@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" 
+	xmlns="http://java.sun.com/xml/ns/j2ee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>Univrinfo</servlet-name>
+    <servlet-class>univr.Univrinfo</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>UploadClient</servlet-name>
+    <servlet-class>ajout.UploadClient</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>Test</servlet-name>
+    <servlet-class>ajout.Test</servlet-class>
+  </servlet>
+  <servlet>
+    <description>Suppression auto des tests</description>
+    <display-name>Suppression auto des tests</display-name>
+    <servlet-name>SupprAuto</servlet-name>
+    <servlet-class>paquet.SupprAuto</servlet-class>
+  </servlet>
+  <servlet>
+    <description>Changement d'état des amphis</description>
+    <display-name>Changement d'état des amphis</display-name>
+    <servlet-name>LiveState</servlet-name>
+    <servlet-class>paquet.LiveState</servlet-class>
+  </servlet>
+
+
+
+
+
+  <servlet-mapping>
+    <servlet-name>Univrinfo</servlet-name>
+    <url-pattern>/servlet/Univrinfo</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>UploadClient</servlet-name>
+    <url-pattern>/servlet/UploadClient</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Test</servlet-name>
+    <url-pattern>/servlet/Test</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SupprAuto</servlet-name>
+    <url-pattern>/servlet/SupprAuto</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>LiveState</servlet-name>
+    <url-pattern>/servlet/LiveState</url-pattern>
+  </servlet-mapping>
+
+</web-app>

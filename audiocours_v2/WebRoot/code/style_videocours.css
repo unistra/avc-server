@@ -1,0 +1,141 @@
+body {  scrollbar-face-Color: #FFD288;
+        scrollbar-Base-Color: #FFF1D9;
+        scrollbar-Arrow-Color: #000000;
+        scrollbar-Shadow-Color: #000000;
+        scrollbar-DarkShadow-Color: #000000;
+        scrollbar-highlight-Color: #000000;
+        scrollbar-track-color: #FFF1D9;
+        scrollbar-3d-light-color: #FFF1D9;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+        }
+
+a.lk {
+	color: #333333;
+	text-decoration: none}
+a.lk:visited {
+	color: #666666;
+	text-decoration: none}
+a.lk:hover {
+	color: #000000;
+	text-decoration: underline}
+a.lk:active, a.lk:focus {
+	font-weight: bold;
+	color: #000000;
+	text-decoration: underline}
+
+.imgBorder {
+	display: block;
+	border: #999999 1px solid;}
+.imgBorder:visited{
+	border: #999999 1px solid;}
+.imgBorder:hover {
+	border: #FFD288 1px solid;}
+.imgBorder:active, .imgBorder:focus {
+	border: #000000 1px solid;}
+
+INPUT.inputTxt { 
+	BACKGROUND-COLOR: #FFF1D9; 
+	BORDER: #FFD288 1px solid;
+	COLOR: #666666; 
+	font-family: Arial, Verdana, Helvetica, sans-serif; 
+	font-size: 12px; }
+	
+.ArialBlack18 {
+	font-family: Arial, Verdana, Helvetica, sans-serif; 
+	font-size: 18px; 
+	font-style: normal; 
+	font-weight: bold;
+	color: #666666}
+
+.Arial11 {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: normal;
+	color: #666666;
+	text-align: justify;
+
+}
+
+.Arial11Bold {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: bold;
+	color: #666666;
+	text-align: justify;
+
+}
+
+.Arial11BoldCenter {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: bold;
+	color: #666666;
+	text-align: center;
+
+}
+
+.Arial12 {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: normal;
+	color: #666666;
+	text-align: justify;
+}
+
+
+.Arial12NoJust {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: normal;
+	color: #666666;
+}
+
+.Arial12bold {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: bold;
+	color: #666666;
+	text-align: justify;
+}
+
+.Arial14boldNoir {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: bold;
+	color: #000000;
+	text-align: justify;
+}
+
+.Arial18boldBlanc {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: bold;
+	color: #FFFFFF;
+}
+
+.Arial14boldGris {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: bold;
+	color: #666666;
+}
+
+.Arial11boldGris {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: bold;
+	color: #666666;
+}

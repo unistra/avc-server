@@ -1,0 +1,30 @@
+			body {
+	    		color:white;
+	    		background-image:url(../_mm/Fond.jpg);
+	    	}
+	    	
+	    	.retour {color:yellow}
+	    	
+	    	div#diapo_courante {
+	    		text-align: center;
+	    		position: absolute;
+	    		width: 50%;
+	    		height: 98%;
+	    		left: 0%;
+	    	}
+	    	
+	    	div#diaThumb {
+	    		position:absolute;
+	    		width: 20%;
+	    		height: 98%;
+	    		left: 55%;
+	    		overflow: auto;
+	    	}
+	    	
+	    	div#cours {
+		      	position:absolute;
+		      	width: 20%;
+		      	height: 98%;
+		      	right: 1%;
+		      	overflow: auto;
+	    	}   
