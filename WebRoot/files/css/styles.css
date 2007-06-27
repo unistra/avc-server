@@ -1,0 +1,142 @@
+/* Page html */
+html {
+	height: 100%;
+	margin: 0;
+}
+
+/* Corps de la page */
+body {
+	margin: 0px;
+	font-family: trebuchet, helvetica, arial;
+	color: white;
+	height: 100%;
+	margin: 0;
+	background-image: url("../img/images/gradient.png");
+	background-repeat: repeat-x;
+	background-color:#58585a;
+	text-align: center; /* Permet le centrage de main avec IE6 */
+}
+
+/* Div principal */
+.main {
+	position: relative;
+	width: 970px;
+	min-height: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	background-color:#606060;
+	padding: 0 10px;
+	margin: 0 auto;
+	text-align: left; /* Permet le centrage de main avec IE6 */
+}
+
+/* Div contenant la bannière du site */
+.banner {
+	width: 940px;
+	height: 180px;
+	margin-left: 15px;
+	margin-right: 15px;
+	background-image: url(../img/images/banner2.png);
+  	background-repeat: no-repeat;
+}
+
+/* Zone cliquable pour retour sur la page d'accueil */
+.zoneAccueil {
+	position: absolute;
+	width : 210px;
+	height: 90px;
+	margin-left: 20px;
+	margin-top: 7px;
+}
+
+/* Zone cliquable lien vers le site ULPMM */
+.zoneUlpmm {
+	position: absolute;
+	width : 85px;
+	height: 15px;
+	margin-left:140px;
+	margin-top: 148px;
+}
+
+/* Zone cliquable lien vers le site ULP */
+.zoneUlp {
+	position: absolute;
+	width : 40px;
+	height: 25px;
+	margin-left:240px;
+	margin-top: 145px;
+}
+
+/*  Div contenant le bouton Direct */
+.direct {
+	position: absolute;
+	margin-left: 312px;
+	width: 115px;
+	height: 180px;
+}
+
+/* Zone cliquable lien vers la page Direct */
+.zoneDirect {
+	position: absolute;
+	width : 105px;
+	height: 28px;
+	margin-left:5px;
+	margin-top: 145px;
+}
+
+/* Div contenant le bouton Différé */
+.differe {
+	position: absolute;
+	margin-left: 428px;
+	width: 115px;
+	height: 180px;
+}
+
+/* Zone clickable lien vers la page Différé */
+.zoneDiffere {
+	position: absolute;
+	width : 105px;
+	height: 28px;
+	margin-left:5px;
+	margin-top: 145px;
+}
+
+/* Mise en forme du texte des boutons Direct et Différé */
+.zoneDirect, .zoneDiffere {
+	text-align: center;
+	margin-top: 152px;
+	font-size: 16px;
+}
+
+/* Div du contenu de la page */
+.contenu {
+	margin-top: 20px;
+	margin-left: 15px;
+	margin-right: 15px;
+	padding-bottom: 50px;
+	/*border: 1px dotted white; /* ajouté pour visualiser la zone*/
+	overflow: auto;
+}
+
+/* Div du bas de page */
+.footer {
+	position: absolute;
+	bottom: 0px;
+	width: 970px;
+	left: 50%;
+	margin-left: -485px;
+	margin-bottom: 5px;
+	text-align: center;
+	font-size: 11px;
+}
+
+/* Suppression des bordures des images liens */
+a img {
+	border: 0px;
+}
+
+/* Style des liens */
+a {
+	text-decoration: none;
+	color: #FF9602;
+}

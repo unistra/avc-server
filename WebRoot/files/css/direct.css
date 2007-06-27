@@ -1,0 +1,83 @@
+/*  Div contenant le bouton Direct */
+.direct {
+	background-image: url(../img/images/menu_on.png);
+}
+
+/*  Div contenant le bouton Différé */
+.differe {
+	background-image: url(../img/images/menu_off.png);
+}
+
+.zoneDirect {
+	color: #FF9602;
+}
+
+.zoneDiffere {
+	color: #ffffff;
+} 
+
+/* Div du contenu de la page */
+.contenu {
+	/*padding-left: 75px;
+	padding-right: 75px;*/
+	/*text-align: center; /* Permet le centrage de main avec IE6 */
+}
+
+/* Div contenant une ligne de jusqu'à 3 blocs "batiment" */
+.ligne {
+	/*border: 1px dotted yellow;*/
+	width: 870px;
+	margin-left: auto;
+	margin-right: auto;
+	overflow: hidden;
+	margin-bottom: 10px;
+	/*text-align: left; /* Permet le centrage de main avec IE6 */
+}
+
+/* Div du bloc de batiment */
+.batiment {
+	float: left;
+	width: 270px;
+	background-color: #FFFFFF;
+	margin: 5px;
+	text-align: center;	
+	padding: 5px;
+	margin-bottom: -2000px;
+	padding-bottom: 2005px;
+}
+
+.amphi {
+	color: #FF9602;
+}
+
+table {
+	width: 100%;
+	text-align: left;
+	border-collapse: collapse;
+}
+
+tr {
+}
+
+th {
+	background-color: #FF9602;
+	width: 50%;
+	font-size: 12px;
+}
+
+td {
+	color: #000000;
+	font-size: 11px;
+}
+
+th, td {
+	padding-left: 15px;
+}
+
+.row1 {
+	background-color: #C4C4C4;
+}
+
+.row2 {
+	background-color: #FFFFFF;
+}
