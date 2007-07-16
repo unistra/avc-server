@@ -114,7 +114,7 @@ body {
 	margin-left: 15px;
 	margin-right: 15px;
 	padding-bottom: 50px;
-	/*border: 1px dotted white; /* ajouté pour visualiser la zone*/
+	border: 1px dotted white; /* ajouté pour visualiser la zone*/
 	overflow: auto;
 }
 
