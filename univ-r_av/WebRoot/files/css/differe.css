@@ -1,0 +1,102 @@
+/*  Div contenant le bouton Direct */
+.direct {
+	background-image: url(../img/images/menu_off.png);
+}
+
+/*  Div contenant le bouton Différé */
+.differe {
+	background-image: url(../img/images/menu_on.png);
+}
+
+.zoneDirect {
+	color: #ffffff;
+}
+
+.zoneDiffere {
+	color: #FF9602;
+} 
+
+/* Div du contenu de la page */
+.contenu {
+	/*padding-left: 75px;
+	padding-right: 75px;*/
+	/*text-align: center; /* Permet le centrage de main avec IE6 */
+}
+
+.recherche {
+	width: 728px;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px dotted blue;
+	background-color: #747474;
+	overflow: hidden;
+}
+
+.imgRecherche {
+	float: left;
+	width: 237px;
+	height: 139px;
+	background-image: url(../img/images/search.png);
+}
+
+.champs {
+	float: left;
+}
+
+.radio {
+	background-image: url("../img/images/chip.png");
+}
+
+label {
+	width: 50px;
+}
+
+.cours {
+	margin-top: 20px;
+}
+
+table {
+	/*background-color: #FFFFFF;*/
+	width: 100%;
+	text-align: left;
+	border-collapse: collapse;
+	color: #000000;
+}
+
+tr {
+}
+
+th {
+	background-color: #FF9602;
+	font-size: 12px;
+}
+
+td {
+	/*background-color: #E3DABA;*/
+	font-size: 11px;
+	
+}
+
+th, td {
+	padding-left: 15px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #FFFFFF;
+}
+
+.row1 {
+	background-color: #FFD557;
+}
+
+.row2 {
+	background-color: #E3DABA;
+}
+
+.tdalign {
+	text-align: center;
+}
+
+.pasBordure {
+	/*border-style: none;
+	text-align: center;*/
+}
