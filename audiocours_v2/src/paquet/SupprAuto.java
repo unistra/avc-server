@@ -33,9 +33,18 @@ public class SupprAuto extends HttpServlet {
 		SqlBean sqlbean = new SqlBean();
 		sqlbean.connect();
 		
-		String query = "DELETE FROM \"AudioCours\" WHERE INITCAP(\"Who\")='Testulpmm'";
+		/*String query = "DELETE FROM \"AudioCours\" WHERE INITCAP(\"Who\")='Testulpmm'";
 		query += " AND INITCAP(\"Title\")='Testulpmm'";
-		query += " AND INITCAP(\"Genre\")='Suppression'"; 
+		query += " AND INITCAP(\"Genre\")='Suppression'"; */
+		
+		String query = "DELETE FROM \"AudioCours\" WHERE ";
+		query += "INITCAP(\"Genre\")='Suppression'";
+		
+		
+		
+		
+		
+		
 		
 		sqlbean.update(query);
 		
@@ -48,6 +57,7 @@ public class SupprAuto extends HttpServlet {
 		out.println("  <HEAD><TITLE>Suppression des tests</TITLE></HEAD>");
 		out.println("  <BODY>");
 		out.println("    <p>Suppression des tests</p>");
+		out.println("requete : " + query);
 		out.println("  </BODY>");
 		out.println("</HTML>");
 		out.flush();
