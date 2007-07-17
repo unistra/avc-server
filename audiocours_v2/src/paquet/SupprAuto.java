@@ -40,12 +40,6 @@ public class SupprAuto extends HttpServlet {
 		String query = "DELETE FROM \"AudioCours\" WHERE ";
 		query += "INITCAP(\"Genre\")='Suppression'";
 		
-		
-		
-		
-		
-		
-		
 		sqlbean.update(query);
 		
 		response.setContentType("text/html");
@@ -57,7 +51,6 @@ public class SupprAuto extends HttpServlet {
 		out.println("  <HEAD><TITLE>Suppression des tests</TITLE></HEAD>");
 		out.println("  <BODY>");
 		out.println("    <p>Suppression des tests</p>");
-		out.println("requete : " + query);
 		out.println("  </BODY>");
 		out.println("</HTML>");
 		out.flush();
