@@ -15,9 +15,10 @@
 	<link rel="stylesheet" type="text/css" href="../files/css/styles.css">
 	<link rel="stylesheet" type="text/css" href="../files/css/direct.css">
 	
-	<!--[if lte IE 6]>
+	<!--[if lt IE 8]>
 	<link rel="stylesheet" type="text/css" href="../files/css/styles_ie6.css" media="screen" />
 	<link rel="stylesheet" type="text/css" href="../files/css/direct_ie6.css" media="screen" />
+	<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
   </head>

@@ -16,22 +16,13 @@
 	color: #ffffff;
 } 
 
-/* Div du contenu de la page */
-.contenu {
-	/*padding-left: 75px;
-	padding-right: 75px;*/
-	/*text-align: center; /* Permet le centrage de main avec IE6 */
-}
-
 /* Div contenant une ligne de jusqu'à 3 blocs "batiment" */
 .ligne {
-	/*border: 1px dotted yellow;*/
 	width: 870px;
 	margin-left: auto;
 	margin-right: auto;
 	overflow: hidden;
 	margin-bottom: 10px;
-	/*text-align: left; /* Permet le centrage de main avec IE6 */
 }
 
 /* Div du bloc de batiment */
@@ -54,9 +45,6 @@ table {
 	width: 100%;
 	text-align: left;
 	border-collapse: collapse;
-}
-
-tr {
 }
 
 th {

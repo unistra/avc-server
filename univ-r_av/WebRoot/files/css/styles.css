@@ -6,9 +6,8 @@ html {
 
 /* Corps de la page */
 body {
-	margin: 0px;
-	font-family: trebuchet, helvetica, arial;
-	color: white;
+	font-family: helvetica, arial;
+	color: #FFFFFF;
 	height: 100%;
 	margin: 0;
 	background-image: url("../img/images/gradient.png");
@@ -22,11 +21,13 @@ body {
 	position: relative;
 	width: 970px;
 	min-height: 100%;
+	/*left: 50%;
+	margin-left: -485px;*/
 	margin-left: auto;
 	margin-right: auto;
 	background-color:#606060;
-	padding: 0 10px;
-	margin: 0 auto;
+	/*padding: 0;*/
+	/*margin: 0 auto;*/
 	text-align: left; /* Permet le centrage de main avec IE6 */
 }
 
@@ -36,7 +37,7 @@ body {
 	height: 180px;
 	margin-left: 15px;
 	margin-right: 15px;
-	background-image: url(../img/images/banner2.png);
+	background-image: url(../img/images/banner.png);
   	background-repeat: no-repeat;
 }
 
@@ -110,11 +111,12 @@ body {
 
 /* Div du contenu de la page */
 .contenu {
+	width: 940px;
 	margin-top: 20px;
 	margin-left: 15px;
 	margin-right: 15px;
 	padding-bottom: 50px;
-	border: 1px dotted white; /* ajouté pour visualiser la zone*/
+	/*border: 1px dotted white; /* ajouté pour visualiser la zone*/
 	overflow: auto;
 }
 
@@ -123,8 +125,6 @@ body {
 	position: absolute;
 	bottom: 0px;
 	width: 970px;
-	left: 50%;
-	margin-left: -485px;
 	margin-bottom: 5px;
 	text-align: center;
 	font-size: 11px;
