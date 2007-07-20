@@ -1,9 +1,18 @@
 /*  Div contenant le bouton Direct */
 .direct {
-	background-image: url(../img/images/direct_off.gif);
+	background-image: url(../img/images/menu_off.gif);
 }
 
 /*  Div contenant le bouton Différé */
 .differe {
-	background-image: url(../img/images/differe_off.gif);
+	background-image: url(../img/images/menu_on.gif);
+}
+
+.recherche {
+	overflow: visible;
+	margin-top: 40px;
+}
+
+.imgRecherche {
+	background-image: url(../img/images/search.gif);
 }

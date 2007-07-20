@@ -9,46 +9,81 @@
 }
 
 .zoneDirect {
-	color: #ffffff;
+	color: #FFFFFF;
 }
 
 .zoneDiffere {
 	color: #FF9602;
-} 
-
-/* Div du contenu de la page */
-.contenu {
-	/*padding-left: 75px;
-	padding-right: 75px;*/
-	/*text-align: center; /* Permet le centrage de main avec IE6 */
 }
 
 .recherche {
 	width: 728px;
-	margin-left: auto;
-	margin-right: auto;
-	border: 1px dotted blue;
+	margin-left: 116px;
+	margin-right: 76px;
+	margin-top: 20px;
+	/*border: 1px dotted blue;*/
 	background-color: #747474;
 	overflow: hidden;
+	font-size: 12px;
 }
 
 .imgRecherche {
-	float: left;
+	position: absolute;
 	width: 237px;
 	height: 139px;
+	margin-left: -20px;
+	margin-top: -20px;
 	background-image: url(../img/images/search.png);
 }
 
-.champs {
-	float: left;
+.txtRecherche {
+	position: absolute;
+	font-size: 20px;
+	left: 10px;
+	top: 18px;
+	color: #FF9602;
 }
 
-.radio {
-	background-image: url("../img/images/chip.png");
+.txtAvance {
+	position: absolute;
+	font-size: 10px;
+	left: 88px;
+	top: 39px;
 }
 
-label {
-	width: 50px;
+.criteres {
+	float: right;
+	padding: 15px;
+	text-align: right;
+}
+
+.champ {
+	width: 130px;
+	margin: 3px;
+}
+
+fieldset {
+	width: 200px;
+	text-align: left;
+	border: 1px solid #DDDDDD;
+}
+
+.submit {
+	background: none;
+	border:0;
+	color: white;
+	font-size: 14px;
+	font-family: helvetica, arial;
+}
+
+hr {
+	position: absolute;
+	background-color: #DDDDDD;
+	border: 0;
+	left: 350px;
+	margin-top: 10px;
+	height: 105px;
+	width: 1px;
 }
 
 .cours {
@@ -56,32 +91,33 @@ label {
 }
 
 table {
-	/*background-color: #FFFFFF;*/
 	width: 100%;
 	text-align: left;
-	border-collapse: collapse;
+	border-spacing: 0px;
 	color: #000000;
 }
 
-tr {
+th, td {
+	padding-top: 4px;
+	padding-bottom: 4px;
 }
 
 th {
+	padding-left: 25px;
 	background-color: #FF9602;
 	font-size: 12px;
 }
 
-td {
-	/*background-color: #E3DABA;*/
-	font-size: 11px;
-	
+th#cours {
+	color: #FFFFFF;
+	font-size: 14px;
 }
 
-th, td {
+td {
 	padding-left: 15px;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #FFFFFF;
+	font-size: 11px;
+	border-width: 0px;
+	/*border-top-width : 10px; border-right-width : 0; border-bottom-width : 0.5; border-left-width : 0.5; border-top-color : #000000; border-right-color : #000000; border-bottom-color : #000000; border-left-color : #000000; border-top-style : solid; border-right-style : solid; border-bottom-style : solid; border-left-style : solid*/
 }
 
 .row1 {
@@ -94,9 +130,21 @@ th, td {
 
 .tdalign {
 	text-align: center;
+	width: 55px;
 }
 
-.pasBordure {
-	/*border-style: none;
-	text-align: center;*/
+.hidden {
+	display: none;
+}
+
+.pagination {
+	color: #FFFFFF;
+	font-size: 12px;
+	text-align: right;
+	margin: 5px;
+}
+
+.pagination a {
+	color: #FFFFFF;
+	font-size: 12px;
 }
