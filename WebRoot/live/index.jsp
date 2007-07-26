@@ -1,16 +1,16 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
+<jsp:directive.page import="org.ulpmm.language.Messages"/>
+<jsp:directive.page import="java.util.Locale"/>
+
+<%
+	Locale l = request.getLocale();
+%>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
     
-    <title>Page de direct</title>
-    
-	<meta http-equiv="pragma" content="no-cache">
-	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">    
-	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<meta http-equiv="description" content="This is my page">
+    <title><%=Messages._("Cours en direct", l)%></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/css/styles.css">
 	<link rel="stylesheet" type="text/css" href="../files/css/direct.css">
@@ -27,34 +27,34 @@
     
 	    <div class="main">
 		    <div class="banner">
-		    	<a class="zoneAccueil" href="."></a>
-		    	<a class="zoneUlpmm" href="http://ulpmultimedia.u-strasbg.fr/" target="external"></a>
-		    	<a class="zoneUlp" href="http://www-ulp.u-strasbg.fr/" target="external"></a>
-		    	<div class="direct">
-		    		<a class="zoneDirect" href=".">Direct</a>
+		    	<a class="bannerPageZone" href="."></a>
+		    	<a class="ulpmmZone" href="http://ulpmultimedia.u-strasbg.fr/" target="external"></a>
+		    	<a class="ulpZone" href="http://www-ulp.u-strasbg.fr/" target="external"></a>
+		    	<div class="live">
+		    		<a class="liveZone" href="."><%=Messages._("Direct", l)%></a>
 		    	</div>
-		    	<div class="differe">
-		    		<a class="zoneDiffere" href=".">Différé</a>
+		    	<div class="recorded">
+		    		<a class="recordedZone" href="."><%=Messages._("Enregistr&eacute;", l)%></a>
 		    	</div>
 		    </div>
-		    <div class="contenu">
-		    	<div class="ligne">
+		    <div class="contents">
+		    	<div class="line">
 			    	
-			    	<div class="batiment">
+			    	<div class="building">
 			    	<img src="../files/img/images/lebel-thumb.png" alt="Institut Le Bel">
-			    	<p class="amphi">Institut Le Bel</p>
+			    	<p class="buildingName">Institut Le Bel</p>
 			    	<table>
 			    		<tr>
-			    			<th>Salle</th>
-			    			<th>Enregistrement</th>
+			    			<th><%=Messages._("Salle", l)%></th>
+			    			<th><%=Messages._("Enregistrement", l)%></th>
 			    		</tr>
 			    		<tr class="row1">
 			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon">Amphi1</td>
-			    			<td> <img src="../files/img/links/chip_direct_on.png" alt="chip_direct_on"> En attente</td>
+			    			<td> <img src="../files/img/links/chip_direct_on.png" alt="chip_direct_on"> <%=Messages._("En attente", l)%></td>
 			    		</tr>
 			    		<tr class="row2">
 			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon">Amphi2</td>
-			    			<td> <img src="../files/img/links/chip_direct_on.png" alt="chip_direct_on"> En attente</td>
+			    			<td> <img src="../files/img/links/chip_direct_on.png" alt="chip_direct_on"> <%=Messages._("En cours", l)%></td>
 			    		</tr>
 			    		<tr class="row1">
 			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon">Amphi3</td>
@@ -75,9 +75,9 @@
 			    	</table>
 			    	</div>
 			    	
-			    	<div class="batiment">
+			    	<div class="building">
 			    	<img src="../files/img/images/lebel-thumb.png" alt="Institut Le Bel">
-			    	<p class="amphi">Institut Le Bel</p>
+			    	<p class="buildingName">Institut Le Bel</p>
 			    	<table>
 			    		<tr>
 			    			<th>Salle</th>
@@ -118,9 +118,9 @@
 			    	</table>
 			    	</div>
 			    	
-			    	<div class="batiment">
+			    	<div class="building">
 			    	<img src="../files/img/images/lebel-thumb.png" alt="Institut Le Bel">
-			    	<p class="amphi">Institut Le Bel</p>
+			    	<p class="buildingName">Institut Le Bel</p>
 			    	<table>
 			    		<tr>
 			    			<th>Salle</th>
@@ -143,11 +143,11 @@
 			    	   	
 		    	</div>
 		    	
-		    	<div class="ligne">
+		    	<div class="line">
 			    	
-			    	<div class="batiment">
+			    	<div class="building">
 			    	<img src="../files/img/images/lebel-thumb.png" alt="Institut Le Bel">
-			    	<p class="amphi">Institut Le Bel</p>
+			    	<p class="buildingName">Institut Le Bel</p>
 			    	<table>
 			    		<tr>
 			    			<th>Salle</th>
@@ -180,9 +180,9 @@
 			    	</table>
 			    	</div>
 			    	
-			    	<div class="batiment">
+			    	<div class="building">
 			    	<img src="../files/img/images/lebel-thumb.png" alt="Institut Le Bel">
-			    	<p class="amphi">Institut Le Bel</p>
+			    	<p class="buildingName">Institut Le Bel</p>
 			    	<table>
 			    		<tr>
 			    			<th>Salle</th>
@@ -223,9 +223,9 @@
 			    	</table>
 			    	</div>
 			    	
-			    	<div class="batiment">
+			    	<div class="building">
 			    	<img src="../files/img/images/lebel-thumb.png" alt="Institut Le Bel">
-			    	<p class="amphi">Institut Le Bel</p>
+			    	<p class="buildingName">Institut Le Bel</p>
 			    	<table>
 			    		<tr>
 			    			<th>Salle</th>
@@ -248,11 +248,11 @@
 			    	   	
 		    	</div>
 		    	
-		    	<div class="ligne">
+		    	<div class="line">
 			    	
-			    	<div class="batiment">
+			    	<div class="building">
 			    	<img src="../files/img/images/lebel-thumb.png" alt="Institut Le Bel">
-			    	<p class="amphi">Institut Le Bel</p>
+			    	<p class="buildingName">Institut Le Bel</p>
 			    	<table>
 			    		<tr>
 			    			<th>Salle</th>
@@ -285,9 +285,9 @@
 			    	</table>
 			    	</div>
 			    	
-			    	<div class="batiment">
+			    	<div class="building">
 			    	<img src="../files/img/images/lebel-thumb.png" alt="Institut Le Bel">
-			    	<p class="amphi">Institut Le Bel</p>
+			    	<p class="buildingName">Institut Le Bel</p>
 			    	<table>
 			    		<tr>
 			    			<th>Salle</th>
@@ -328,9 +328,9 @@
 			    	</table>
 			    	</div>
 			    	
-			    	<div class="batiment">
+			    	<div class="building">
 			    	<img src="../files/img/images/lebel-thumb.png" alt="Institut Le Bel">
-			    	<p class="amphi">Institut Le Bel</p>
+			    	<p class="buildingName">Institut Le Bel</p>
 			    	<table>
 			    		<tr>
 			    			<th>Salle</th>
@@ -357,8 +357,8 @@
 		    	
 		    <div class="footer">
 		    	<p>
-			    	Réalisation du site par ULP Multim&eacute;dia - 2007 <br>
-			    	<a href=".">Contact</a> - <a href=".">Informations l&eacute;gales</a> - <a href=".">Liens</a>
+			    	<%=Messages._("R&eacute;alisation du site par ULP Multim&eacute;dia - 2007", l)%> <br>
+			    	<a href="."><%=Messages._("Contact", l)%></a> - <a href="."><%=Messages._("Informations l&eacute;gales", l)%></a> - <a href="."><%=Messages._("Liens", l)%></a>
 		    	</p>
 		    </div>
 	    </div>
