@@ -1,18 +1,20 @@
 /*  Div contenant le bouton Direct */
-.direct {
+.live {
 	background-image: url(../img/images/menu_off.gif);
 }
 
 /*  Div contenant le bouton Différé */
-.differe {
+.recorded {
 	background-image: url(../img/images/menu_on.gif);
 }
 
-.recherche {
+/* Div of the search part of the page */
+.search {
 	overflow: visible;
 	margin-top: 40px;
 }
 
-.imgRecherche {
+/* Div containing the search image */
+.searchImage {
 	background-image: url(../img/images/search.gif);
 }

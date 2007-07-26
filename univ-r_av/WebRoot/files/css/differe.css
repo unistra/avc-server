@@ -1,33 +1,36 @@
-/*  Div contenant le bouton Direct */
-.direct {
+/*  Div containing the "Live" button */
+.live {
 	background-image: url(../img/images/menu_off.png);
 }
 
-/*  Div contenant le bouton Différé */
-.differe {
+/*  Div containing the "Recorded" button */
+.recorded {
 	background-image: url(../img/images/menu_on.png);
 }
 
-.zoneDirect {
+/* Clickable zone, link to the "Live" page */
+.liveZone {
 	color: #FFFFFF;
 }
 
-.zoneDiffere {
+/* Clickable zone, link to the "Recorded" page */
+.recordedZone {
 	color: #FF9602;
 }
 
-.recherche {
+/* Div of the search part of the page */
+.search {
 	width: 728px;
 	margin-left: 116px;
 	margin-right: 76px;
 	margin-top: 20px;
-	/*border: 1px dotted blue;*/
 	background-color: #747474;
 	overflow: hidden;
 	font-size: 12px;
 }
 
-.imgRecherche {
+/* Div containing the search image */
+.searchImage {
 	position: absolute;
 	width: 237px;
 	height: 139px;
@@ -36,7 +39,8 @@
 	background-image: url(../img/images/search.png);
 }
 
-.txtRecherche {
+/* Div containing the "search" text */
+.searchText {
 	position: absolute;
 	font-size: 20px;
 	left: 10px;
@@ -44,23 +48,27 @@
 	color: #FF9602;
 }
 
-.txtAvance {
+/* Div containing the "advanced" text */
+.advancedText {
 	position: absolute;
 	font-size: 10px;
 	left: 88px;
 	top: 39px;
 }
 
-.criteres {
+/* Float div containing search criteria */
+.criteria {
 	float: right;
 	padding: 15px;
 	text-align: right;
 }
 
-.champ {
+/* A field of the html form */
+.field {
 	width: 130px;
 	margin: 3px;
 }
+
 
 fieldset {
 	width: 200px;
@@ -68,6 +76,7 @@ fieldset {
 	border: 1px solid #DDDDDD;
 }
 
+/* Formatting of the submit button of the html form */
 .submit {
 	background: none;
 	border:0;
@@ -76,6 +85,7 @@ fieldset {
 	font-family: helvetica, arial;
 }
 
+/* vertical line in the "search" div */
 hr {
 	position: absolute;
 	background-color: #DDDDDD;
@@ -86,10 +96,12 @@ hr {
 	width: 1px;
 }
 
-.cours {
+/* Div which prints the courses list with the pagination links */
+.course {
 	margin-top: 20px;
 }
 
+/* Courses list table */
 table {
 	width: 100%;
 	text-align: left;
@@ -108,7 +120,7 @@ th {
 	font-size: 12px;
 }
 
-th#cours {
+th#course {
 	color: #FFFFFF;
 	font-size: 14px;
 }
@@ -117,9 +129,9 @@ td {
 	padding-left: 15px;
 	font-size: 11px;
 	border-width: 0px;
-	/*border-top-width : 10px; border-right-width : 0; border-bottom-width : 0.5; border-left-width : 0.5; border-top-color : #000000; border-right-color : #000000; border-bottom-color : #000000; border-left-color : #000000; border-top-style : solid; border-right-style : solid; border-bottom-style : solid; border-left-style : solid*/
 }
 
+/* Classes to alternate the color of the rows of the courses table */
 .row1 {
 	background-color: #FFD557;
 }
@@ -128,15 +140,18 @@ td {
 	background-color: #E3DABA;
 }
 
+/* Aligned cells in the table */
 .tdalign {
 	text-align: center;
 	width: 55px;
 }
 
+/* Div with its content hidden */
 .hidden {
 	display: none;
 }
 
+/* Div containing the pagination links */
 .pagination {
 	color: #FFFFFF;
 	font-size: 12px;

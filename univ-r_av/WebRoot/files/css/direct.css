@@ -1,23 +1,25 @@
-/*  Div contenant le bouton Direct */
-.direct {
+/*  Div containing the "Live" button */
+.live {
 	background-image: url(../img/images/menu_on.png);
 }
 
-/*  Div contenant le bouton Différé */
-.differe {
+/*  Div containing the "Recorded" button */
+.recorded {
 	background-image: url(../img/images/menu_off.png);
 }
 
-.zoneDirect {
+/* Clickable zone, link to the "Live" page */
+.liveZone {
 	color: #FF9602;
 }
 
-.zoneDiffere {
+/* Clickable zone, link to the "Recorded" page */
+.recordedZone {
 	color: #ffffff;
 } 
 
-/* Div contenant une ligne de jusqu'à 3 blocs "batiment" */
-.ligne {
+/* Div containing a line of 3 "building" div with equal height */
+.line {
 	width: 870px;
 	margin-left: auto;
 	margin-right: auto;
@@ -25,8 +27,8 @@
 	margin-bottom: 10px;
 }
 
-/* Div du bloc de batiment */
-.batiment {
+/* Div of the building block */
+.building {
 	float: left;
 	width: 270px;
 	background-color: #FFFFFF;
@@ -37,10 +39,12 @@
 	padding-bottom: 2005px;
 }
 
-.amphi {
+/* Div of the building name text */
+.amphitheatre {
 	color: #FF9602;
 }
 
+/* "building" div table */
 table {
 	width: 100%;
 	text-align: left;
@@ -62,6 +66,7 @@ th, td {
 	padding-left: 15px;
 }
 
+/* Classes to alternate the color of the rows in the table of "building" div */
 .row1 {
 	background-color: #C4C4C4;
 }
