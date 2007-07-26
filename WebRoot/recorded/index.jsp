@@ -13,11 +13,11 @@
     <title><%=Messages._("Cours enregistr&eacute;s", l)%></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/css/differe.css">
+	<link rel="stylesheet" type="text/css" href="../files/css/recorded.css">
 	
 	<!--[if lt IE 8]>
 	<link rel="stylesheet" type="text/css" href="../files/css/styles_ie6.css" media="screen" />
-	<link rel="stylesheet" type="text/css" href="../files/css/differe_ie6.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="../files/css/recorded_ie6.css" media="screen" />
 	<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
