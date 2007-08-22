@@ -74,7 +74,7 @@
 	    	<div class="course">
 	    		<table cellspacing="0">
 	    			<tr>
-	    				<th colspan="3" id="cours"><%=Messages._("Les cours", l)%></th>
+	    				<th colspan="3" id="courses"><%=Messages._("Les cours", l)%></th>
 	    				<th colspan="2"><%=Messages._("Visualisez", l)%></th>
 	    				<th colspan="4"><%=Messages._("T&eacute;l&eacute;chargez", l)%></th>
 	    			</tr>
