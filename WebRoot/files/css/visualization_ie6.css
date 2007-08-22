@@ -1,0 +1,9 @@
+div#videoLine {
+	background-image: url("../img/images/1px_video_line.gif");
+}
+
+.thumb {
+	width: 115px;
+	height: 77px;
+	margin-right: -60px; /* unables to superpose the hidden thumbs */
+}

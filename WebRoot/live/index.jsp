@@ -13,11 +13,11 @@
     <title><%=Messages._("Cours en direct", l)%></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/css/direct.css">
+	<link rel="stylesheet" type="text/css" href="../files/css/live.css">
 	
 	<!--[if lt IE 8]>
 	<link rel="stylesheet" type="text/css" href="../files/css/styles_ie6.css" media="screen" />
-	<link rel="stylesheet" type="text/css" href="../files/css/direct_ie6.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="../files/css/live_ie6.css" media="screen" />
 	<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
@@ -49,27 +49,27 @@
 			    			<th><%=Messages._("Enregistrement", l)%></th>
 			    		</tr>
 			    		<tr class="row1">
-			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon">Amphi1</td>
+			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon"> Amphi1</td>
 			    			<td> <img src="../files/img/links/chip_direct_on.png" alt="chip_direct_on"> <%=Messages._("En attente", l)%></td>
 			    		</tr>
 			    		<tr class="row2">
-			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon">Amphi2</td>
+			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon"> Amphi2</td>
 			    			<td> <img src="../files/img/links/chip_direct_on.png" alt="chip_direct_on"> <%=Messages._("En cours", l)%></td>
 			    		</tr>
 			    		<tr class="row1">
-			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon">Amphi3</td>
+			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon"> Amphi3</td>
 			    			<td> <img src="../files/img/links/chip_direct_on.png" alt="chip_direct_on"> En attente</td>
 			    		</tr>
 			    		<tr class="row2">
-			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon">Amphi4</td>
+			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon"> Amphi4</td>
 			    			<td> <img src="../files/img/links/chip_direct_on.png" alt="chip_direct_on"> En attente</td>
 			    		</tr>
 			    		<tr class="row1">
-			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon">Amphi5</td>
+			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon"> Amphi5</td>
 			    			<td> <img src="../files/img/links/chip_direct_on.png" alt="chip_direct_on"> En attente</td>
 			    		</tr>
 			    		<tr class="row2">
-			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon">Amphi6</td>
+			    			<td><img src="../files/img/links/amphi_icon.png" alt="amphi_icon"> Amphi6</td>
 			    			<td> <img src="../files/img/links/chip_direct_on.png" alt="chip_direct_on"> En attente</td>
 			    		</tr>
 			    	</table>
