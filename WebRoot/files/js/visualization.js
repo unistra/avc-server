@@ -99,7 +99,7 @@ function initTimeBar() {
 	
 	// adds each time point and corresponding thumb
 	for( i=0 ; i< 15 && (firstSlide + i <= timecodes.length) ; i++) {
-		document.getElementById("videoLine").innerHTML += '<a href="javascript:setTimeFromSlide(' + (firstSlide + i)  + ')" onmouseover="showThumb(' + (firstSlide + i)  + ')" onmouseout="hideThumb(' + (firstSlide + i)  + ')" id="time' + (firstSlide + i)  + '" class="videoTime"><img src="../files/img/images/video_time_off.gif"></a>';
+		document.getElementById("videoLine").innerHTML += '<a href="javascript:setTimeFromSlide(' + (firstSlide + i)  + ')" onmouseover="showThumb(' + (firstSlide + i)  + ')" onmouseout="hideThumb(' + (firstSlide + i)  + ')" id="time' + (firstSlide + i)  + '" class="videoTime"><img src="../files/img/video_time_off.gif"></a>';
 		document.getElementById("thumbLine").innerHTML += '<img class="thumb" id="thumb' + (firstSlide + i) + '" src="http://stagiaire1.u-strasbg.fr/coursv2/smiltest/screenshots/D3-thumb.jpg">';
 	}
 }
@@ -122,10 +122,10 @@ function updateTimeBar() {
 					checkPageChange();
 					
 					// changes the points images for the current and old slide
-					document.getElementById('time' + currentSlide).innerHTML =  "<img src=\"../files/img/images/video_time_on.gif\">";
+					document.getElementById('time' + currentSlide).innerHTML =  "<img src=\"../files/img/video_time_on.gif\">";
 					
 					if(oldSlide > 0)
-						document.getElementById('time' + oldSlide).innerHTML =  "<img src=\"../files/img/images/video_time_off.gif\">";
+						document.getElementById('time' + oldSlide).innerHTML =  "<img src=\"../files/img/video_time_off.gif\">";
 						
 					oldSlide=currentSlide;
 				}
