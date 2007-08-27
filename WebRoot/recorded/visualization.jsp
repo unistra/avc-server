@@ -10,15 +10,17 @@
 <html>
   <head>
     
-    <title><%=Messages._("Course visualization", l)%></title>
+    <title><%=Messages._("Visualisation du cours", l)%></title>
 
-	<link rel="stylesheet" type="text/css" href="../files/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/css/visualization.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/styles.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/visualization.css">
 	
-	<!--[if lt IE 8]>
-	<link rel="stylesheet" type="text/css" href="../files/css/styles_ie6.css" media="screen" />
-	<link rel="stylesheet" type="text/css" href="../files/css/visualization_ie6.css" media="screen" />
-	<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
+	<!--[if IE]>
+   		<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/styles_ie.css" media="screen" />
+	<![endif]-->
+	<!--[if lte IE 6]>
+		<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/visualization_ie6.css" media="screen" />
+		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
 	<script type="text/javascript" src="../files/js/visualization.js"></script>
@@ -31,7 +33,7 @@
 	    	
 	    	<div class="amphitheatre">UFR Math&eacute;matiques et informatique | salle C10</div>
 	    	
-	    	<a class="closeButton" href=".">Close <img src="../files/img/images/close.png"></a>
+	    	<a class="closeButton" href="."><%=Messages._("Fermer", l)%> <img src="../files/img/close.png"></a>
 	    	
 			<div class="smil">
 				<object name="video" classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="970" height="550">
@@ -64,9 +66,9 @@
 			<div id="pagination">
 				<a class="leftPagination" href="javascript:previousPage()">&lt;&lt;</a>
 				<div class="rightPagination">
-				Page <span id="pageNumber"></span>
+				<%=Messages._("Page", l)%> <span id="pageNumber"></span>
 				<a href="javascript:nextPage()">&gt;&gt;</a>
-				| diapositive <span id="slideNumber"></span>
+				| <%=Messages._("diapositive", l)%> <span id="slideNumber"></span>
 				</div>
 			</div>
 
