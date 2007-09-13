@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 
 public class TestDao extends TestCase {
 
-	private static DaoImpl dao = DaoImpl.getInstance();
+	private static DaoImpl dao = new DaoImpl();
 	
 	public void testCourse() {
 		/* Adds a new course */

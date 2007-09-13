@@ -18,14 +18,14 @@ import org.ulpmm.univrav.entities.Smil;
 
 public class DaoImpl implements IDao {
 
+	// Singleton à virer dans cette classe ????
+	
 	private static PgsqlAccess pa = PgsqlAccess.getInstance();
 	
-	private static DaoImpl instance = new DaoImpl();
-	
-	public static DaoImpl getInstance() {
-		return instance;
-	}
-	
+	/**
+	 * Adds a new course
+	 * @param c the course to add
+	 */
 	public void addCourse(Course c) {
 		Connection cnt = pa.getConnection();
 		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -46,11 +46,12 @@ public class DaoImpl implements IDao {
 			pstmt.setBoolean(12, c.isVisible());
 			pstmt.setInt(13, c.getConsultations());
 			pstmt.setString(14, c.getTiming());
-			pstmt.executeUpdate();
+			if( pstmt.executeUpdate() == 0)
+				throw new DaoException("The course " + c + " has not been added to the database");
 			pa.disconnect();
 		}
 		catch(SQLException sqle){
-			System.out.println("Error while adding the new Course");
+			System.out.println("Error while adding the new Course " + c);
 			sqle.printStackTrace();
 		}
 		
@@ -75,6 +76,10 @@ public class DaoImpl implements IDao {
 		pa.disconnect();*/
 	}
 	
+	/**
+	 * Gets a list of all the courses
+	 * @return the list of courses
+	 */
 	public List<Course> getAllCourses() {
 		pa.connect();
 		ResultSet rs = pa.query("SELECT * From course;");
@@ -108,104 +113,11 @@ public class DaoImpl implements IDao {
 		return l;
 	}
 	
-	public void deleteCourse(int courseId) {
-		Connection cnt = pa.getConnection();
-		String sql = "DELETE FROM course WHERE courseid = ?";
-		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, courseId);
-			pstmt.executeUpdate();
-		}
-		catch( SQLException sqle) {
-			System.out.println("Error while deleting the course");
-			sqle.printStackTrace();
-		}
-		pa.disconnect();
-	}
-
-	public Amphi getAmphi(String ip) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<Amphi> getAmphis() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Course getCourse(int courseId) {
-		Course c = null;
-		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM course WHERE courseid = ?";
-		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, courseId);
-			ResultSet rs = pstmt.executeQuery();
-			if( rs.next() ) {
-				c = new Course(
-					rs.getInt("courseid"),
-					rs.getTimestamp("date"),
-					rs.getString("type"),
-					rs.getString("title"),
-					rs.getString("description"),
-					rs.getString("formation"),
-					rs.getString("name"),
-					rs.getString("firstname"),
-					rs.getString("ipaddress"),
-					rs.getInt("duration"),
-					rs.getString("genre"),
-					rs.getBoolean("visible"),
-					rs.getInt("consultations"),
-					rs.getString("timing")
-				);
-			}
-		}
-		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the course");
-			sqle.printStackTrace();
-		}
-		pa.disconnect();
-		
-		return c;
-	}
-
-	public Course getCourse(int courseId, String genre) {
-		Course c = null;
-		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM course WHERE courseid = ? AND GENRE = ?";
-		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, courseId);
-			pstmt.setString(2, genre);
-			ResultSet rs = pstmt.executeQuery();
-			if( rs.next() ) {
-				c = new Course(
-					rs.getInt("courseid"),
-					rs.getTimestamp("date"),
-					rs.getString("type"),
-					rs.getString("title"),
-					rs.getString("description"),
-					rs.getString("formation"),
-					rs.getString("name"),
-					rs.getString("firstname"),
-					rs.getString("ipaddress"),
-					rs.getInt("duration"),
-					rs.getString("genre"),
-					rs.getBoolean("visible"),
-					rs.getInt("consultations"),
-					rs.getString("timing")
-				);
-			}
-		}
-		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the course");
-			sqle.printStackTrace();
-		}
-		pa.disconnect();
-		
-		return c;
-	}
-
+	/**
+	 * Gets the courses corresponding to the given criteria
+	 * @param params the criteria of the searched courses
+	 * @return the list of courses
+	 */
 	public List<Course> getCourses(HashMap<String, String> params) {
 		
 		Connection cnt = pa.getConnection();	
@@ -264,95 +176,99 @@ public class DaoImpl implements IDao {
 		pa.disconnect();
 		return l;
 	}
-
-	public List<Slide> getSlides(int courseId) {
+	
+	/**
+	 * Gets a course by providing its id
+	 * @param courseId the id of the course
+	 * @return the course
+	 */
+	public Course getCourse(int courseId) {
+		Course c = null;
 		Connection cnt = pa.getConnection();
-		List<Slide> l = new ArrayList<Slide>();
-		String sql = "SELECT * FROM slide WHERE courseid = ?";
-		
-		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, courseId);
-			ResultSet rs = pstmt.executeQuery();
-			
-			while(rs.next()) {
-				l.add(new Slide(
-					rs.getInt("slideid"),
-					rs.getInt("courseid"),
-					rs.getString("slideuri"),
-					rs.getInt("slidetime")
-				));
-			}
-			rs.close();
-		}
-		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the slides list");
-			sqle.printStackTrace();
-		}
-		pa.disconnect();
-		return l;
-	}
-
-	public Smil getSmil(int courseId) {
-		Smil s = null;
-		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM smil WHERE courseid = ?";
+		String sql = "SELECT * FROM course WHERE courseid = ?";
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseId);
 			ResultSet rs = pstmt.executeQuery();
 			if( rs.next() ) {
-				s = new Smil(
-					rs.getInt("smilid"),
+				c = new Course(
 					rs.getInt("courseid"),
-					rs.getString("smilpath")
+					rs.getTimestamp("date"),
+					rs.getString("type"),
+					rs.getString("title"),
+					rs.getString("description"),
+					rs.getString("formation"),
+					rs.getString("name"),
+					rs.getString("firstname"),
+					rs.getString("ipaddress"),
+					rs.getInt("duration"),
+					rs.getString("genre"),
+					rs.getBoolean("visible"),
+					rs.getInt("consultations"),
+					rs.getString("timing")
 				);
 			}
+			else
+				throw new DaoException("Course " + courseId + " not found");
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the smil");
+			System.out.println("Error while retrieving the course " + courseId);
 			sqle.printStackTrace();
 		}
 		pa.disconnect();
 		
-		return s;
+		return c;
 	}
 
-	public void deleteAmphi(String ip) {
-		// TODO Auto-generated method stub
+	/**
+	 * Gets a course by providing its id and genre
+	 * @param courseId the id of the course
+	 * @param genre the genre of the course
+	 * @return the course
+	 */
+	public Course getCourse(int courseId, String genre) {
+		Course c = null;
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * FROM course WHERE courseid = ? AND GENRE = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, courseId);
+			pstmt.setString(2, genre);
+			ResultSet rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				c = new Course(
+					rs.getInt("courseid"),
+					rs.getTimestamp("date"),
+					rs.getString("type"),
+					rs.getString("title"),
+					rs.getString("description"),
+					rs.getString("formation"),
+					rs.getString("name"),
+					rs.getString("firstname"),
+					rs.getString("ipaddress"),
+					rs.getInt("duration"),
+					rs.getString("genre"),
+					rs.getBoolean("visible"),
+					rs.getInt("consultations"),
+					rs.getString("timing")
+				);
+			}
+			else
+				throw new DaoException("Course " + courseId + " not found with this genre");
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the course " + courseId);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
 		
+		return c;
 	}
-
-	public void deleteSlide(int courseId) {
-		Connection cnt = pa.getConnection();
-		String sql = "DELETE FROM slide WHERE courseid = ?";
-		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, courseId);
-			pstmt.executeUpdate();
-		}
-		catch( SQLException sqle) {
-			System.out.println("Error while deleting the slide");
-			sqle.printStackTrace();
-		}
-		pa.disconnect();
-	}
-
-	public void deleteSmil(int courseId) {
-		Connection cnt = pa.getConnection();
-		String sql = "DELETE FROM smil WHERE courseid = ?";
-		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, courseId);
-			pstmt.executeUpdate();
-		}
-		catch( SQLException sqle) {
-			System.out.println("Error while deleting the smil");
-			sqle.printStackTrace();
-		}
-		pa.disconnect();
-	}
-
+	
+	/**
+	 * Modifies a course
+	 * @param c the course to modify
+	 */
 	public void modifyCourse(Course c) {
 		Connection cnt = pa.getConnection();
 		
@@ -380,15 +296,238 @@ public class DaoImpl implements IDao {
 			pstmt.setString(13, c.getTiming());
 			pstmt.setInt(14, c.getCourseid());
 			
-			pstmt.executeUpdate();
+			if( pstmt.executeUpdate() == 0 )
+				throw new DaoException("The course " + c + " has not been modified");
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while modifying the course");
+			System.out.println("Error while modifying the course " + c);
 			sqle.printStackTrace();
 		}
 		
 		pa.disconnect();
 	}
+	
+	/**
+	 * Deletes a course by providing its id
+	 * @param courseId the id of the course
+	 */
+	public void deleteCourse(int courseId) {
+		Connection cnt = pa.getConnection();
+		String sql = "DELETE FROM course WHERE courseid = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, courseId);
+			if( pstmt.executeUpdate() == 0)
+				throw new DaoException("the course " + courseId + " has not been deleted");
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while deleting the course " + courseId);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+	}
+	
+	/**
+	 * Adds a new slide
+	 * @param s the slide to add
+	 */
+	public void addSlide(Slide s) {
+		Connection cnt = pa.getConnection();
+		String sql = "INSERT INTO Slide values(?,?,?,?)";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, s.getSlideid());
+			pstmt.setInt(2, s.getCourseid());
+			pstmt.setString(3, s.getSlideuri());
+			pstmt.setInt(4, s.getSlidetime());
+			if( pstmt.executeUpdate() == 0 )
+				throw new DaoException("The slide " + s + " has not been added");
+			pa.disconnect();
+		}
+		catch(SQLException sqle){
+			System.out.println("Error while adding the Slide " + s);
+			sqle.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Gets the slides of a course
+	 * @param courseId the id of the course
+	 * @return the list of slides
+	 */
+	public List<Slide> getSlides(int courseId) {
+		Connection cnt = pa.getConnection();
+		List<Slide> l = new ArrayList<Slide>();
+		String sql = "SELECT * FROM slide WHERE courseid = ?";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, courseId);
+			ResultSet rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				l.add(new Slide(
+					rs.getInt("slideid"),
+					rs.getInt("courseid"),
+					rs.getString("slideuri"),
+					rs.getInt("slidetime")
+				));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the slides list");
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		return l;
+	}
+	
+	/**
+	 * Deletes the slides of a course
+	 * @param courseId the id of the course
+	 */
+	public void deleteSlide(int courseId) {
+		Connection cnt = pa.getConnection();
+		String sql = "DELETE FROM slide WHERE courseid = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, courseId);
+			if( pstmt.executeUpdate() == 0 )
+				throw new DaoException("The Slides of the course " + courseId + " have not been deleted");
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while deleting the slide of the course " + courseId);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+	}
+	
+	/**
+	 * Adds a new smil
+	 * @param s the smil to add
+	 */
+	public void addSmil(Smil s) {
+		Connection cnt = pa.getConnection();
+		String sql = "INSERT INTO Smil values(?,?,?)";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, s.getSmilid());
+			pstmt.setInt(2, s.getCourseid());
+			pstmt.setString(3, s.getSmilpath());
+			if( pstmt.executeUpdate() == 0 )
+				throw new DaoException("The Smil " + s + " has not been added");
+			pa.disconnect();
+		}
+		catch(SQLException sqle){
+			System.out.println("Error while adding the Smil " + s);
+			sqle.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Gets the smil of a course
+	 * @param courseId the id of the course
+	 * @return the smil
+	 */
+	public Smil getSmil(int courseId) {
+		Smil s = null;
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * FROM smil WHERE courseid = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, courseId);
+			ResultSet rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				s = new Smil(
+					rs.getInt("smilid"),
+					rs.getInt("courseid"),
+					rs.getString("smilpath")
+				);
+			}
+			else
+				throw new DaoException("Smil not found for the course " + courseId);
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the smil of the course " + courseId);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		
+		return s;
+	}
+	
+	/**
+	 * Deletes the smil of a course
+	 * @param courseId the id of the course
+	 */
+	public void deleteSmil(int courseId) {
+		Connection cnt = pa.getConnection();
+		String sql = "DELETE FROM smil WHERE courseid = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, courseId);
+			if( pstmt.executeUpdate() == 0 )
+				throw new DaoException("The smil of the course " + courseId + "has not been deleted");
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while deleting the smil of the course " + courseId);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+	}
+	
+	/**
+	 * Adds a new Amphi
+	 * @param a the amphi to add
+	 */
+	public void addAmphi(Amphi a) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/**
+	 * Gets a list of all the amphis
+	 * @return the list of amphis
+	 */
+	public List<Amphi> getAmphis() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Gets an amphi by providing its IP address
+	 * @param ip the IP address of the amphi
+	 * @return the amphi
+	 */
+	public Amphi getAmphi(String ip) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	/**
+	 * Modifies an amphi
+	 * @param a the amphi to modify
+	 */
+	public void modifyAmphi(Amphi a) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * Deletes an amphi by providing its id
+	 * @param id the id of the amphi
+	 */
+	public void deleteAmphi(String ip) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
+	
 	
 	/* A supprimer si plus besoin !!!!!!! */
 	public void modifyCourse(int courseId, HashMap<String, String> params) {
@@ -427,52 +566,4 @@ public class DaoImpl implements IDao {
 		
 		pa.disconnect();
 	}
-
-	public void addAmphi(Amphi a) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void addSlide(Slide s) {
-		Connection cnt = pa.getConnection();
-		String sql = "INSERT INTO Slide values(?,?,?,?)";
-		
-		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, s.getSlideid());
-			pstmt.setInt(2, s.getCourseid());
-			pstmt.setString(3, s.getSlideuri());
-			pstmt.setInt(4, s.getSlidetime());
-			pstmt.executeUpdate();
-			pa.disconnect();
-		}
-		catch(SQLException sqle){
-			System.out.println("Error while adding the Slide");
-			sqle.printStackTrace();
-		}
-	}
-
-	public void addSmil(Smil s) {
-		Connection cnt = pa.getConnection();
-		String sql = "INSERT INTO Smil values(?,?,?)";
-		
-		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, s.getSmilid());
-			pstmt.setInt(2, s.getCourseid());
-			pstmt.setString(3, s.getSmilpath());
-			pstmt.executeUpdate();
-			pa.disconnect();
-		}
-		catch(SQLException sqle){
-			System.out.println("Error while adding the Smil");
-			sqle.printStackTrace();
-		}
-	}
-
-	public void modifyAmphi(Amphi a) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

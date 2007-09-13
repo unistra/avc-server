@@ -8,6 +8,12 @@ public class Slide {
 	private int slidetime;
 	
 	/**
+	 * Default constructor
+	 */
+	public Slide() {
+	}
+	
+	/**
 	 * @param slideid
 	 * @param courseid
 	 * @param slideuri
@@ -18,6 +24,13 @@ public class Slide {
 		this.courseid = courseid;
 		this.slideuri = slideuri;
 		this.slidetime = slidetime;
+	}
+	
+	/**
+	 * Returns a string representation of the object
+	 */
+	public String toString() {
+		return "[" + this.slideid + "," + this.courseid + "," + this.slideuri + "," + this.slidetime + "]";
 	}
 
 	/**
