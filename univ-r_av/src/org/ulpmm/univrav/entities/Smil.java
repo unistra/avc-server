@@ -7,6 +7,12 @@ public class Smil {
 	private String smilpath;
 	
 	/**
+	 * Default constructor
+	 */
+	public Smil() {
+	}
+	
+	/**
 	 * @param smilid
 	 * @param courseid
 	 * @param smilpath
@@ -17,6 +23,13 @@ public class Smil {
 		this.smilpath = smilpath;
 	}
 
+	/**
+	 * Returns a string representation of the object
+	 */
+	public String toString() {
+		return "[" + smilid + "," + courseid + "," + smilpath + "]";
+	}
+	
 	/**
 	 * @return the courseid
 	 */

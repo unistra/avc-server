@@ -15,4 +15,7 @@
     <servlet-name>Application</servlet-name>
     <url-pattern>/servlet/Application</url-pattern>
   </servlet-mapping>
+  <welcome-file-list>
+  	<welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
 </web-app>

@@ -21,6 +21,12 @@ public class Course {
 	private String timing;
 	
 	/**
+	 * Default constructor
+	 */
+	public Course() {
+	}
+	
+	/**
 	 * constructor : creates a course by providing all the information
 	 * 
 	 * @param courseid
@@ -59,7 +65,7 @@ public class Course {
 	 * Creates a copy of the object passed in parameter
 	 * @param c
 	 */
-	public Course(Course c) {
+	/*public Course(Course c) {
 		this.courseid = c.getCourseid();
 		this.date = c.getDate();
 		this.type = c.getType();
@@ -74,6 +80,16 @@ public class Course {
 		this.visible = c.isVisible();
 		this.consultations = c.getConsultations();
 		this.timing = c.getTiming();
+	}*/
+	
+	/**
+	 * Returns a string representation of the object
+	 */
+	public String toString() {
+		return "[" + courseid + "," + getDateString() + "," + type + "," + title + ","
+			+ description + "," + formation + "," + name + "," + firstname + ","
+			+ ipaddress + "," + getDurationString() + "," + genre + "," + visible + ","
+			+ consultations + "," + timing + "]";
 	}
 
 	/*public List<Slide> getSlides() {
@@ -94,9 +110,9 @@ public class Course {
 	/**
 	 * Increments the number of consultations
 	 */
-	public void addConsultation() {
+	/*public void addConsultation() {
 		consultations++;
-	}
+	}*/
 
 	/**
 	 * @return the courseid

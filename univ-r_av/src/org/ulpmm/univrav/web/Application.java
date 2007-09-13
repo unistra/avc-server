@@ -3,13 +3,21 @@ package org.ulpmm.univrav.web;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.ulpmm.univrav.dao.DaoImpl;
+import org.ulpmm.univrav.dao.IDao;
+import org.ulpmm.univrav.service.IService;
+import org.ulpmm.univrav.service.ServiceImpl;
+
 public class Application extends HttpServlet {
 
+	private ServiceImpl service;
+	
 	/**
 	 * Destruction of the servlet. <br>
 	 */
@@ -82,7 +90,9 @@ public class Application extends HttpServlet {
 	 * @throws ServletException if an error occure
 	 */
 	public void init() throws ServletException {
-		// Put your code here
+		DaoImpl dao = new DaoImpl();
+		service = new ServiceImpl();
+		service.setDao(dao);
 	}
 
 }
