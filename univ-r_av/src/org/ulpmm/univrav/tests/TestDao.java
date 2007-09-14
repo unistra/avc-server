@@ -95,19 +95,19 @@ public class TestDao extends TestCase {
 		System.out.println(c2.getTitle());
 		
 		/* Delete the smils */
-		dao.deleteSmil(1);
+		/*dao.deleteSmil(1);
 		dao.deleteSmil(2);
 		dao.deleteSmil(3);
 		
 		/* Delete the slides */
-		dao.deleteSlide(1);
+		/*dao.deleteSlide(1);
 		dao.deleteSlide(2);
 		dao.deleteSlide(3);
 		
 		/* Delete the courses */
-		dao.deleteCourse(1);
+		/*dao.deleteCourse(1);
 		dao.deleteCourse(2);
-		dao.deleteCourse(3);
+		dao.deleteCourse(3);*/
 	}
 
 	public void testAmphi() {
