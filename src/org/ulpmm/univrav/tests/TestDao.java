@@ -27,34 +27,36 @@ public class TestDao extends TestCase {
 		dao.addCourse(c);
 		c = new Course(3,new Timestamp(new Date().getTime()),"audio","Test Junit 3","Test d'ajout de cours","test","Kieffer","Laurent",
 				"127.0.0.1",5,"suppression",true,0,"n-1");
+		c = new Course(4,new Timestamp(new Date().getTime()),"audio","Test Junit 4","Test d'ajout de cours null","test","Kieffer","Laurent",
+				"127.0.0.1",5,null,true,0,"n-1");
 		dao.addCourse(c);
 		
 		/* Adds the smils */
-		Smil s = new Smil(1,1,"1.smil");
+		Smil s = new Smil(1,"1.smil");
 		dao.addSmil(s);
-		s = new Smil(2,2,"2.smil");
+		s = new Smil(2,"2.smil");
 		dao.addSmil(s);
-		s = new Smil(3,3,"3.smil");
+		s = new Smil(3,"3.smil");
 		dao.addSmil(s);
 		
 		/* Adds the slides */
-		Slide sl = new Slide(1,1,"1.jpg",0);
+		Slide sl = new Slide(1,"1.jpg",0);
 		dao.addSlide(sl);
-		sl = new Slide(2,1,"2.jpg",3);
+		sl = new Slide(1,"2.jpg",3);
 		dao.addSlide(sl);
-		sl = new Slide(3,1,"3.jpg",5);
+		sl = new Slide(1,"3.jpg",5);
 		dao.addSlide(sl);
-		sl = new Slide(4,2,"1.jpg",0);
+		sl = new Slide(2,"1.jpg",0);
 		dao.addSlide(sl);
-		sl = new Slide(5,2,"2.jpg",3);
+		sl = new Slide(2,"2.jpg",3);
 		dao.addSlide(sl);
-		sl = new Slide(6,2,"3.jpg",5);
+		sl = new Slide(2,"3.jpg",5);
 		dao.addSlide(sl);
-		sl = new Slide(7,3,"1.jpg",0);
+		sl = new Slide(3,"1.jpg",0);
 		dao.addSlide(sl);
-		sl = new Slide(8,3,"2.jpg",3);
+		sl = new Slide(3,"2.jpg",3);
 		dao.addSlide(sl);
-		sl = new Slide(9,3,"3.jpg",5);
+		sl = new Slide(3,"3.jpg",5);
 		dao.addSlide(sl);
 		
 		

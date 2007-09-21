@@ -227,5 +227,38 @@ public class Course {
 		return visible;
 	}
 	
-	
+	/**
+	 * @ return the name used by the media files of this course
+	 */
+	public String getMediasFileName() {
+		String mediasFileName="";
+		
+		if( title != null && ! title.equals("") ) {
+			for(int i=0 ; i< title.length() ; i++) {
+				char car = title.charAt(i);
+				if( ! ((car >= 'a' && car <='z') | (car >= 'A' && car <='Z') | (car >= '0' && car <='9')))
+					car = '_';
+				
+				mediasFileName += car;
+			}
+		}
+		else
+			mediasFileName = "course_" + courseid;
+		
+		return mediasFileName;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	/**
+	 * @param duration the duration to set
+	 */
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
 }

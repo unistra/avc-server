@@ -19,6 +19,17 @@ public class Application extends HttpServlet {
 	private ServiceImpl service;
 	
 	/**
+	 * Initialization of the servlet. <br>
+	 *
+	 * @throws ServletException if an error occure
+	 */
+	public void init() throws ServletException {
+		DaoImpl dao = new DaoImpl();
+		service = new ServiceImpl();
+		service.setDao(dao);
+	}
+	
+	/**
 	 * Destruction of the servlet. <br>
 	 */
 	public void destroy() {
@@ -41,7 +52,13 @@ public class Application extends HttpServlet {
 
 		String page = request.getPathInfo();
 		
-		//if( page.equals(""))
+		if( page == null )
+			page = "home";
+		
+		if( page.equals("home"))
+			displayHomePage(request, response);
+		else
+			displayHomePage(request, response);
 	}
 
 	/**
@@ -72,16 +89,14 @@ public class Application extends HttpServlet {
 		out.flush();
 		out.close();
 	}
-
-	/**
-	 * Initialization of the servlet. <br>
-	 *
-	 * @throws ServletException if an error occure
-	 */
-	public void init() throws ServletException {
-		DaoImpl dao = new DaoImpl();
-		service = new ServiceImpl();
-		service.setDao(dao);
+	
+	private void displayHomePage(HttpServletRequest request, HttpServletResponse response)
+		throws ServletException, IOException {
+		  // le modèle de la vue [list]
+		  request.setAttribute("courses", service.getNLastCourses(3));
+		  // affichage de la vue [list]
+		  getServletContext()
+		      .getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
 	}
 
 }

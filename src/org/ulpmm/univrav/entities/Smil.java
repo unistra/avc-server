@@ -2,7 +2,6 @@ package org.ulpmm.univrav.entities;
 
 public class Smil {
 
-	private int smilid;
 	private int courseid;
 	private String smilpath;
 	
@@ -13,12 +12,10 @@ public class Smil {
 	}
 	
 	/**
-	 * @param smilid
 	 * @param courseid
 	 * @param smilpath
 	 */
-	public Smil(int smilid, int courseid, String smilpath) {
-		this.smilid = smilid;
+	public Smil(int courseid, String smilpath) {
 		this.courseid = courseid;
 		this.smilpath = smilpath;
 	}
@@ -27,7 +24,7 @@ public class Smil {
 	 * Returns a string representation of the object
 	 */
 	public String toString() {
-		return "[" + smilid + "," + courseid + "," + smilpath + "]";
+		return "[" + courseid + "," + smilpath + "]";
 	}
 	
 	/**
@@ -35,13 +32,6 @@ public class Smil {
 	 */
 	public int getCourseid() {
 		return courseid;
-	}
-
-	/**
-	 * @return the smilid
-	 */
-	public int getSmilid() {
-		return smilid;
 	}
 
 	/**
