@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.ulpmm.univrav.dao.DaoImpl;
+import org.ulpmm.univrav.dao.DatabaseImpl;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Smil;
@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 
 public class TestDao extends TestCase {
 
-	private static DaoImpl dao = new DaoImpl();
+	private static DatabaseImpl dao = new DatabaseImpl();
 	
 	public void testCourse() {
 		/* Adds a new course */

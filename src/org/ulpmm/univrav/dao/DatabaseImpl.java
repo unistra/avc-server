@@ -16,7 +16,7 @@ import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Smil;
 
-public class DaoImpl implements IDao {
+public class DatabaseImpl implements IDatabase {
 
 	// Singleton à virer dans cette classe ????
 	

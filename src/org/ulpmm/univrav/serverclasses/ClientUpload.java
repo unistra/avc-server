@@ -15,9 +15,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ulpmm.univrav.dao.DaoImpl;
+import org.ulpmm.univrav.dao.DatabaseImpl;
 import org.ulpmm.univrav.dao.FileSystemImpl;
-import org.ulpmm.univrav.dao.IDao;
+import org.ulpmm.univrav.dao.IDatabase;
+import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Smil;
@@ -105,8 +106,10 @@ public class ClientUpload extends HttpServlet {
 			out.println("Media : " + media + "<br/>");
 			
 			ServiceImpl service = new ServiceImpl();
-			IDao dao = new DaoImpl();
-			service.setDao(dao); 
+			IDatabase db = new DatabaseImpl();
+			IFileSystem fs = new FileSystemImpl(getServletContext().getRealPath("/") + "scripts");
+			service.setDb(db);
+			service.setFs(fs);
 			
 			Course c = new Course(
 					service.getNextCoursId(),
@@ -125,16 +128,13 @@ public class ClientUpload extends HttpServlet {
 					timing
 			);
 			
-			FileSystemImpl fsi = new FileSystemImpl(getServletContext().getRealPath("/") + "scripts");
-			fsi.courseCreation(c,media);
+			service.addCourse(c, media);
 			
-			service.addCourse(c);
+			// virer le addSlides de la couche service ??
+			//service.addSlides(c.getCourseid());
 			
-			ArrayList<String> list = fsi.getTimecodes();
-			for( int i = 0 ; i< list.size() ; i++)
-				service.addSlide(new Slide(c.getCourseid(),"XXXXXXXXXX",(int) Float.parseFloat(list.get(i))));
 			// ça sert à rien en fait la table smil ...?
-			service.addSmil(new Smil(c.getCourseid(), "XXXXXXX"));
+			//service.addSmil(new Smil(c.getCourseid(), "XXXXXXX"));
 			
 			
 			

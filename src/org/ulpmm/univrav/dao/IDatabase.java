@@ -8,7 +8,7 @@ import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Smil;
 
-public interface IDao {
+public interface IDatabase {
 	
 	/**
 	 * Adds a new course

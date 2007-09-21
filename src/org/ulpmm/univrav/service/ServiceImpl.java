@@ -1,9 +1,11 @@
 package org.ulpmm.univrav.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.ulpmm.univrav.dao.IDao;
+import org.ulpmm.univrav.dao.IDatabase;
+import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
@@ -11,28 +13,44 @@ import org.ulpmm.univrav.entities.Smil;
 
 public class ServiceImpl implements IService {
 
-	private IDao dao;
+	private IDatabase db;
+	private IFileSystem fs;
 	
 	/**
-	 * @return the dao
+	 * @return the db
 	 */
-	public IDao getDao() {
-		return dao;
+	public IDatabase getDb() {
+		return db;
 	}
 
 	/**
-	 * @param dao the dao to set
+	 * @param db the db to set
 	 */
-	public void setDao(IDao dao) {
-		this.dao = dao;
+	public void setDb(IDatabase db) {
+		this.db = db;
 	}
 	
+	/**
+	 * @return the fs
+	 */
+	public IFileSystem getFs() {
+		return fs;
+	}
+
+	/**
+	 * @param fs the fs to set
+	 */
+	public void setFs(IFileSystem fs) {
+		this.fs = fs;
+	}
+
 	/**
 	 * Adds a new course
 	 * @param c the course to add
 	 */
-	public synchronized void addCourse(Course c) {
-		dao.addCourse(c);
+	public synchronized void addCourse(Course c, String courseArchive) {
+		CourseAddition ca = new CourseAddition(db, fs, c, courseArchive);
+		ca.start();
 	}
 	
 	/**
@@ -40,7 +58,7 @@ public class ServiceImpl implements IService {
 	 * @return the list of courses
 	 */
 	public synchronized List<Course> getAllCourses() {
-		return dao.getAllCourses();
+		return db.getAllCourses();
 	}
 	
 	/**
@@ -49,7 +67,7 @@ public class ServiceImpl implements IService {
 	 * @return the list of courses
 	 */
 	public List<Course> getNLastCourses(int n) {
-		return dao.getNLastCourses(n);
+		return db.getNLastCourses(n);
 	}
 	
 	/**
@@ -58,7 +76,7 @@ public class ServiceImpl implements IService {
 	 * @return the list of courses
 	 */
 	public synchronized List<Course> getCourses(HashMap<String, String> params) {
-		return dao.getCourses(params);
+		return db.getCourses(params);
 	}
 	
 	/**
@@ -67,7 +85,7 @@ public class ServiceImpl implements IService {
 	 * @return the course
 	 */
 	public synchronized Course getCourse(int courseId) {
-		return dao.getCourse(courseId);
+		return db.getCourse(courseId);
 	}
 
 	/**
@@ -77,7 +95,7 @@ public class ServiceImpl implements IService {
 	 * @return the course
 	 */
 	public synchronized Course getCourse(int courseId, String genre) {
-		return dao.getCourse(courseId, genre);
+		return db.getCourse(courseId, genre);
 	}
 	
 	/**
@@ -85,7 +103,7 @@ public class ServiceImpl implements IService {
 	 * @param c the course to modify
 	 */
 	public synchronized void modifyCourse(Course c) {
-		dao.modifyCourse(c);
+		db.modifyCourse(c);
 	}
 	
 	/**
@@ -93,7 +111,8 @@ public class ServiceImpl implements IService {
 	 * @param courseId the id of the course
 	 */
 	public synchronized void deleteCourse(int courseId) {
-		dao.deleteCourse(courseId);
+		db.deleteCourse(courseId);
+		fs.deleteCourse();
 	}
 	
 	/**
@@ -101,16 +120,26 @@ public class ServiceImpl implements IService {
 	 * @return the id of the course
 	 */
 	public int getNextCoursId() {
-		return dao.getNextCoursId();
+		return db.getNextCoursId();
 	}
+	
+	/**
+	 * Adds the slides of a course
+	 * @param s the slide to add
+	 */
+	/*public void addSlides(int courseid) {
+		ArrayList<String> list = fs.getTimecodes();
+		for( int i = 0 ; i< list.size() ; i++)
+			db.addSlide(new Slide(courseid,"XXXXXXXXXX",(int) Float.parseFloat(list.get(i))));
+	}*/
 	
 	/**
 	 * Adds a new slide
 	 * @param s the slide to add
 	 */
-	public synchronized void addSlide(Slide s) {
-		dao.addSlide(s);
-	}
+	/*public synchronized void addSlide(Slide s) {
+		db.addSlide(s);
+	}*/
 	
 	/**
 	 * Gets the slides of a course
@@ -118,7 +147,7 @@ public class ServiceImpl implements IService {
 	 * @return the list of slides
 	 */
 	public synchronized List<Slide> getSlides(int courseId) {
-		return dao.getSlides(courseId);
+		return db.getSlides(courseId);
 	}
 	
 	/**
@@ -126,16 +155,16 @@ public class ServiceImpl implements IService {
 	 * @param courseId the id of the course
 	 */
 	public synchronized void deleteSlide(int courseId) {
-		dao.deleteSlide(courseId);
+		db.deleteSlide(courseId);
 	}
 	
 	/**
 	 * Adds a new smil
 	 * @param s the smil to add
 	 */
-	public synchronized void addSmil(Smil s) {
-		dao.addSmil(s);
-	}
+	/*public synchronized void addSmil(Smil s) {
+		db.addSmil(s);
+	}*/
 	
 	/**
 	 * Gets the smil of a course
@@ -143,7 +172,7 @@ public class ServiceImpl implements IService {
 	 * @return the smil
 	 */
 	public synchronized Smil getSmil(int courseId) {
-		return dao.getSmil(courseId);
+		return db.getSmil(courseId);
 	}
 	
 	/**
@@ -151,7 +180,7 @@ public class ServiceImpl implements IService {
 	 * @param courseId the id of the course
 	 */
 	public synchronized void deleteSmil(int courseId) {
-		dao.deleteSmil(courseId);
+		db.deleteSmil(courseId);
 	}
 	
 	/**
