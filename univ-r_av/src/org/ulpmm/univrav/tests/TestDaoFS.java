@@ -23,9 +23,9 @@ public class TestDaoFS extends TestCase {
 				"127.0.0.1",0,"suppression",true,0,"n");
 		
 		fs = new FileSystemImpl("scripts");
-		fs.courseCreation(c,"2007-03-27-16h-33m-30s.tar");
+		fs.addCourse(c,"2007-03-27-16h-33m-30s.tar");
 		
 		fs = new FileSystemImpl("scripts");
-		fs.courseCreation(c2,"2007-01-29-17h-36m-35s.zip");
+		fs.addCourse(c2,"2007-01-29-17h-36m-35s.zip");
 	}
 }

@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ulpmm.univrav.dao.DaoImpl;
-import org.ulpmm.univrav.dao.IDao;
+import org.ulpmm.univrav.dao.DatabaseImpl;
+import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.service.IService;
 import org.ulpmm.univrav.service.ServiceImpl;
 
@@ -24,9 +24,9 @@ public class Application extends HttpServlet {
 	 * @throws ServletException if an error occure
 	 */
 	public void init() throws ServletException {
-		DaoImpl dao = new DaoImpl();
+		DatabaseImpl dao = new DatabaseImpl();
 		service = new ServiceImpl();
-		service.setDao(dao);
+		service.setDb(dao);
 	}
 	
 	/**

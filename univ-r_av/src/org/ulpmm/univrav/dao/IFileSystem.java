@@ -10,7 +10,7 @@ public interface IFileSystem {
 	 * Creates a course with all its media files on the file system
 	 * @param courseArchive the name of the archive file of the course to create
 	 */
-	public void courseCreation(Course c, String courseArchive);
+	public void addCourse(Course c, String courseArchive);
 	
 	/**
 	 * Reads the timecodes csv file and creates the timecodes list
@@ -18,7 +18,7 @@ public interface IFileSystem {
 	 */
 	public ArrayList<String> getTimecodes();
 	
-	public void courseSuppression();
+	public void deleteCourse();
 	
 	public void rssCreation();
 	

@@ -43,7 +43,7 @@ public class FileSystemImpl implements IFileSystem {
 	 * Creates a course with all its media files on the file system
 	 * @param courseArchive the name of the archive file of the course to create
 	 */
-	public void courseCreation(Course c, String courseArchive) {
+	public void addCourse(Course c, String courseArchive) {
 		this.c = c;
 		mediaFileName = c.getMediasFileName();
 		archiveExtraction(courseArchive);
@@ -95,7 +95,7 @@ public class FileSystemImpl implements IFileSystem {
 		
 	}
 	
-	public void courseSuppression() {
+	public void deleteCourse() {
 		// TODO Auto-generated method stub
 
 	}

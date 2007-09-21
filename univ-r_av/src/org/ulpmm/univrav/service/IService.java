@@ -14,7 +14,7 @@ public interface IService {
 	 * Adds a new course
 	 * @param c the course to add
 	 */
-	public void addCourse(Course c);
+	public void addCourse(Course c, String courseArchive);
 	
 	/**
 	 * Gets a list of all the courses
@@ -71,10 +71,10 @@ public interface IService {
 	
 	
 	/**
-	 * Adds a new slide
+	 * Adds the slides of a course
 	 * @param s the slide to add
 	 */
-	public void addSlide(Slide s);
+	//public void addSlides(int courseid);
 	
 	/**
 	 * Gets the slides of a course
@@ -94,7 +94,7 @@ public interface IService {
 	 * Adds a new smil
 	 * @param s the smil to add
 	 */
-	public void addSmil(Smil s);
+	//public void addSmil(Smil s);
 	
 	/**
 	 * Gets the smil of a course
