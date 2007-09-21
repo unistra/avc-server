@@ -9,9 +9,22 @@
 		<servlet-name>Application</servlet-name>
 		<servlet-class>org.ulpmm.univrav.web.Application</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>
+		ClientUpload</display-name>
+		<servlet-name>ClientUpload</servlet-name>
+		<servlet-class>
+		org.ulpmm.univrav.serverclasses.ClientUpload</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>Application</servlet-name>
 		<url-pattern>/servlet/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ClientUpload</servlet-name>
+		<url-pattern>/servlet/ClientUpload</url-pattern>
 	</servlet-mapping>
 	<error-page>
 		<exception-type>java.lang.Exception</exception-type>

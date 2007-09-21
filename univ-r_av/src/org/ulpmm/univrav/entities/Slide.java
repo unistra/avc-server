@@ -2,7 +2,6 @@ package org.ulpmm.univrav.entities;
 
 public class Slide {
 	
-	private int slideid;
 	private int courseid;
 	private String slideuri;
 	private int slidetime;
@@ -14,13 +13,11 @@ public class Slide {
 	}
 	
 	/**
-	 * @param slideid
 	 * @param courseid
 	 * @param slideuri
 	 * @param slidetime
 	 */
-	public Slide(int slideid, int courseid, String slideuri, int slidetime) {
-		this.slideid = slideid;
+	public Slide(int courseid, String slideuri, int slidetime) {
 		this.courseid = courseid;
 		this.slideuri = slideuri;
 		this.slidetime = slidetime;
@@ -30,7 +27,7 @@ public class Slide {
 	 * Returns a string representation of the object
 	 */
 	public String toString() {
-		return "[" + this.slideid + "," + this.courseid + "," + this.slideuri + "," + this.slidetime + "]";
+		return "[" + this.courseid + "," + this.slideuri + "," + this.slidetime + "]";
 	}
 
 	/**
@@ -38,13 +35,6 @@ public class Slide {
 	 */
 	public int getCourseid() {
 		return courseid;
-	}
-
-	/**
-	 * @return the slideid
-	 */
-	public int getSlideid() {
-		return slideid;
 	}
 
 	/**

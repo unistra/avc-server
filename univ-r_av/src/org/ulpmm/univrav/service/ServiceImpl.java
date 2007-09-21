@@ -44,6 +44,15 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
+	 * Gets a list of the n last courses
+	 * @param n the number of courses to return
+	 * @return the list of courses
+	 */
+	public List<Course> getNLastCourses(int n) {
+		return dao.getNLastCourses(n);
+	}
+	
+	/**
 	 * Gets the courses corresponding to the given criteria
 	 * @param params the criteria of the searched courses
 	 * @return the list of courses
@@ -85,6 +94,14 @@ public class ServiceImpl implements IService {
 	 */
 	public synchronized void deleteCourse(int courseId) {
 		dao.deleteCourse(courseId);
+	}
+	
+	/**
+	 * Gets the id of the next course which will be uploaded
+	 * @return the id of the course
+	 */
+	public int getNextCoursId() {
+		return dao.getNextCoursId();
 	}
 	
 	/**

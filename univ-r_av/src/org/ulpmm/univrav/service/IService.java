@@ -23,6 +23,13 @@ public interface IService {
 	public List<Course> getAllCourses();
 	
 	/**
+	 * Gets a list of the n last courses
+	 * @param n the number of courses to return
+	 * @return the list of courses
+	 */
+	public List<Course> getNLastCourses(int n);
+	
+	/**
 	 * Gets the courses corresponding to the given criteria
 	 * @param params the criteria of the searched courses
 	 * @return the list of courses
@@ -55,6 +62,12 @@ public interface IService {
 	 * @param courseId the id of the course
 	 */
 	public void deleteCourse(int courseId);
+	
+	/**
+	 * Gets the id of the next course which will be uploaded
+	 * @return the id of the course
+	 */
+	public int getNextCoursId();
 	
 	
 	/**

@@ -82,7 +82,45 @@ public class DaoImpl implements IDao {
 	 */
 	public List<Course> getAllCourses() {
 		pa.connect();
-		ResultSet rs = pa.query("SELECT * From course;");
+		ResultSet rs = pa.query("SELECT * From course ORDER BY date DESC");
+		List<Course> l = new ArrayList<Course>();
+		try {
+			while(rs.next()) {
+				l.add(new Course(
+					rs.getInt("courseid"),
+					rs.getTimestamp("date"),
+					rs.getString("type"),
+					rs.getString("title"),
+					rs.getString("description"),
+					rs.getString("formation"),
+					rs.getString("name"),
+					rs.getString("firstname"),
+					rs.getString("ipaddress"),
+					rs.getInt("duration"),
+					rs.getString("genre"),
+					rs.getBoolean("visible"),
+					rs.getInt("consultations"),
+					rs.getString("timing")
+				));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the courses list");
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		return l;
+	}
+	
+	/**
+	 * Gets a list of the n last courses
+	 * @param n the number of courses to return
+	 * @return the list of courses
+	 */
+	public List<Course> getNLastCourses(int n) {
+		pa.connect();
+		ResultSet rs = pa.query("SELECT * From course ORDER BY date DESC LIMIT " + n);
 		List<Course> l = new ArrayList<Course>();
 		try {
 			while(rs.next()) {
@@ -131,7 +169,7 @@ public class DaoImpl implements IDao {
 		while( it.hasNext()) {
 			if( ! sql.endsWith("WHERE "))
 				sql += "AND ";
-			sql += it.next() + " = ? ";
+			sql += it.next() + " = ? ORDER BY date DESC";
 		}
 		
 		try {
@@ -328,19 +366,43 @@ public class DaoImpl implements IDao {
 	}
 	
 	/**
+	 * Gets the id of the next course which will be uploaded
+	 * @return the id of the course
+	 */
+	public int getNextCoursId() {
+		int id = 0 ;
+		
+		pa.connect();
+		ResultSet rs = pa.query("SELECT nextval('course_courseid_seq')");
+		try {
+			if( rs.next() ) 
+				id = rs.getInt("nextval");
+			else {
+				throw new DaoException("The next course Id hasn't been retrieved");
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the next course Id");
+			sqle.printStackTrace();
+		}
+		
+		return id;
+	}
+	
+	
+	/**
 	 * Adds a new slide
 	 * @param s the slide to add
 	 */
 	public void addSlide(Slide s) {
 		Connection cnt = pa.getConnection();
-		String sql = "INSERT INTO Slide values(?,?,?,?)";
+		String sql = "INSERT INTO Slide(courseid, slideuri, slidetime) values(?,?,?)";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, s.getSlideid());
-			pstmt.setInt(2, s.getCourseid());
-			pstmt.setString(3, s.getSlideuri());
-			pstmt.setInt(4, s.getSlidetime());
+			pstmt.setInt(1, s.getCourseid());
+			pstmt.setString(2, s.getSlideuri());
+			pstmt.setInt(3, s.getSlidetime());
 			if( pstmt.executeUpdate() == 0 )
 				throw new DaoException("The slide " + s + " has not been added");
 			pa.disconnect();
@@ -359,7 +421,7 @@ public class DaoImpl implements IDao {
 	public List<Slide> getSlides(int courseId) {
 		Connection cnt = pa.getConnection();
 		List<Slide> l = new ArrayList<Slide>();
-		String sql = "SELECT * FROM slide WHERE courseid = ?";
+		String sql = "SELECT * FROM slide WHERE courseid = ? ORDER BY slidetime";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -368,7 +430,6 @@ public class DaoImpl implements IDao {
 			
 			while(rs.next()) {
 				l.add(new Slide(
-					rs.getInt("slideid"),
 					rs.getInt("courseid"),
 					rs.getString("slideuri"),
 					rs.getInt("slidetime")
@@ -410,13 +471,12 @@ public class DaoImpl implements IDao {
 	 */
 	public void addSmil(Smil s) {
 		Connection cnt = pa.getConnection();
-		String sql = "INSERT INTO Smil values(?,?,?)";
+		String sql = "INSERT INTO Smil(courseid, smilpath) values(?,?)";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, s.getSmilid());
-			pstmt.setInt(2, s.getCourseid());
-			pstmt.setString(3, s.getSmilpath());
+			pstmt.setInt(1, s.getCourseid());
+			pstmt.setString(2, s.getSmilpath());
 			if( pstmt.executeUpdate() == 0 )
 				throw new DaoException("The Smil " + s + " has not been added");
 			pa.disconnect();
@@ -442,7 +502,6 @@ public class DaoImpl implements IDao {
 			ResultSet rs = pstmt.executeQuery();
 			if( rs.next() ) {
 				s = new Smil(
-					rs.getInt("smilid"),
 					rs.getInt("courseid"),
 					rs.getString("smilpath")
 				);
