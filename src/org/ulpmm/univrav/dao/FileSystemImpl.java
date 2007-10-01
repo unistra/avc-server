@@ -111,6 +111,7 @@ public class FileSystemImpl implements IFileSystem {
 			extension = courseArchive.substring(courseArchive.length()-4, courseArchive.length());
 			String tmpMediaFolder = courseArchive.substring(0,courseArchive.lastIndexOf(".")); //uncompressed media folder
 			mediaFolder = tmpMediaFolder + "-" + c.getCourseid(); // new (renamed) media folder
+			c.setMediaFolder(mediaFolder);
 			
 			if( ! new File(coursesFolder + mediaFolder).exists()) {	
 				try {
@@ -367,11 +368,11 @@ public class FileSystemImpl implements IFileSystem {
 	private void smilCreation() {
 		ISmil smil;
 		if( c.getType().equals("audio")) {
-			smil = new AudioSmil1(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, getTimecodes());
+			smil = new AudioSmil2(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, getTimecodes());
 			smil.smilCreation();
 		}
 		else if( c.getType().equals("video")) {
-			smil = new VideoSmil1(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, getTimecodes());
+			smil = new VideoSmil2(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, getTimecodes());
 			smil.smilCreation();
 		}
 	}
