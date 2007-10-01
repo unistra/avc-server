@@ -1,4 +1,4 @@
-package org.ulpmm.language;
+package org.ulpmm.univrav.language;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -15,7 +15,7 @@ public class Messages {
 	/**
 	 *  The name of the bundle to search the corresponding language properties files
 	 */
-	private static final String BUNDLE_NAME = "org.ulpmm.language.messages"; 
+	private static final String BUNDLE_NAME = "org.ulpmm.univrav.language.messages"; 
 	
 	/**
 	 * Uses Java ResourceBundles to get the translation of a String by specifying its key and locale

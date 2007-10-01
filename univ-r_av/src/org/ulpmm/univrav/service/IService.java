@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.ulpmm.univrav.entities.Amphi;
+import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
-import org.ulpmm.univrav.entities.Smil;
 
 public interface IService {
 	
@@ -30,11 +30,21 @@ public interface IService {
 	public List<Course> getNLastCourses(int n);
 	
 	/**
-	 * Gets the courses corresponding to the given criteria
-	 * @param params the criteria of the searched courses
+	 * Gets a restricted list of courses
+	 * @param number the number of courses to return
+	 * @param start the start number of the courses
 	 * @return the list of courses
 	 */
-	public List<Course> getCourses(HashMap<String, String> params);
+	public List<Course> getCourses(int number, int start);
+	
+	/**
+	 * Gets a restricted list of courses corresponding to the given criteria
+	 * @param params the criteria of the searched courses
+	 * @param number the number of courses to return
+	 * @param start the start number of the courses
+	 * @return the list of courses
+	 */
+	public List<Course> getCourses(HashMap<String, String> params, int number, int start);
 	
 	/**
 	 * Gets a course by providing its id
@@ -50,6 +60,19 @@ public interface IService {
 	 * @return the course
 	 */
 	public Course getCourse(int courseId, String genre);
+	
+	/**
+	 * Gets the total number of courses
+	 * @return the number of courses
+	 */
+	public int getCourseNumber();
+	
+	/**
+	 * Gets the number of courses corresponding to the given criteria
+	 * @param params the criteria of the searched courses
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(HashMap<String, String> params);
 	
 	/**
 	 * Modifies a course
@@ -68,6 +91,18 @@ public interface IService {
 	 * @return the id of the course
 	 */
 	public int getNextCoursId();
+	
+	/**
+	 * Gets the list of all the teachers
+	 * @return the list of teachers
+	 */
+	public List<String[]> getTeachers();
+	
+	/**
+	 * Gets the list of all the formations
+	 * @return the list of formations
+	 */
+	public List<String> getFormations();
 	
 	
 	/**
@@ -91,24 +126,10 @@ public interface IService {
 	
 	
 	/**
-	 * Adds a new smil
-	 * @param s the smil to add
+	 * Gets the list of the buildings
+	 * @return the list of buildings
 	 */
-	//public void addSmil(Smil s);
-	
-	/**
-	 * Gets the smil of a course
-	 * @param courseId the id of the course
-	 * @return the smil
-	 */
-	public Smil getSmil(int courseId);
-	
-	/**
-	 * Deletes the smil of a course
-	 * @param courseId the id of the course
-	 */
-	public void deleteSmil(int courseId);
-	
+	public List<Building> getBuildings();
 	
 	/**
 	 * Adds a new Amphi
@@ -120,7 +141,7 @@ public interface IService {
 	 * Gets a list of all the amphis
 	 * @return the list of amphis
 	 */
-	public List<Amphi> getAmphis();
+	public List<Amphi> getAmphis(int buildingId);
 	
 	/**
 	 * Gets an amphi by providing its IP address

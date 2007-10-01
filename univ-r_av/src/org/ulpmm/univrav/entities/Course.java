@@ -19,7 +19,8 @@ public class Course {
 	private boolean visible;
 	private int consultations;
 	private String timing;
-	
+	private String mediaFolder;
+
 	/**
 	 * Default constructor
 	 */
@@ -44,7 +45,7 @@ public class Course {
 	 * @param consultations
 	 * @param timing
 	 */
-	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing) {
+	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder) {
 		this.courseid = courseid;
 		this.date = date;
 		this.type = type;
@@ -59,6 +60,7 @@ public class Course {
 		this.visible = visible;
 		this.consultations = consultations;
 		this.timing = timing;
+		this.mediaFolder = mediaFolder;
 	}
 	
 	/**
@@ -247,6 +249,13 @@ public class Course {
 		
 		return mediasFileName;
 	}
+	
+	/**
+	 * @return the mediaFolder
+	 */
+	public String getMediaFolder() {
+		return mediaFolder;
+	}
 
 	/**
 	 * @param type the type to set
@@ -260,5 +269,12 @@ public class Course {
 	 */
 	public void setDuration(int duration) {
 		this.duration = duration;
+	}
+
+	/**
+	 * @param mediaFolder the mediaFolder to set
+	 */
+	public void setMediaFolder(String mediaFolder) {
+		this.mediaFolder = mediaFolder;
 	}
 }

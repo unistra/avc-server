@@ -1,15 +1,14 @@
 package org.ulpmm.univrav.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.entities.Amphi;
+import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
-import org.ulpmm.univrav.entities.Smil;
 
 public class ServiceImpl implements IService {
 
@@ -66,17 +65,29 @@ public class ServiceImpl implements IService {
 	 * @param n the number of courses to return
 	 * @return the list of courses
 	 */
-	public List<Course> getNLastCourses(int n) {
+	public synchronized List<Course> getNLastCourses(int n) {
 		return db.getNLastCourses(n);
 	}
 	
 	/**
-	 * Gets the courses corresponding to the given criteria
-	 * @param params the criteria of the searched courses
+	 * Gets a restricted list of courses
+	 * @param number the number of courses to return
+	 * @param start the start number of the courses
 	 * @return the list of courses
 	 */
-	public synchronized List<Course> getCourses(HashMap<String, String> params) {
-		return db.getCourses(params);
+	public List<Course> getCourses(int number, int start) {
+		return db.getCourses(number, start);
+	}
+	
+	/**
+	 * Gets a restricted list of courses corresponding to the given criteria
+	 * @param params the criteria of the searched courses
+	 * @param number the number of courses to return
+	 * @param start the start number of the courses
+	 * @return the list of courses
+	 */
+	public List<Course> getCourses(HashMap<String, String> params, int number, int start) {
+		return db.getCourses(params, number, start);
 	}
 	
 	/**
@@ -96,6 +107,23 @@ public class ServiceImpl implements IService {
 	 */
 	public synchronized Course getCourse(int courseId, String genre) {
 		return db.getCourse(courseId, genre);
+	}
+	
+	/**
+	 * Gets the total number of courses
+	 * @return the number of courses
+	 */
+	public int getCourseNumber() {
+		return db.getCourseNumber();
+	}
+	
+	/**
+	 * Gets the number of courses corresponding to the given criteria
+	 * @param params the criteria of the searched courses
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(HashMap<String, String> params) {
+		return db.getCourseNumber(params);
 	}
 	
 	/**
@@ -119,9 +147,26 @@ public class ServiceImpl implements IService {
 	 * Gets the id of the next course which will be uploaded
 	 * @return the id of the course
 	 */
-	public int getNextCoursId() {
+	public synchronized int getNextCoursId() {
 		return db.getNextCoursId();
 	}
+	
+	/**
+	 * Gets the list of all the teachers
+	 * @return the list of teachers
+	 */
+	public List<String[]> getTeachers() {
+		return db.getTeachers();
+	}
+	
+	/**
+	 * Gets the list of all the formations
+	 * @return the list of formations
+	 */
+	public List<String> getFormations() {
+		return db.getFormations();
+	}
+	
 	
 	/**
 	 * Adds the slides of a course
@@ -158,29 +203,13 @@ public class ServiceImpl implements IService {
 		db.deleteSlide(courseId);
 	}
 	
-	/**
-	 * Adds a new smil
-	 * @param s the smil to add
-	 */
-	/*public synchronized void addSmil(Smil s) {
-		db.addSmil(s);
-	}*/
 	
 	/**
-	 * Gets the smil of a course
-	 * @param courseId the id of the course
-	 * @return the smil
+	 * Gets the list of the buildings
+	 * @return the list of buildings
 	 */
-	public synchronized Smil getSmil(int courseId) {
-		return db.getSmil(courseId);
-	}
-	
-	/**
-	 * Deletes the smil of a course
-	 * @param courseId the id of the course
-	 */
-	public synchronized void deleteSmil(int courseId) {
-		db.deleteSmil(courseId);
+	public synchronized List<Building> getBuildings() {
+		return db.getBuildings();
 	}
 	
 	/**
@@ -196,9 +225,8 @@ public class ServiceImpl implements IService {
 	 * Gets a list of all the amphis
 	 * @return the list of amphis
 	 */
-	public synchronized List<Amphi> getAmphis() {
-		// TODO Auto-generated method stub
-		return null;
+	public synchronized List<Amphi> getAmphis(int buildingId) {
+		return db.getAmphis(buildingId);
 	}
 
 	/**

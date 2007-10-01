@@ -6,7 +6,6 @@ import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
-import org.ulpmm.univrav.entities.Smil;
 
 public class CourseAddition extends Thread {
 	
@@ -39,7 +38,6 @@ public class CourseAddition extends Thread {
 		ArrayList<String> list = fs.getTimecodes();
 		for( int i = 0 ; i< list.size() ; i++)
 			db.addSlide(new Slide(c.getCourseid(),"XXXXXXXXXX",(int) Float.parseFloat(list.get(i))));
-		db.addSmil(new Smil(c.getCourseid(), "XXXXXXX"));
 	}
 	
 	

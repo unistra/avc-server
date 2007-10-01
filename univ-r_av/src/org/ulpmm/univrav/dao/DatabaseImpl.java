@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.ulpmm.univrav.entities.Amphi;
+import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
-import org.ulpmm.univrav.entities.Smil;
 
 public class DatabaseImpl implements IDatabase {
 
@@ -28,7 +28,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addCourse(Course c) {
 		Connection cnt = pa.getConnection();
-		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -46,6 +46,7 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setBoolean(12, c.isVisible());
 			pstmt.setInt(13, c.getConsultations());
 			pstmt.setString(14, c.getTiming());
+			pstmt.setString(15, c.getMediaFolder());
 			if( pstmt.executeUpdate() == 0)
 				throw new DaoException("The course " + c + " has not been added to the database");
 			pa.disconnect();
@@ -100,7 +101,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("genre"),
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
-					rs.getString("timing")
+					rs.getString("timing"),
+					rs.getString("mediaFolder")
 				));
 			}
 			rs.close();
@@ -138,7 +140,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("genre"),
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
-					rs.getString("timing")
+					rs.getString("timing"),
+					rs.getString("mediaFolder")
 				));
 			}
 			rs.close();
@@ -152,56 +155,33 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
-	 * Gets the courses corresponding to the given criteria
-	 * @param params the criteria of the searched courses
+	 * Gets a restricted list of courses
+	 * @param number the number of courses to return
+	 * @param start the start number of the courses
 	 * @return the list of courses
 	 */
-	public List<Course> getCourses(HashMap<String, String> params) {
-		
-		Connection cnt = pa.getConnection();	
+	public List<Course> getCourses(int number, int start) {
+		pa.connect();
+		ResultSet rs = pa.query("SELECT * From course ORDER BY date DESC LIMIT " + number + " OFFSET " + start);
 		List<Course> l = new ArrayList<Course>();
-		Set<String> keys = params.keySet();
-		Collection<String> values = params.values();
-		
-		/* Creation of the SQL query string */
-		String sql = "SELECT * FROM course WHERE ";
-		Iterator<String> it = keys.iterator();
-		while( it.hasNext()) {
-			if( ! sql.endsWith("WHERE "))
-				sql += "AND ";
-			sql += it.next() + " = ? ORDER BY date DESC";
-		}
-		
 		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			
-			/* Applies the parameters to the query */
-			it = values.iterator();
-			int i = 1;
-			while( it.hasNext()) {
-				pstmt.setString(i, it.next());
-				i++;
-			}
-			
-			ResultSet rs = pstmt.executeQuery();
-			
-			/* Retrieves the records */
 			while(rs.next()) {
 				l.add(new Course(
-						rs.getInt("courseid"),
-						rs.getTimestamp("date"),
-						rs.getString("type"),
-						rs.getString("title"),
-						rs.getString("description"),
-						rs.getString("formation"),
-						rs.getString("name"),
-						rs.getString("firstname"),
-						rs.getString("ipaddress"),
-						rs.getInt("duration"),
-						rs.getString("genre"),
-						rs.getBoolean("visible"),
-						rs.getInt("consultations"),
-						rs.getString("timing")
+					rs.getInt("courseid"),
+					rs.getTimestamp("date"),
+					rs.getString("type"),
+					rs.getString("title"),
+					rs.getString("description"),
+					rs.getString("formation"),
+					rs.getString("name"),
+					rs.getString("firstname"),
+					rs.getString("ipaddress"),
+					rs.getInt("duration"),
+					rs.getString("genre"),
+					rs.getBoolean("visible"),
+					rs.getInt("consultations"),
+					rs.getString("timing"),
+					rs.getString("mediaFolder")
 				));
 			}
 			rs.close();
@@ -210,8 +190,82 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the courses list");
 			sqle.printStackTrace();
 		}
-		
 		pa.disconnect();
+		return l;
+	}
+	
+	/**
+	 * Gets a restricted list of courses corresponding to the given criteria
+	 * @param params the criteria of the searched courses
+	 * @param number the number of courses to return
+	 * @param start the start number of the courses
+	 * @return the list of courses
+	 */
+	public List<Course> getCourses(HashMap<String, String> params, int number, int start) {
+			
+		List<Course> l = new ArrayList<Course>();
+		
+		if( ! params.isEmpty() ) {
+		
+			Connection cnt = pa.getConnection();
+			Set<String> keys = params.keySet();
+			Collection<String> values = params.values();
+			
+			/* Creation of the SQL query string */
+			String sql = "SELECT * FROM course WHERE ";
+			Iterator<String> it = keys.iterator();
+			while( it.hasNext()) {
+				if( ! sql.endsWith("WHERE "))
+					sql += "AND ";
+				sql += it.next() + " = ? ";
+			}
+			sql += "ORDER BY date DESC LIMIT " + number + " OFFSET " + start;
+			System.out.println(sql);
+			try {
+				PreparedStatement pstmt = cnt.prepareStatement(sql);
+				
+				/* Applies the parameters to the query */
+				it = values.iterator();
+				int i = 1;
+				while( it.hasNext()) {
+					pstmt.setString(i, it.next());
+					i++;
+				}
+				
+				ResultSet rs = pstmt.executeQuery();
+				
+				/* Retrieves the records */
+				while(rs.next()) {
+					l.add(new Course(
+							rs.getInt("courseid"),
+							rs.getTimestamp("date"),
+							rs.getString("type"),
+							rs.getString("title"),
+							rs.getString("description"),
+							rs.getString("formation"),
+							rs.getString("name"),
+							rs.getString("firstname"),
+							rs.getString("ipaddress"),
+							rs.getInt("duration"),
+							rs.getString("genre"),
+							rs.getBoolean("visible"),
+							rs.getInt("consultations"),
+							rs.getString("timing"),
+							rs.getString("mediaFolder")
+					));
+				}
+				rs.close();
+			}
+			catch( SQLException sqle) {
+				System.out.println("Error while retrieving the courses list");
+				sqle.printStackTrace();
+			}
+			
+			pa.disconnect();
+		}
+		else
+			l = getCourses(number, start);
+		
 		return l;
 	}
 	
@@ -243,7 +297,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("genre"),
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
-					rs.getString("timing")
+					rs.getString("timing"),
+					rs.getString("mediaFolder")
 				);
 			}
 			else
@@ -288,7 +343,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("genre"),
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
-					rs.getString("timing")
+					rs.getString("timing"),
+					rs.getString("mediaFolder")
 				);
 			}
 			else
@@ -301,6 +357,80 @@ public class DatabaseImpl implements IDatabase {
 		pa.disconnect();
 		
 		return c;
+	}
+	
+	/**
+	 * Gets the total number of courses
+	 * @return the number of courses
+	 */
+	public int getCourseNumber() {
+		int number = 0;
+		String sql = "SELECT COUNT(*) FROM course";
+		pa.connect();
+		try {
+			ResultSet rs = pa.query(sql);
+			
+			if(rs.next()) 
+				number = rs.getInt("count");
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the buildings list");
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		return number;
+	}
+	
+	/**
+	 * Gets the number of courses corresponding to the given criteria
+	 * @param params the criteria of the searched courses
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(HashMap<String, String> params) {
+		int number = 0;
+		
+		if( ! params.isEmpty() ) {
+			Connection cnt = pa.getConnection();
+			Set<String> keys = params.keySet();
+			Collection<String> values = params.values();
+			
+			
+			String sql = "SELECT COUNT(*) FROM course WHERE ";
+			Iterator<String> it = keys.iterator();
+			while( it.hasNext()) {
+				if( ! sql.endsWith("WHERE "))
+					sql += "AND ";
+				sql += it.next() + " = ? ";
+			}
+			
+			try {
+				PreparedStatement pstmt = cnt.prepareStatement(sql);
+				
+				/* Applies the parameters to the query */
+				it = values.iterator();
+				int i = 1;
+				while( it.hasNext()) {
+					pstmt.setString(i, it.next());
+					i++;
+				}
+				
+				ResultSet rs = pstmt.executeQuery();
+				
+				if(rs.next()) 
+					number = rs.getInt("count");
+				rs.close();
+			}
+			catch( SQLException sqle) {
+				System.out.println("Error while retrieving the buildings list");
+				sqle.printStackTrace();
+			}
+			pa.disconnect();
+		}
+		else
+			number = getCourseNumber();
+		
+		return number;
 	}
 	
 	/**
@@ -389,6 +519,53 @@ public class DatabaseImpl implements IDatabase {
 		return id;
 	}
 	
+	/**
+	 * Gets the list of all the teachers
+	 * @return the list of teachers
+	 */
+	public List<String[]> getTeachers() {
+		List<String[]> l = new ArrayList<String[]>();
+		
+		pa.connect();
+		ResultSet rs = pa.query("select distinct name, firstname from course");
+		try {
+			while( rs.next() ) {
+				String[] t = new String[2];
+				t[0]= rs.getString("name");
+				t[1]= rs.getString("firstname");
+				l.add(t);
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the teachers list");
+			sqle.printStackTrace();
+		}
+		
+		return l;
+	}
+	
+	/**
+	 * Gets the list of all the formations
+	 * @return the list of formations
+	 */
+	public List<String> getFormations() {
+		List<String> l = new ArrayList<String>();
+		
+		pa.connect();
+		ResultSet rs = pa.query("select distinct formation from course");
+		try {
+			while( rs.next() ) {
+				l.add(rs.getString("formation"));
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the formations list");
+			sqle.printStackTrace();
+		}
+		
+		return l;
+	}
+	
 	
 	/**
 	 * Adds a new slide
@@ -465,77 +642,36 @@ public class DatabaseImpl implements IDatabase {
 		pa.disconnect();
 	}
 	
-	/**
-	 * Adds a new smil
-	 * @param s the smil to add
-	 */
-	public void addSmil(Smil s) {
-		Connection cnt = pa.getConnection();
-		String sql = "INSERT INTO Smil(courseid, smilpath) values(?,?)";
-		
-		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, s.getCourseid());
-			pstmt.setString(2, s.getSmilpath());
-			if( pstmt.executeUpdate() == 0 )
-				throw new DaoException("The Smil " + s + " has not been added");
-			pa.disconnect();
-		}
-		catch(SQLException sqle){
-			System.out.println("Error while adding the Smil " + s);
-			sqle.printStackTrace();
-		}
-	}
 	
 	/**
-	 * Gets the smil of a course
-	 * @param courseId the id of the course
-	 * @return the smil
+	 * Gets the list of the buildings
+	 * @return the list of buildings
 	 */
-	public Smil getSmil(int courseId) {
-		Smil s = null;
-		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM smil WHERE courseid = ?";
+	public List<Building> getBuildings() {
+		pa.connect();
+		List<Building> l = new ArrayList<Building>();
+		String sql = "SELECT * FROM building";
+		
 		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, courseId);
-			ResultSet rs = pstmt.executeQuery();
-			if( rs.next() ) {
-				s = new Smil(
-					rs.getInt("courseid"),
-					rs.getString("smilpath")
+			ResultSet rs = pa.query(sql);
+			
+			while(rs.next()) {
+				Building b = new Building(
+					rs.getInt("buildingid"),
+					rs.getString("name"),
+					rs.getString("imagefile")
 				);
+				b.setAmphis(getAmphis(b.getBuildingid()));
+				l.add(b);
 			}
-			else
-				throw new DaoException("Smil not found for the course " + courseId);
+			rs.close();
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the smil of the course " + courseId);
+			System.out.println("Error while retrieving the buildings list");
 			sqle.printStackTrace();
 		}
 		pa.disconnect();
-		
-		return s;
-	}
-	
-	/**
-	 * Deletes the smil of a course
-	 * @param courseId the id of the course
-	 */
-	public void deleteSmil(int courseId) {
-		Connection cnt = pa.getConnection();
-		String sql = "DELETE FROM smil WHERE courseid = ?";
-		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, courseId);
-			if( pstmt.executeUpdate() == 0 )
-				throw new DaoException("The smil of the course " + courseId + "has not been deleted");
-		}
-		catch( SQLException sqle) {
-			System.out.println("Error while deleting the smil of the course " + courseId);
-			sqle.printStackTrace();
-		}
-		pa.disconnect();
+		return l;
 	}
 	
 	/**
@@ -551,9 +687,33 @@ public class DatabaseImpl implements IDatabase {
 	 * Gets a list of all the amphis
 	 * @return the list of amphis
 	 */
-	public List<Amphi> getAmphis() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Amphi> getAmphis(int buildingId) {
+		Connection cnt = pa.getConnection();
+		List<Amphi> l = new ArrayList<Amphi>();
+		String sql = "SELECT * FROM amphi WHERE buildingid = ? ORDER BY name";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, buildingId);
+			ResultSet rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				l.add(new Amphi(
+					rs.getInt("buildingid"),
+					rs.getString("name"),
+					rs.getString("type"),
+					rs.getString("ipaddress"),
+					rs.getBoolean("status")
+				));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the amphis list");
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		return l;
 	}
 
 	/**
