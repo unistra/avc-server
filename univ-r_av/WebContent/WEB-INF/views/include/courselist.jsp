@@ -89,7 +89,7 @@
 			<td class="tdalign">
 				<c:choose>
 					<c:when test="${course.genre == ''}">
-						<a href="./recordInterface?id=${course.courseid}"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./courseaccess?id=${course.courseid}&type=smil"><img src="../files/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
 						<a href="./codeform?id=${course.courseid}&type=smil&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/img/chip.png" alt="chip"></a>
@@ -99,24 +99,52 @@
 			<td class="tdalign">
 				<c:choose>
 					<c:when test="${course.genre == ''}">
-						<a href="./recordInterface?id=${course.courseid}"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./courseaccess?id=${course.courseid}&type=real"><img src="../files/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
-						<a href="./codeform?id=${course.courseid}&type=smil&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./codeform?id=${course.courseid}&type=real&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
 			<td class="tdalign">
-				<a href="."><img src="../files/img/chip.png" alt="chip"></a>
+				<c:choose>
+					<c:when test="${course.genre == ''}">
+						<a href="./courseaccess?id=${course.courseid}&type=ogg"><img src="../files/img/chip.png" alt="chip"></a>
+					</c:when>
+					<c:otherwise>
+						<a href="./codeform?id=${course.courseid}&type=ogg&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/img/chip.png" alt="chip"></a>
+					</c:otherwise>
+				</c:choose>
 			</td>
 			<td class="tdalign">
-				<a href="."><img src="../files/img/chip.png" alt="chip"></a>
+				<c:choose>
+					<c:when test="${course.genre == ''}">
+						<a href="./courseaccess?id=${course.courseid}&type=mp3"><img src="../files/img/chip.png" alt="chip"></a>
+					</c:when>
+					<c:otherwise>
+						<a href="./codeform?id=${course.courseid}&type=mp3&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/img/chip.png" alt="chip"></a>
+					</c:otherwise>
+				</c:choose>
 			</td>
 			<td class="tdalign">
-				<a href="."><img src="../files/img/chip.png" alt="chip"></a>
+				<c:choose>
+					<c:when test="${course.genre == ''}">
+						<a href="./courseaccess?id=${course.courseid}&type=zip"><img src="../files/img/chip.png" alt="chip"></a>
+					</c:when>
+					<c:otherwise>
+						<a href="./codeform?id=${course.courseid}&type=zip&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/img/chip.png" alt="chip"></a>
+					</c:otherwise>
+				</c:choose>
 			</td>
 			<td class="tdalign">
-				<a href="."><img src="../files/img/chip.png" alt="chip"></a>
+				<c:choose>
+					<c:when test="${course.genre == ''}">
+						<a href="./courseaccess?id=${course.courseid}&type=pdf"><img src="../files/img/chip.png" alt="chip"></a>
+					</c:when>
+					<c:otherwise>
+						<a href="./codeform?id=${course.courseid}&type=pdf&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/img/chip.png" alt="chip"></a>
+					</c:otherwise>
+				</c:choose>
 			</td>
 		</tr>
 		<!-- Defines the class of the next row of the table -->

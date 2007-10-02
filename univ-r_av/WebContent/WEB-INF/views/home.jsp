@@ -13,6 +13,7 @@
     
     <title><%=Messages._("Univ-R AV Audiovid&eacute;cours", l)%></title>
 
+	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/styles.css">
 	<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/home.css">
 	
@@ -25,13 +26,15 @@
 	<![endif]-->
 
 	<script type="text/javascript" src="../files/js/details.js"></script>
+	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
+	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
 
   </head>
   
   <body>
     <div class="main">
 	    <div class="banner">
-	    	<a class="bannerPageZone" href="."></a>
+	    	<a class="bannerPageZone" href=".."></a>
 	    	<a class="ulpmmZone" href="http://ulpmultimedia.u-strasbg.fr/" target="external"></a>
 	    	<a class="ulpZone" href="http://www-ulp.u-strasbg.fr/" target="external"></a>
 	    	<div class="live">
