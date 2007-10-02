@@ -1,6 +1,11 @@
 package org.ulpmm.univrav.web;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -33,6 +38,7 @@ public class Application extends HttpServlet {
 	private ServiceImpl service;
 	
 	private String coursesUrl = "http://stagiaire1.u-strasbg.fr/coursv2/";
+	private String coursesFolder = "/media/coursv2/";
 	
 	/**
 	 * Initialization of the servlet. <br>
@@ -89,7 +95,7 @@ public class Application extends HttpServlet {
 			getServletContext().getRequestDispatcher("/WEB-INF/views/codeform.jsp").forward(request, response);
 		}
 		else if( page.equals("/courseaccess")) {
-			checkAccess(request, response);
+			courseAccess(request, response);
 		}
 		else
 			displayHomePage(request, response);
@@ -312,29 +318,63 @@ public class Application extends HttpServlet {
 		out.close();
 	}
 	
-	private void checkAccess(HttpServletRequest request, HttpServletResponse response) 
+	private void courseAccess(HttpServletRequest request, HttpServletResponse response) 
 		throws ServletException, IOException {
 		
 		int courseid = Integer.parseInt( (String) request.getParameter("id"));
 		Course c = null;
 		String genre = (String) request.getParameter("code");
+		String type = (String) request.getParameter("type");
 		System.out.println("id:" + courseid);
 		System.out.println("code:" + genre);
 		
 		try {
-			c = service.getCourse(courseid, genre);
-			//redirection interface
-			request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
-			List<Slide> slides = service.getSlides(c.getCourseid());
-			System.out.println(slides.toString());
+			if( genre == null)
+				c = service.getCourse(courseid);
+			else
+				c = service.getCourse(courseid, genre);
 			
-			// affichage de la vue [list]
-			//getServletContext().getRequestDispatcher("/WEB-INF/views/visualization.jsp").forward(request, response);
-			getServletContext().getRequestDispatcher("www.google.fr").forward(request, response);
+			if( type.equals("real")) {
+				//redirection interface
+				request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
+				List<Slide> slides = service.getSlides(c.getCourseid());
+				System.out.println(slides.toString());
+				
+				// affichage de la vue [list]
+				getServletContext().getRequestDispatcher("/WEB-INF/views/visualization.jsp").forward(request, response);
+			}
+			else {
+				String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
+				
+				// Initialisation des en-têtes.
+				response.setContentType("application/x-download");
+				response.setHeader("Content-Disposition", "attachment; filename=" + c.getMediasFileName() + "." + type);
+
+				// Envoi du fichier.
+				OutputStream out = response.getOutputStream();
+				returnFile(filename, out);
+			}
 		}
 		catch(DaoException de) {
 			// redirection message d'erreur
 			System.out.println("mauvais code");
+		}
+	}
+	
+	public static void returnFile(String filename, OutputStream out)
+	    throws FileNotFoundException, IOException {
+		InputStream in = null;
+		try {
+			in = new BufferedInputStream(new FileInputStream(filename));
+			byte[  ] buf = new byte[4 * 1024];  // 4K buffer
+			int bytesRead;
+			while ((bytesRead = in.read(buf)) != -1) {
+				out.write(buf, 0, bytesRead);
+			}
+		}
+		finally {
+			if (in != null) 
+				in.close(  );
 		}
 	}
 
