@@ -14,14 +14,16 @@
     <title><%=Messages._("Univ-R AV Audiovid&eacute;cours", l)%></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
-	<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/home.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/home.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/searchform.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/courselist.css">
 	
 	<!--[if IE]>
-   		<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/styles_ie.css" media="screen" />
+   		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles_ie.css" media="screen" />
 	<![endif]-->
 	<!--[if lte IE 6]>
-		<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/home_ie6.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/home_ie6.css" media="screen" />
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
@@ -59,7 +61,7 @@
 		    		<span class="linkDescription"><%=Messages._("Abonnez-vous au fil d'abonnement", l)%></span>
 		    	</div>
 		    	<div class="helpImage">
-		    		<span class="linkText"><a href="./help/index.jsp"><%=Messages._("Aide", l)%></a></span>
+		    		<span class="linkText"><a href="./help"><%=Messages._("Aide", l)%></a></span>
 		    		<span class="linkDescription"><%=Messages._("Utilisation d'Univ-R AV", l)%></span>
 		    	</div>
 	    	</div>

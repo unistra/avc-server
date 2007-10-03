@@ -15,14 +15,16 @@
     <title><%=Messages._("Cours enregistr&eacute;s", l)%></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
-	<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/recorded.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/recorded.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/searchform.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/courselist.css">
 	
 	<!--[if IE]>
-   		<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/styles_ie.css" media="screen" />
+   		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles_ie.css" media="screen" />
 	<![endif]-->
 	<!--[if lte IE 6]>
-		<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/recorded_ie6.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/recorded_ie6.css" media="screen" />
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 

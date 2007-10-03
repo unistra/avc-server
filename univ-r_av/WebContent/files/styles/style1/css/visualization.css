@@ -32,7 +32,7 @@
 div#videoLine {
 	width: 970px;
 	height: 11px;
-	background-image: url("../../../img/1px_video_line.png");
+	background-image: url("../img/1px_video_line.png");
 	background-repeat: repeat-x;
 }
 

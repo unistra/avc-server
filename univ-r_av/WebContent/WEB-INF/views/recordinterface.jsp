@@ -12,18 +12,21 @@
     
     <title><%=Messages._("Visualisation du cours", l)%></title>
 
-	<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/visualization.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/visualization.css">
 	
 	<!--[if IE]>
-   		<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/styles_ie.css" media="screen" />
+   		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles_ie.css" media="screen" />
 	<![endif]-->
 	<!--[if lte IE 6]>
-		<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/visualization_ie6.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/visualization_ie6.css" media="screen" />
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
-	<script type="text/javascript" src="../files/js/visualization.js"></script>
+	<script type="text/javascript" src="../files/js/recordinterface.js"></script>
+	<script type="text/javascript">
+		var timecodes = ${slides};
+	</script>
 
   </head>
   
@@ -31,9 +34,9 @@
     <div class="main">
 	    <div class="contents">
 	    	
-	    	<div class="amphitheatre">UFR Math&eacute;matiques et informatique | salle C10</div>
+	    	<div class="amphitheatre">${building} | ${amphi}</div>
 	    	
-	    	<a class="closeButton" href="."><%=Messages._("Fermer", l)%> <img src="../files/img/close.png"></a>
+	    	<a class="closeButton" href="."><%=Messages._("Fermer", l)%> <img src="../files/styles/${style}/img/close.png"></a>
 	    	
 			<div class="smil">
 				<object name="video" classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="970" height="550">

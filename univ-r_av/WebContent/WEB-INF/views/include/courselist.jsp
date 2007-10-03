@@ -17,27 +17,27 @@
 	<tr class="row2">
 		<td colspan="3">&nbsp;</td>
 		<td class="tdalign">
-			<img src="../files/img/smile.png" alt="smile"><br>
+			<img src="../files/styles/${style}/img/smile.png" alt="smile"><br>
 			smil
 		</td>
 		<td class="tdalign">
-			<img src="../files/img/real_v2.png" alt="real"><br>
+			<img src="../files/styles/${style}/img/real_v2.png" alt="real"><br>
 			realplayer
 		</td>
 		<td class="tdalign">
-			<img src="../files/img/ogg_v2.png" alt="ogg"><br>
+			<img src="../files/styles/${style}/img/ogg_v2.png" alt="ogg"><br>
 			ogg
 		</td>
 		<td class="tdalign">
-			<img src="../files/img/mp3_v2.png" alt="mp3"><br>
+			<img src="../files/styles/${style}/img/mp3_v2.png" alt="mp3"><br>
 			mp3
 		</td>
 		<td class="tdalign">
-			<img src="../files/img/winzip3.png" alt="zip"><br>
+			<img src="../files/styles/${style}/img/winzip3.png" alt="zip"><br>
 			zip
 		</td>
 		<td class="tdalign">
-			<img src="../files/img/acrobat.png" alt="pdf"><br>
+			<img src="../files/styles/${style}/img/acrobat.png" alt="pdf"><br>
 			pdf
 		</td>
 	</tr>
@@ -61,7 +61,7 @@
 					<c:set var="typeImg" value="video_locked" />
 				</c:when>
 			</c:choose> 
-			<td><img src="../files/img/${typeImg}.png" alt="video"></td>
+			<td><img src="../files/styles/${style}/img/${typeImg}.png" alt="video"></td>
 			<td>	    				
 				<b><%=Messages._("Titre :", l)%> </b> <c:out value="${course.title}" /> <br>
 				<b><%=Messages._("Enseignant :", l)%> </b> <c:out value="${course.name}" /> <br>
@@ -89,60 +89,60 @@
 			<td class="tdalign">
 				<c:choose>
 					<c:when test="${course.genre == ''}">
-						<a href="./courseaccess?id=${course.courseid}&type=smil"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./courseaccess?id=${course.courseid}&type=smil"><img src="../files/styles/${style}/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
-						<a href="./codeform?id=${course.courseid}&type=smil&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./codeform?id=${course.courseid}&type=smil&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/styles/${style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
 			<td class="tdalign">
 				<c:choose>
 					<c:when test="${course.genre == ''}">
-						<a href="./courseaccess?id=${course.courseid}&type=real"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./courseaccess?id=${course.courseid}&type=real"><img src="../files/styles/${style}/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
-						<a href="./codeform?id=${course.courseid}&type=real&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./codeform?id=${course.courseid}&type=real&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/styles/${style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
 			<td class="tdalign">
 				<c:choose>
 					<c:when test="${course.genre == ''}">
-						<a href="./courseaccess?id=${course.courseid}&type=ogg"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./courseaccess?id=${course.courseid}&type=ogg"><img src="../files/styles/${style}/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
-						<a href="./codeform?id=${course.courseid}&type=ogg&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./codeform?id=${course.courseid}&type=ogg&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/styles/${style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
 			<td class="tdalign">
 				<c:choose>
 					<c:when test="${course.genre == ''}">
-						<a href="./courseaccess?id=${course.courseid}&type=mp3"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./courseaccess?id=${course.courseid}&type=mp3"><img src="../files/styles/${style}/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
-						<a href="./codeform?id=${course.courseid}&type=mp3&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./codeform?id=${course.courseid}&type=mp3&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/styles/${style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
 			<td class="tdalign">
 				<c:choose>
 					<c:when test="${course.genre == ''}">
-						<a href="./courseaccess?id=${course.courseid}&type=zip"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./courseaccess?id=${course.courseid}&type=zip"><img src="../files/styles/${style}/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
-						<a href="./codeform?id=${course.courseid}&type=zip&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./codeform?id=${course.courseid}&type=zip&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/styles/${style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
 			<td class="tdalign">
 				<c:choose>
 					<c:when test="${course.genre == ''}">
-						<a href="./courseaccess?id=${course.courseid}&type=pdf"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./courseaccess?id=${course.courseid}&type=pdf"><img src="../files/styles/${style}/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
-						<a href="./codeform?id=${course.courseid}&type=pdf&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/img/chip.png" alt="chip"></a>
+						<a href="./codeform?id=${course.courseid}&type=pdf&height=100&width=250" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/styles/${style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>

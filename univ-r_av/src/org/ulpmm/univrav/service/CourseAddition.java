@@ -37,7 +37,7 @@ public class CourseAddition extends Thread {
 		db.addCourse(c);
 		ArrayList<String> list = fs.getTimecodes();
 		for( int i = 0 ; i< list.size() ; i++)
-			db.addSlide(new Slide(c.getCourseid(),"XXXXXXXXXX",(int) Float.parseFloat(list.get(i))));
+			db.addSlide(new Slide(c.getCourseid(),(int) Float.parseFloat(list.get(i))));
 	}
 	
 	

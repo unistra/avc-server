@@ -56,6 +56,11 @@ public class Building {
 		this.amphis = amphis;
 	}
 	
-	
+	/**
+	 * returns a String representation of this object
+	 */
+	public String toString() {
+		return this.name;
+	}
 	
 }
