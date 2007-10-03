@@ -8,47 +8,11 @@ var update = true; // if the time bar has to be updated or not
 
 /* function to call when the page starts */
 window.onload = function(){
-
-	xmlHttp=getXMLHTTP(); //retrieves the xmlHttpRequest object
-	
-	if(xmlHttp) {
-		// gets the list of timecodes from the server
-		xmlHttp.open("GET",'timecodes.jsp',true);
-		xmlHttp.onreadystatechange=function() {
-			if (xmlHttp.readyState == 4 && xmlHttp.status == 200) { //Complete state and HTTP OK response
-				timecodes = xmlHttp.responseText.split(",");
-				
-				// calls the method to update the time bar
-				initTimeBar();
-				updatePagination();
-				updateTimeBar();
-			}
-		};
-		
-		xmlHttp.send(null);
-	}
+	// calls the method to update the time bar
+	initTimeBar();
+	updatePagination();
+	updateTimeBar();
 };
-
-/* Returns a xmlHttpRequest object */
-function getXMLHTTP(){
-	var xhr=null;
-	
-	if(window.XMLHttpRequest) // Firefox and others
-		xhr = new XMLHttpRequest();
-	else if(window.ActiveXObject) { // Internet Explorer
-		try {
-			xhr = new ActiveXObject("Msxml2.XMLHTTP");
-		} catch (e) {
-			try {
-				xhr = new ActiveXObject("Microsoft.XMLHTTP");
-			} catch (e1) {
-				xhr = null;
-			}
-		}
-	}
-	
-	return xhr;
-}
 
 /* Gets the corresponding slide number from a given time */
 function getSlideFromTime(time) {

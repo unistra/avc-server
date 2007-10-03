@@ -70,6 +70,10 @@ public class Amphi {
 		return status;
 	}
 	
-	
-	
+	/**
+	 * returns a String representation of this object
+	 */
+	public String toString() {
+		return this.name;
+	}
 }

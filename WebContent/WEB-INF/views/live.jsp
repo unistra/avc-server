@@ -13,14 +13,14 @@
     
     <title><%=Messages._("Cours en direct", l)%></title>
 
-	<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/live.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/live.css">
 	
 	<!--[if IE]>
-		<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/styles_ie.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles_ie.css" media="screen" />
 	<![endif]-->
 	<!--[if lte IE 6]>
-		<link rel="stylesheet" type="text/css" href="../files/styles/style1/css/live_ie6.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/live_ie6.css" media="screen" />
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
@@ -60,13 +60,14 @@
 				    		<c:set var="class" value="row1" />
 				    		<c:forEach var="amphi" varStatus="status2" items="${building.amphis}">
 					    		<tr class="${class}">
-					    			<td><img src="../files/img/amphi_icon.png" alt="amphi_icon"> <c:out value="${amphi.name}" /></td>
 					    			<c:choose>
 					    				<c:when test="${amphi.status == true}">
-											<td> <img src="../files/img/chip_direct_on.png" alt="chip_direct_on"> <%=Messages._("En cours", l)%></td>
+											<td> <img src="../files/styles/${style}/img/amphi_icon.png" alt="amphi_icon"> <a href="./liveaccess?amphi=${amphi.ipAddress}"> <c:out value="${amphi.name}"/> </a> </td>
+											<td> <img src="../files/styles/${style}/img/chip_direct_on.png" alt="chip_direct_on"> <%=Messages._("En cours", l)%> </td>
 										</c:when>
 										<c:otherwise>
-											<td> <img src="../files/img/chip_direct.png" alt="chip_direct"> <%=Messages._("En attente", l)%></td>
+											<td> <img src="../files/styles/${style}/img/amphi_icon.png" alt="amphi_icon"> <c:out value="${amphi.name}" /> </td>
+											<td> <img src="../files/styles/${style}/img/chip_direct.png" alt="chip_direct"> <%=Messages._("En attente", l)%> </td>
 										</c:otherwise>
 					    			</c:choose>
 					    		</tr>

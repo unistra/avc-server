@@ -26,6 +26,8 @@ import org.ulpmm.univrav.dao.DatabaseImpl;
 import org.ulpmm.univrav.dao.FileSystemImpl;
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
+import org.ulpmm.univrav.entities.Amphi;
+import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.language.Messages;
@@ -39,6 +41,7 @@ public class Application extends HttpServlet {
 	
 	private String coursesUrl = "http://stagiaire1.u-strasbg.fr/coursv2/";
 	private String coursesFolder = "/media/coursv2/";
+	private String helixServerIp = "130.79.188.5";
 	
 	/**
 	 * Initialization of the servlet. <br>
@@ -74,6 +77,8 @@ public class Application extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		request.setAttribute("style", "style2");
+		
 		String page = request.getPathInfo();
 		
 		if( page == null )
@@ -92,10 +97,19 @@ public class Application extends HttpServlet {
 		else if( page.equals("/codeform")) {
 			request.setAttribute("id", request.getParameter("id"));
 			request.setAttribute("type", request.getParameter("type"));
-			getServletContext().getRequestDispatcher("/WEB-INF/views/codeform.jsp").forward(request, response);
+			getServletContext().getRequestDispatcher("/WEB-INF/views/include/codeform.jsp").forward(request, response);
 		}
 		else if( page.equals("/courseaccess")) {
 			courseAccess(request, response);
+		}
+		else if( page.equals("/liveaccess")) {
+			liveAccess(request, response);
+		}
+		else if( page.equals("/liveslide")) {
+			liveSlide(request, response);
+		}
+		else if( page.equals("/help")) {
+			getServletContext().getRequestDispatcher("/WEB-INF/views/help.jsp").forward(request, response);
 		}
 		else
 			displayHomePage(request, response);
@@ -325,8 +339,6 @@ public class Application extends HttpServlet {
 		Course c = null;
 		String genre = (String) request.getParameter("code");
 		String type = (String) request.getParameter("type");
-		System.out.println("id:" + courseid);
-		System.out.println("code:" + genre);
 		
 		try {
 			if( genre == null)
@@ -338,10 +350,15 @@ public class Application extends HttpServlet {
 				//redirection interface
 				request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
 				List<Slide> slides = service.getSlides(c.getCourseid());
-				System.out.println(slides.toString());
+				request.setAttribute("slides", slides);
+				Amphi a = service.getAmphi(c.getIpaddress());
+				String amphi = a != null ? a.getName() : c.getIpaddress();
+				String building = service.getBuildingName(c.getIpaddress());
+				request.setAttribute("amphi", amphi);
+				request.setAttribute("building", building);
 				
 				// affichage de la vue [list]
-				getServletContext().getRequestDispatcher("/WEB-INF/views/visualization.jsp").forward(request, response);
+				getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface.jsp").forward(request, response);
 			}
 			else {
 				String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
@@ -357,8 +374,45 @@ public class Application extends HttpServlet {
 		}
 		catch(DaoException de) {
 			// redirection message d'erreur
+			de.printStackTrace();
 			System.out.println("mauvais code");
 		}
+	}
+	
+	private void liveAccess(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		String ip = request.getParameter("amphi");
+		Amphi a = service.getAmphi(ip);
+		String amphi = a != null ? a.getName() : ip;
+		String building = service.getBuildingName(ip);
+		String url = "";
+		if( a.getType().equals("audio")) {
+			url = "http://" + ip + ":8080";
+		}
+		else if( a.getType().equals("video")) {
+			service.createLiveVideo(ip, helixServerIp);
+			url = coursesUrl + "live/livevideo_" + ip.replace('.','_') + ".ram";
+		}
+		
+		request.setAttribute("amphi", amphi);
+		request.setAttribute("building", building);
+		request.setAttribute("type", a.getType());
+		request.setAttribute("ip", ip);
+		request.setAttribute("url", url);
+		
+		getServletContext().getRequestDispatcher("/WEB-INF/views/liveinterface.jsp").forward(request, response);
+	}
+	
+	private void liveSlide(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		String ip = request.getParameter("ip");
+		String url = "../../live/" + ip.replace('.','_') + ".jpg";
+		request.setAttribute("ip", ip);
+		request.setAttribute("url", url);
+		
+		getServletContext().getRequestDispatcher("/WEB-INF/views/include/liveslide.jsp").forward(request, response);
 	}
 	
 	public static void returnFile(String filename, OutputStream out)

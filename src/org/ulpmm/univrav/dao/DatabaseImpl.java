@@ -277,7 +277,8 @@ public class DatabaseImpl implements IDatabase {
 	public Course getCourse(int courseId) {
 		Course c = null;
 		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM course WHERE courseid = ?";
+		String sql = "SELECT * FROM course WHERE courseid = ? AND genre = ''";
+		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseId);
@@ -573,19 +574,18 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addSlide(Slide s) {
 		Connection cnt = pa.getConnection();
-		String sql = "INSERT INTO Slide(courseid, slideuri, slidetime) values(?,?,?)";
+		String sql = "INSERT INTO Slide(courseid, slidetime) values(?,?)";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, s.getCourseid());
-			pstmt.setString(2, s.getSlideuri());
-			pstmt.setInt(3, s.getSlidetime());
+			pstmt.setInt(2, s.getSlidetime());
 			if( pstmt.executeUpdate() == 0 )
-				throw new DaoException("The slide " + s + " has not been added");
+				throw new DaoException("The slide has not been added");
 			pa.disconnect();
 		}
 		catch(SQLException sqle){
-			System.out.println("Error while adding the Slide " + s);
+			System.out.println("Error while adding the Slide");
 			sqle.printStackTrace();
 		}
 	}
@@ -608,7 +608,6 @@ public class DatabaseImpl implements IDatabase {
 			while(rs.next()) {
 				l.add(new Slide(
 					rs.getInt("courseid"),
-					rs.getString("slideuri"),
 					rs.getInt("slidetime")
 				));
 			}
@@ -675,6 +674,33 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
+	 * Gets a building name by providing one of its amphis IP address
+	 * @param amphiIp the amphi IP address
+	 * @return the building name
+	 */
+	public String getBuildingName(String amphiIp) {
+		String name = "";
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT name FROM building WHERE buildingid = ( SELECT buildingid FROM amphi WHERE ipaddress = ? )";
+
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setString(1, amphiIp);
+			ResultSet rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				name = rs.getString("name");
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the building of amphi " + amphiIp);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		
+		return name;
+	}
+	
+	/**
 	 * Adds a new Amphi
 	 * @param a the amphi to add
 	 */
@@ -722,8 +748,30 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the amphi
 	 */
 	public Amphi getAmphi(String ip) {
-		// TODO Auto-generated method stub
-		return null;
+		Amphi a = null;
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * FROM amphi WHERE ipaddress = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setString(1, ip);
+			ResultSet rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				a = new Amphi(
+					rs.getInt("buildingid"),
+					rs.getString("name"),
+					rs.getString("type"),
+					rs.getString("ipaddress"),
+					rs.getBoolean("status")
+				);
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the amphi " + ip);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		
+		return a;
 	}
 	
 	/**

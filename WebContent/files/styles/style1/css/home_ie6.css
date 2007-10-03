@@ -15,17 +15,17 @@
 
 /* Div containing the images div */
 .searchImage {
-	background-image: url(../../../img/search.gif);
+	background-image: url(../img/search.gif);
 }
 
 .downloadImage {
-	background-image: url(../../../img/help.gif);
+	background-image: url(../img/help.gif);
 }
 
 .rssImage {
-	background-image: url(../../../img/rss.gif);
+	background-image: url(../img/rss.gif);
 }
 
 .helpImage {
-	background-image: url(../../../img/help.gif);
+	background-image: url(../img/help.gif);
 }

@@ -9,7 +9,6 @@
 
 <div class="searchImage">
 	<span class="searchText"><%=Messages._("Recherche", l)%></span>
-	<span class="advancedText"><%=Messages._("avanc&eacute;e", l)%></span>
 </div>
 <form method="post" action="./search">
 	<div class="criteria">
@@ -26,7 +25,7 @@
 		<!-- <br>
 		<input type="checkbox" class="cb" name="tous">Tous les cours-->
 		<br><br>
-		<img src="../files/img/arrowsearch.png" alt="arrowsearch"><input type="submit" class="submit" value=<%= "\"" + Messages._("Lancez la recherche", l) + "\""%>>
+		<img src="../files/styles/${style}/img/arrowsearch.png" alt="arrowsearch"><input type="submit" class="submit" value=<%= "\"" + Messages._("Lancez la recherche", l) + "\""%>>
 	</div>
 	<div class="criteria">
 		<label><%=Messages._("Enseignant", l)%></label>

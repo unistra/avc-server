@@ -22,6 +22,13 @@ public interface IFileSystem {
 	
 	public void rssCreation();
 	
+	/**
+	 * Creates the .ram file used by a live video
+	 * @param amphiIp the Ip address of the video amphi
+	 * @param helixServerIp the Ip address of the helix server
+	 */
+	public void createLiveVideo(String amphiIp, String helixServerIp);
+	
 	// + méthodes pour les amphis
 	
 }

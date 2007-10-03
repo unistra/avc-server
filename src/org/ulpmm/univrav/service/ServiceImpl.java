@@ -213,6 +213,15 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
+	 * Gets a building name by providing one of its amphis IP address
+	 * @param amphiIp the amphi IP address
+	 * @return the building name
+	 */
+	public synchronized String getBuildingName(String amphiIp) {
+		return db.getBuildingName(amphiIp);
+	}
+	
+	/**
 	 * Adds a new Amphi
 	 * @param a the amphi to add
 	 */
@@ -235,8 +244,7 @@ public class ServiceImpl implements IService {
 	 * @return the amphi
 	 */
 	public synchronized Amphi getAmphi(String ip) {
-		// TODO Auto-generated method stub
-		return null;
+		return db.getAmphi(ip);
 	}
 	
 	/**
@@ -255,6 +263,15 @@ public class ServiceImpl implements IService {
 	public synchronized void deleteAmphi(String ip) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	/**
+	 * Creates the .ram file used by a live video
+	 * @param amphiIp the Ip address of the video amphi
+	 * @param helixServerIp the Ip address of the helix server
+	 */
+	public void createLiveVideo(String amphiIp, String helixServerIp) {
+		fs.createLiveVideo(amphiIp, helixServerIp);
 	}
 	
 }
