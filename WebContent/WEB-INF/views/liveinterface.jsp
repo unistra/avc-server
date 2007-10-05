@@ -13,14 +13,14 @@
     
     <title><%=Messages._("Visualisation du cours", l)%></title>
 
-	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/visualization.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/visualization.css">
 	
 	<!--[if IE]>
-   		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles_ie.css" media="screen" />
+   		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
 	<![endif]-->
 	<!--[if lte IE 6]>
-		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/visualization_ie6.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/visualization_ie6.css" media="screen" />
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
@@ -31,9 +31,9 @@
 	    <div class="contents">
 	    	
 	    	<div class="amphitheatre">${building} | ${amphi}</div>  	
-	    	<a class="closeButton" href="."><%=Messages._("Fermer", l)%> <img src="../files/styles/${style}/img/close.png"></a>
+	    	<a class="closeButton" href="."><%=Messages._("Fermer", l)%> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
 	    	
-			<iframe id="DiaFrame" name="DiaFrame" width="966" height="724" scrolling="no" src="./liveslide?ip=${ip}"></iframe>
+			<iframe id="DiaFrame" name="DiaFrame" width="966" height="724" scrolling="no" src="./iframe_liveslide?ip=${ip}"></iframe>
 			<br><br>
 			<c:choose>
 				<c:when test="${type == 'audio'}">
@@ -59,10 +59,7 @@
     	</div>
 	    	
 	    <div class="footer">
-	    	<p>
-		    	<%=Messages._("R&eacute;alisation du site par ULP Multim&eacute;dia - 2007", l)%> <br>
-		    	<a href="."><%=Messages._("Contact", l)%></a> - <a href="."><%=Messages._("Informations l&eacute;gales", l)%></a> - <a href="."><%=Messages._("Liens", l)%></a>
-	    	</p>
+	    	<c:import url="include/footer.jsp" />
 	    </div>
     </div>
   </body>

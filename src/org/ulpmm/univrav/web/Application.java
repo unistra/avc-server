@@ -13,13 +13,16 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.ulpmm.univrav.dao.DaoException;
 import org.ulpmm.univrav.dao.DatabaseImpl;
@@ -38,6 +41,7 @@ import org.ulpmm.univrav.service.ServiceImpl;
 public class Application extends HttpServlet {
 
 	private ServiceImpl service;
+	private HttpSession session;
 	
 	private String coursesUrl = "http://stagiaire1.u-strasbg.fr/coursv2/";
 	private String coursesFolder = "/media/coursv2/";
@@ -77,15 +81,57 @@ public class Application extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		request.setAttribute("style", "style2");
+		/* Retrieves the current session or create a new one if no session exists */
+		session = request.getSession(true);
+		System.out.println(session.isNew());
+		System.out.println(session.getId());
+		
+		String style = null;
+		String language = null;
+		
+		/* If the session didn't exist and has just been created */
+		if( session.isNew()) {
+			/* Checks if the style and language are stored in the cookies */
+			Cookie[] cookies = request.getCookies();
+			
+			/* If the browser has not disabled cookies */
+			if( cookies != null ) {
+				for(int i=0 ; i<cookies.length ; i++) {
+					String cookieName = cookies[i].getName();
+					if( cookieName.equals("style") )
+						style=cookies[i].getValue();
+					else if( cookieName.equals("language") ) 
+						language = cookies[i].getValue();
+				}
+			}
+			
+			/* If not, store the default values in the cookies */
+			if( style == null) {
+				style = "style1";
+				Cookie styleCookie = new Cookie("style", style);
+				styleCookie.setMaxAge(31536000);
+				response.addCookie(styleCookie);
+			}
+			
+			/* Store them in the session */
+			session.setAttribute("style", style);
+		}
+		else {
+			/* Retrieves the style and language from the session */
+			/*String style = (String) session.getAttribute("style");
+			if( style == null ) {
+				style = "style1";
+			}*/
+		}
 		
 		String page = request.getPathInfo();
 		
 		if( page == null )
 			page = "/home";
 		
-		if( page.equals("/home"))
+		if( page.equals("/home")){
 			displayHomePage(request, response);
+		}
 		else if( page.equals("/live"))
 			displayLivePage(request, response);
 		else if( page.equals("/recorded"))
@@ -94,22 +140,32 @@ public class Application extends HttpServlet {
 			displaySearchResults(request, response);
 		else if( page.equals("/add"))
 			addCourse(request, response);
-		else if( page.equals("/codeform")) {
-			request.setAttribute("id", request.getParameter("id"));
-			request.setAttribute("type", request.getParameter("type"));
-			getServletContext().getRequestDispatcher("/WEB-INF/views/include/codeform.jsp").forward(request, response);
-		}
 		else if( page.equals("/courseaccess")) {
 			courseAccess(request, response);
 		}
 		else if( page.equals("/liveaccess")) {
 			liveAccess(request, response);
 		}
-		else if( page.equals("/liveslide")) {
-			liveSlide(request, response);
-		}
 		else if( page.equals("/help")) {
+			/* Saves the page for the style selection thickbox return */
+			session.setAttribute("previousPage", "/help");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/help.jsp").forward(request, response);
+		}
+		else if( page.equals("/changestyle")) {
+			changeStyle(request, response);
+		}
+		else if( page.equals("/thick_codeform")) {
+			request.setAttribute("id", request.getParameter("id"));
+			request.setAttribute("type", request.getParameter("type"));
+			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_codeform.jsp").forward(request, response);
+		}
+		else if( page.equals("/thick_styles")) {
+			List<String> styles = service.getStyles(getServletContext().getRealPath("/") + "files/styles/");
+			request.setAttribute("styles", styles );
+			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_styles.jsp").forward(request, response);
+		}
+		else if( page.equals("/iframe_liveslide")) {
+			liveSlide(request, response);
 		}
 		else
 			displayHomePage(request, response);
@@ -137,6 +193,10 @@ public class Application extends HttpServlet {
 		request.setAttribute("teachers", service.getTeachers());
 		request.setAttribute("formations", service.getFormations());
 		request.setAttribute("courses", service.getNLastCourses(3));
+		
+		/* Saves the page for the style selection thickbox return */
+		session.setAttribute("previousPage", "/home");
+		
 		// affichage de la vue [list]
 		getServletContext().getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
 	}
@@ -145,6 +205,10 @@ public class Application extends HttpServlet {
 		throws ServletException, IOException {  
 		// le modèle de la vue [list]  
 		request.setAttribute("buildings", service.getBuildings());
+		
+		/* Saves the page for the style selection thickbox return */
+		session.setAttribute("previousPage", "/live");
+		
 		// affichage de la vue [list] 
 		getServletContext().getRequestDispatcher("/WEB-INF/views/live.jsp").forward(request, response);
 	}
@@ -154,22 +218,26 @@ public class Application extends HttpServlet {
 		
 		int courseNumber = 5;
 		int start = 0;
+		int pageNumber;
 		
 		// le modèle de la vue [list]
 		if( request.getParameter("page") != null) {
-			int pageNumber = Integer.parseInt( request.getParameter("page"));
+			pageNumber = Integer.parseInt( request.getParameter("page"));
 			start = courseNumber * (pageNumber - 1) ;
-			request.setAttribute("page", pageNumber);
 		}
 		else
-			request.setAttribute("page", 1);
+			pageNumber = 1;
 		
+		request.setAttribute("page", pageNumber);
 		request.setAttribute("teachers", service.getTeachers());
 		request.setAttribute("formations", service.getFormations());
 		request.setAttribute("courses", service.getCourses(courseNumber, start));
 		request.setAttribute("items", service.getCourseNumber());
 		request.setAttribute("number", courseNumber);
 		request.setAttribute("resultPage", "recorded");
+		
+		/* Saves the page for the style selection thickbox return */
+		session.setAttribute("previousPage", "/recorded?page=" + pageNumber);
 		
 		// affichage de la vue [list]
 		getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
@@ -180,61 +248,78 @@ public class Application extends HttpServlet {
 		
 		int courseNumber = 5;
 		int start = 0;
+		int pageNumber;
 		
 		HashMap<String, String> params = new HashMap<String, String>();
-		System.out.println(request.getParameter("audio"));
 		
-		if( /*request.getMethod()*/ request.getParameter("page") == null) {
+		if( request.getMethod().equals("POST")) { // The form has just been posted
 			
-			if( request.getParameter("audio") != null && request.getParameter("video") == null ) { 
+			pageNumber = 1;
+			System.out.println("enregistrement parametres");
+			
+			/* Puts the search paramaters in a HashMap object */
+			if( request.getParameter("audio") != null && request.getParameter("video") == null ) 
 				params.put("type", "audio");
-				request.setAttribute("audio", "checked");
-			}
-			else if( request.getParameter("audio") == null && request.getParameter("video") != null ) {
+			else if( request.getParameter("audio") == null && request.getParameter("video") != null ) 
 				params.put("type", "video");
-				request.setAttribute("video", "checked");
-			}
-			else if( request.getParameter("audio") != null && request.getParameter("video") != null ) {
-				request.setAttribute("audio", "checked");
-				request.setAttribute("video", "checked");
-			}
-			else
+			else if( request.getParameter("audio") == null && request.getParameter("video") == null ) 
 				params.put("type", "");
 			
-			if( request.getParameter("name") != null && ! request.getParameter("name").equals("*") ) {
+			if( request.getParameter("name") != null && ! request.getParameter("name").equals("*") ) 
 				params.put("name", request.getParameter("name"));
-				request.setAttribute("nameSelected", request.getParameter("name"));
-			}
 			
-			if( request.getParameter("formation") != null && ! request.getParameter("formation").equals("*") ) {
+			if( request.getParameter("formation") != null && ! request.getParameter("formation").equals("*") ) 
 				params.put("formation", request.getParameter("formation"));
-				request.setAttribute("formationSelected", request.getParameter("formation"));
+			
+			/* Saves the hashmap in the session */
+			session.setAttribute("params", params);
+		}
+		else { // The user has clicked on a pagination link
+			
+			pageNumber = Integer.parseInt( request.getParameter("page"));
+			start = courseNumber * (pageNumber - 1) ;
+			
+			params = (HashMap<String, String>) session.getAttribute("params");
+		}
+		
+		if( params != null) {
+			/* Saves the parameters of the form */
+			if( params.get("type") == null ) { 
+				request.setAttribute("audio", "checked");
+				request.setAttribute("video", "checked");
+			}
+			else if( (params.get("type")).equals("audio") ) {
+				request.setAttribute("audio", "checked");
+			}
+			else if( (params.get("type")).equals("video") ) {
+				request.setAttribute("video", "checked");
 			}
 			
-			request.setAttribute("page", 1);
-		}
-		else {
-			int pageNumber = Integer.parseInt( request.getParameter("page"));
-			start = courseNumber * (pageNumber - 1) ;
+			if( params.get("name") != null && ! params.get("name").equals("*") ) {
+				request.setAttribute("nameSelected", params.get("name"));
+			}
+			
+			if( params.get("formation") != null && ! params.get("formation").equals("*") ) {
+				request.setAttribute("formationSelected", params.get("formation"));
+			}
+			
 			request.setAttribute("page", pageNumber);
+			request.setAttribute("teachers", service.getTeachers());
+			request.setAttribute("formations", service.getFormations());
+			request.setAttribute("courses", service.getCourses(params, courseNumber, start));
+			request.setAttribute("items", service.getCourseNumber(params));
+			request.setAttribute("number", courseNumber);
+			request.setAttribute("resultPage", "search");
+			
+			/* Saves the page for the style selection thickbox return */
+			session.setAttribute("previousPage", "/recorded?page=" + pageNumber);
+			
+			// affichage de la vue [list]
+			getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
 		}
-		
-		/*Enumeration<String> e = request.getParameterNames();
-
-		while( e.hasMoreElements())
-			System.out.println(e.nextElement());
-		
-		System.out.println(request.getParameter("type"));*/
-		
-		request.setAttribute("teachers", service.getTeachers());
-		request.setAttribute("formations", service.getFormations());
-		request.setAttribute("courses", service.getCourses(params, courseNumber, start));
-		request.setAttribute("items", service.getCourseNumber(params));
-		request.setAttribute("number", courseNumber);
-		request.setAttribute("resultPage", "search");
-		
-		// affichage de la vue [list]
-		getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
+		else { // if the session is not valid anymore
+			response.sendRedirect("./recorded");
+		}
 	}
 	
 	private void addCourse(HttpServletRequest request, HttpServletResponse response)
@@ -349,6 +434,7 @@ public class Application extends HttpServlet {
 			if( type.equals("real")) {
 				//redirection interface
 				request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
+				request.setAttribute("slidesurl", coursesUrl + c.getMediaFolder() + "/screenshots/");
 				List<Slide> slides = service.getSlides(c.getCourseid());
 				request.setAttribute("slides", slides);
 				Amphi a = service.getAmphi(c.getIpaddress());
@@ -370,6 +456,11 @@ public class Application extends HttpServlet {
 				// Envoi du fichier.
 				OutputStream out = response.getOutputStream();
 				returnFile(filename, out);
+				
+				/*String previousPage = (String) request.getSession().getAttribute("previousPage");
+				if( previousPage == null)
+					previousPage = "/home";
+				response.sendRedirect("." + previousPage);*/
 			}
 		}
 		catch(DaoException de) {
@@ -412,7 +503,24 @@ public class Application extends HttpServlet {
 		request.setAttribute("ip", ip);
 		request.setAttribute("url", url);
 		
-		getServletContext().getRequestDispatcher("/WEB-INF/views/include/liveslide.jsp").forward(request, response);
+		getServletContext().getRequestDispatcher("/WEB-INF/views/include/iframe_liveslide.jsp").forward(request, response);
+	}
+	
+	private void changeStyle(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		String style = request.getParameter("style");
+		/* Store the style in the session */
+		session.setAttribute("style", style);
+		/* Store the style in the cookies */
+		Cookie styleCookie = new Cookie("style", style);
+		styleCookie.setMaxAge(31536000);
+		response.addCookie(styleCookie);
+		
+		/* Returns to the page before the thickbox call (stored in the session) */
+		String previousPage = (String) session.getAttribute("previousPage");
+		if( previousPage == null)
+			previousPage = "/home";
+		response.sendRedirect(response.encodeRedirectURL("." + previousPage));
 	}
 	
 	public static void returnFile(String filename, OutputStream out)

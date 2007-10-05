@@ -1,4 +1,5 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:directive.page import="org.ulpmm.univrav.language.Messages"/>
 <jsp:directive.page import="java.util.Locale"/>
 
@@ -12,20 +13,22 @@
     
     <title><%=Messages._("Visualisation du cours", l)%></title>
 
-	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/visualization.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/visualization.css">
 	
 	<!--[if IE]>
-   		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles_ie.css" media="screen" />
+   		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
 	<![endif]-->
 	<!--[if lte IE 6]>
-		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/visualization_ie6.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/visualization_ie6.css" media="screen" />
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
 	<script type="text/javascript" src="../files/js/recordinterface.js"></script>
 	<script type="text/javascript">
 		var timecodes = ${slides};
+		var style = "${sessionScope.style}";
+		var slidesurl = "${slidesurl}";
 	</script>
 
   </head>
@@ -36,7 +39,7 @@
 	    	
 	    	<div class="amphitheatre">${building} | ${amphi}</div>
 	    	
-	    	<a class="closeButton" href="."><%=Messages._("Fermer", l)%> <img src="../files/styles/${style}/img/close.png"></a>
+	    	<a class="closeButton" href="."><%=Messages._("Fermer", l)%> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
 	    	
 			<div class="smil">
 				<object name="video" classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="970" height="550">
@@ -78,10 +81,7 @@
     	</div>
 	    	
 	    <div class="footer">
-	    	<p>
-		    	<%=Messages._("R&eacute;alisation du site par ULP Multim&eacute;dia - 2007", l)%> <br>
-		    	<a href="."><%=Messages._("Contact", l)%></a> - <a href="."><%=Messages._("Informations l&eacute;gales", l)%></a> - <a href="."><%=Messages._("Liens", l)%></a>
-	    	</p>
+	    	<c:import url="include/footer.jsp" />
 	    </div>
     </div>
   </body>

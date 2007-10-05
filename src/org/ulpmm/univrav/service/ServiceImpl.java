@@ -274,4 +274,13 @@ public class ServiceImpl implements IService {
 		fs.createLiveVideo(amphiIp, helixServerIp);
 	}
 	
+	/**
+	 * Retrieves a list of the website's available themes
+	 * @param stylesFolder the folder in which the themes are stored
+	 * @return the list of themes
+	 */
+	public List<String> getStyles(String stylesFolder) {
+		return fs.getStyles(stylesFolder);
+	}
+	
 }

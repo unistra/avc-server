@@ -11,8 +11,10 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.ulpmm.univrav.entities.Course;
 
@@ -127,6 +129,16 @@ public class FileSystemImpl implements IFileSystem {
 				ioe.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * Retrieves a list of the website's available themes
+	 * @param stylesFolder the folder in which the themes are stored
+	 * @return the list of themes
+	 */
+	public List<String> getStyles(String stylesFolder) {
+		File f = new File(stylesFolder);
+		return Arrays.asList(f.list());
 	}
 	
 	/**
