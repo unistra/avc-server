@@ -57,26 +57,24 @@ public class PaginationTag extends TagSupport {
 			
 		}
 		
-		/* Sets the parameters */
-		Map<String, String[]> parameters = pageContext.getRequest().getParameterMap();
-		String params = "";
-		for(Entry<String, String[]> entry : parameters.entrySet()) {
-		    params += "&" + entry.getKey() + "=" + entry.getValue()[0];
-		}
+		/* Sets url rewriting to keep the session if the browser has disabled cookies */
+		String sessionId = "";
+		sessionId = ";jsessionid=" + pageContext.getSession().getId();
+		
 
 		/* Displays the links to the different pages */
 		try {
 			JspWriter out = pageContext.getOut();
 			
 			/* Link to the first page */
-			out.println("<a href=\"" + resultPageName + "?page=1" + params + "\">&lt;&lt;</a>&nbsp;");
+			out.println("<a href=\"" + resultPageName + sessionId + "?page=1" + "\">&lt;&lt;</a>&nbsp;");
 			
 			/* Links with page numbers to the pages */
 			for( int i=begin ; i<= end ; i++)
-				out.println((i != currentPage ? "<a href=\"" + resultPageName + "?page=" + i + params + "\">" : "<b>") + i + (i != currentPage ? "</a>" : "</b>") +"&nbsp;");
+				out.println((i != currentPage ? "<a href=\"" + resultPageName + sessionId + "?page=" + i + "\">" : "<b>") + i + (i != currentPage ? "</a>" : "</b>") +"&nbsp;");
 			
 			/* Link to the last page */
-			out.println("<a href=\"" + resultPageName + "?page=" + pagesNumber + params + "\">&gt;&gt;</a>&nbsp;");
+			out.println("<a href=\"" + resultPageName + sessionId + "?page=" + pagesNumber + "\">&gt;&gt;</a>&nbsp;");
 		}
 		catch(IOException ioe){
 			ioe.printStackTrace();

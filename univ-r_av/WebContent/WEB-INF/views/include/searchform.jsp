@@ -10,7 +10,7 @@
 <div class="searchImage">
 	<span class="searchText"><%=Messages._("Recherche", l)%></span>
 </div>
-<form method="post" action="./search">
+<form method="post" action="<c:url value="./search" />">
 	<div class="criteria">
 		<fieldset>
 			<legend><%=Messages._("Type de cours", l)%></legend>
@@ -25,7 +25,7 @@
 		<!-- <br>
 		<input type="checkbox" class="cb" name="tous">Tous les cours-->
 		<br><br>
-		<img src="../files/styles/${style}/img/arrowsearch.png" alt="arrowsearch"><input type="submit" class="submit" value=<%= "\"" + Messages._("Lancez la recherche", l) + "\""%>>
+		<img src="../files/styles/${sessionScope.style}/img/arrowsearch.png" alt="arrowsearch"><input type="submit" class="submit" value=<%= "\"" + Messages._("Lancez la recherche", l) + "\""%>>
 	</div>
 	<div class="criteria">
 		<label><%=Messages._("Enseignant", l)%></label>
@@ -35,7 +35,7 @@
 				<c:if test="${nameSelected == teacher[0]}">
 					<c:set var="selected" value="selected" />
 				</c:if>
-				<option value="${teacher[0]}" ${selected} }>${teacher[0]} ${teacher[1]}</option>
+				<option value="${teacher[0]}" ${selected}>${teacher[0]} ${teacher[1]}</option>
 				<c:remove var="selected"/>
 			</c:forEach>
 		</select>

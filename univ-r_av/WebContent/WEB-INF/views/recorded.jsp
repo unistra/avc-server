@@ -15,16 +15,16 @@
     <title><%=Messages._("Cours enregistr&eacute;s", l)%></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
-	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/recorded.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/searchform.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/courselist.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/recorded.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/searchform.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/courselist.css">
 	
 	<!--[if IE]>
-   		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/styles_ie.css" media="screen" />
+   		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
 	<![endif]-->
 	<!--[if lte IE 6]>
-		<link rel="stylesheet" type="text/css" href="../files/styles/${style}/css/recorded_ie6.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/recorded_ie6.css" media="screen" />
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
@@ -37,15 +37,7 @@
   <body>
     <div class="main">
 	    <div class="banner">
-	    	<a class="bannerPageZone" href=".."></a>
-	    	<a class="ulpmmZone" href="http://ulpmultimedia.u-strasbg.fr/" target="external"></a>
-	    	<a class="ulpZone" href="http://www-ulp.u-strasbg.fr/" target="external"></a>
-	    	<div class="live">
-	    		<a class="liveZone" href="./live"><%=Messages._("Direct", l)%></a>
-	    	</div>
-	    	<div class="recorded">
-	    		<a class="recordedZone" href="./recorded"><%=Messages._("Enregistr&eacute;", l)%></a>
-	    	</div>
+	    	<c:import url="include/banner.jsp" />
 	    </div>
 	    <div class="contents">
 	    	<div class="search">
@@ -62,10 +54,7 @@
     	</div>
 	    	
 	    <div class="footer">
-	    	<p>
-		    	<%=Messages._("R&eacute;alisation du site par ULP Multim&eacute;dia - 2007", l)%> <br>
-		    	<a href="."><%=Messages._("Contact", l)%></a> - <a href="."><%=Messages._("Informations l&eacute;gales", l)%></a> - <a href="."><%=Messages._("Liens", l)%></a>
-	    	</p>
+	    	<c:import url="include/footer.jsp" />
 	    </div>
     </div>
   </body>
