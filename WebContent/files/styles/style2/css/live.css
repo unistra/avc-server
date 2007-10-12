@@ -39,11 +39,6 @@
 	padding-bottom: 2005px;
 }
 
-/* Div of the building name text */
-.buildingName {
-	color: #5284FD;
-}
-
 /* "building" div table */
 table {
 	width: 100%;
@@ -52,7 +47,6 @@ table {
 }
 
 th {
-	background-color: #5284FD;
 	width: 50%;
 	font-size: 12px;
 }

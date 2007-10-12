@@ -138,3 +138,12 @@ a {
 	text-decoration: none;
 	color: #FF9602;
 }
+
+/* Defines the colors of the different elements */
+a, .linkText, .helpText, h5, .buildingName, .searchText {
+	color: #FF9602;
+}
+
+th {
+	background-color: #FF9602;
+}

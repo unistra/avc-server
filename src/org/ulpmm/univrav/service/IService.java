@@ -1,8 +1,22 @@
 package org.ulpmm.univrav.service;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.ulpmm.univrav.dao.DaoException;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
@@ -21,6 +35,12 @@ public interface IService {
 	 * @return the list of courses
 	 */
 	public List<Course> getAllCourses();
+	
+	/**
+	 * Gets a list of all the courses without an access code
+	 * @return the list of courses
+	 */
+	public List<Course> getAllUnlockedCourses();
 	
 	/**
 	 * Gets a list of the n last courses
@@ -45,6 +65,13 @@ public interface IService {
 	 * @return the list of courses
 	 */
 	public List<Course> getCourses(HashMap<String, String> params, int number, int start);
+	
+	/**
+	 * Gets the list of courses without access code for a teacher
+	 * @param teacher the teacher
+	 * @return the list of courses
+	 */
+	public List<Course> getUnlockedCourses(String[] teacher);
 	
 	/**
 	 * Gets a course by providing its id
@@ -99,17 +126,23 @@ public interface IService {
 	public List<String[]> getTeachers();
 	
 	/**
+	 * Gets the list of all the teachers who have at least one course with no access code
+	 * @return the list of teachers
+	 */
+	public List<String[]> getTeachersWithRss();
+	
+	/**
 	 * Gets the list of all the formations
 	 * @return the list of formations
 	 */
 	public List<String> getFormations();
 	
-	
 	/**
-	 * Adds the slides of a course
-	 * @param s the slide to add
+	 * Increments the number of consultations for a course
+	 * @param c the course
 	 */
-	//public void addSlides(int courseid);
+	public void incrementConsultations(Course c);
+	
 	
 	/**
 	 * Gets the slides of a course
@@ -164,10 +197,33 @@ public interface IService {
 	public void modifyAmphi(Amphi a);
 	
 	/**
+	 * Sets the status of the live in an amphi
+	 * @param ip the IP address of the amphi
+	 * @param status the status od the live in the amphi
+	 */
+	public void setAmphiStatus(String ip, boolean status);
+	
+	/**
 	 * Deletes an amphi by providing its id
 	 * @param id the id of the amphi
 	 */
 	public void deleteAmphi(String id);
+	
+	/**
+	 * Creates a RSS files for a list of courses
+	 * @param courses the list of courses
+	 * @param filePath the full path of the RSS file to create
+	 * @param rssTitle the title of the RSS file
+	 * @param rssDescription the description of the RSS file
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image file
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS file
+	 * @throws ParserConfigurationException
+	 */
+	public void rssCreation( List<Course> courses, String filePath, String rssTitle, 
+			String rssDescription, String serverUrl, String rssImageUrl, 
+			String recordedInterfaceUrl, String language );
 	
 	/**
 	 * Creates the .ram file used by a live video
@@ -182,4 +238,18 @@ public interface IService {
 	 * @return the list of themes
 	 */
 	public List<String> getStyles(String stylesFolder);
+	
+	/**
+	 * Retrieves a list of the website's available languages
+	 * @param languagesFolder the folder in which the language property files are stored
+	 * @return the list of languages
+	 */
+	public List<String> getLanguages(String languagesFolder);
+	
+	/**
+	 * Sends a file to the client's browser
+	 * @param filename the name of the file to send
+	 * @param out the stream in which send the file
+	 */
+	public void returnFile(String filename, OutputStream out);
 }

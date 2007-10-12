@@ -17,10 +17,12 @@ import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
 
 public class DatabaseImpl implements IDatabase {
-
-	// Singleton à virer dans cette classe ????
 	
-	private static PgsqlAccess pa = PgsqlAccess.getInstance();
+	private static PgsqlAccess pa;
+	
+	public DatabaseImpl(String host, String port, String database, String user, String password) {
+		pa = new PgsqlAccess(host, port, database, user, password);
+	}
 	
 	/**
 	 * Adds a new course
@@ -55,26 +57,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while adding the new Course " + c);
 			sqle.printStackTrace();
 		}
-		
-		/*pa.connect();
-		String query = "INSERT INTO course values(";
-		query+= c.getCourseid() + ",'";
-		query+= c.getDate() + "','";
-		query+= c.getType() + "','";
-		query+= c.getTitle() + "','";
-		query+= c.getDescription() + "','";
-		query+= c.getFormation() + "','";
-		query+= c.getName() + "','";
-		query+= c.getFirstname() + "','";
-		query+= c.getIpaddress() + "',";
-		query+= c.getDuration() + ",'";
-		query+= c.getGenre() + "',";
-		query+= c.isVisible() + ",";
-		query+= c.getConsultations() + ",'";
-		query+= c.getTiming() + "')";
-		if( pa.update(query) )
-			throw new RuntimeException("Error while adding the new course");
-		pa.disconnect();*/
 	}
 	
 	/**
@@ -116,13 +98,51 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
+	 * Gets a list of all the courses without an access code
+	 * @return the list of courses
+	 */
+	public List<Course> getAllUnlockedCourses() {
+		pa.connect();
+		ResultSet rs = pa.query("SELECT * From course WHERE genre = '' ORDER BY date DESC");
+		List<Course> l = new ArrayList<Course>();
+		try {
+			while(rs.next()) {
+				l.add(new Course(
+					rs.getInt("courseid"),
+					rs.getTimestamp("date"),
+					rs.getString("type"),
+					rs.getString("title"),
+					rs.getString("description"),
+					rs.getString("formation"),
+					rs.getString("name"),
+					rs.getString("firstname"),
+					rs.getString("ipaddress"),
+					rs.getInt("duration"),
+					rs.getString("genre"),
+					rs.getBoolean("visible"),
+					rs.getInt("consultations"),
+					rs.getString("timing"),
+					rs.getString("mediaFolder")
+				));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the courses list");
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		return l;
+	}
+	
+	/**
 	 * Gets a list of the n last courses
 	 * @param n the number of courses to return
 	 * @return the list of courses
 	 */
 	public List<Course> getNLastCourses(int n) {
 		pa.connect();
-		ResultSet rs = pa.query("SELECT * From course ORDER BY date DESC LIMIT " + n);
+		ResultSet rs = pa.query("SELECT * From course WHERE genre = '' ORDER BY date DESC LIMIT " + n);
 		List<Course> l = new ArrayList<Course>();
 		try {
 			while(rs.next()) {
@@ -265,6 +285,56 @@ public class DatabaseImpl implements IDatabase {
 		}
 		else
 			l = getCourses(number, start);
+		
+		return l;
+	}
+	
+	/**
+	 * Gets the list of courses without access code for a teacher
+	 * @param teacher the teacher
+	 * @return the list of courses
+	 */
+	public List<Course> getUnlockedCourses(String[] teacher) {
+		
+		List<Course> l = new ArrayList<Course>();
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * FROM course WHERE name = ? AND firstname = ? AND genre = ''";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setString(1, teacher[0]);
+			pstmt.setString(2, teacher[1]);
+			ResultSet rs = pstmt.executeQuery();
+			
+			/* Retrieves the records */
+			while(rs.next()) {
+				l.add(new Course(
+						rs.getInt("courseid"),
+						rs.getTimestamp("date"),
+						rs.getString("type"),
+						rs.getString("title"),
+						rs.getString("description"),
+						rs.getString("formation"),
+						rs.getString("name"),
+						rs.getString("firstname"),
+						rs.getString("ipaddress"),
+						rs.getInt("duration"),
+						rs.getString("genre"),
+						rs.getBoolean("visible"),
+						rs.getInt("consultations"),
+						rs.getString("timing"),
+						rs.getString("mediaFolder")
+				));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the courses list for the teacher " 
+					+ teacher[0] + " " + teacher[1]);
+			sqle.printStackTrace();
+		}
+		
+		pa.disconnect();
 		
 		return l;
 	}
@@ -546,6 +616,31 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
+	 * Gets the list of all the teachers who have at least one course with no access code
+	 * @return the list of teachers
+	 */
+	public List<String[]> getTeachersWithRss() {
+		List<String[]> l = new ArrayList<String[]>();
+		
+		pa.connect();
+		ResultSet rs = pa.query("SELECT DISTINCT name, firstname FROM course WHERE genre = '' ");
+		try {
+			while( rs.next() ) {
+				String[] t = new String[2];
+				t[0]= rs.getString("name");
+				t[1]= rs.getString("firstname");
+				l.add(t);
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the teachers list");
+			sqle.printStackTrace();
+		}
+		
+		return l;
+	}
+	
+	/**
 	 * Gets the list of all the formations
 	 * @return the list of formations
 	 */
@@ -567,6 +662,29 @@ public class DatabaseImpl implements IDatabase {
 		return l;
 	}
 	
+	/**
+	 * Increments the number of consultations for a course
+	 * @param c the course
+	 */
+	public void incrementConsultations(Course c) {
+		int consultations = c.getConsultations() + 1;
+		
+		Connection cnt = pa.getConnection();
+		String sql = "UPDATE course SET consultations = ? WHERE courseid = ? ";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, consultations);
+			pstmt.setInt(2, c.getCourseid());
+			if( pstmt.executeUpdate() == 0 )
+				throw new DaoException("The consultations have not been incremented");
+			pa.disconnect();
+		}
+		catch(SQLException sqle){
+			System.out.println("Error while incrementing the consultations");
+			sqle.printStackTrace();
+		}
+	}
 	
 	/**
 	 * Adds a new slide
@@ -792,7 +910,28 @@ public class DatabaseImpl implements IDatabase {
 		
 	}
 	
-	
+	/**
+	 * Sets the status of the live in an amphi
+	 * @param ip the IP address of the amphi
+	 * @param status the status od the live in the amphi
+	 */
+	public void setAmphiStatus(String ip, boolean status) {
+		Connection cnt = pa.getConnection();
+		String sql = "UPDATE amphi SET status = ? WHERE ipaddress = ? ";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setBoolean(1, status);
+			pstmt.setString(2, ip);
+			if( pstmt.executeUpdate() == 0)
+				throw new DaoException("The status of the amphi has not been changed");
+			
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while updating the status of the amphi " + ip);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+	}
 	
 	
 	

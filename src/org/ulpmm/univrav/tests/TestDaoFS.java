@@ -17,15 +17,15 @@ public class TestDaoFS extends TestCase {
 		
 		System.out.println(System.getProperties().getProperty("user.dir"));
 		
-		Course c = new Course(5,new Timestamp(new Date().getTime()),"","Test Junit FS","Test d'ajout de cours sur le syst. de fichiers","essai","Kieffer","Laurent",
+		/*Course c = new Course(5,new Timestamp(new Date().getTime()),"","Test Junit FS","Test d'ajout de cours sur le syst. de fichiers","essai","Kieffer","Laurent",
 				"127.0.0.1",0,"suppression",true,0,"n-1");
 		Course c2 = new Course(6,new Timestamp(new Date().getTime()),"","Test Junit FS","Test d'ajout de cours sur le syst. de fichiers","essai","Kieffer","Laurent",
-				"127.0.0.1",0,"suppression",true,0,"n");
+				"127.0.0.1",0,"suppression",true,0,"n");*/
 		
 		fs = new FileSystemImpl("scripts");
-		fs.addCourse(c,"2007-03-27-16h-33m-30s.tar");
+		//fs.addCourse(c,"2007-03-27-16h-33m-30s.tar");
 		
 		fs = new FileSystemImpl("scripts");
-		fs.addCourse(c2,"2007-01-29-17h-36m-35s.zip");
+		//fs.addCourse(c2,"2007-01-29-17h-36m-35s.zip");
 	}
 }

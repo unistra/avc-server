@@ -128,8 +128,11 @@ a img {
 	border: 0px;
 }
 
-/* Links style */
-a {
-	text-decoration: none;
+/* Defines the colors of the different elements */
+a, .linkText, .helpText, h5, .buildingName, .searchText {
 	color: #5284FD;
+}
+
+th {
+	background-color: #5284FD;;
 }

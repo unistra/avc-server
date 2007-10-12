@@ -1,5 +1,8 @@
 package org.ulpmm.univrav.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,6 +24,12 @@ public interface IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getAllCourses();
+	
+	/**
+	 * Gets a list of all the courses without an access code
+	 * @return the list of courses
+	 */
+	public List<Course> getAllUnlockedCourses();
 	
 	/**
 	 * Gets a list of the n last courses
@@ -45,6 +54,13 @@ public interface IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getCourses(HashMap<String, String> params, int number, int start);
+	
+	/**
+	 * Gets the list of courses without access code for a teacher
+	 * @param teacher the teacher
+	 * @return the list of courses
+	 */
+	public List<Course> getUnlockedCourses(String[] teacher);
 	
 	/**
 	 * Gets a course by providing its id
@@ -99,10 +115,22 @@ public interface IDatabase {
 	public List<String[]> getTeachers();
 	
 	/**
+	 * Gets the list of all the teachers who have at least one course with no access code
+	 * @return the list of teachers
+	 */
+	public List<String[]> getTeachersWithRss();
+	
+	/**
 	 * Gets the list of all the formations
 	 * @return the list of formations
 	 */
 	public List<String> getFormations();
+	
+	/**
+	 * Increments the number of consultations for a course
+	 * @param c the course
+	 */
+	public void incrementConsultations(Course c);
 	
 	
 	/**
@@ -163,6 +191,13 @@ public interface IDatabase {
 	 * @param a the amphi to modify
 	 */
 	public void modifyAmphi(Amphi a);
+	
+	/**
+	 * Sets the status of the live in an amphi
+	 * @param ip the IP address of the amphi
+	 * @param status the status od the live in the amphi
+	 */
+	public void setAmphiStatus(String ip, boolean status);
 	
 	/**
 	 * Deletes an amphi by providing its id

@@ -17,4 +17,10 @@
 		<exception-type>java.lang.Exception</exception-type>
 		<location>/exception.jsp</location>
 	</error-page>
+	<!-- Use english as the default locale -->
+	<context-param>
+		<param-name>javax.servlet.jsp.jstl.fmt.fallbackLocale</param-name>
+		<param-value>en</param-value>
+	</context-param>
+	
 </web-app>

@@ -1,17 +1,15 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<jsp:directive.page import="org.ulpmm.univrav.language.Messages"/>
-<jsp:directive.page import="java.util.Locale"/>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%
-	Locale l = request.getLocale();
-%>
+<fmt:setLocale value="${sessionScope.language}"/>
+<fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
     
-    <title><%=Messages._("Cours en direct", l)%></title>
+    <title><fmt:message key="Cours en direct"/></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
@@ -49,8 +47,8 @@
 				    	<p class="buildingName"><c:out value="${building.name}" /></p>
 				    	<table>
 				    		<tr>
-				    			<th><%=Messages._("Salle", l)%></th>
-				    			<th><%=Messages._("Enregistrement", l)%></th>
+				    			<th><fmt:message key="Salle"/></th>
+				    			<th><fmt:message key="Enregistrement"/></th>
 				    		</tr>
 				    		
 				    		<c:set var="class" value="row1" />
@@ -62,11 +60,11 @@
 					    			<c:choose>
 					    				<c:when test="${amphi.status == true}">
 											<td> <img src="../files/styles/${sessionScope.style}/img/amphi_icon.png" alt="amphi_icon"> <a href="${liveaccess}"> <c:out value="${amphi.name}"/> </a> </td>
-											<td> <img src="../files/styles/${sessionScope.style}/img/chip_direct_on.png" alt="chip_direct_on"> <%=Messages._("En cours", l)%> </td>
+											<td> <img src="../files/styles/${sessionScope.style}/img/chip_direct_on.png" alt="chip_direct_on"><fmt:message key="En cours"/> </td>
 										</c:when>
 										<c:otherwise>
 											<td> <img src="../files/styles/${sessionScope.style}/img/amphi_icon.png" alt="amphi_icon"> <c:out value="${amphi.name}" /> </td>
-											<td> <img src="../files/styles/${sessionScope.style}/img/chip_direct.png" alt="chip_direct"> <%=Messages._("En attente", l)%> </td>
+											<td> <img src="../files/styles/${sessionScope.style}/img/chip_direct.png" alt="chip_direct"><fmt:message key="En attente"/> </td>
 										</c:otherwise>
 					    			</c:choose>
 					    		</tr>

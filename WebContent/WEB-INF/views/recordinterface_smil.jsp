@@ -1,17 +1,15 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<jsp:directive.page import="org.ulpmm.univrav.language.Messages"/>
-<jsp:directive.page import="java.util.Locale"/>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%
-	Locale l = request.getLocale();
-%>
+<fmt:setLocale value="${sessionScope.language}"/>
+<fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
     
-    <title><%=Messages._("Visualisation du cours", l)%></title>
+    <title><fmt:message key="Visualisation du cours"/></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/visualization.css">
@@ -39,7 +37,7 @@
 	    	
 	    	<div class="amphitheatre">${building} | ${amphi}</div>
 	    	
-	    	<a class="closeButton" href="."><%=Messages._("Fermer", l)%> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
+	    	<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
 	    	
 			<div class="smil">
 				<object name="video" classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="970" height="550">
@@ -72,9 +70,9 @@
 			<div id="pagination">
 				<a class="leftPagination" href="javascript:previousPage()">&lt;&lt;</a>
 				<div class="rightPagination">
-				<%=Messages._("Page", l)%> <span id="pageNumber"></span>
+				<fmt:message key="Page"/> <span id="pageNumber"></span>
 				<a href="javascript:nextPage()">&gt;&gt;</a>
-				| <%=Messages._("diapositive", l)%> <span id="slideNumber"></span>
+				| <fmt:message key="diapositive"/> <span id="slideNumber"></span>
 				</div>
 			</div>
 

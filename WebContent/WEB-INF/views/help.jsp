@@ -1,7 +1,11 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:directive.page import="org.ulpmm.univrav.language.Messages"/>
 <jsp:directive.page import="java.util.Locale"/>
+
+<fmt:setLocale value="${sessionScope.language}"/>
+<fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
 <%
 	Locale l = request.getLocale();
@@ -11,7 +15,7 @@
 <html>
   <head>
     
-    <title><%=Messages._("Aide", l)%></title>
+    <title><fmt:message key="Aide"/></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
@@ -36,8 +40,8 @@
 		    </div>
 		    <div class="contents">
 		    	<div class="helpImage">
-		    		<span class="helpText"><%=Messages._("Aide", l)%></span>
-	    			<span class="useText"><%=Messages._("Utilisation d'Univ-R AV", l)%></span>
+		    		<span class="helpText"><fmt:message key="Aide"/></span>
+	    			<span class="useText"><fmt:message key="Utilisation d'Univ-R AV"/></span>
 		    	</div>
 				<div class="helpLinks">
 					<ul>

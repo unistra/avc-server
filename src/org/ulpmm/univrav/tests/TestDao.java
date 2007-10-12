@@ -9,7 +9,6 @@ import java.util.List;
 import org.ulpmm.univrav.dao.DatabaseImpl;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
-import org.ulpmm.univrav.entities.Smil;
 
 import junit.framework.TestCase;
 
@@ -19,7 +18,7 @@ public class TestDao extends TestCase {
 	
 	public void testCourse() {
 		/* Adds a new course */
-		Course c = new Course(1,new Timestamp(new Date().getTime()),"audio","Test Junit 1","Test d'ajout de cours","essai","Kieffer","Laurent",
+		/*Course c = new Course(1,new Timestamp(new Date().getTime()),"audio","Test Junit 1","Test d'ajout de cours","essai","Kieffer","Laurent",
 				"127.0.0.1",5,"suppression",true,0,"n-1");
 		dao.addCourse(c);
 		c = new Course(2,new Timestamp(new Date().getTime()),"video","Test Junit 2","Test d'ajout de cours","test","Kieffer","Laurent",
@@ -32,7 +31,7 @@ public class TestDao extends TestCase {
 		dao.addCourse(c);
 		
 		/* Adds the smils */
-		Smil s = new Smil(1,"1.smil");
+		/*Smil s = new Smil(1,"1.smil");
 		dao.addSmil(s);
 		s = new Smil(2,"2.smil");
 		dao.addSmil(s);
@@ -40,7 +39,7 @@ public class TestDao extends TestCase {
 		dao.addSmil(s);
 		
 		/* Adds the slides */
-		Slide sl = new Slide(1,"1.jpg",0);
+		/*Slide sl = new Slide(1,"1.jpg",0);
 		dao.addSlide(sl);
 		sl = new Slide(1,"2.jpg",3);
 		dao.addSlide(sl);
@@ -89,7 +88,7 @@ public class TestDao extends TestCase {
 		map.put("title", "Test Junit 2 modifié");
 		map.put("formation", "modification");
 		dao.modifyCourse(2, map);*/
-		c2 = new Course(2,new Timestamp(new Date().getTime()),"video","Test Junit 2 modifié","Test d'ajout de cours","test","Kieffer","Laurent",
+		/*c2 = new Course(2,new Timestamp(new Date().getTime()),"video","Test Junit 2 modifié","Test d'ajout de cours","test","Kieffer","Laurent",
 			"127.0.0.1",5,"suppression",true,0,"n-1");
 		dao.modifyCourse(c2);
 		System.out.println("Course with ID 2 :");

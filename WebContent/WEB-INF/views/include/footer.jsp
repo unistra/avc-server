@@ -1,12 +1,15 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
-<jsp:directive.page import="org.ulpmm.univrav.language.Messages"/>
-<jsp:directive.page import="java.util.Locale"/>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%
-	Locale l = request.getLocale();
-%>
+<fmt:setLocale value="${sessionScope.language}"/>
+<fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
 <p>
-  	<%=Messages._("R&eacute;alisation du site par ULP Multim&eacute;dia - 2007", l)%> <br>
-  	<a href="."><%=Messages._("Contact", l)%></a> - <a href="."><%=Messages._("Informations l&eacute;gales", l)%></a> - <a href="."><%=Messages._("Liens", l)%></a>
+  	<fmt:message key="R&eacute;alisation du site par ULP Multim&eacute;dia - 2007"/> <br>
+  	<c:url var="thick_legal" scope="page" value="./thick_legal">
+		<c:param name="width" value="200"/>
+		<c:param name="height" value="100"/>
+	</c:url>
+  	<a href="mailto:christophe.debeire@ulpmm.u-strasbg.fr"><fmt:message key="Contact"/></a> - <a href="${thick_legal}" title="<fmt:message key="Informations l&eacute;gales"/>" class="thickbox"><fmt:message key="Informations l&eacute;gales"/></a>
 </p>
