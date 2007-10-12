@@ -7,7 +7,7 @@
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
 <table cellspacing="0">
-	<tr>
+	<tr class="tableheader">
 		<th colspan="3" id="courses"><fmt:message key="Les cours"/></th>
 		<th colspan="2"><fmt:message key="Visualisez"/></th>
 		<th colspan="4"><fmt:message key="T&eacute;l&eacute;chargez"/></th>
@@ -62,7 +62,7 @@
 			<td><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></td>
 			<td>	    				
 				<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br>
-				<b><fmt:message key="Enseignant :"/> </b> <c:out value="${course.name}" /> <br>
+				<b><fmt:message key="Enseignant :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>
 				<div id="row${status.count}col1link">
 					<a href="javascript:switchDetails('row${status.count}')"><fmt:message key="[+] plus de détails"/></a>
 				</div>	    				

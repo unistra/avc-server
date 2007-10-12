@@ -226,8 +226,14 @@ public class Application extends HttpServlet {
 			displayLivePage(request, response);
 		else if( page.equals("/recorded"))
 			displayRecordedPage(request, response);
-		else if( page.equals("/search"))
+		else if( page.equals("/search")) {
+			try {
 			displaySearchResults(request, response);
+			}
+			catch( Exception e) {
+				e.printStackTrace();
+			}
+		}
 		else if( page.equals("/add"))
 			addCourse(request, response);
 		else if(page.equals("/livestate"))
@@ -378,11 +384,14 @@ public class Application extends HttpServlet {
 			else if( request.getParameter("audio") == null && request.getParameter("video") == null ) 
 				params.put("type", "");
 			
-			if( request.getParameter("name") != null && ! request.getParameter("name").equals("*") ) 
-				params.put("name", request.getParameter("name"));
+			if( request.getParameter("fullname") != null && ! request.getParameter("fullname").equals("*") ) 
+				params.put("fullname", request.getParameter("fullname"));
 			
 			if( request.getParameter("formation") != null && ! request.getParameter("formation").equals("*") ) 
 				params.put("formation", request.getParameter("formation"));
+			
+			if( request.getParameter("keyword") != null && ! request.getParameter("keyword").equals("") ) 
+				params.put("keyword", request.getParameter("keyword"));
 			
 			/* Saves the hashmap in the session */
 			session.setAttribute("params", params);
@@ -408,12 +417,16 @@ public class Application extends HttpServlet {
 				request.setAttribute("video", "checked");
 			}
 			
-			if( params.get("name") != null && ! params.get("name").equals("*") ) {
-				request.setAttribute("nameSelected", params.get("name"));
+			if( params.get("fullname") != null && ! params.get("fullname").equals("*") ) {
+				request.setAttribute("nameSelected", params.get("fullname"));
 			}
 			
 			if( params.get("formation") != null && ! params.get("formation").equals("*") ) {
 				request.setAttribute("formationSelected", params.get("formation"));
+			}
+			
+			if( params.get("keyword") != null && ! params.get("keyword").equals("") ) {
+				request.setAttribute("keyword", params.get("keyword"));
 			}
 			
 			request.setAttribute("page", pageNumber);
