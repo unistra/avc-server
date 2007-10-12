@@ -30,15 +30,15 @@ public class VideoSmil2 implements ISmil {
 	 * @param mediaFolder the media folder name of the course in the file system
 	 * @param mediaFileName the name of all the media files
 	 */
-	public VideoSmil2(Course c, String absoluteMediaFolder, String mediaFolder, String mediaFileName, ArrayList<String> timecodes) {
+	public VideoSmil2(Course c, String absoluteMediaFolder, String mediaFolder, String mediaFileName, 
+			String coursesUrl, String comment, ArrayList<String> timecodes) {
 		this.c = c;
 		this.absoluteMediaFolder = absoluteMediaFolder;
 		this.mediaFolder = mediaFolder;
 		this.mediaFileName = mediaFileName;
+		this.coursesUrl = coursesUrl;
+		this.comment = comment;
 		this.timecodes = timecodes;
-		
-		coursesUrl = "http://stagiaire1.u-strasbg.fr/coursv2/";
-		comment = "Copyright ULP Multimedia";
 	}
 
 	/**

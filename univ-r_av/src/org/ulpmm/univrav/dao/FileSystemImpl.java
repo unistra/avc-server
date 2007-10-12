@@ -1,22 +1,40 @@
 package org.ulpmm.univrav.dao;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.ulpmm.univrav.entities.Course;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class FileSystemImpl implements IFileSystem {
 
@@ -25,25 +43,28 @@ public class FileSystemImpl implements IFileSystem {
 	
 	private String mediaFolder; //folder which contains the media files of a course
 	private String mediaFileName; //name used by all the media files of a course
-	private File scriptsFolder; //folder which contain
+	private File scriptsFolder; //folder which contains the scripts
 	
 	private String ftpFolder; // folder in which the courses are uploaded via FTP
 	private String coursesFolder; // folder which contains all the media folders
 	private String liveFolder; // folder which contains the media files for a live
+	private String coursesUrl;
 	private String defaultMp3File;
 	private String defaultRmFile;
 	private String comment;
 	
-	public FileSystemImpl(String scriptsFolder) {
-		this.scriptsFolder = new File(scriptsFolder);
-		r = Runtime.getRuntime();
+	public FileSystemImpl(String scriptsFolder, String ftpFolder, String coursesFolder, 
+		String liveFolder, String coursesUrl, String defaultMp3File, String defaultRmFile, String comment) {
 		
-		ftpFolder = "/media/ftp/";
-		coursesFolder = "/media/coursv2/";
-		liveFolder = "/media/ftp/live/";
-		defaultMp3File = "enregistrement-micro.mp3";
-		defaultRmFile = "enregistrement-video.rm";
-		comment = "Copyright ULP Multimedia";
+		r = Runtime.getRuntime();
+		this.scriptsFolder = new File(scriptsFolder);
+		this.ftpFolder = ftpFolder;
+		this.coursesFolder = coursesFolder;
+		this.liveFolder = liveFolder;
+		this.coursesUrl = coursesUrl;
+		this.defaultMp3File = defaultMp3File;
+		this.defaultRmFile = defaultRmFile;
+		this.comment = comment;
 	}
 	
 	/**
@@ -98,10 +119,6 @@ public class FileSystemImpl implements IFileSystem {
 		return timecodes;
 	}
 	
-	public void rssCreation() {
-		
-	}
-	
 	public void deleteCourse() {
 		// TODO Auto-generated method stub
 
@@ -140,6 +157,55 @@ public class FileSystemImpl implements IFileSystem {
 		File f = new File(stylesFolder);
 		return Arrays.asList(f.list());
 	}
+	
+	/**
+	 * Retrieves a list of the website's available languages
+	 * @param languagesFolder the folder in which the language property files are stored
+	 * @return the list of languages
+	 */
+	public List<String> getLanguages(String languagesFolder) {
+		File f = new File(languagesFolder);
+		String[] files = f.list();
+		ArrayList<String> languages = new ArrayList<String>();
+		for( int i=0 ; i<files.length ; i++ ) {
+			if(files[i].endsWith(".properties")) {
+				String language = files[i].substring(files[i].indexOf('_') + 1, files[i].indexOf('.'));
+				languages.add(language);
+			}
+		}
+		return languages;
+	}
+	
+	/**
+	 * Sends a file to the client's browser
+	 * @param filename the name of the file to send
+	 * @param out the stream in which send the file
+	 */
+	public void returnFile(String filename, OutputStream out) {
+		InputStream in = null;
+		try {
+			in = new BufferedInputStream(new FileInputStream(filename));
+			byte[  ] buf = new byte[4 * 1024];  // 4K buffer
+			int bytesRead;
+			while ((bytesRead = in.read(buf)) != -1) {
+				out.write(buf, 0, bytesRead);
+			}
+		}
+		catch( Exception e) {
+			System.out.println("Error while sending the file " + filename + " to the client");
+			e.printStackTrace();
+		}
+		finally {
+			if (in != null) {
+				try {
+					in.close(  );
+				}
+				catch( IOException ioe) {
+					ioe.printStackTrace();
+				}
+			}
+		}
+	}	
 	
 	/**
 	 * Extracts the course archive file to the courses folder and renames it
@@ -409,11 +475,11 @@ public class FileSystemImpl implements IFileSystem {
 	private void smilCreation() {
 		ISmil smil;
 		if( c.getType().equals("audio")) {
-			smil = new AudioSmil2(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, getTimecodes());
+			smil = new AudioSmil2(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, coursesUrl, comment, getTimecodes());
 			smil.smilCreation();
 		}
 		else if( c.getType().equals("video")) {
-			smil = new VideoSmil2(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, getTimecodes());
+			smil = new VideoSmil2(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, coursesUrl, comment, getTimecodes());
 			smil.smilCreation();
 		}
 	}
@@ -442,6 +508,183 @@ public class FileSystemImpl implements IFileSystem {
 			System.out.println("Error while creating the zip file " + mediaFileName + ".zip");
 			ie.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Creates a RSS files for a list of courses
+	 * @param courses the list of courses
+	 * @param filePath the full path of the RSS file to create
+	 * @param rssTitle the title of the RSS file
+	 * @param rssDescription the description of the RSS file
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image file
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS file
+	 * @throws ParserConfigurationException
+	 */
+	public void rssCreation( List<Course> courses, String filePath, String rssTitle, 
+			String rssDescription, String serverUrl, String rssImageUrl, 
+			String recordedInterfaceUrl, String language ) {
+		
+		try {		
+			// Création d'un nouveau DOM
+	        DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
+	        DocumentBuilder constructeur = fabrique.newDocumentBuilder();
+	        Document document = constructeur.newDocument();
+	        
+	        // Propriétés du DOM
+	        document.setXmlVersion("1.0");
+	        document.setXmlStandalone(true);
+	        
+	        // Création de l'arborescence du DOM
+	        Element racine = document.createElement("rss");
+	        racine.setAttribute("version", "2.0");
+	        
+	        Element channel = document.createElement("channel");
+	        racine.appendChild(channel);
+	        
+	        // Ajout des informations sur le flux
+	        
+	        Element title = document.createElement("title");
+	        title.setTextContent(rssTitle);
+	        channel.appendChild(title);
+	        
+	        Element link = document.createElement("link");
+	        link.setTextContent(serverUrl);
+	        channel.appendChild(link);
+	        
+	        Element description = document.createElement("description");
+	        description.setTextContent(rssDescription);
+	        channel.appendChild(description);
+	        
+	        /*Element lang = document.createElement("language");
+	        lang.setTextContent(language);
+	        channel.appendChild(lang);*/
+	        
+	        Element cr = document.createElement("copyright");
+	        cr.setTextContent(comment);
+	        channel.appendChild(cr);
+	        
+	        // Ajout d'une image au flux RSS
+	        Element image = document.createElement("image");
+	        channel.appendChild(image);
+	        
+	        Element imageTitle = document.createElement("title");
+	        imageTitle.setTextContent(rssTitle);
+	        image.appendChild(imageTitle);
+	        
+	        Element urlLink = document.createElement("url");
+	        urlLink.setTextContent(rssImageUrl);
+	        image.appendChild(urlLink);
+	        
+	        Element imageLink = document.createElement("link");
+	        imageLink.setTextContent(serverUrl);
+	        image.appendChild(imageLink);
+	        
+	        // Recherche de cours et création d'un item pour chaque cours
+			for( Course course : courses) {
+	        
+	        
+				/*if(FirstName == null)
+					FirstName = "";
+				if(Object == null)
+					Object = "";
+				if(Rating == null)
+					Rating = "";*/
+				
+				// Conversion de la date dans le bon format	
+		    	Date d = course.getDate();
+		    	SimpleDateFormat sdf = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
+	        
+		        Element item = document.createElement("item");
+		        channel.appendChild(item);
+		        
+		        Element coursGuid = document.createElement("guid");
+		        coursGuid.setTextContent(Integer.toString(course.getCourseid()));
+		        coursGuid.setAttribute("isPermaLink","false");
+		        item.appendChild(coursGuid);
+		        
+		        Element coursTitle = document.createElement("title");
+		        coursTitle.setTextContent(course.getTitle());
+		        item.appendChild(coursTitle);
+		        
+		        Element coursDescription = document.createElement("description");
+		        coursDescription.setTextContent(
+		        		course.getName() + (! course.getFirstname().equals("") ? " " : "") + course.getFirstname()
+		        		+ (! ((course.getName().equals("") && course.getFirstname().equals("")) || course.getFormation().equals("")) ? " - " : "")
+		        		+ course.getFormation()
+		        		+ (! (course.getName().equals("") && course.getFirstname().equals("") && course.getFormation().equals("")) ? " : " : "")
+		        		+ course.getDescription());
+		        item.appendChild(coursDescription);
+		        
+		        Element coursCategory = document.createElement("category");
+		        coursCategory.setTextContent(course.getType());
+		        item.appendChild(coursCategory);
+		        
+		        Element coursLink = document.createElement("link");
+		        coursLink.setTextContent(recordedInterfaceUrl + "?id=" + course.getCourseid() + "&type=real");
+		        item.appendChild(coursLink);
+		        
+		        Element coursPubDate = document.createElement("pubDate");
+		        coursPubDate.setTextContent(sdf.format(d));
+		        item.appendChild(coursPubDate);
+		        
+		        String courseMediaUrl = coursesUrl + course.getMediaFolder() + "/" + course.getMediasFileName();
+		        
+		        Element coursEnclosure = document.createElement("enclosure");
+		        coursEnclosure.setAttribute("url",courseMediaUrl + ".mp3");
+		        coursEnclosure.setAttribute("type","audio/mpeg");
+		        item.appendChild(coursEnclosure);
+		        
+		        Element coursEnclosure2 = document.createElement("enclosure");
+		        coursEnclosure2.setAttribute("url",courseMediaUrl + ".ogg");
+		        coursEnclosure2.setAttribute("type","application/ogg");
+		        item.appendChild(coursEnclosure2);
+		        
+		        Element coursEnclosure3 = document.createElement("enclosure");
+		        coursEnclosure3.setAttribute("url",courseMediaUrl + ".pdf");
+		        coursEnclosure3.setAttribute("type","application/pdf");
+		        item.appendChild(coursEnclosure3);
+		        
+		        Element coursEnclosure4 = document.createElement("enclosure");
+		        coursEnclosure4.setAttribute("url",courseMediaUrl + ".zip");
+		        coursEnclosure4.setAttribute("type","application/zip");
+		        item.appendChild(coursEnclosure4);
+			}
+		        
+			document.appendChild(racine);
+	        
+			svgXml(document, filePath);
+		}
+		catch( ParserConfigurationException pce) {
+			System.out.println("Error while creating the RSS file " + filePath);
+			pce.printStackTrace();
+		}
+	}
+	
+	/* Procédure permettant de sauvegarder le fichier XML du flux RSS */
+	private static void svgXml(Document document, String fichier) {
+        try {
+	        // Création de la source DOM
+	        Source source = new DOMSource(document);
+	        
+	        // Création du fichier de sortie
+	        File file = new File(fichier);
+	        //File file = new File("../../../rss/" + fichier);
+	        Result resultat = new StreamResult(file);
+	        
+	        // Configuration du transformer
+	        TransformerFactory fabrique = TransformerFactory.newInstance();
+	        Transformer transformer = fabrique.newTransformer();
+	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+	        
+	        // Transformation en fichier XML
+	        transformer.transform(source, resultat);
+	        
+        }catch(Exception e){
+        	e.printStackTrace();
+        }
 	}
 
 }

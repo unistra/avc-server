@@ -1,6 +1,7 @@
 package org.ulpmm.univrav.web;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,7 +14,9 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -43,9 +46,32 @@ public class Application extends HttpServlet {
 	private ServiceImpl service;
 	private HttpSession session;
 	
-	private String coursesUrl = "http://stagiaire1.u-strasbg.fr/coursv2/";
-	private String coursesFolder = "/media/coursv2/";
-	private String helixServerIp = "130.79.188.5";
+	/* Configuration parameters */
+	private static String ftpFolder; // folder in which the courses are uploaded via FTP
+	private static String coursesFolder; // folder which contains all the media folders
+	private static String liveFolder; // folder which contains the media files for a live
+	private static String coursesUrl;
+	private static String defaultMp3File;
+	private static String defaultRmFile;
+	private static String comment;
+	private static String helixServerIp;
+	
+	private static String host;
+	private static String port;
+	private static String database;
+	private static String user;
+	private static String password;
+	
+	private static String rssTitle;
+	private static String rssFileName;
+	private static String rssDescription;
+	private static String serverUrl;
+	private static String rssImageUrl;
+	private static String recordedInterfaceUrl;
+	private static String language;
+	
+	private static int homeCourseNumber;
+	private static int recordedCourseNumber;
 	
 	/**
 	 * Initialization of the servlet. <br>
@@ -53,11 +79,75 @@ public class Application extends HttpServlet {
 	 * @throws ServletException if an error occure
 	 */
 	public void init() throws ServletException {
-		DatabaseImpl db = new DatabaseImpl();
-		FileSystemImpl fs = new FileSystemImpl(getServletContext().getRealPath("/") + "scripts");
-		service = new ServiceImpl();
+		
+		System.out.println("Univ-R AV : init method called");
+		
+		/* configuration parameters loading */
+		Properties p = new Properties();
+		try {
+			p.load(new FileInputStream(getServletContext().getRealPath("/conf") + "/univrav.properties"));
+			
+			ftpFolder = p.getProperty("ftpFolder");
+			coursesFolder = p.getProperty("coursesFolder");
+			liveFolder = p.getProperty("liveFolder");
+			coursesUrl = p.getProperty("coursesUrl");
+			defaultMp3File = p.getProperty("defaultMp3File");
+			defaultRmFile = p.getProperty("defaultRmFile");
+			comment = p.getProperty("comment");
+			helixServerIp = p.getProperty("helixServerIp");
+			
+			/* Loading of the settings to connect to the database */
+			host = p.getProperty("host");
+			port = p.getProperty("port");
+			database = p.getProperty("database");
+			user = p.getProperty("user");
+			password = p.getProperty("password");
+			
+			/* Loading of the settings of the RSS files */
+			rssTitle = p.getProperty("rssTitle");
+			rssFileName = p.getProperty("rssFileName");
+			rssDescription = p.getProperty("rssDescription");
+			serverUrl = p.getProperty("serverUrl");
+			rssImageUrl = p.getProperty("rssImageUrl");
+			recordedInterfaceUrl = p.getProperty("recordedInterfaceUrl");
+			language = p.getProperty("language");
+			
+			/* the numbers of courses to display at the same time */
+			homeCourseNumber = Integer.parseInt(p.getProperty("homeCourseNumber"));
+			recordedCourseNumber = Integer.parseInt(p.getProperty("recordedCourseNumber"));
+		}
+		catch( Exception e) {
+			System.out.println("Impossible to find the configuration file");
+			e.printStackTrace();
+			destroy();
+		}
+		
+		DatabaseImpl db = new DatabaseImpl(host, port, database, user, password);
+		FileSystemImpl fs = new FileSystemImpl(
+				getServletContext().getRealPath("/") + "scripts",
+				ftpFolder, coursesFolder, liveFolder, coursesUrl,
+				defaultMp3File, defaultRmFile, comment
+		);
+		service = ServiceImpl.getInstance();
 		service.setDb(db);
 		service.setFs(fs);
+		
+		/* Creation of the RSS files */
+		
+		// For all courses
+		List<Course> courses = service.getAllUnlockedCourses();
+		/*** !!!!!! ***/
+		String rssPath = getServletContext().getRealPath("/rss") + "/" + rssFileName;
+		service.rssCreation(courses, rssPath, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+		
+		// For the teachers
+		List<String[]> teachers = service.getTeachersWithRss();
+		for( String[] teacher : teachers) {
+			courses = service.getUnlockedCourses(teacher);
+			rssPath = getServletContext().getRealPath("/rss") + "/" 
+				+ teacher[0] +  (! teacher[1].equals("") ? "_" + teacher[1] : "") + ".xml";
+			service.rssCreation(courses, rssPath, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+		}
 	}
 	
 	/**
@@ -80,11 +170,10 @@ public class Application extends HttpServlet {
 	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		/* Retrieves the current session or create a new one if no session exists */
+		
+		/* Retrieves the current session or creates a new one if no session exists */
 		session = request.getSession(true);
-		System.out.println(session.isNew());
-		System.out.println(session.getId());
+		System.out.println("new session : " + session.isNew());
 		
 		String style = null;
 		String language = null;
@@ -113,15 +202,16 @@ public class Application extends HttpServlet {
 				response.addCookie(styleCookie);
 			}
 			
+			if( language == null ){
+				language = request.getLocale().getLanguage();
+				Cookie languageCookie = new Cookie("language", language);
+				languageCookie.setMaxAge(31536000);
+				response.addCookie(languageCookie);
+			}
+			
 			/* Store them in the session */
 			session.setAttribute("style", style);
-		}
-		else {
-			/* Retrieves the style and language from the session */
-			/*String style = (String) session.getAttribute("style");
-			if( style == null ) {
-				style = "style1";
-			}*/
+			session.setAttribute("language", language);
 		}
 		
 		String page = request.getPathInfo();
@@ -140,6 +230,8 @@ public class Application extends HttpServlet {
 			displaySearchResults(request, response);
 		else if( page.equals("/add"))
 			addCourse(request, response);
+		else if(page.equals("/livestate"))
+			liveState(request, response);
 		else if( page.equals("/courseaccess")) {
 			courseAccess(request, response);
 		}
@@ -154,6 +246,9 @@ public class Application extends HttpServlet {
 		else if( page.equals("/changestyle")) {
 			changeStyle(request, response);
 		}
+		else if( page.equals("/changelanguage")) {
+			changeLanguage(request, response);
+		}
 		else if( page.equals("/thick_codeform")) {
 			request.setAttribute("id", request.getParameter("id"));
 			request.setAttribute("type", request.getParameter("type"));
@@ -164,8 +259,23 @@ public class Application extends HttpServlet {
 			request.setAttribute("styles", styles );
 			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_styles.jsp").forward(request, response);
 		}
+		else if( page.equals("/thick_languages")) {
+			List<String> languages = service.getLanguages(getServletContext().getRealPath("/") + "WEB-INF/classes/org/ulpmm/univrav/language");
+			request.setAttribute("languages", languages );
+			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_languages.jsp").forward(request, response);
+		}
+		else if( page.equals("/thick_legal")) {
+			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_legal.jsp").forward(request, response);
+		}
+		else if( page.equals("/thick_download")) {
+			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_download.jsp").forward(request, response);
+		}
 		else if( page.equals("/iframe_liveslide")) {
 			liveSlide(request, response);
+		}
+		else if( page.equals("/admin_courses")) {
+			request.setAttribute("courses", service.getAllCourses());
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_courses.jsp").forward(request, response);
 		}
 		else
 			displayHomePage(request, response);
@@ -192,7 +302,10 @@ public class Application extends HttpServlet {
 		// le modèle de la vue [list]
 		request.setAttribute("teachers", service.getTeachers());
 		request.setAttribute("formations", service.getFormations());
-		request.setAttribute("courses", service.getNLastCourses(3));
+		request.setAttribute("courses", service.getNLastCourses(homeCourseNumber));
+		request.setAttribute("rssFileName", rssFileName);
+		
+		request.setAttribute("rssfiles", getRssFileList());
 		
 		/* Saves the page for the style selection thickbox return */
 		session.setAttribute("previousPage", "/home");
@@ -216,14 +329,13 @@ public class Application extends HttpServlet {
 	private void displayRecordedPage(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 		
-		int courseNumber = 5;
 		int start = 0;
 		int pageNumber;
 		
 		// le modèle de la vue [list]
 		if( request.getParameter("page") != null) {
 			pageNumber = Integer.parseInt( request.getParameter("page"));
-			start = courseNumber * (pageNumber - 1) ;
+			start = recordedCourseNumber * (pageNumber - 1) ;
 		}
 		else
 			pageNumber = 1;
@@ -231,10 +343,12 @@ public class Application extends HttpServlet {
 		request.setAttribute("page", pageNumber);
 		request.setAttribute("teachers", service.getTeachers());
 		request.setAttribute("formations", service.getFormations());
-		request.setAttribute("courses", service.getCourses(courseNumber, start));
+		request.setAttribute("courses", service.getCourses(recordedCourseNumber, start));
 		request.setAttribute("items", service.getCourseNumber());
-		request.setAttribute("number", courseNumber);
+		request.setAttribute("number", recordedCourseNumber);
 		request.setAttribute("resultPage", "recorded");
+		
+		request.setAttribute("rssfiles", getRssFileList());
 		
 		/* Saves the page for the style selection thickbox return */
 		session.setAttribute("previousPage", "/recorded?page=" + pageNumber);
@@ -246,7 +360,6 @@ public class Application extends HttpServlet {
 	private void displaySearchResults(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 		
-		int courseNumber = 5;
 		int start = 0;
 		int pageNumber;
 		
@@ -277,7 +390,7 @@ public class Application extends HttpServlet {
 		else { // The user has clicked on a pagination link
 			
 			pageNumber = Integer.parseInt( request.getParameter("page"));
-			start = courseNumber * (pageNumber - 1) ;
+			start = recordedCourseNumber * (pageNumber - 1) ;
 			
 			params = (HashMap<String, String>) session.getAttribute("params");
 		}
@@ -306,13 +419,15 @@ public class Application extends HttpServlet {
 			request.setAttribute("page", pageNumber);
 			request.setAttribute("teachers", service.getTeachers());
 			request.setAttribute("formations", service.getFormations());
-			request.setAttribute("courses", service.getCourses(params, courseNumber, start));
+			request.setAttribute("courses", service.getCourses(params, recordedCourseNumber, start));
 			request.setAttribute("items", service.getCourseNumber(params));
-			request.setAttribute("number", courseNumber);
+			request.setAttribute("number", recordedCourseNumber);
 			request.setAttribute("resultPage", "search");
 			
+			request.setAttribute("rssfiles", getRssFileList());
+			
 			/* Saves the page for the style selection thickbox return */
-			session.setAttribute("previousPage", "/recorded?page=" + pageNumber);
+			session.setAttribute("previousPage", "/search?page=" + pageNumber);
 			
 			// affichage de la vue [list]
 			getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
@@ -406,11 +521,58 @@ public class Application extends HttpServlet {
 			
 			service.addCourse(c, media);
 			
+			/* Generation of the RSS files */
+			if( c.getGenre().equals("")) {
+				// Regeneration for all courses
+				List<Course> courses = service.getAllUnlockedCourses();
+				/*** !!!!!! ***/
+				String rssPath = getServletContext().getRealPath("/rss") + "/" + rssFileName;
+				service.rssCreation(courses, rssPath, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+				
+				// For the teacher
+				courses = service.getUnlockedCourses(new String[]{c.getName(), c.getFirstname()});
+				rssPath = getServletContext().getRealPath("/rss") + "/" 
+					+ c.getName() +  (! c.getFirstname().equals("") ? "_" + c.getFirstname() : "") + ".xml";
+				service.rssCreation(courses, rssPath, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			}
+			
 		out.println("Fichier envoye ! <br/>");
 								
 		}
 		else
 			out.println("Erreur : un ou plusieurs parametres n'ont pas ete renseignes");
+		out.println("  </BODY>");
+		out.println("</HTML>");
+		out.flush();
+		out.close();
+	}
+	
+	private void liveState(HttpServletRequest request, HttpServletResponse response)
+		throws ServletException, IOException {
+		
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		out
+				.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
+		out.println("<HTML>");
+		out.println("  <HEAD><TITLE>A Servlet</TITLE></HEAD>");
+		out.println("  <BODY>");
+		
+		String recordingPlace = request.getParameter("recordingPlace");
+		String status = request.getParameter("status");
+		
+		/* Vérification que les paramètres sont envoyés et non vides */
+		if( recordingPlace != null && status != null && ! recordingPlace.equals("") && ! status.equals("")) {
+			
+			/* Vérification que status contient une des deux chaînes attendues */
+			if( status.equals("begin") || status.equals("end"))
+				service.setAmphiStatus(recordingPlace, status.equals("begin"));
+			else
+				out.println("Erreur: valeurs de status attendues: {begin ; end}");
+		} 
+		else
+			out.println("Erreur: param&egrave;tres attendus: recordingPlace, status");
+		
 		out.println("  </BODY>");
 		out.println("</HTML>");
 		out.flush();
@@ -431,6 +593,8 @@ public class Application extends HttpServlet {
 			else
 				c = service.getCourse(courseid, genre);
 			
+			service.incrementConsultations(c);
+			
 			if( type.equals("real")) {
 				//redirection interface
 				request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
@@ -444,7 +608,19 @@ public class Application extends HttpServlet {
 				request.setAttribute("building", building);
 				
 				// affichage de la vue [list]
-				getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface.jsp").forward(request, response);
+				getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_smil.jsp").forward(request, response);
+			}
+			else if( type.equals("flash")) {
+				//redirection interface
+				request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".swf");
+				Amphi a = service.getAmphi(c.getIpaddress());
+				String amphi = a != null ? a.getName() : c.getIpaddress();
+				String building = service.getBuildingName(c.getIpaddress());
+				request.setAttribute("amphi", amphi);
+				request.setAttribute("building", building);
+				
+				// affichage de la vue [list]
+				getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
 			}
 			else {
 				String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
@@ -455,7 +631,7 @@ public class Application extends HttpServlet {
 
 				// Envoi du fichier.
 				OutputStream out = response.getOutputStream();
-				returnFile(filename, out);
+				service.returnFile(filename, out);
 				
 				/*String previousPage = (String) request.getSession().getAttribute("previousPage");
 				if( previousPage == null)
@@ -523,21 +699,36 @@ public class Application extends HttpServlet {
 		response.sendRedirect(response.encodeRedirectURL("." + previousPage));
 	}
 	
-	public static void returnFile(String filename, OutputStream out)
-	    throws FileNotFoundException, IOException {
-		InputStream in = null;
-		try {
-			in = new BufferedInputStream(new FileInputStream(filename));
-			byte[  ] buf = new byte[4 * 1024];  // 4K buffer
-			int bytesRead;
-			while ((bytesRead = in.read(buf)) != -1) {
-				out.write(buf, 0, bytesRead);
-			}
+	private void changeLanguage(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		String language = request.getParameter("language");
+		/* Store the style in the session */
+		session.setAttribute("language", language);
+		/* Store the style in the cookies */
+		Cookie languageCookie = new Cookie("language", language);
+		languageCookie.setMaxAge(31536000);
+		response.addCookie(languageCookie);
+		
+		/* Returns to the page before the thickbox call (stored in the session) */
+		String previousPage = (String) session.getAttribute("previousPage");
+		if( previousPage == null)
+			previousPage = "/home";
+		response.sendRedirect(response.encodeRedirectURL("." + previousPage));
+	}
+	
+	public HashMap<String, String> getRssFileList() {
+		HashMap<String, String> rss = new HashMap<String, String>();
+		rss.put(rssTitle, "../rss/" + rssFileName);
+		
+		List<String[]> teachers = service.getTeachersWithRss();
+		for( String[] teacher : teachers) {
+			rss.put(
+				teacher[0] +  (! teacher[1].equals("") ? " " + teacher[1] : ""), 
+				"../rss/" + teacher[0] +  (! teacher[1].equals("") ? "_" + teacher[1] : "") + ".xml"
+			);
 		}
-		finally {
-			if (in != null) 
-				in.close(  );
-		}
+		
+		return rss;
 	}
 
 }

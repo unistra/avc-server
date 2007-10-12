@@ -15,22 +15,16 @@ public class PgsqlAccess {
 	
 	private final static String DRIVER = "org.postgresql.Driver";
 	
-	private static String host;
-	
-	private static String port;
-	
-	private static String database;
-	
-	private static String user;
-	
-	private static String password;
+	private String host;
+	private String port;
+	private String database;
+	private String user;
+	private String password;
 	
 	private Connection cnt;
 	
-	private static PgsqlAccess instance = new PgsqlAccess();
-	
-	
-	public PgsqlAccess() {
+	public PgsqlAccess(String host, String port, String database, String user, String password) {
+		
 		/* Loading of the driver */
 		try {
 			Class.forName(DRIVER);
@@ -41,15 +35,11 @@ public class PgsqlAccess {
 		}
 		
 		/* Loading of the settings to connect to the database */
-		host="stagiaire1.u-strasbg.fr";
-		port="5432";
-		database="univrav";
-		user="sqluser";
-		password="$ulpmmeric1";
-	}
-	
-	public static PgsqlAccess getInstance() {
-		return instance;
+		this.host = host;
+		this.port = port;
+		this.database = database;
+		this.user = user;
+		this.password = password;
 	}
 	
 	/**

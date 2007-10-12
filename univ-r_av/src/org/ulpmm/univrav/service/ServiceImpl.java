@@ -1,8 +1,22 @@
 package org.ulpmm.univrav.service;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.ulpmm.univrav.dao.DaoException;
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.entities.Amphi;
@@ -14,6 +28,11 @@ public class ServiceImpl implements IService {
 
 	private IDatabase db;
 	private IFileSystem fs;
+	private static ServiceImpl instance = new ServiceImpl();
+	
+	public static ServiceImpl getInstance() {
+		return instance;
+	}
 	
 	/**
 	 * @return the db
@@ -61,6 +80,14 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
+	 * Gets a list of all the courses without an access code
+	 * @return the list of courses
+	 */
+	public synchronized List<Course> getAllUnlockedCourses() {
+		return db.getAllUnlockedCourses();
+	}
+	
+	/**
 	 * Gets a list of the n last courses
 	 * @param n the number of courses to return
 	 * @return the list of courses
@@ -75,7 +102,7 @@ public class ServiceImpl implements IService {
 	 * @param start the start number of the courses
 	 * @return the list of courses
 	 */
-	public List<Course> getCourses(int number, int start) {
+	public synchronized List<Course> getCourses(int number, int start) {
 		return db.getCourses(number, start);
 	}
 	
@@ -86,8 +113,17 @@ public class ServiceImpl implements IService {
 	 * @param start the start number of the courses
 	 * @return the list of courses
 	 */
-	public List<Course> getCourses(HashMap<String, String> params, int number, int start) {
+	public synchronized List<Course> getCourses(HashMap<String, String> params, int number, int start) {
 		return db.getCourses(params, number, start);
+	}
+	
+	/**
+	 * Gets the list of courses without access code for a teacher
+	 * @param teacher the teacher
+	 * @return the list of courses
+	 */
+	public synchronized List<Course> getUnlockedCourses(String[] teacher) {
+		return db.getUnlockedCourses(teacher);
 	}
 	
 	/**
@@ -113,7 +149,7 @@ public class ServiceImpl implements IService {
 	 * Gets the total number of courses
 	 * @return the number of courses
 	 */
-	public int getCourseNumber() {
+	public synchronized int getCourseNumber() {
 		return db.getCourseNumber();
 	}
 	
@@ -122,7 +158,7 @@ public class ServiceImpl implements IService {
 	 * @param params the criteria of the searched courses
 	 * @return the number of courses
 	 */
-	public int getCourseNumber(HashMap<String, String> params) {
+	public synchronized int getCourseNumber(HashMap<String, String> params) {
 		return db.getCourseNumber(params);
 	}
 	
@@ -155,36 +191,34 @@ public class ServiceImpl implements IService {
 	 * Gets the list of all the teachers
 	 * @return the list of teachers
 	 */
-	public List<String[]> getTeachers() {
+	public synchronized List<String[]> getTeachers() {
 		return db.getTeachers();
+	}
+	
+	/**
+	 * Gets the list of all the teachers who have at least one course with no access code
+	 * @return the list of teachers
+	 */
+	public synchronized List<String[]> getTeachersWithRss() {
+		return db.getTeachersWithRss();
 	}
 	
 	/**
 	 * Gets the list of all the formations
 	 * @return the list of formations
 	 */
-	public List<String> getFormations() {
+	public synchronized List<String> getFormations() {
 		return db.getFormations();
 	}
-	
-	
+
 	/**
-	 * Adds the slides of a course
-	 * @param s the slide to add
+	 * Increments the number of consultations for a course
+	 * @param c the course
 	 */
-	/*public void addSlides(int courseid) {
-		ArrayList<String> list = fs.getTimecodes();
-		for( int i = 0 ; i< list.size() ; i++)
-			db.addSlide(new Slide(courseid,"XXXXXXXXXX",(int) Float.parseFloat(list.get(i))));
-	}*/
+	public synchronized void incrementConsultations(Course c) {
+		db.incrementConsultations(c);
+	}
 	
-	/**
-	 * Adds a new slide
-	 * @param s the slide to add
-	 */
-	/*public synchronized void addSlide(Slide s) {
-		db.addSlide(s);
-	}*/
 	
 	/**
 	 * Gets the slides of a course
@@ -257,6 +291,15 @@ public class ServiceImpl implements IService {
 	}
 
 	/**
+	 * Sets the status of the live in an amphi
+	 * @param ip the IP address of the amphi
+	 * @param status the status od the live in the amphi
+	 */
+	public synchronized void setAmphiStatus(String ip, boolean status) {
+		db.setAmphiStatus(ip, status);
+	}
+	
+	/**
 	 * Deletes an amphi by providing its id
 	 * @param id the id of the amphi
 	 */
@@ -266,11 +309,31 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
+	 * Creates a RSS files for a list of courses
+	 * @param courses the list of courses
+	 * @param filePath the full path of the RSS file to create
+	 * @param rssTitle the title of the RSS file
+	 * @param rssDescription the description of the RSS file
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image file
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS file
+	 * @throws ParserConfigurationException
+	 */
+	public synchronized void rssCreation( List<Course> courses, String filePath, String rssTitle, 
+			String rssDescription, String serverUrl, String rssImageUrl, 
+			String recordedInterfaceUrl, String language ) {
+		
+		fs.rssCreation(courses, filePath, rssTitle, rssDescription, serverUrl, 
+				rssImageUrl, recordedInterfaceUrl, language);
+	}
+	
+	/**
 	 * Creates the .ram file used by a live video
 	 * @param amphiIp the Ip address of the video amphi
 	 * @param helixServerIp the Ip address of the helix server
 	 */
-	public void createLiveVideo(String amphiIp, String helixServerIp) {
+	public synchronized void createLiveVideo(String amphiIp, String helixServerIp) {
 		fs.createLiveVideo(amphiIp, helixServerIp);
 	}
 	
@@ -279,8 +342,26 @@ public class ServiceImpl implements IService {
 	 * @param stylesFolder the folder in which the themes are stored
 	 * @return the list of themes
 	 */
-	public List<String> getStyles(String stylesFolder) {
+	public synchronized List<String> getStyles(String stylesFolder) {
 		return fs.getStyles(stylesFolder);
+	}
+	
+	/**
+	 * Retrieves a list of the website's available languages
+	 * @param languagesFolder the folder in which the language property files are stored
+	 * @return the list of languages
+	 */
+	public synchronized List<String> getLanguages(String languagesFolder) {
+		return fs.getLanguages(languagesFolder);
+	}
+	
+	/**
+	 * Sends a file to the client's browser
+	 * @param filename the name of the file to send
+	 * @param out the stream in which send the file
+	 */
+	public synchronized void returnFile(String filename, OutputStream out) {
+		fs.returnFile(filename, out);
 	}
 	
 }

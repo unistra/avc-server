@@ -1,18 +1,16 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="pt" uri="/WEB-INF/pagination-taglib.tld" %>
-<jsp:directive.page import="org.ulpmm.univrav.language.Messages"/>
-<jsp:directive.page import="java.util.Locale"/>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%
-	Locale l = request.getLocale();
-%>
+<fmt:setLocale value="${sessionScope.language}"/>
+<fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
     
-    <title><%=Messages._("Cours enregistr&eacute;s", l)%></title>
+    <title><fmt:message key="Cours enregistr&eacute;s"/></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
@@ -27,6 +25,10 @@
 		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/recorded_ie6.css" media="screen" />
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
+	
+	<c:forEach var="rssfile" items="${rssfiles}">
+		<link rel="alternate" type="application/rss+xml" title="${rssfile.key}" href="${rssfile.value}"/>
+	</c:forEach>
 
 	<script type="text/javascript" src="../files/js/details.js"></script>
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>

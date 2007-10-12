@@ -1,18 +1,16 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="dt" uri="http://jakarta.apache.org/taglibs/datetime-1.0" %>
-<jsp:directive.page import="org.ulpmm.univrav.language.Messages"/>
-<jsp:directive.page import="java.util.Locale"/>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%
-	Locale l = request.getLocale();
-%>
+<fmt:setLocale value="${sessionScope.language}"/>
+<fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
 <table cellspacing="0">
 	<tr>
-		<th colspan="3" id="courses"><%=Messages._("Les cours", l)%></th>
-		<th colspan="2"><%=Messages._("Visualisez", l)%></th>
-		<th colspan="4"><%=Messages._("T&eacute;l&eacute;chargez", l)%></th>
+		<th colspan="3" id="courses"><fmt:message key="Les cours"/></th>
+		<th colspan="2"><fmt:message key="Visualisez"/></th>
+		<th colspan="4"><fmt:message key="T&eacute;l&eacute;chargez"/></th>
 	</tr>
 	<tr class="row2">
 		<td colspan="3">&nbsp;</td>
@@ -63,27 +61,27 @@
 			</c:choose> 
 			<td><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></td>
 			<td>	    				
-				<b><%=Messages._("Titre :", l)%> </b> <c:out value="${course.title}" /> <br>
-				<b><%=Messages._("Enseignant :", l)%> </b> <c:out value="${course.name}" /> <br>
+				<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br>
+				<b><fmt:message key="Enseignant :"/> </b> <c:out value="${course.name}" /> <br>
 				<div id="row${status.count}col1link">
-					<a href="javascript:switchDetails('row${status.count}')"><%=Messages._("[+] plus de détails", l)%></a>
+					<a href="javascript:switchDetails('row${status.count}')"><fmt:message key="[+] plus de détails"/></a>
 				</div>	    				
 				<div id="row${status.count}col1details" class="hidden">
- 					<b><%=Messages._("Formation :", l)%> </b> <c:out value="${course.formation}" /> <br>
- 					<b><%=Messages._("Sujet :", l)%> </b> <c:out value="${course.description}" /> <br>
- 					<a href="javascript:switchDetails('row${status.count}')"><%=Messages._("[-] moins de détails", l)%></a>
+ 					<b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br>
+ 					<b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br>
+ 					<a href="javascript:switchDetails('row${status.count}')"><fmt:message key="[-] moins de détails"/></a>
 				</div>	    				
 			</td>
 			<td>
-				<b><%=Messages._("Date :", l)%> </b> <dt:format pattern="dd/MM/yyyy">${course.date.time}</dt:format> <br>
-				<b><%=Messages._("Consultations :", l)%> </b> <c:out value="${course.consultations}" /> <br>
+				<b><fmt:message key="Date :"/> </b> <dt:format pattern="dd/MM/yyyy">${course.date.time}</dt:format> <br>
+				<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
 				<div id="row${status.count}col2link">
-					<a href="javascript:switchDetails('row${status.count}')"><%=Messages._("[+] plus de détails", l)%></a>
+					<a href="javascript:switchDetails('row${status.count}')"><fmt:message key="[+] plus de détails"/></a>
 				</div>
 				<div id="row${status.count}col2details" class="hidden">
- 					<b><%=Messages._("Dur&eacute;e :", l)%> </b> <c:out value="${course.durationString}" /> <br>
- 					<b><%=Messages._("Type :", l)%> </b> <c:out value="${course.type}" /> <br>
- 					<a href="javascript:switchDetails('row${status.count}')"><%=Messages._("[-] moins de détails", l)%></a>
+ 					<b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br>
+ 					<b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br>
+ 					<a href="javascript:switchDetails('row${status.count}')"><fmt:message key="[-] moins de détails"/></a>
 				</div>
 			</td>
 			<td class="tdalign">
@@ -102,7 +100,7 @@
 							<c:param name="width" value="250"/>
 							<c:param name="height" value="100"/>
 						</c:url>
-						<a href="${thick_codeform}" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="${thick_codeform}" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
@@ -122,7 +120,7 @@
 							<c:param name="width" value="250"/>
 							<c:param name="height" value="100"/>
 						</c:url>
-						<a href="${thick_codeform}" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="${thick_codeform}" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
@@ -142,7 +140,7 @@
 							<c:param name="width" value="250"/>
 							<c:param name="height" value="100"/>
 						</c:url>
-						<a href="${thick_codeform}" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="${thick_codeform}" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
@@ -162,7 +160,7 @@
 							<c:param name="width" value="250"/>
 							<c:param name="height" value="100"/>
 						</c:url>
-						<a href="${thick_codeform}" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="${thick_codeform}" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
@@ -182,7 +180,7 @@
 							<c:param name="width" value="250"/>
 							<c:param name="height" value="100"/>
 						</c:url>
-						<a href="${thick_codeform}" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="${thick_codeform}" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
@@ -202,7 +200,7 @@
 							<c:param name="width" value="250"/>
 							<c:param name="height" value="100"/>
 						</c:url>
-						<a href="${thick_codeform}" title="<%=Messages._("Acc&egrave;s au cours", l)%>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="${thick_codeform}" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
