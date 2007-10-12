@@ -103,7 +103,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getAllUnlockedCourses() {
 		pa.connect();
-		ResultSet rs = pa.query("SELECT * From course WHERE genre = '' ORDER BY date DESC");
+		ResultSet rs = pa.query("SELECT * From course WHERE genre = '' AND visible = true ORDER BY date DESC");
 		List<Course> l = new ArrayList<Course>();
 		try {
 			while(rs.next()) {
@@ -142,7 +142,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getNLastCourses(int n) {
 		pa.connect();
-		ResultSet rs = pa.query("SELECT * From course WHERE genre = '' ORDER BY date DESC LIMIT " + n);
+		ResultSet rs = pa.query("SELECT * From course WHERE genre = '' AND visible = true ORDER BY date DESC LIMIT " + n);
 		List<Course> l = new ArrayList<Course>();
 		try {
 			while(rs.next()) {
@@ -182,7 +182,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getCourses(int number, int start) {
 		pa.connect();
-		ResultSet rs = pa.query("SELECT * From course ORDER BY date DESC LIMIT " + number + " OFFSET " + start);
+		ResultSet rs = pa.query("SELECT * From course WHERE visible = true ORDER BY date DESC LIMIT " + number + " OFFSET " + start);
 		List<Course> l = new ArrayList<Course>();
 		try {
 			while(rs.next()) {
@@ -229,7 +229,6 @@ public class DatabaseImpl implements IDatabase {
 		
 			Connection cnt = pa.getConnection();
 			Set<String> keys = params.keySet();
-			Collection<String> values = params.values();
 			
 			/* Creation of the SQL query string */
 			String sql = "SELECT * FROM course WHERE ";
@@ -237,18 +236,32 @@ public class DatabaseImpl implements IDatabase {
 			while( it.hasNext()) {
 				if( ! sql.endsWith("WHERE "))
 					sql += "AND ";
-				sql += it.next() + " = ? ";
+				
+				String param = it.next();
+				if( param.equals("fullname") )
+					sql += "name || ' ' || firstname = ? ";
+				else if( param.equals("keyword") )
+					sql += "(INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?)) ";
+				else
+					sql += param + " = ? ";
 			}
-			sql += "ORDER BY date DESC LIMIT " + number + " OFFSET " + start;
+			sql += "AND visible = true ORDER BY date DESC LIMIT " + number + " OFFSET " + start;
 			System.out.println(sql);
 			try {
 				PreparedStatement pstmt = cnt.prepareStatement(sql);
-				
+
 				/* Applies the parameters to the query */
-				it = values.iterator();
+				it = keys.iterator();
 				int i = 1;
 				while( it.hasNext()) {
-					pstmt.setString(i, it.next());
+					String param = it.next();
+					if( param.equals("keyword") ) {
+						pstmt.setString(i, "%" + params.get(param) + "%");
+						i++;
+						pstmt.setString(i, "%" + params.get(param) + "%");
+					}
+					else
+						pstmt.setString(i, params.get(param));
 					i++;
 				}
 				
@@ -298,7 +311,7 @@ public class DatabaseImpl implements IDatabase {
 		
 		List<Course> l = new ArrayList<Course>();
 		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM course WHERE name = ? AND firstname = ? AND genre = ''";
+		String sql = "SELECT * FROM course WHERE name = ? AND firstname = ? AND genre = '' AND visible = true";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -347,7 +360,7 @@ public class DatabaseImpl implements IDatabase {
 	public Course getCourse(int courseId) {
 		Course c = null;
 		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM course WHERE courseid = ? AND genre = ''";
+		String sql = "SELECT * FROM course WHERE courseid = ? AND genre = '' AND visible = true";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -393,7 +406,7 @@ public class DatabaseImpl implements IDatabase {
 	public Course getCourse(int courseId, String genre) {
 		Course c = null;
 		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM course WHERE courseid = ? AND GENRE = ?";
+		String sql = "SELECT * FROM course WHERE courseid = ? AND GENRE = ? AND visible = true";
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseId);
@@ -436,7 +449,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public int getCourseNumber() {
 		int number = 0;
-		String sql = "SELECT COUNT(*) FROM course";
+		String sql = "SELECT COUNT(*) FROM course WHERE visible = true";
 		pa.connect();
 		try {
 			ResultSet rs = pa.query(sql);
@@ -446,7 +459,7 @@ public class DatabaseImpl implements IDatabase {
 			rs.close();
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the buildings list");
+			System.out.println("Error while retrieving the course number");
 			sqle.printStackTrace();
 		}
 		pa.disconnect();
@@ -464,7 +477,6 @@ public class DatabaseImpl implements IDatabase {
 		if( ! params.isEmpty() ) {
 			Connection cnt = pa.getConnection();
 			Set<String> keys = params.keySet();
-			Collection<String> values = params.values();
 			
 			
 			String sql = "SELECT COUNT(*) FROM course WHERE ";
@@ -472,17 +484,31 @@ public class DatabaseImpl implements IDatabase {
 			while( it.hasNext()) {
 				if( ! sql.endsWith("WHERE "))
 					sql += "AND ";
-				sql += it.next() + " = ? ";
+				
+				String param = it.next();
+				if( param.equals("fullname") )
+					sql += "name || ' ' || firstname = ? ";
+				else if( param.equals("keyword") )
+					sql += "(INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?)) ";
+				else
+					sql += param + " = ? ";
 			}
 			
 			try {
 				PreparedStatement pstmt = cnt.prepareStatement(sql);
 				
 				/* Applies the parameters to the query */
-				it = values.iterator();
+				it = keys.iterator();
 				int i = 1;
 				while( it.hasNext()) {
-					pstmt.setString(i, it.next());
+					String param = it.next();
+					if( param.equals("keyword") ) {
+						pstmt.setString(i, "%" + params.get(param) + "%");
+						i++;
+						pstmt.setString(i, "%" + params.get(param) + "%");
+					}
+					else
+						pstmt.setString(i, params.get(param));
 					i++;
 				}
 				
@@ -598,7 +624,7 @@ public class DatabaseImpl implements IDatabase {
 		List<String[]> l = new ArrayList<String[]>();
 		
 		pa.connect();
-		ResultSet rs = pa.query("select distinct name, firstname from course");
+		ResultSet rs = pa.query("SELECT DISTINCT name, firstname FROM course WHERE visible = true");
 		try {
 			while( rs.next() ) {
 				String[] t = new String[2];
@@ -623,7 +649,7 @@ public class DatabaseImpl implements IDatabase {
 		List<String[]> l = new ArrayList<String[]>();
 		
 		pa.connect();
-		ResultSet rs = pa.query("SELECT DISTINCT name, firstname FROM course WHERE genre = '' ");
+		ResultSet rs = pa.query("SELECT DISTINCT name, firstname FROM course WHERE genre = '' AND visible = true");
 		try {
 			while( rs.next() ) {
 				String[] t = new String[2];
@@ -648,7 +674,7 @@ public class DatabaseImpl implements IDatabase {
 		List<String> l = new ArrayList<String>();
 		
 		pa.connect();
-		ResultSet rs = pa.query("select distinct formation from course");
+		ResultSet rs = pa.query("SELECT DISTINCT formation from course WHERE visible = true");
 		try {
 			while( rs.next() ) {
 				l.add(rs.getString("formation"));

@@ -133,6 +133,6 @@ a, .linkText, .helpText, h5, .buildingName, .searchText {
 	color: #5284FD;
 }
 
-th {
-	background-color: #5284FD;;
+.tableheader {
+	background-image: url("../img/th_DeepSea.png");
 }

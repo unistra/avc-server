@@ -46,7 +46,7 @@
 				    	<img src="../files/img/buildings/${building.imageFile}" alt="Institut Le Bel">
 				    	<p class="buildingName"><c:out value="${building.name}" /></p>
 				    	<table>
-				    		<tr>
+				    		<tr class="tableheader">
 				    			<th><fmt:message key="Salle"/></th>
 				    			<th><fmt:message key="Enregistrement"/></th>
 				    		</tr>

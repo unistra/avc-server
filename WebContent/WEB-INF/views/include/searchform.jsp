@@ -20,20 +20,19 @@
 			&nbsp;&nbsp;&nbsp;
 			<input type="checkbox" name="video" value="checked" ${video}><fmt:message key="Video"/>
 		</fieldset>
-		<!-- <br>
-		<input type="checkbox" class="cb" name="tous">Tous les cours-->
 		<br><br>
 		<img src="../files/styles/${sessionScope.style}/img/arrowsearch.png" alt="arrowsearch"><input type="submit" class="submit" value="<fmt:message key="Lancez la recherche"/>">
 	</div>
 	<div class="criteria">
 		<label><fmt:message key="Enseignant"/></label>
-		<select class="field" name="name" title="test">
+		<select class="field" name="fullname" title="<fmt:message key="Enseignant"/>">
 			<option value="*"><fmt:message key="Tous"/></option>
 			<c:forEach var="teacher" items="${teachers}">
-				<c:if test="${nameSelected == teacher[0]}">
+				<c:set var="fullname" value="${teacher[0]} ${teacher[1]}"/>
+				<c:if test="${nameSelected == fullname}">
 					<c:set var="selected" value="selected" />
 				</c:if>
-				<option value="${teacher[0]}" ${selected}>${teacher[0]} ${teacher[1]}</option>
+				<option value="${fullname}" ${selected}>${fullname}</option>
 				<c:remove var="selected"/>
 			</c:forEach>
 		</select>
@@ -50,8 +49,8 @@
 			</c:forEach>
 		</select>
 		<br>
-		<label><fmt:message key="Code ETAP"/></label>
-		<input type="text" class="field">
+		<label><fmt:message key="keyword"/></label>
+		<input type="text" name="keyword" value="${keyword}" class="field">
 		<br>
 	</div>
 	<hr>
