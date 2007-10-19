@@ -62,7 +62,7 @@ function initTimeBar() {
 	// adds each time point and corresponding thumb
 	for( i=0 ; i< 15 && (firstSlide + i <= timecodes.length) ; i++) {
 		document.getElementById("videoLine").innerHTML += '<a href="javascript:setTimeFromSlide(' + (firstSlide + i)  + ')" onmouseover="showThumb(' + (firstSlide + i)  + ')" onmouseout="hideThumb(' + (firstSlide + i)  + ')" id="time' + (firstSlide + i)  + '" class="videoTime"><img src="../files/styles/' + style + '/img/video_time_off.gif"></a>';
-		document.getElementById("thumbLine").innerHTML += '<img class="thumb" id="thumb' + (firstSlide + i) + '" src="' + slidesurl + 'D' + (firstSlide + i) + '-thumb.jpg">';
+		document.getElementById("thumbLine").innerHTML += '<img class="thumb" id="thumb' + (firstSlide + i) + '" src="' + slidesurl + 'D' + (firstSlide + i + timing) + '-thumb.jpg">';
 	}
 }
 

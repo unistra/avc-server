@@ -57,10 +57,10 @@ public class VideoSmil2 implements ISmil {
 			pw.println("<!DOCTYPE smil PUBLIC \"-//W3C//DTD SMIL 2.0//EN\" \"http://www.w3.org/2001/SMIL20/SMIL20.dtd\">");
 			pw.println("<smil xmlns=\"http://www.w3.org/2001/SMIL20/Language\">");
 			pw.println("<head>");
-			if( ! c.getTitle().equals(""))
+			if( c.getTitle() != null)
 				pw.println("<meta name=\"title\" content=\"" + cleanString(c.getTitle()) + "\"/>");
-			if( ! c.getName().equals(""))
-				pw.println("<meta name=\"author\" content=\"" + cleanString(c.getName())  + (c.getFirstname().equals("") ? "" : " " + cleanString(c.getFirstname())) + "\"/>");
+			if( c.getName() != null)
+				pw.println("<meta name=\"author\" content=\"" + cleanString(c.getName())  + (c.getFirstname() == null ? "" : " " + cleanString(c.getFirstname())) + "\"/>");
 			if( ! comment.equals(""))
 				pw.println("<meta name=\"copyright\" content=\"" + cleanString(comment) + "\"/>");
 			
@@ -80,7 +80,8 @@ public class VideoSmil2 implements ISmil {
 			
 			/* Media display */
 			pw.println("<img region=\"Bg\" src=\"" + coursesUrl + "model/bgsmi.png\"/>");
-			pw.println("<video src=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".rm" + "\" region=\"Video\" />");
+			pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".mp3\" external=\"true\"> " +
+					"<video src=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".rm" + "\" region=\"Video\" /> </a>");
 			pw.println("<text region=\"Texte\" src=\"" + coursesUrl + mediaFolder + "/description.txt\">");
 			pw.println("<param name=\"fontFace\" value=\"Arial\"/>");
 			pw.println("<param name=\"fontColor\" value=\"#ffffff\"/>");
@@ -130,13 +131,13 @@ public class VideoSmil2 implements ISmil {
 			File descriptionFile = new File(absoluteMediaFolder + "description.txt");
 			descriptionFile.createNewFile();
 			pw = new PrintWriter( new OutputStreamWriter( new FileOutputStream( descriptionFile)));
-			pw.println("Enseignant: " +  (! c.getName().equals("") ? c.getName() : "-"));
-			pw.println("Formation: " +  (! c.getFormation().equals("") ? c.getFormation() : "-"));
-			pw.println("Titre: " +  (! c.getTitle().equals("") ? c.getTitle() : "-"));
-			pw.println("Sujet: " +  (! c.getDescription().equals("") ? c.getDescription() : "-"));
+			pw.println("Teacher: " +  (c.getName() != null ? c.getName() + ( c.getFirstname() != null ? " " + c.getFirstname() : "") : "-"));
+			pw.println("Formation: " +  (c.getFormation() != null ? c.getFormation() : "-"));
+			pw.println("Title: " +  (c.getTitle() != null ? c.getTitle() : "-"));
+			pw.println("Subject: " +  (c.getDescription() != null ? c.getDescription() : "-"));
 			pw.println("Date: " + c.getDateString());
 			pw.println("Type: " + c.getType());
-			pw.println("Durée: " + c.getDurationString());
+			pw.println("Duration: " + c.getDurationString());
 			pw.close();
 		}
 		catch( IOException ioe) {

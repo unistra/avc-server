@@ -22,6 +22,5 @@
 	<c:param name="width" value="500"/>
 	<c:param name="height" value="500"/>
 </c:url>
-<a href="<c:url value="${thick_styles}" />" title="<fmt:message key="S&eacute;l&eacute;ction du th&egrave;me"/>" class="thickbox">Style</a>
-<a href="<c:url value="${thick_languages}" />" title="<fmt:message key="S&eacute;l&eacute;ction de la langue"/>" class="thickbox">Langue</a>
-<a></a>
+<a href="<c:out value="${thick_styles}" />" title="<fmt:message key="S&eacute;l&eacute;ction du th&egrave;me"/>" class="thickbox">Style</a>
+<a href="<c:out value="${thick_languages}" />" title="<fmt:message key="S&eacute;l&eacute;ction de la langue"/>" class="thickbox">Langue</a>

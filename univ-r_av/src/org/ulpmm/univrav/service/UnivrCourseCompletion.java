@@ -7,7 +7,7 @@ import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
 
-public class CourseAddition extends Thread {
+public class UnivrCourseCompletion extends Thread {
 	
 	private IDatabase db;
 	private IFileSystem fs;
@@ -20,7 +20,7 @@ public class CourseAddition extends Thread {
 	 * @param c
 	 * @param courseArchive
 	 */
-	public CourseAddition(IDatabase db, IFileSystem fs, Course c,
+	public UnivrCourseCompletion(IDatabase db, IFileSystem fs, Course c,
 			String courseArchive) {
 		super();
 		this.db = db;
@@ -34,7 +34,7 @@ public class CourseAddition extends Thread {
 	 */
 	public void run() {
 		fs.addCourse(c, courseArchive);
-		db.addCourse(c);
+		db.modifyCourse(c);
 		ArrayList<String> list = fs.getTimecodes();
 		
 		int time;

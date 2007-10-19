@@ -4,8 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Univr;
 
 public class DatabaseImpl implements IDatabase {
 	
@@ -36,25 +38,88 @@ public class DatabaseImpl implements IDatabase {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, c.getCourseid());
 			pstmt.setTimestamp(2, c.getDate());
-			pstmt.setString(3, c.getType());
-			pstmt.setString(4, c.getTitle());
-			pstmt.setString(5, c.getDescription());
-			pstmt.setString(6, c.getFormation());
-			pstmt.setString(7, c.getName());
-			pstmt.setString(8, c.getFirstname());
+			
+			if( c.getType() != null)
+				pstmt.setString(3, c.getType());
+			else
+				pstmt.setNull(3, Types.VARCHAR);
+			
+			if( c.getTitle() != null)
+				pstmt.setString(4, c.getTitle());
+			else
+				pstmt.setNull(4, Types.VARCHAR);
+			
+			if( c.getDescription() != null)
+				pstmt.setString(5, c.getDescription());
+			else
+				pstmt.setNull(5, Types.VARCHAR);
+			
+			if( c.getFormation() != null)
+				pstmt.setString(6, c.getFormation());
+			else
+				pstmt.setNull(6, Types.VARCHAR);
+			
+			if( c.getName() != null)
+				pstmt.setString(7, c.getName());
+			else
+				pstmt.setNull(7, Types.VARCHAR);
+			
+			if( c.getFirstname() != null)
+				pstmt.setString(8, c.getFirstname());
+			else
+				pstmt.setNull(8, Types.VARCHAR);
+			
 			pstmt.setString(9, c.getIpaddress());
 			pstmt.setInt(10, c.getDuration());
-			pstmt.setString(11, c.getGenre());
+			
+			if( c.getGenre() != null)
+				pstmt.setString(11, c.getGenre());
+			else
+				pstmt.setNull(11, Types.VARCHAR);
+			
 			pstmt.setBoolean(12, c.isVisible());
 			pstmt.setInt(13, c.getConsultations());
-			pstmt.setString(14, c.getTiming());
-			pstmt.setString(15, c.getMediaFolder());
+			
+			if( c.getTiming() != null)
+				pstmt.setString(14, c.getTiming());
+			else
+				pstmt.setNull(14, Types.VARCHAR);
+			
+			if( c.getMediaFolder() != null)
+				pstmt.setString(15, c.getMediaFolder());
+			else
+				pstmt.setNull(15, Types.VARCHAR);
+				
 			if( pstmt.executeUpdate() == 0)
 				throw new DaoException("The course " + c + " has not been added to the database");
 			pa.disconnect();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new Course " + c);
+			sqle.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Adds a new Univ-R course
+	 * @param u the Univ-R course
+	 */
+	public void addUnivr(Univr u) {
+		Connection cnt = pa.getConnection();
+		String sql = "INSERT INTO univr values(?,?,?)";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, u.getCourseid());
+			pstmt.setInt(2, u.getUid());
+			pstmt.setInt(3, u.getGroupCode());
+			
+			if( pstmt.executeUpdate() == 0)
+				throw new DaoException("The Univr course " + u + " has not been added to the database");
+			pa.disconnect();
+		}
+		catch(SQLException sqle){
+			System.out.println("Error while adding the new Univr course " + u);
 			sqle.printStackTrace();
 		}
 	}
@@ -84,7 +149,7 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediaFolder")
+					rs.getString("mediafolder")
 				));
 			}
 			rs.close();
@@ -103,7 +168,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getAllUnlockedCourses() {
 		pa.connect();
-		ResultSet rs = pa.query("SELECT * From course WHERE genre = '' AND visible = true ORDER BY date DESC");
+		ResultSet rs = pa.query("SELECT * From course WHERE genre IS NULL AND visible = true ORDER BY date DESC");
 		List<Course> l = new ArrayList<Course>();
 		try {
 			while(rs.next()) {
@@ -122,7 +187,7 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediaFolder")
+					rs.getString("mediafolder")
 				));
 			}
 			rs.close();
@@ -142,7 +207,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getNLastCourses(int n) {
 		pa.connect();
-		ResultSet rs = pa.query("SELECT * From course WHERE genre = '' AND visible = true ORDER BY date DESC LIMIT " + n);
+		ResultSet rs = pa.query("SELECT * From course WHERE genre IS NULL AND visible = true ORDER BY date DESC LIMIT " + n);
 		List<Course> l = new ArrayList<Course>();
 		try {
 			while(rs.next()) {
@@ -161,7 +226,7 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediaFolder")
+					rs.getString("mediafolder")
 				));
 			}
 			rs.close();
@@ -201,7 +266,7 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediaFolder")
+					rs.getString("mediafolder")
 				));
 			}
 			rs.close();
@@ -284,7 +349,7 @@ public class DatabaseImpl implements IDatabase {
 							rs.getBoolean("visible"),
 							rs.getInt("consultations"),
 							rs.getString("timing"),
-							rs.getString("mediaFolder")
+							rs.getString("mediafolder")
 					));
 				}
 				rs.close();
@@ -311,12 +376,20 @@ public class DatabaseImpl implements IDatabase {
 		
 		List<Course> l = new ArrayList<Course>();
 		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM course WHERE name = ? AND firstname = ? AND genre = '' AND visible = true";
+		String sql = "SELECT * FROM course WHERE" +
+				(teacher[0] != null ? " name = ?" : "") +
+				(teacher[0] != null && teacher[1] != null ? "AND" : "") + 
+				(teacher[1] != null ? " firstname = ? " : "") +
+				"AND genre IS NULL AND visible = true";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setString(1, teacher[0]);
-			pstmt.setString(2, teacher[1]);
+			if( teacher[0] != null)
+				pstmt.setString(1, teacher[0]);
+			else if( teacher[1] != null)
+				pstmt.setString(1, teacher[1]);
+			if( teacher[0] != null && teacher[1] != null)
+				pstmt.setString(2, teacher[1]);
 			ResultSet rs = pstmt.executeQuery();
 			
 			/* Retrieves the records */
@@ -336,7 +409,7 @@ public class DatabaseImpl implements IDatabase {
 						rs.getBoolean("visible"),
 						rs.getInt("consultations"),
 						rs.getString("timing"),
-						rs.getString("mediaFolder")
+						rs.getString("mediafolder")
 				));
 			}
 			rs.close();
@@ -360,7 +433,7 @@ public class DatabaseImpl implements IDatabase {
 	public Course getCourse(int courseId) {
 		Course c = null;
 		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM course WHERE courseid = ? AND genre = '' AND visible = true";
+		String sql = "SELECT * FROM course WHERE courseid = ?";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -382,7 +455,7 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediaFolder")
+					rs.getString("mediafolder")
 				);
 			}
 			else
@@ -428,7 +501,7 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediaFolder")
+					rs.getString("mediafolder")
 				);
 			}
 			else
@@ -540,7 +613,8 @@ public class DatabaseImpl implements IDatabase {
 		/* Creation of the SQL query string */
 		String sql = "UPDATE course SET date = ? , type = ? , title = ? , description = ? , ";
 		sql += "formation = ? , name = ? , firstname = ? , ipaddress = ? , duration = ? , ";
-		sql += "genre = ? , visible = ? , consultations = ? , timing = ? WHERE courseid = ?";
+		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, mediafolder = ? ";
+		sql += "WHERE courseid = ?";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -559,7 +633,8 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setBoolean(11, c.isVisible());
 			pstmt.setInt(12, c.getConsultations());
 			pstmt.setString(13, c.getTiming());
-			pstmt.setInt(14, c.getCourseid());
+			pstmt.setString(14, c.getMediaFolder());
+			pstmt.setInt(15, c.getCourseid());
 			
 			if( pstmt.executeUpdate() == 0 )
 				throw new DaoException("The course " + c + " has not been modified");
@@ -587,6 +662,64 @@ public class DatabaseImpl implements IDatabase {
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the course " + courseId);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+	}
+	
+	/**
+	 * Gets the list of the media folders of the test courses
+	 * @return the list of media folders
+	 */
+	public List<String> getTestsMediaFolders() {
+		pa.connect();
+		ResultSet rs = pa.query("SELECT mediafolder FROM course WHERE initcap(genre) = 'Suppression'");
+		List<String> l = new ArrayList<String>();
+		try {
+			while(rs.next()) {
+				l.add(rs.getString("mediafolder"));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the media folders list");
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		return l;
+	}
+	
+	/**
+	 * Deletes the test courses (courses with genre 'Suppression')
+	 */
+	public void deleteTests() {
+		Connection cnt = pa.getConnection();
+		String sql = "DELETE FROM course WHERE initcap(genre) = 'Suppression'";
+		try {
+			Statement stmt = cnt.createStatement();
+			stmt.executeUpdate(sql);
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while deleting the tests");
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+	}
+	
+	/**
+	 * Hides the test courses (courses beginning with 'test' or 'essai')
+	 */
+	public void hideTests() {
+		Connection cnt = pa.getConnection();
+		String sql = "UPDATE course SET visible=false " +
+				"WHERE INITCAP(title) LIKE 'Test%'" +
+				"OR INITCAP(title) LIKE 'Essai%'";
+		try {
+			Statement stmt = cnt.createStatement();
+			stmt.executeUpdate(sql);
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while hiding the tests");
 			sqle.printStackTrace();
 		}
 		pa.disconnect();
@@ -624,7 +757,7 @@ public class DatabaseImpl implements IDatabase {
 		List<String[]> l = new ArrayList<String[]>();
 		
 		pa.connect();
-		ResultSet rs = pa.query("SELECT DISTINCT name, firstname FROM course WHERE visible = true");
+		ResultSet rs = pa.query("SELECT DISTINCT name, firstname FROM course WHERE visible = true AND NOT (name IS NULL AND firstname IS NULL)");
 		try {
 			while( rs.next() ) {
 				String[] t = new String[2];
@@ -649,7 +782,7 @@ public class DatabaseImpl implements IDatabase {
 		List<String[]> l = new ArrayList<String[]>();
 		
 		pa.connect();
-		ResultSet rs = pa.query("SELECT DISTINCT name, firstname FROM course WHERE genre = '' AND visible = true");
+		ResultSet rs = pa.query("SELECT DISTINCT name, firstname FROM course WHERE genre IS NULL AND title IS NOT NULL AND visible = true AND NOT (name IS NULL AND firstname IS NULL)");
 		try {
 			while( rs.next() ) {
 				String[] t = new String[2];
@@ -674,7 +807,7 @@ public class DatabaseImpl implements IDatabase {
 		List<String> l = new ArrayList<String>();
 		
 		pa.connect();
-		ResultSet rs = pa.query("SELECT DISTINCT formation from course WHERE visible = true");
+		ResultSet rs = pa.query("SELECT DISTINCT formation from course WHERE visible = true AND formation IS NOT NULL");
 		try {
 			while( rs.next() ) {
 				l.add(rs.getString("formation"));
@@ -785,6 +918,28 @@ public class DatabaseImpl implements IDatabase {
 		pa.disconnect();
 	}
 	
+	/**
+	 * Adds a new building
+	 * @param b the building to add
+	 */
+	public void addBuilding(Building b) {
+		Connection cnt = pa.getConnection();
+		String sql = "INSERT INTO building(name, imagefile) values(?,?)";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setString(1, b.getName());
+			pstmt.setString(2, b.getImageFile());
+			
+			if( pstmt.executeUpdate() == 0)
+				throw new DaoException("The building " + b + " has not been added to the database");
+			pa.disconnect();
+		}
+		catch(SQLException sqle){
+			System.out.println("Error while adding the new Building " + b);
+			sqle.printStackTrace();
+		}
+	}
 	
 	/**
 	 * Gets the list of the buildings
@@ -818,6 +973,39 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
+	 * Gets a building by providing its id
+	 * @param buildingId the id of the building
+	 * @return the building
+	 */
+	public Building getBuilding(int buildingId) {
+		Building b = null;
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * FROM building WHERE buildingid = ?";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, buildingId);
+			ResultSet rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				b = new Building(
+					rs.getInt("buildingid"),
+					rs.getString("name"),
+					rs.getString("imagefile")
+				);
+			}
+			else
+				throw new DaoException("Building " + buildingId + " not found");
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the building " + buildingId);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		
+		return b;
+	}
+	
+	/**
 	 * Gets a building name by providing one of its amphis IP address
 	 * @param amphiIp the amphi IP address
 	 * @return the building name
@@ -845,12 +1033,79 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
+	 * Modifies a building
+	 * @param b the building to modify
+	 */
+	public void modifyBuilding(Building b) {
+		Connection cnt = pa.getConnection();
+		
+		/* Creation of the SQL query string */
+		String sql = "UPDATE building SET name = ? , imagefile = ? ";
+		sql += "WHERE buildingid = ?";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			
+			/* Applies the parameters to the query */
+			pstmt.setString(1, b.getName());
+			pstmt.setString(2, b.getImageFile());
+			pstmt.setInt(3, b.getBuildingid());
+			
+			if( pstmt.executeUpdate() == 0 )
+				throw new DaoException("The building " + b + " has not been modified");
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while modifying the building " + b);
+			sqle.printStackTrace();
+		}
+		
+		pa.disconnect();
+	}
+	
+	/**
+	 * Deletes a building
+	 * @param buildingId the id of the building
+	 */
+	public void deleteBuilding(int buildingId) {
+		Connection cnt = pa.getConnection();
+		String sql = "DELETE FROM building WHERE buildingid = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, buildingId);
+			if( pstmt.executeUpdate() == 0)
+				throw new DaoException("the building " + buildingId + " has not been deleted");
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while deleting the course " + buildingId);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+	}
+	
+	/**
 	 * Adds a new Amphi
 	 * @param a the amphi to add
 	 */
 	public void addAmphi(Amphi a) {
-		// TODO Auto-generated method stub
-		
+		Connection cnt = pa.getConnection();
+		String sql = "INSERT INTO amphi(buildingid, name, type, ipaddress, status) values(?,?,?,?,?)";
+		System.out.println(sql);
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, a.getBuildingid());
+			pstmt.setString(2, a.getName());
+			pstmt.setString(3, a.getType());
+			pstmt.setString(4, a.getIpAddress());
+			pstmt.setBoolean(5, false);
+			
+			if( pstmt.executeUpdate() == 0)
+				throw new DaoException("The amphi " + a + " has not been added to the database");
+			pa.disconnect();
+		}
+		catch(SQLException sqle){
+			System.out.println("Error while adding the new amphi " + a);
+			sqle.printStackTrace();
+		}
 	}
 	
 	/**
@@ -869,6 +1124,7 @@ public class DatabaseImpl implements IDatabase {
 			
 			while(rs.next()) {
 				l.add(new Amphi(
+					rs.getInt("amphiid"),
 					rs.getInt("buildingid"),
 					rs.getString("name"),
 					rs.getString("type"),
@@ -891,6 +1147,39 @@ public class DatabaseImpl implements IDatabase {
 	 * @param ip the IP address of the amphi
 	 * @return the amphi
 	 */
+	public Amphi getAmphi(int amphiId) {
+		Amphi a = null;
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * FROM amphi WHERE amphiid = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, amphiId);
+			ResultSet rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				a = new Amphi(
+					rs.getInt("amphiid"),
+					rs.getInt("buildingid"),
+					rs.getString("name"),
+					rs.getString("type"),
+					rs.getString("ipaddress"),
+					rs.getBoolean("status")
+				);
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the amphi " + amphiId);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		
+		return a;
+	}	
+	
+	/**
+	 * Gets an amphi by providing its IP address
+	 * @param ip the IP address of the amphi
+	 * @return the amphi
+	 */
 	public Amphi getAmphi(String ip) {
 		Amphi a = null;
 		Connection cnt = pa.getConnection();
@@ -901,6 +1190,7 @@ public class DatabaseImpl implements IDatabase {
 			ResultSet rs = pstmt.executeQuery();
 			if( rs.next() ) {
 				a = new Amphi(
+					rs.getInt("amphiid"),
 					rs.getInt("buildingid"),
 					rs.getString("name"),
 					rs.getString("type"),
@@ -923,17 +1213,52 @@ public class DatabaseImpl implements IDatabase {
 	 * @param a the amphi to modify
 	 */
 	public void modifyAmphi(Amphi a) {
-		// TODO Auto-generated method stub
+		Connection cnt = pa.getConnection();
 		
+		/* Creation of the SQL query string */
+		String sql = "UPDATE amphi SET buildingid = ?, name = ? , type = ?, ";
+		sql += "ipaddress = ?, status = ? WHERE amphiid = ?";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			
+			/* Applies the parameters to the query */
+			pstmt.setInt(1, a.getBuildingid());
+			pstmt.setString(2, a.getName());
+			pstmt.setString(3, a.getType());
+			pstmt.setString(4, a.getIpAddress());
+			pstmt.setBoolean(5, a.isStatus());
+			pstmt.setInt(6, a.getAmphiid());
+			
+			if( pstmt.executeUpdate() == 0 )
+				throw new DaoException("The amphi " + a + " has not been modified");
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while modifying the amphi " + a);
+			sqle.printStackTrace();
+		}
+		
+		pa.disconnect();
 	}
 
 	/**
 	 * Deletes an amphi by providing its id
-	 * @param id the id of the amphi
+	 * @param amphiId the id of the amphi
 	 */
-	public void deleteAmphi(String ip) {
-		// TODO Auto-generated method stub
-		
+	public void deleteAmphi(int amphiId) {
+		Connection cnt = pa.getConnection();
+		String sql = "DELETE FROM amphi WHERE amphiid = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, amphiId);
+			if( pstmt.executeUpdate() == 0)
+				throw new DaoException("the amphi " + amphiId + " has not been deleted");
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while deleting the amphi " + amphiId);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
 	}
 	
 	/**
@@ -959,43 +1284,4 @@ public class DatabaseImpl implements IDatabase {
 		pa.disconnect();
 	}
 	
-	
-	
-	/* A supprimer si plus besoin !!!!!!! */
-	public void modifyCourse(int courseId, HashMap<String, String> params) {
-		Connection cnt = pa.getConnection();	
-		Set<String> keys = params.keySet();
-		Collection<String> values = params.values();
-		
-		/* Creation of the SQL query string */
-		String sql = "UPDATE course SET ";
-		Iterator<String> it = keys.iterator();
-		while( it.hasNext()) {
-			if( ! sql.endsWith("SET "))
-				sql += ", ";
-			sql += it.next() + " = ? ";
-		}
-		sql += "WHERE courseid = ?";
-		
-		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			
-			/* Applies the parameters to the query */
-			it = values.iterator();
-			int i = 1;
-			while( it.hasNext()) {
-				pstmt.setString(i, it.next());
-				i++;
-			}
-			
-			pstmt.setInt(i, courseId);
-			pstmt.executeUpdate();
-		}
-		catch( SQLException sqle) {
-			System.out.println("Error while modifying the course");
-			sqle.printStackTrace();
-		}
-		
-		pa.disconnect();
-	}
 }

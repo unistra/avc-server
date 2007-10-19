@@ -1,6 +1,5 @@
 package org.ulpmm.univrav.entities;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
@@ -27,7 +26,7 @@ public class Course {
 	 */
 	public Course() {
 	}
-	
+
 	/**
 	 * constructor : creates a course by providing all the information
 	 * 
@@ -65,27 +64,6 @@ public class Course {
 	}
 	
 	/**
-	 * Creates a copy of the object passed in parameter
-	 * @param c
-	 */
-	/*public Course(Course c) {
-		this.courseid = c.getCourseid();
-		this.date = c.getDate();
-		this.type = c.getType();
-		this.title = c.getTitle();
-		this.description = c.getDescription();
-		this.formation = c.getFormation();
-		this.name = c.getName();
-		this.firstname = c.getFirstname();
-		this.ipaddress = c.getIpaddress();
-		this.duration = c.getDuration();
-		this.genre = c.getGenre();
-		this.visible = c.isVisible();
-		this.consultations = c.getConsultations();
-		this.timing = c.getTiming();
-	}*/
-	
-	/**
 	 * Returns a string representation of the object
 	 */
 	public String toString() {
@@ -94,14 +72,6 @@ public class Course {
 			+ ipaddress + "," + getDurationString() + "," + genre + "," + visible + ","
 			+ consultations + "," + timing + "]";
 	}
-
-	/*public List<Slide> getSlides() {
-		return new ArrayList<Slide>();
-	}
-	
-	public Smil getSmil() {
-		return new Smil();
-	}*/
 	
 	/**
 	 * @return the consultations
@@ -109,13 +79,6 @@ public class Course {
 	public int getConsultations() {
 		return consultations;
 	}
-	
-	/**
-	 * Increments the number of consultations
-	 */
-	/*public void addConsultation() {
-		consultations++;
-	}*/
 
 	/**
 	 * @return the courseid
@@ -135,7 +98,7 @@ public class Course {
 	 * @return the date in the convenient String format
 	 */
 	public String getDateString() {
-    	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");	
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");	
 		return sdf.format(date);
 	}
 
@@ -277,5 +240,26 @@ public class Course {
 	 */
 	public void setMediaFolder(String mediaFolder) {
 		this.mediaFolder = mediaFolder;
+	}
+
+	/**
+	 * @param date the date to set
+	 */
+	public void setDate(Timestamp date) {
+		this.date = date;
+	}
+
+	/**
+	 * @param visible the visible to set
+	 */
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+	
+	/**
+	 * @param timing the timing to set
+	 */
+	public void setTiming(String timing) {
+		this.timing = timing;
 	}
 }

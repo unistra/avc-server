@@ -1,8 +1,6 @@
 package org.ulpmm.univrav.serverclasses;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;

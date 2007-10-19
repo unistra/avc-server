@@ -2,7 +2,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-     <meta http-equiv="Refresh" content="10; URL=liveslide?ip=${ip}&url=${url}">
+     <title>Slide Frame</title>
+     <meta http-equiv="Refresh" content="10; URL=./iframe_liveslide?ip=${ip}&amp;url=${url}">
      <link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/liveslide.css">
   </head>
   <body style="padding:0">

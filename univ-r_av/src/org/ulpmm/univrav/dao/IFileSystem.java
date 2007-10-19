@@ -22,7 +22,11 @@ public interface IFileSystem {
 	 */
 	public ArrayList<String> getTimecodes();
 	
-	public void deleteCourse();
+	/**
+	 * Removes the media folder of a course on the file system
+	 * @param mediaFolder the media folder of the course
+	 */
+	public void deleteCourse(String mediaFolder);
 	
 	/**
 	 * Creates a RSS files for a list of courses
@@ -68,6 +72,11 @@ public interface IFileSystem {
 	 */
 	public void returnFile(String filename, OutputStream out);
 	
-	// + méthodes pour les amphis
+	/**
+	 * Sends a message over a socket to the Univ-R AV client
+	 * @param message the message to send
+	 * @return the answer of the client
+	 */
+	public String sendMessageToClient(String message, String ip, int port);
 	
 }

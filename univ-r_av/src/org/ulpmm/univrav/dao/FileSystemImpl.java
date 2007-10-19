@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,9 +118,18 @@ public class FileSystemImpl implements IFileSystem {
 		return timecodes;
 	}
 	
-	public void deleteCourse() {
-		// TODO Auto-generated method stub
-
+	/**
+	 * Removes the media folder of a course on the file system
+	 * @param mediaFolder the media folder of the course
+	 */
+	public void deleteCourse(String mediaFolder) {
+		try {
+			r.exec("rm -Rf " + coursesFolder + mediaFolder);
+		}
+		catch(IOException ioe) {
+			System.out.println("Impossible to delete the course folder");
+			ioe.printStackTrace();
+		}
 	}
 	
 	/**
@@ -203,7 +213,35 @@ public class FileSystemImpl implements IFileSystem {
 				}
 			}
 		}
-	}	
+	}
+	
+	/**
+	 * Sends a message over a socket to the Univ-R AV client
+	 * @param message the message to send
+	 * @return the answer of the client
+	 */
+	public String sendMessageToClient(String message, String ip, int port) {
+		
+		String answer = "";
+		
+		try {
+			/* Sends the message to the client */
+			Socket client = new Socket(ip, port);
+			PrintWriter output = new PrintWriter(client.getOutputStream());
+			output.println(message);
+			output.flush();
+			/* Reception of the answer */
+			BufferedReader entree = new BufferedReader(new InputStreamReader(client.getInputStream()));
+			answer = entree.readLine();
+			client.close();
+		}
+		catch( IOException ioe) {
+			System.out.println("Error while sending the message to the client");
+			ioe.printStackTrace();
+		}
+		
+		return answer;
+	}
 	
 	/**
 	 * Extracts the course archive file to the courses folder and renames it
@@ -331,21 +369,21 @@ public class FileSystemImpl implements IFileSystem {
 			ArrayList<String> command = new ArrayList<String>();
 			
 			command.add("mp3info");
-			if( ! c.getTitle().equals("")) {
+			if( c.getTitle() != null) {
 				command.add("-t");
 				command.add(c.getTitle());
 			}
-			if( ! c.getName().equals("")) {
+			if( c.getName() != null) {
 				command.add("-a");
-				command.add(c.getName() + (c.getFirstname().equals("") ? "" : " " + c.getFirstname()));
+				command.add(c.getName() + (c.getFirstname() == null ? "" : " " + c.getFirstname()));
 			}
 			command.add("-y");
 			command.add(sdf.format(c.getDate()));
-			if( ! c.getFormation().equals("")) {
+			if( c.getFormation() != null) {
 				command.add("-l");
 				command.add(c.getFormation());
 			}
-			if( ! comment.equals("")) {
+			if( comment != null) {
 				command.add("-c");
 				command.add(comment);
 			}
@@ -581,73 +619,69 @@ public class FileSystemImpl implements IFileSystem {
 	        
 	        // Recherche de cours et création d'un item pour chaque cours
 			for( Course course : courses) {
-	        
-	        
-				/*if(FirstName == null)
-					FirstName = "";
-				if(Object == null)
-					Object = "";
-				if(Rating == null)
-					Rating = "";*/
 				
-				// Conversion de la date dans le bon format	
-		    	Date d = course.getDate();
-		    	SimpleDateFormat sdf = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
-	        
-		        Element item = document.createElement("item");
-		        channel.appendChild(item);
+				if( course.getTitle() != null) {
+					// Conversion de la date dans le bon format	
+			    	Date d = course.getDate();
+			    	SimpleDateFormat sdf = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
 		        
-		        Element coursGuid = document.createElement("guid");
-		        coursGuid.setTextContent(Integer.toString(course.getCourseid()));
-		        coursGuid.setAttribute("isPermaLink","false");
-		        item.appendChild(coursGuid);
-		        
-		        Element coursTitle = document.createElement("title");
-		        coursTitle.setTextContent(course.getTitle());
-		        item.appendChild(coursTitle);
-		        
-		        Element coursDescription = document.createElement("description");
-		        coursDescription.setTextContent(
-		        		course.getName() + (! course.getFirstname().equals("") ? " " : "") + course.getFirstname()
-		        		+ (! ((course.getName().equals("") && course.getFirstname().equals("")) || course.getFormation().equals("")) ? " - " : "")
-		        		+ course.getFormation()
-		        		+ (! (course.getName().equals("") && course.getFirstname().equals("") && course.getFormation().equals("")) ? " : " : "")
-		        		+ course.getDescription());
-		        item.appendChild(coursDescription);
-		        
-		        Element coursCategory = document.createElement("category");
-		        coursCategory.setTextContent(course.getType());
-		        item.appendChild(coursCategory);
-		        
-		        Element coursLink = document.createElement("link");
-		        coursLink.setTextContent(recordedInterfaceUrl + "?id=" + course.getCourseid() + "&type=real");
-		        item.appendChild(coursLink);
-		        
-		        Element coursPubDate = document.createElement("pubDate");
-		        coursPubDate.setTextContent(sdf.format(d));
-		        item.appendChild(coursPubDate);
-		        
-		        String courseMediaUrl = coursesUrl + course.getMediaFolder() + "/" + course.getMediasFileName();
-		        
-		        Element coursEnclosure = document.createElement("enclosure");
-		        coursEnclosure.setAttribute("url",courseMediaUrl + ".mp3");
-		        coursEnclosure.setAttribute("type","audio/mpeg");
-		        item.appendChild(coursEnclosure);
-		        
-		        Element coursEnclosure2 = document.createElement("enclosure");
-		        coursEnclosure2.setAttribute("url",courseMediaUrl + ".ogg");
-		        coursEnclosure2.setAttribute("type","application/ogg");
-		        item.appendChild(coursEnclosure2);
-		        
-		        Element coursEnclosure3 = document.createElement("enclosure");
-		        coursEnclosure3.setAttribute("url",courseMediaUrl + ".pdf");
-		        coursEnclosure3.setAttribute("type","application/pdf");
-		        item.appendChild(coursEnclosure3);
-		        
-		        Element coursEnclosure4 = document.createElement("enclosure");
-		        coursEnclosure4.setAttribute("url",courseMediaUrl + ".zip");
-		        coursEnclosure4.setAttribute("type","application/zip");
-		        item.appendChild(coursEnclosure4);
+			        Element item = document.createElement("item");
+			        channel.appendChild(item);
+			        
+			        Element coursGuid = document.createElement("guid");
+			        coursGuid.setTextContent(Integer.toString(course.getCourseid()));
+			        coursGuid.setAttribute("isPermaLink","false");
+			        item.appendChild(coursGuid);
+			        
+			        Element coursTitle = document.createElement("title");
+			        coursTitle.setTextContent(course.getTitle());
+			        item.appendChild(coursTitle);
+			        
+			        Element coursDescription = document.createElement("description");
+			        coursDescription.setTextContent(
+			        		(course.getName() != null ? course.getName() : "") 
+			        		+ (! (course.getName() == null || course.getFirstname() == null) ? " " : "")
+			        		+ (course.getFirstname() != null ? course.getFirstname() : "")
+			        		+ (! ((course.getName() == null && course.getFirstname() == null) || course.getFormation() == null) ? " - " : "")
+			        		+ (course.getFormation() != null ? course.getFormation() : "")
+			        		+ (! ((course.getName() == null && course.getFirstname() == null && course.getFormation() == null) || course.getDescription() == null) ? " : " : "")
+			        		+ (course.getDescription() != null ? course.getDescription() : ""));
+			        item.appendChild(coursDescription);
+			        
+			        Element coursCategory = document.createElement("category");
+			        coursCategory.setTextContent(course.getType());
+			        item.appendChild(coursCategory);
+			        
+			        Element coursLink = document.createElement("link");
+			        coursLink.setTextContent(recordedInterfaceUrl + "?id=" + course.getCourseid() + "&type=real");
+			        item.appendChild(coursLink);
+			        
+			        Element coursPubDate = document.createElement("pubDate");
+			        coursPubDate.setTextContent(sdf.format(d));
+			        item.appendChild(coursPubDate);
+			        
+			        String courseMediaUrl = coursesUrl + course.getMediaFolder() + "/" + course.getMediasFileName();
+			        
+			        Element coursEnclosure = document.createElement("enclosure");
+			        coursEnclosure.setAttribute("url",courseMediaUrl + ".mp3");
+			        coursEnclosure.setAttribute("type","audio/mpeg");
+			        item.appendChild(coursEnclosure);
+			        
+			        Element coursEnclosure2 = document.createElement("enclosure");
+			        coursEnclosure2.setAttribute("url",courseMediaUrl + ".ogg");
+			        coursEnclosure2.setAttribute("type","application/ogg");
+			        item.appendChild(coursEnclosure2);
+			        
+			        Element coursEnclosure3 = document.createElement("enclosure");
+			        coursEnclosure3.setAttribute("url",courseMediaUrl + ".pdf");
+			        coursEnclosure3.setAttribute("type","application/pdf");
+			        item.appendChild(coursEnclosure3);
+			        
+			        Element coursEnclosure4 = document.createElement("enclosure");
+			        coursEnclosure4.setAttribute("url",courseMediaUrl + ".zip");
+			        coursEnclosure4.setAttribute("type","application/zip");
+			        item.appendChild(coursEnclosure4);
+				}
 			}
 		        
 			document.appendChild(racine);

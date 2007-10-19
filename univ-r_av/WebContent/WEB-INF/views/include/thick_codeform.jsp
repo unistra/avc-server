@@ -5,14 +5,22 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<div id="codeForm">
-	<form method="post" action="./courseaccess">
-		<br>
-		<legend><fmt:message key="Code d'acc&egrave;s"/></legend>
-		<input type="text" name="code">
-		<input type="hidden" name="id" value="${id}">
-		<input type="hidden" name="type" value="${type}">
-		<br><br>
-		<input type="submit" value="<fmt:message key="Valider"/>">
-	</form>
-</div>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<title>Course access</title>
+	</head>
+	<body>
+		<div id="codeForm">
+			<form method="post" action="./courseaccess">
+				<br>
+				<legend><fmt:message key="Code d'acc&egrave;s"/></legend>
+				<input type="text" name="code">
+				<input type="hidden" name="id" value="${id}">
+				<input type="hidden" name="type" value="${type}">
+				<br><br>
+				<input type="submit" value="<fmt:message key="Valider"/>">
+			</form>
+		</div>
+	</body>
+</html>

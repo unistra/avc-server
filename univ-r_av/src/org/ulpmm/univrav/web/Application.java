@@ -1,25 +1,15 @@
 package org.ulpmm.univrav.web;
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -30,19 +20,17 @@ import javax.servlet.http.HttpSession;
 import org.ulpmm.univrav.dao.DaoException;
 import org.ulpmm.univrav.dao.DatabaseImpl;
 import org.ulpmm.univrav.dao.FileSystemImpl;
-import org.ulpmm.univrav.dao.IDatabase;
-import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
-import org.ulpmm.univrav.language.Messages;
-import org.ulpmm.univrav.serverclasses.EncodageStr;
-import org.ulpmm.univrav.service.IService;
+import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.service.ServiceImpl;
+
 
 public class Application extends HttpServlet {
 
+	private static final long serialVersionUID = 1L;
 	private ServiceImpl service;
 	private HttpSession session;
 	
@@ -55,6 +43,7 @@ public class Application extends HttpServlet {
 	private static String defaultRmFile;
 	private static String comment;
 	private static String helixServerIp;
+	private static int clientSocketPort;
 	
 	private static String host;
 	private static String port;
@@ -76,15 +65,15 @@ public class Application extends HttpServlet {
 	/**
 	 * Initialization of the servlet. <br>
 	 *
-	 * @throws ServletException if an error occure
+	 * @throws ServletException if an error occurs
 	 */
 	public void init() throws ServletException {
 		
 		System.out.println("Univ-R AV : init method called");
 		
-		/* configuration parameters loading */
 		Properties p = new Properties();
 		try {
+			/* configuration parameters loading */
 			p.load(new FileInputStream(getServletContext().getRealPath("/conf") + "/univrav.properties"));
 			
 			ftpFolder = p.getProperty("ftpFolder");
@@ -95,6 +84,7 @@ public class Application extends HttpServlet {
 			defaultRmFile = p.getProperty("defaultRmFile");
 			comment = p.getProperty("comment");
 			helixServerIp = p.getProperty("helixServerIp");
+			clientSocketPort = Integer.parseInt(p.getProperty("clientSocketPort"));
 			
 			/* Loading of the settings to connect to the database */
 			host = p.getProperty("host");
@@ -115,38 +105,45 @@ public class Application extends HttpServlet {
 			/* the numbers of courses to display at the same time */
 			homeCourseNumber = Integer.parseInt(p.getProperty("homeCourseNumber"));
 			recordedCourseNumber = Integer.parseInt(p.getProperty("recordedCourseNumber"));
+			
+			DatabaseImpl db = new DatabaseImpl(host, port, database, user, password);
+			FileSystemImpl fs = new FileSystemImpl(
+					getServletContext().getRealPath("/") + "scripts",
+					ftpFolder, coursesFolder, liveFolder, coursesUrl,
+					defaultMp3File, defaultRmFile, comment
+			);
+			service = ServiceImpl.getInstance();
+			service.setDb(db);
+			service.setFs(fs);
+			
+			/* Creation of the RSS files */
+			
+			// For all courses
+			List<Course> courses = service.getAllUnlockedCourses();
+			/*** !!!!!! ***/
+			String rssPath = getServletContext().getRealPath("/rss") + "/" + rssFileName;
+			service.rssCreation(courses, rssPath, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			
+			// For the teachers
+			List<String[]> teachers = service.getTeachersWithRss();
+			for( String[] teacher : teachers) {
+				courses = service.getUnlockedCourses(teacher);
+				rssPath = getServletContext().getRealPath("/rss") + "/" 
+					+ teacher[0] +  (teacher[1] != null ? "_" + teacher[1] : "") + ".xml";
+				service.rssCreation(courses, rssPath, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			}
 		}
-		catch( Exception e) {
+		catch( IOException e) {
 			System.out.println("Impossible to find the configuration file");
 			e.printStackTrace();
 			destroy();
 		}
-		
-		DatabaseImpl db = new DatabaseImpl(host, port, database, user, password);
-		FileSystemImpl fs = new FileSystemImpl(
-				getServletContext().getRealPath("/") + "scripts",
-				ftpFolder, coursesFolder, liveFolder, coursesUrl,
-				defaultMp3File, defaultRmFile, comment
-		);
-		service = ServiceImpl.getInstance();
-		service.setDb(db);
-		service.setFs(fs);
-		
-		/* Creation of the RSS files */
-		
-		// For all courses
-		List<Course> courses = service.getAllUnlockedCourses();
-		/*** !!!!!! ***/
-		String rssPath = getServletContext().getRealPath("/rss") + "/" + rssFileName;
-		service.rssCreation(courses, rssPath, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
-		
-		// For the teachers
-		List<String[]> teachers = service.getTeachersWithRss();
-		for( String[] teacher : teachers) {
-			courses = service.getUnlockedCourses(teacher);
-			rssPath = getServletContext().getRealPath("/rss") + "/" 
-				+ teacher[0] +  (! teacher[1].equals("") ? "_" + teacher[1] : "") + ".xml";
-			service.rssCreation(courses, rssPath, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+		catch( DaoException de) {
+			de.printStackTrace();
+			destroy();
+		}
+		catch( Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -170,6 +167,8 @@ public class Application extends HttpServlet {
 	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+		request.setCharacterEncoding("UTF-8");
 		
 		/* Retrieves the current session or creates a new one if no session exists */
 		session = request.getSession(true);
@@ -255,6 +254,10 @@ public class Application extends HttpServlet {
 		else if( page.equals("/changelanguage")) {
 			changeLanguage(request, response);
 		}
+		else if( page.equals("/deletetests")) {
+			service.deleteTests();
+			service.hideTests();
+		}
 		else if( page.equals("/thick_codeform")) {
 			request.setAttribute("id", request.getParameter("id"));
 			request.setAttribute("type", request.getParameter("type"));
@@ -282,6 +285,69 @@ public class Application extends HttpServlet {
 		else if( page.equals("/admin_courses")) {
 			request.setAttribute("courses", service.getAllCourses());
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_courses.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_editcourse")) {
+			request.setAttribute("course", service.getCourse(Integer.parseInt(request.getParameter("id"))));
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editcourse.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_deletecourse")) {
+			int courseid = Integer.parseInt(request.getParameter("id"));
+			service.deleteCourse(courseid, service.getCourse(courseid).getMediaFolder());
+			response.sendRedirect(response.encodeRedirectURL("./admin_courses"));
+		}
+		else if( page.equals("/admin_validatecourse")) {
+			validateCourse(request, response);
+		}
+		else if( page.equals("/admin_buildings")) {
+			request.setAttribute("buildings", service.getBuildings());
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_buildings.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_addbuilding")) {
+			request.setAttribute("action","add"); 
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editbuilding.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_editbuilding")) {
+			request.setAttribute("action","edit"); 
+			request.setAttribute("building", service.getBuilding(Integer.parseInt(request.getParameter("id"))));
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editbuilding.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_deletebuilding")) {
+			int buildingid = Integer.parseInt(request.getParameter("id"));
+			service.deleteBuilding(buildingid);
+			response.sendRedirect(response.encodeRedirectURL("./admin_buildings"));
+		}
+		else if( page.equals("/admin_validatebuilding")) {
+			validateBuilding(request, response);
+		}
+		else if( page.equals("/admin_amphis")) {
+			request.setAttribute("buildingId", request.getParameter("buildingId"));
+			request.setAttribute("amphis", service.getAmphis(Integer.parseInt(request.getParameter("buildingId"))));
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_amphis.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_addamphi")) {
+			request.setAttribute("buildingId", request.getParameter("buildingId"));
+			request.setAttribute("action","add"); 
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editamphi.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_editamphi")) {
+			request.setAttribute("buildingId", request.getParameter("buildingId"));
+			request.setAttribute("action","edit"); 
+			request.setAttribute("amphi", service.getAmphi(Integer.parseInt(request.getParameter("id"))));
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editamphi.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_deleteamphi")) {
+			int amphiid = Integer.parseInt(request.getParameter("id"));
+			service.deleteAmphi(amphiid);
+			response.sendRedirect(response.encodeRedirectURL("./admin_amphis?buildingId=" + request.getParameter("buildingId")));
+		}
+		else if( page.equals("/admin_validateamphi")) {
+			validateAmphi(request, response);
+		}
+		else if( page.equals("/univr_creation")) {
+			univrCreation(request, response);
+		}
+		else if( page.equals("/univr_courseaccess")) {
+			univrCourseAccess(request, response);
 		}
 		else
 			displayHomePage(request, response);
@@ -373,8 +439,7 @@ public class Application extends HttpServlet {
 		
 		if( request.getMethod().equals("POST")) { // The form has just been posted
 			
-			pageNumber = 1;
-			System.out.println("enregistrement parametres");
+			pageNumber = 1;			
 			
 			/* Puts the search paramaters in a HashMap object */
 			if( request.getParameter("audio") != null && request.getParameter("video") == null ) 
@@ -453,16 +518,9 @@ public class Application extends HttpServlet {
 	private void addCourse(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 		
-		String id, title, description, mediapath, media, timing, name, firstname, formation, login, genre;
-
-		response.setContentType("text/html");
-		
-		PrintWriter out = response.getWriter();
-		
-		out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-		out.println("<HTML>");
-		out.println("  <HEAD><TITLE>Servlet d'envoi de cours</TITLE></HEAD>");
-		out.println("  <BODY>");
+		String id, title, description, mediapath, media, timing, name, firstname, formation, genre;
+		String message = "";
+		String messageType = "information";
 		
 		/* Le client envoie les informations en ISO8859-15 */
 		request.setCharacterEncoding("ISO8859-15");
@@ -472,23 +530,15 @@ public class Application extends HttpServlet {
 		mediapath = request.getParameter("mediapath");
 		timing = request.getParameter("timing");
 		
-		description = request.getParameter("description");
-		title = request.getParameter("title");
-		name = request.getParameter("name");
-		firstname = EncodageStr.toUTF8(request.getParameter("firstname"));
-		formation = request.getParameter("ue");
-		login = request.getParameter("login");
+		description = cleanString(request.getParameter("description"));
+		title = cleanString(request.getParameter("title"));
+		name = cleanString(request.getParameter("name"));
+		firstname = cleanString(request.getParameter("firstname"));
+		formation = cleanString(request.getParameter("ue"));
 		genre = request.getParameter("genre");
 		
 		/* Vérification que les paramètres essentiels ont bien été envoyés, annulation de l'upload dans le cas contraire */
 		if(id != null && description != null && mediapath != null && title != null && name != null && formation != null) {
-		
-			/* Traitement des valeurs NULL (paramètres non envoyés par les anciens clients) */
-			if( firstname == null )
-				firstname = "";
-			
-			if( genre == null )
-				genre = "";
 			
 			if( timing == null )
 				timing = "n-1";
@@ -496,46 +546,54 @@ public class Application extends HttpServlet {
 			String clientIP = request.getRemoteAddr();
 			
 			/* Affichage des informations reçues */
-			out.println("ID : " + id + "<br/>");
-			out.println("Titre : " + title + "<br/>");
-			out.println("Description : " + description + "<br/>");
-			out.println("Mediapath : " + mediapath + "<br/>");
-			//out.println("Date : " + date + "<br/>");
-			out.println("Enseignant : " + name + " " + firstname + "<br>");
-			out.println("UE : " + formation + "<br>");
-			out.println("Login : " + login + "<br>");
-			out.println("Genre : " + genre + "<br>");
-			out.println("Timing : " + timing + "<br>");
+			/*message += "ID : " + id + "<br/>";
+			message += "Title : " + title + "<br/>";
+			message += "Description : " + description + "<br/>";
+			message += "Mediapath : " + mediapath + "<br/>";
+			message += "Teacher : " + name + " " + firstname + "<br>";
+			message += "UE : " + formation + "<br>";
+			message += "Genre : " + genre + "<br>";
+			message += "Timing : " + timing + "<br>";*/
 			
 			/* Récupération du nom du fichier à partir de son chemin d'accès */
 			media = mediapath.substring(mediapath.lastIndexOf("\\") + 1, mediapath.length());
 			if( media.length() == mediapath.length() )
 				media = mediapath.substring(mediapath.lastIndexOf("/") + 1, mediapath.length());
 			
-			out.println("Media : " + media + "<br/>");
+			message += "Media : " + media + "<br/>";
 			
-			Course c = new Course(
-					service.getNextCoursId(),
-					new Timestamp(new Date().getTime()),
-					"", // The type can't be set yet
-					title,
-					description,
-					formation,
-					name,
-					firstname,
-					clientIP,
-					0, // The duration can't be set yet
-					genre,
-					true,
-					0,
-					timing,
-					"" // The media folder can't be set yet
-			);
+			Course c;
 			
-			service.addCourse(c, media);
+			if( id.equals("") || id.equals("(id:no)")) {
+				c = new Course(
+						service.getNextCoursId(),
+						new Timestamp(new Date().getTime()),
+						null, // The type can't be set yet
+						title.equals("") ? null : title,
+						description.equals("") ? null : description,
+						formation.equals("") ? null : formation,
+						name.equals("") ? null : name,
+						(firstname == null || firstname.equals("")) ? null : firstname,
+						clientIP,
+						0, // The duration can't be set yet
+						(genre == null || genre.equals("")) ? null : genre,
+						true,
+						0,
+						timing,
+						null // The media folder can't be set yet
+				);
+				service.addCourse(c, media);
+			}
+			else {
+				c = service.getCourse(Integer.parseInt(id));
+				c.setDate(new Timestamp(new Date().getTime()));
+				c.setVisible(true);
+				c.setTiming(timing);
+				service.completeUnivrCourse(c, media);
+			}
 			
 			/* Generation of the RSS files */
-			if( c.getGenre().equals("")) {
+			if( c.getGenre() == null) {
 				// Regeneration for all courses
 				List<Course> courses = service.getAllUnlockedCourses();
 				/*** !!!!!! ***/
@@ -545,19 +603,21 @@ public class Application extends HttpServlet {
 				// For the teacher
 				courses = service.getUnlockedCourses(new String[]{c.getName(), c.getFirstname()});
 				rssPath = getServletContext().getRealPath("/rss") + "/" 
-					+ c.getName() +  (! c.getFirstname().equals("") ? "_" + c.getFirstname() : "") + ".xml";
+					+ c.getName() +  (c.getFirstname() != null ? "_" + c.getFirstname() : "") + ".xml";
 				service.rssCreation(courses, rssPath, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 			}
 			
-		out.println("Fichier envoye ! <br/>");
+			message = "File successfully sent !";
 								
 		}
-		else
-			out.println("Erreur : un ou plusieurs parametres n'ont pas ete renseignes");
-		out.println("  </BODY>");
-		out.println("</HTML>");
-		out.flush();
-		out.close();
+		else {
+			messageType = "error";
+			message = "Erreur: One ore more parameters have not been given";
+		}
+		
+		request.setAttribute("messagetype", messageType);
+		request.setAttribute("message", message);
+		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 	}
 	
 	private void liveState(HttpServletRequest request, HttpServletResponse response)
@@ -619,6 +679,10 @@ public class Application extends HttpServlet {
 				String building = service.getBuildingName(c.getIpaddress());
 				request.setAttribute("amphi", amphi);
 				request.setAttribute("building", building);
+				if( c.getTiming().equals("n-1"))
+					request.setAttribute("timing", 1);
+				else
+					request.setAttribute("timing", 0);
 				
 				// affichage de la vue [list]
 				getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_smil.jsp").forward(request, response);
@@ -653,9 +717,9 @@ public class Application extends HttpServlet {
 			}
 		}
 		catch(DaoException de) {
-			// redirection message d'erreur
-			de.printStackTrace();
-			System.out.println("mauvais code");
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Wrong access code");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 		}
 	}
 	
@@ -695,6 +759,69 @@ public class Application extends HttpServlet {
 		getServletContext().getRequestDispatcher("/WEB-INF/views/include/iframe_liveslide.jsp").forward(request, response);
 	}
 	
+	private void validateCourse(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		Course c= new Course(
+			Integer.parseInt(request.getParameter("courseid")),
+			new Timestamp(Long.parseLong(request.getParameter("date"))),
+			request.getParameter("type"),
+			request.getParameter("title"),
+			request.getParameter("description"),
+			request.getParameter("formation"),
+			request.getParameter("name"),
+			request.getParameter("firstname"),
+			request.getParameter("ipaddress"),
+			Integer.parseInt(request.getParameter("duration")),
+			request.getParameter("genre"),
+			request.getParameter("visible") != null ? true : false,
+			Integer.parseInt(request.getParameter("consultations")),
+			request.getParameter("timing"),
+			request.getParameter("mediaFolder")
+		);
+		service.modifyCourse(c);
+		response.sendRedirect(response.encodeRedirectURL("./admin_courses"));
+	}
+	
+	private void validateBuilding(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		int buildingId =  ! request.getParameter("buildingid").equals("") ? Integer.parseInt(request.getParameter("buildingid")) : 0;
+		
+		Building b = new Building(
+			buildingId,
+			request.getParameter("name"),
+			request.getParameter("imagefile")
+		);
+		
+		if(request.getParameter("action").equals("edit"))
+			service.modifyBuilding(b);
+		else
+			service.addBuilding(b);
+		response.sendRedirect(response.encodeRedirectURL("./admin_buildings"));
+	}
+	
+	private void validateAmphi(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		int amphiId =  ! request.getParameter("amphiid").equals("") ? Integer.parseInt(request.getParameter("amphiid")) : 0;
+		
+		Amphi a = new Amphi(
+			amphiId,
+			Integer.parseInt(request.getParameter("buildingid")),
+			request.getParameter("name"),
+			request.getParameter("type"),
+			request.getParameter("ipaddress"),
+			Boolean.parseBoolean(request.getParameter("status"))
+		);
+		
+		if(request.getParameter("action").equals("edit"))
+			service.modifyAmphi(a);
+		else
+			service.addAmphi(a);
+		response.sendRedirect(response.encodeRedirectURL("./admin_amphis?buildingId=" + request.getParameter("buildingid")));
+	}
+	
 	private void changeStyle(HttpServletRequest request, HttpServletResponse response) 
 		throws ServletException, IOException {
 		String style = request.getParameter("style");
@@ -729,19 +856,231 @@ public class Application extends HttpServlet {
 		response.sendRedirect(response.encodeRedirectURL("." + previousPage));
 	}
 	
-	public HashMap<String, String> getRssFileList() {
+	private void univrCreation(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		String message = "Veuillez suivre les indications à l'écran";
+		String messageType = "information";
+
+		int courseId = service.getNextCoursId();
+		
+		/* Récupération des paramètres envoyés par Univers */
+		/* (envoi des informations en LATIN9) */
+		request.setCharacterEncoding("LATIN9");
+		
+		String uid = request.getParameter("uid");
+		String uuid = request.getParameter("uuid");
+		String groupCode = request.getParameter("codegroupe");
+		String ip = request.getParameter("ip");
+		
+		String description = request.getParameter("description");
+		String title = request.getParameter("titre");
+		String genre = request.getParameter("genre");
+		
+		/* Vérification que les paramètres ont bien été envoyés */
+		if( uid != null && uuid != null && groupCode != null && ip != null && (! groupCode.equals("")) && (! ip.equals(""))) {
+		
+			/*out.println("ID du cours : " + courseId + "<br>");
+			out.println("User ID : " + uid + "<br>");
+			out.println("Code groupe : " + groupCode + "<br>");
+			
+			out.println("Titre : " + title + "<br/>");
+			out.println("Description : " + description + "<br/>");
+			out.println("IP : " + ip + "<br/>");*/
+			
+			if( service.getAmphi(ip) != null) {
+				
+				try {
+					
+					int user = Integer.parseInt(uid);
+					int group = Integer.parseInt(groupCode);
+					
+					/* Si l'utilisateur est autorisé , vérification des droits pour le cours */
+					//if( service.isUserAuth(user, uuid)) {
+						
+						//HashMap<String, String> map = service.getUserInfos(user);
+						String name = ""/*map.get("nom")*/;
+						String firstname = ""/*map.get("prenom")*/;
+						String formation = ""/*service.getGroupName(Integer.parseInt(groupCode))*/;
+						
+						String msg = "(id:" + courseId + ")";
+						//String answer = service.sendMessageToClient(msg, ip, clientSocketPort);
+						
+						Course c = new Course(
+								courseId,
+								new Timestamp(new Date().getTime()),
+								null, // The type can't be set yet
+								title.equals("") ? null : title,
+								description.equals("") ? null : description,
+								formation.equals("") ? null : formation,
+								name.equals("") ? null : name,
+								firstname.equals("") ? null : firstname,
+								ip,
+								0, // The duration can't be set yet
+								genre.equals("") ? null : genre,
+								false,
+								0,
+								null, // The timing can't be set yet
+								null // The media folder can't be set yet
+						);
+						
+						Univr u = new Univr(courseId, user, group);
+						
+						service.addUnivrCourse(c,u);
+					/*}
+					else {
+						messageType = "error";
+						message = "Erreur: Utilisateur non authentifié";
+					}*/
+				}
+				catch( NumberFormatException nfe) {
+					messageType = "error";
+					message = "Erreur: Paramètres incorrects";
+					System.out.println("Param&egrave;tres incorrects !");
+					System.out.println( nfe.toString());
+				}
+				catch( Exception e ) {
+					messageType = "error";
+					message = "Erreur: Problème lors de la connexion au client";
+					System.out.println("Problème lors de la connexion au client !");
+					System.out.println( e.toString() );
+					e.printStackTrace();
+				}
+			}
+			else {
+				messageType = "error";
+				message = "Erreur: ";
+				System.out.println("amphi inconnu !");
+			}
+		}
+		else {
+			messageType = "error";
+			message = "Erreur: paramètres manquants";
+			System.out.println("Paramètres manquants !");
+		}
+		
+		request.setAttribute("messagetype", messageType);
+		request.setAttribute("message", message);
+		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+	}
+	
+	private void univrCourseAccess(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		String message = "";
+		String forwardUrl = "/WEB-INF/views/recordinterface_smil.jsp";
+		
+		String id = request.getParameter("id");
+		String uid = request.getParameter("uid");
+		String uuid = request.getParameter("uuid");
+		
+		/* Vérification que les paramètres ont bien été envoyés */
+		if( id != null && uid != null && uuid != null) {
+		
+			try {
+				int courseId = Integer.parseInt(id);
+				int userId = Integer.parseInt(uid);
+				
+				/* Si l'utilisateur est loggué , vérification des droits pour le cours */
+				//if( service.isUserAuth(userId, uuid)) {
+					
+					//if ( service.hasAccessToCourse(userId, courseId)) {
+						
+						Course c = null;
+						c = service.getCourse(courseId);	
+						service.incrementConsultations(c);
+						
+						//redirection interface
+						request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
+						request.setAttribute("slidesurl", coursesUrl + c.getMediaFolder() + "/screenshots/");
+						List<Slide> slides = service.getSlides(c.getCourseid());
+						request.setAttribute("slides", slides);
+						Amphi a = service.getAmphi(c.getIpaddress());
+						String amphi = a != null ? a.getName() : c.getIpaddress();
+						String building = service.getBuildingName(c.getIpaddress());
+						request.setAttribute("amphi", amphi);
+						request.setAttribute("building", building);
+						if( c.getTiming().equals("n-1"))
+							request.setAttribute("timing", 1);
+						else
+							request.setAttribute("timing", 0);
+						
+						// affichage de la vue [list]
+						//getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_smil.jsp").forward(request, response);
+						
+					/*} else {
+						message = "Erreur: autorisation refusée";
+						request.setAttribute("messagetype", "error");
+						request.setAttribute("message", message);
+						forwardUrl = "/WEB-INF/views/message.jsp";
+					}	 	*/
+				/*}
+				else {
+					message = "Erreur: utilisateur non authentifié";
+					request.setAttribute("messagetype", "error");
+					request.setAttribute("message", message);
+					forwardUrl = "/WEB-INF/views/message.jsp";
+				}*/
+			}
+			catch( NumberFormatException nfe) {
+				nfe.printStackTrace();
+				message = "Erreur: paramètres incorrects (valeurs numériques attendues)";
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", message);
+				forwardUrl = "/WEB-INF/views/message.jsp";
+			}
+		}
+		else {
+			message = "Erreur: paramètres manquants";
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", message);
+			forwardUrl = "/WEB-INF/views/message.jsp";
+		}
+		
+		/* If an error has occured, diplays an error message */
+		getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
+	}
+	
+	private HashMap<String, String> getRssFileList() {
 		HashMap<String, String> rss = new HashMap<String, String>();
 		rss.put(rssTitle, "../rss/" + rssFileName);
 		
 		List<String[]> teachers = service.getTeachersWithRss();
 		for( String[] teacher : teachers) {
 			rss.put(
-				teacher[0] +  (! teacher[1].equals("") ? " " + teacher[1] : ""), 
-				"../rss/" + teacher[0] +  (! teacher[1].equals("") ? "_" + teacher[1] : "") + ".xml"
+				teacher[0] +  (teacher[1] != null ? " " + teacher[1] : ""), 
+				"../rss/" + teacher[0] +  (teacher[1] != null ? "_" + teacher[1] : "") + ".xml"
 			);
 		}
 		
 		return rss;
 	}
 
+	/**
+	 * Function which removes the undesirable characters of a String and the useless spaces at the end
+	 * @param string the string to clean
+	 * @return the cleaned string
+	 */
+	private String cleanString(String string){
+		final String carSpeTotal = "&><\"%#+";
+		
+		String res = "";
+		
+		/* Removes the undesirable characters */
+		if( string != null ) {
+			for( int i=0 ; i < string.length() ; i++ ) {
+				if( carSpeTotal.indexOf(string.charAt(i)) == -1 )
+					res += string.charAt(i);
+			}
+		}
+
+		/* Removes the spaces at the end */
+		if( res.length() > 0 ) {
+			while( res.charAt(res.length()-1) == ' ' )
+				res = res.substring(0,res.length()-1);
+		}
+		
+		return res;
+	}
+	
 }

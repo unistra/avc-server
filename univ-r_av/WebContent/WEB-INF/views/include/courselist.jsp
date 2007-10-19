@@ -1,6 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="dt" uri="http://jakarta.apache.org/taglibs/datetime-1.0" %>
+<%@ taglib prefix="dt" uri="/WEB-INF/taglibs-datetime.tld" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
@@ -46,13 +46,13 @@
 		<tr class="${class}">
 			<!-- Defines the image file which represents the course type -->
 			<c:choose>
-				<c:when test="${course.type == 'audio' && course.genre == ''}">
+				<c:when test="${course.type == 'audio' && course.genre == null}">
 					<c:set var="typeImg" value="sound" />
 				</c:when>
 				<c:when test="${course.type == 'audio'}">
 					<c:set var="typeImg" value="sound_locked" />
 				</c:when>
-				<c:when test="${course.type == 'video' && course.genre == ''}">
+				<c:when test="${course.type == 'video' && course.genre == null}">
 					<c:set var="typeImg" value="video" />
 				</c:when>
 				<c:when test="${course.type == 'video'}">
@@ -73,7 +73,8 @@
 				</div>	    				
 			</td>
 			<td>
-				<b><fmt:message key="Date :"/> </b> <dt:format pattern="dd/MM/yyyy">${course.date.time}</dt:format> <br>
+				<fmt:message key="dateFormat" var="dateFormat" />
+				<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
 				<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
 				<div id="row${status.count}col2link">
 					<a href="javascript:switchDetails('row${status.count}')"><fmt:message key="[+] plus de détails"/></a>
@@ -86,12 +87,12 @@
 			</td>
 			<td class="tdalign">
 				<c:choose>
-					<c:when test="${course.genre == ''}">
+					<c:when test="${course.genre == null}">
 						<c:url var="courseaccess" scope="page" value="./courseaccess">
 							<c:param name="id" value="${course.courseid}"/>
 							<c:param name="type" value="smil"/>
 						</c:url>
-						<a href="${courseaccess}"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
 						<c:url var="thick_codeform" scope="page" value="./thick_codeform">
@@ -100,18 +101,18 @@
 							<c:param name="width" value="250"/>
 							<c:param name="height" value="100"/>
 						</c:url>
-						<a href="${thick_codeform}" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
 			<td class="tdalign">
 				<c:choose>
-					<c:when test="${course.genre == ''}">
+					<c:when test="${course.genre == null}">
 						<c:url var="courseaccess" scope="page" value="./courseaccess">
 							<c:param name="id" value="${course.courseid}"/>
 							<c:param name="type" value="real"/>
 						</c:url>
-						<a href="${courseaccess}"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
 						<c:url var="thick_codeform" scope="page" value="./thick_codeform">
@@ -120,18 +121,18 @@
 							<c:param name="width" value="250"/>
 							<c:param name="height" value="100"/>
 						</c:url>
-						<a href="${thick_codeform}" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
 			<td class="tdalign">
 				<c:choose>
-					<c:when test="${course.genre == ''}">
+					<c:when test="${course.genre == null}">
 						<c:url var="courseaccess" scope="page" value="./courseaccess">
 							<c:param name="id" value="${course.courseid}"/>
 							<c:param name="type" value="ogg"/>
 						</c:url>
-						<a href="${courseaccess}"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
 						<c:url var="thick_codeform" scope="page" value="./thick_codeform">
@@ -140,18 +141,18 @@
 							<c:param name="width" value="250"/>
 							<c:param name="height" value="100"/>
 						</c:url>
-						<a href="${thick_codeform}" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
 			<td class="tdalign">
 				<c:choose>
-					<c:when test="${course.genre == ''}">
+					<c:when test="${course.genre == null}">
 						<c:url var="courseaccess" scope="page" value="./courseaccess">
 							<c:param name="id" value="${course.courseid}"/>
 							<c:param name="type" value="mp3"/>
 						</c:url>
-						<a href="${courseaccess}"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
 						<c:url var="thick_codeform" scope="page" value="./thick_codeform">
@@ -160,18 +161,18 @@
 							<c:param name="width" value="250"/>
 							<c:param name="height" value="100"/>
 						</c:url>
-						<a href="${thick_codeform}" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
 			<td class="tdalign">
 				<c:choose>
-					<c:when test="${course.genre == ''}">
+					<c:when test="${course.genre == null}">
 						<c:url var="courseaccess" scope="page" value="./courseaccess">
 							<c:param name="id" value="${course.courseid}"/>
 							<c:param name="type" value="zip"/>
 						</c:url>
-						<a href="${courseaccess}"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
 						<c:url var="thick_codeform" scope="page" value="./thick_codeform">
@@ -180,18 +181,18 @@
 							<c:param name="width" value="250"/>
 							<c:param name="height" value="100"/>
 						</c:url>
-						<a href="${thick_codeform}" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
 			<td class="tdalign">
 				<c:choose>
-					<c:when test="${course.genre == ''}">
+					<c:when test="${course.genre == null}">
 						<c:url var="courseaccess" scope="page" value="./courseaccess">
 							<c:param name="id" value="${course.courseid}"/>
 							<c:param name="type" value="pdf"/>
 						</c:url>
-						<a href="${courseaccess}"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:when>
 					<c:otherwise>
 						<c:url var="thick_codeform" scope="page" value="./thick_codeform">
@@ -200,7 +201,7 @@
 							<c:param name="width" value="250"/>
 							<c:param name="height" value="100"/>
 						</c:url>
-						<a href="${thick_codeform}" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+						<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
 				</c:choose>
 			</td>
