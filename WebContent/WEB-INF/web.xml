@@ -11,11 +11,11 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Application</servlet-name>
-		<url-pattern>/servlet/*</url-pattern>
+		<url-pattern>/avc/*</url-pattern>
 	</servlet-mapping>
 	<error-page>
 		<exception-type>java.lang.Exception</exception-type>
-		<location>/exception.jsp</location>
+		<location>/WEB-INF/views/exception.jsp</location>
 	</error-page>
 	<!-- Use english as the default locale -->
 	<context-param>

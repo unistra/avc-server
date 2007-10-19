@@ -7,6 +7,7 @@ import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Univr;
 
 public interface IDatabase {
 	
@@ -15,6 +16,12 @@ public interface IDatabase {
 	 * @param c the course to add
 	 */
 	public void addCourse(Course c);
+	
+	/**
+	 * Adds a new Univ-R course
+	 * @param u the Univ-R course
+	 */
+	public void addUnivr(Univr u);
 	
 	/**
 	 * Gets a list of all the courses
@@ -100,6 +107,22 @@ public interface IDatabase {
 	public void deleteCourse(int courseId);
 	
 	/**
+	 * Gets the list of the media folders of the test courses
+	 * @return the list of media folders
+	 */
+	public List<String> getTestsMediaFolders();
+	
+	/**
+	 * Deletes the test courses
+	 */
+	public void deleteTests();
+	
+	/**
+	 * Hides the test courses (courses beginning with 'test' or 'essai')
+	 */
+	public void hideTests();
+	
+	/**
 	 * Gets the id of the next course which will be uploaded
 	 * @return the id of the course
 	 */
@@ -149,6 +172,11 @@ public interface IDatabase {
 	 */
 	public void deleteSlide(int courseId);
 	
+	/**
+	 * Adds a new building
+	 * @param b the building to add
+	 */
+	public void addBuilding(Building b);
 	
 	/**
 	 * Gets the list of the buildings
@@ -157,12 +185,30 @@ public interface IDatabase {
 	public List<Building> getBuildings();
 	
 	/**
+	 * Gets a building by providing its id
+	 * @param buildingId the id of the building
+	 * @return the building
+	 */
+	public Building getBuilding(int buildingId);
+	
+	/**
 	 * Gets a building name by providing one of its amphis IP address
 	 * @param amphiIp the amphi IP address
 	 * @return the building name
 	 */
 	public String getBuildingName(String amphiIp);
 	
+	/**
+	 * Modifies a building
+	 * @param b the building to modify
+	 */
+	public void modifyBuilding(Building b);
+	
+	/**
+	 * Deletes a building
+	 * @param buildingId the id of the building
+	 */
+	public void deleteBuilding(int buildingId);
 	
 	/**
 	 * Adds a new Amphi
@@ -175,6 +221,13 @@ public interface IDatabase {
 	 * @return the list of amphis
 	 */
 	public List<Amphi> getAmphis(int buildingId);
+	
+	/**
+	 * Gets an amphi by providing its IP address
+	 * @param ip the IP address of the amphi
+	 * @return the amphi
+	 */
+	public Amphi getAmphi(int amphiId);
 	
 	/**
 	 * Gets an amphi by providing its IP address
@@ -198,7 +251,7 @@ public interface IDatabase {
 	
 	/**
 	 * Deletes an amphi by providing its id
-	 * @param id the id of the amphi
+	 * @param amphiId the id of the amphi
 	 */
-	public void deleteAmphi(String id);
+	public void deleteAmphi(int amphiId);
 }

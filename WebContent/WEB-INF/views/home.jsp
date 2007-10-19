@@ -51,7 +51,7 @@
 						<c:param name="width" value="250"/>
 						<c:param name="height" value="100"/>
 					</c:url>
-		    		<span class="linkText"><a href="${thick_download}" title="<fmt:message key="T&eacute;l&eacute;chargements"/>" class="thickbox"><fmt:message key="T&eacute;l&eacute;chargements"/></a></span>
+		    		<span class="linkText"><a href="<c:out value="${thick_download}" />" title="<fmt:message key="T&eacute;l&eacute;chargements"/>" class="thickbox"><fmt:message key="T&eacute;l&eacute;chargements"/></a></span>
 		    		<span class="linkDescription"><fmt:message key="Acc&eacute;dez aux T&eacute;l&eacute;chargements du site"/></span>
 		    	</div>
 		    	<div class="rssImage">

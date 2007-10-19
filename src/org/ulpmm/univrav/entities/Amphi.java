@@ -9,6 +9,7 @@ package org.ulpmm.univrav.entities;
  */
 public class Amphi {
 	
+	private int amphiid;
 	private int buildingid;
 	private String name;
 	private String type;
@@ -25,14 +26,22 @@ public class Amphi {
 	 * @param ipAddress
 	 * @param status
 	 */
-	public Amphi(int buildingid, String name, String type, String ipAddress,
+	public Amphi(int amphiid, int buildingid, String name, String type, String ipAddress,
 			boolean status) {
 		super();
+		this.amphiid = amphiid;
 		this.buildingid = buildingid;
 		this.name = name;
 		this.type = type;
 		this.ipAddress = ipAddress;
 		this.status = status;
+	}
+	
+	/**
+	 * @return the amphiid
+	 */
+	public int getAmphiid() {
+		return amphiid;
 	}
 
 	/**

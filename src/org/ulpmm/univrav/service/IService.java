@@ -1,26 +1,16 @@
 package org.ulpmm.univrav.service;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.ulpmm.univrav.dao.DaoException;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Univr;
 
 public interface IService {
 	
@@ -29,6 +19,13 @@ public interface IService {
 	 * @param c the course to add
 	 */
 	public void addCourse(Course c, String courseArchive);
+	
+	/**
+	 * Adds a new course from Univ-R
+	 * @param c the course to add
+	 * @param u the Univ-R infos
+	 */
+	public void addUnivrCourse(Course c, Univr u);
 	
 	/**
 	 * Gets a list of all the courses
@@ -108,10 +105,21 @@ public interface IService {
 	public void modifyCourse(Course c);
 	
 	/**
-	 * Deletes a course by providing its id
-	 * @param courseId the id of the course
+	 * Deletes a course by providing its id and media Folder
+	 * @param courseId the id of the course to delete
+	 * @param mediaFolder the folder of the course to delete
 	 */
-	public void deleteCourse(int courseId);
+	public void deleteCourse(int courseId, String mediaFolder);
+	
+	/**
+	 * Deletes the test courses
+	 */
+	public void deleteTests();
+	
+	/**
+	 * Hides the test courses (courses beginning with 'test' or 'essai')
+	 */
+	public void hideTests();
 	
 	/**
 	 * Gets the id of the next course which will be uploaded
@@ -159,10 +167,23 @@ public interface IService {
 	
 	
 	/**
+	 * Adds a new building
+	 * @param b the building to add
+	 */
+	public void addBuilding(Building b);
+	
+	/**
 	 * Gets the list of the buildings
 	 * @return the list of buildings
 	 */
 	public List<Building> getBuildings();
+	
+	/**
+	 * Gets a building by providing its id
+	 * @param buildingId the id of the building
+	 * @return the building
+	 */
+	public Building getBuilding(int buildingId);
 	
 	/**
 	 * Gets a building name by providing one of its amphis IP address
@@ -170,6 +191,18 @@ public interface IService {
 	 * @return the building name
 	 */
 	public String getBuildingName(String amphiIp);
+	
+	/**
+	 * Modifies a building
+	 * @param b the building to modify
+	 */
+	public void modifyBuilding(Building b);
+	
+	/**
+	 * Deletes a building
+	 * @param buildingId the id of the building
+	 */
+	public void deleteBuilding(int buildingId);
 	
 	/**
 	 * Adds a new Amphi
@@ -182,6 +215,13 @@ public interface IService {
 	 * @return the list of amphis
 	 */
 	public List<Amphi> getAmphis(int buildingId);
+	
+	/**
+	 * Gets an amphi by providing its IP address
+	 * @param ip the IP address of the amphi
+	 * @return the amphi
+	 */
+	public Amphi getAmphi(int amphiId);
 	
 	/**
 	 * Gets an amphi by providing its IP address
@@ -205,9 +245,9 @@ public interface IService {
 	
 	/**
 	 * Deletes an amphi by providing its id
-	 * @param id the id of the amphi
+	 * @param amphiId the id of the amphi
 	 */
-	public void deleteAmphi(String id);
+	public void deleteAmphi(int amphiId);
 	
 	/**
 	 * Creates a RSS files for a list of courses
@@ -252,4 +292,48 @@ public interface IService {
 	 * @param out the stream in which send the file
 	 */
 	public void returnFile(String filename, OutputStream out);
+	
+	/**
+	 * Sends a message over a socket to the Univ-R AV client
+	 * @param message the message to send
+	 * @return the answer of the client
+	 */
+	public String sendMessageToClient(String message, String ip, int port);
+	
+	/**
+	 * Verifies if a user is logged on Univ-R
+	 * @param uid the uid of the user
+	 * @param uuid Univ-R session identifier
+	 * @return true if the user is logged on Univ-R
+	 */
+	public boolean isUserAuth(int uid, String uuid);
+	
+	/**
+	 * Gets information about an user
+	 * @param uid the uid of the user
+	 * @return the information about the user
+	 */
+	public HashMap<String, String> getUserInfos(int uid);
+	
+	/**
+	 * Gets the group name of a group
+	 * @param groupCode the code of the group
+	 * @return the group name
+	 */
+	public String getGroupName(int groupCode);
+	
+	/**
+	 * Publishes a course on Univ-R
+	 * @param courseId the id of the course to publish
+	 * @param groupCode the code of the group which will have access to the course
+	 */
+	public void publishCourse(int courseId, int groupCode);
+	
+	/**
+	 * Checks if a user has access to a course
+	 * @param uid the uid of the user
+	 * @param courseId the course
+	 * @return true if the user has access to the course
+	 */
+	public boolean hasAccessToCourse(int uid, int courseId);
 }

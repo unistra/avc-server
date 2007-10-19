@@ -144,6 +144,6 @@ a, .linkText, .helpText, h5, .buildingName, .searchText {
 	color: #FF9602;
 }
 
-th {
+.tableheader {
 	background-color: #FF9602;
 }

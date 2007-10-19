@@ -27,6 +27,7 @@
 		var timecodes = ${slides};
 		var style = "${sessionScope.style}";
 		var slidesurl = "${slidesurl}";
+		var timing = ${timing}
 	</script>
 
   </head>
@@ -35,7 +36,7 @@
     <div class="main">
 	    <div class="contents">
 	    	
-	    	<div class="amphitheatre">${building} | ${amphi}</div>
+	    	<div class="amphitheatre">${building} ${building != '' ? '|' : ''} ${amphi}</div>
 	    	
 	    	<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
 	    	

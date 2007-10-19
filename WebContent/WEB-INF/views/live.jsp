@@ -80,11 +80,12 @@
 				    	</table>
 				    	</div>
 			    	
-			    	<c:if test="${status.count % 3 == 0}">
+			    	<c:if test="${status.count % 3 == 0 || status.last }">
 						<c:out value='</div>' escapeXml="false" />
 					</c:if>
 					
 		    	</c:forEach>
+		    	${status.count }
 		    		
 	    	</div>
 		    	

@@ -1,4 +1,4 @@
-.line {
+.thick_line {
 	width: 480px;
 	overflow: hidden;
 	margin-left: auto;
@@ -6,7 +6,7 @@
 	margin-bottom: 10px;
 }
 
-img {
+.thick_img {
 	float: left;
 	margin: 5px;
 	padding: 5px;

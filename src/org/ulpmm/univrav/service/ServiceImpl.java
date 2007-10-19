@@ -1,33 +1,25 @@
 package org.ulpmm.univrav.service;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.ulpmm.univrav.dao.DaoException;
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
+import org.ulpmm.univrav.dao.IUnivrDao;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Univr;
 
 public class ServiceImpl implements IService {
 
 	private IDatabase db;
 	private IFileSystem fs;
+	private IUnivrDao ud;
 	private static ServiceImpl instance = new ServiceImpl();
 	
 	public static ServiceImpl getInstance() {
@@ -63,12 +55,47 @@ public class ServiceImpl implements IService {
 	}
 
 	/**
+	 * @return the ud
+	 */
+	public IUnivrDao getUd() {
+		return ud;
+	}
+
+	/**
+	 * @param ud the ud to set
+	 */
+	public void setUd(IUnivrDao ud) {
+		this.ud = ud;
+	}
+
+	/**
 	 * Adds a new course
 	 * @param c the course to add
+	 * @param courseArchive the archive file of the course to add
 	 */
 	public synchronized void addCourse(Course c, String courseArchive) {
 		CourseAddition ca = new CourseAddition(db, fs, c, courseArchive);
 		ca.start();
+	}
+	
+	/**
+	 * Adds a new course from Univ-R
+	 * @param c the course to add
+	 * @param u the Univ-R infos
+	 */
+	public void addUnivrCourse(Course c, Univr u) {
+		db.addCourse(c);
+		db.addUnivr(u);
+	}
+	
+	/**
+	 * Completes a Univr course
+	 * @param c the Univr course to complete
+	 * @param courseArchive the archive file of the course to complete
+	 */
+	public void completeUnivrCourse(Course c, String courseArchive) {
+		UnivrCourseCompletion ucc = new UnivrCourseCompletion(db, fs, c, courseArchive);
+		ucc.start();
 	}
 	
 	/**
@@ -171,12 +198,30 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
-	 * Deletes a course by providing its id
-	 * @param courseId the id of the course
+	 * Deletes a course by providing its id and media Folder
+	 * @param courseId the id of the course to delete
+	 * @param mediaFolder the folder of the course to delete
 	 */
-	public synchronized void deleteCourse(int courseId) {
+	public synchronized void deleteCourse(int courseId, String mediaFolder) {
 		db.deleteCourse(courseId);
-		fs.deleteCourse();
+		fs.deleteCourse(mediaFolder);
+	}
+	
+	/**
+	 * Deletes the test courses
+	 */
+	public void deleteTests() {
+		List<String> mediaFolders = db.getTestsMediaFolders();
+		db.deleteTests();
+		for( String mediaFolder : mediaFolders)
+			fs.deleteCourse(mediaFolder);
+	}
+	
+	/**
+	 * Hides the test courses (courses beginning with 'test' or 'essai')
+	 */
+	public void hideTests() {
+		db.hideTests();
 	}
 	
 	/**
@@ -239,11 +284,28 @@ public class ServiceImpl implements IService {
 	
 	
 	/**
+	 * Adds a new building
+	 * @param b the building to add
+	 */
+	public synchronized void addBuilding(Building b) {
+		db.addBuilding(b);
+	}
+	
+	/**
 	 * Gets the list of the buildings
 	 * @return the list of buildings
 	 */
 	public synchronized List<Building> getBuildings() {
 		return db.getBuildings();
+	}
+	
+	/**
+	 * Gets a building by providing its id
+	 * @param buildingId the id of the building
+	 * @return the building
+	 */
+	public synchronized Building getBuilding(int buildingId) {
+		return db.getBuilding(buildingId);
 	}
 	
 	/**
@@ -256,12 +318,27 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
+	 * Modifies a building
+	 * @param b the building to modify
+	 */
+	public synchronized void modifyBuilding(Building b) {
+		db.modifyBuilding(b);
+	}
+	
+	/**
+	 * Deletes a building
+	 * @param buildingId the id of the building
+	 */
+	public synchronized void deleteBuilding(int buildingId) {
+		db.deleteBuilding(buildingId);
+	}
+	
+	/**
 	 * Adds a new Amphi
 	 * @param a the amphi to add
 	 */
 	public synchronized void addAmphi(Amphi a) {
-		// TODO Auto-generated method stub
-		
+		db.addAmphi(a);
 	}
 	
 	/**
@@ -277,7 +354,16 @@ public class ServiceImpl implements IService {
 	 * @param ip the IP address of the amphi
 	 * @return the amphi
 	 */
-	public synchronized Amphi getAmphi(String ip) {
+	public synchronized Amphi getAmphi(int amphiId) {
+		return db.getAmphi(amphiId);
+	}
+	
+	/**
+	 * Gets an amphi by providing its IP address
+	 * @param ip the IP address of the amphi
+	 * @return the amphi
+	 */
+	public Amphi getAmphi(String ip) {
 		return db.getAmphi(ip);
 	}
 	
@@ -286,8 +372,7 @@ public class ServiceImpl implements IService {
 	 * @param a the amphi to modify
 	 */
 	public synchronized void modifyAmphi(Amphi a) {
-		// TODO Auto-generated method stub
-		
+		db.modifyAmphi(a);
 	}
 
 	/**
@@ -301,11 +386,10 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Deletes an amphi by providing its id
-	 * @param id the id of the amphi
+	 * @param amphiId the id of the amphi
 	 */
-	public synchronized void deleteAmphi(String ip) {
-		// TODO Auto-generated method stub
-		
+	public void deleteAmphi(int amphiId) {
+		db.deleteAmphi(amphiId);
 	}
 	
 	/**
@@ -362,6 +446,62 @@ public class ServiceImpl implements IService {
 	 */
 	public synchronized void returnFile(String filename, OutputStream out) {
 		fs.returnFile(filename, out);
+	}
+	
+	/**
+	 * Sends a message over a socket to the Univ-R AV client
+	 * @param message the message to send
+	 * @return the answer of the client
+	 */
+	public String sendMessageToClient(String message, String ip, int port) {
+		return fs.sendMessageToClient(message, ip, port);
+	}
+	
+	/**
+	 * Verifies if a user is logged on Univ-R
+	 * @param uid the uid of the user
+	 * @param uuid Univ-R session identifier
+	 * @return true if the user is logged on Univ-R
+	 */
+	public synchronized boolean isUserAuth(int uid, String uuid) {
+		return ud.isUserAuth(uid, uuid);
+	}
+	
+	/**
+	 * Gets information about an user
+	 * @param uid the uid of the user
+	 * @return the information about the user
+	 */
+	public synchronized HashMap<String, String> getUserInfos(int uid) {
+		return ud.getUserInfos(uid);
+	}
+	
+	/**
+	 * Gets the group name of a group
+	 * @param groupCode the code of the group
+	 * @return the group name
+	 */
+	public synchronized String getGroupName(int groupCode) {
+		return ud.getGroupName(groupCode);
+	}
+	
+	/**
+	 * Publishes a course on Univ-R
+	 * @param courseId the id of the course to publish
+	 * @param groupCode the code of the group which will have access to the course
+	 */
+	public synchronized void publishCourse(int courseId, int groupCode) {
+		ud.publishCourse(courseId, groupCode);
+	}
+	
+	/**
+	 * Checks if a user has access to a course
+	 * @param uid the uid of the user
+	 * @param courseId the course
+	 * @return true if the user has access to the course
+	 */
+	public boolean hasAccessToCourse(int uid, int courseId) {
+		return ud.hasAccessToCourse(uid, courseId);
 	}
 	
 }
