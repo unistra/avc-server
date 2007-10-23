@@ -87,23 +87,6 @@ public class PgsqlAccess {
 		return rs;
 	}
 	
-	/*public boolean update(String sql) {
-		boolean result = false;
-		
-		try {
-			if( cnt != null && ! cnt.isClosed()) {
-				Statement stmt = cnt.createStatement();
-				result = stmt.execute(sql);
-			}
-		}
-		catch( SQLException sqle) {
-			System.out.println("Error executing the query");
-			sqle.printStackTrace();
-		}
-		
-		return result;
-	}*/
-	
 	public void disconnect() {
 		try {
 			if( cnt != null && ! cnt.isClosed())

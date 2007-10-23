@@ -42,28 +42,51 @@ body {
 /* Clickable zone to go back to the banner page */
 .bannerPageZone {
 	position: absolute;
-	width : 210px;
-	height: 90px;
-	margin-left: 20px;
-	margin-top: 7px;
+	width : 202px;
+	height: 86px;
+	margin-left: 25px;
+	margin-top: 12px;
+	background-image: url(../img/univr-av-logo.png);
 }
 
 /* Clickable zone, link to the ULPMM website */
 .ulpmmZone {
 	position: absolute;
-	width : 85px;
-	height: 15px;
-	margin-left:140px;
-	margin-top: 148px;
+	width : 100px;
+	height: 34px;
+	margin-left:135px;
+	margin-top: 146px;
+	background-image: url(../img/ulpmm-logo.png);
 }
 
 /* Clickable zone, link to the ULP website */
 .ulpZone {
 	position: absolute;
-	width : 40px;
-	height: 25px;
-	margin-left:240px;
-	margin-top: 145px;
+	width : 52px;
+	height: 34px;
+	margin-left:235px;
+	margin-top: 146px;
+	background-image: url(../img/ulp-logo.png);
+}
+
+/* Div containing the "Styles" link */
+.styles {
+	position: absolute;
+	font-size: 12px;
+	margin-left:845px;
+	margin-top: 130px;
+}
+
+/* Div containing the "Languages" link */
+.languages {
+	position: absolute;
+	font-size: 12px;
+	margin-left:845px;
+	margin-top: 155px;
+}
+
+.styles a, .languages a {
+	color: white;
 }
 
 /*  Div containing the "Live" button */
@@ -136,7 +159,6 @@ a img {
 /* Links style */
 a {
 	text-decoration: none;
-	color: #FF9602;
 }
 
 /* Defines the colors of the different elements */

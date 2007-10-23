@@ -50,10 +50,12 @@ public class FileSystemImpl implements IFileSystem {
 	private String coursesUrl;
 	private String defaultMp3File;
 	private String defaultRmFile;
+	private String defaultFlashFile;
 	private String comment;
 	
 	public FileSystemImpl(String scriptsFolder, String ftpFolder, String coursesFolder, 
-		String liveFolder, String coursesUrl, String defaultMp3File, String defaultRmFile, String comment) {
+		String liveFolder, String coursesUrl, String defaultMp3File, String defaultRmFile, 
+		String defaultFlashFile, String comment) {
 		
 		r = Runtime.getRuntime();
 		this.scriptsFolder = new File(scriptsFolder);
@@ -63,6 +65,7 @@ public class FileSystemImpl implements IFileSystem {
 		this.coursesUrl = coursesUrl;
 		this.defaultMp3File = defaultMp3File;
 		this.defaultRmFile = defaultRmFile;
+		this.defaultFlashFile =defaultFlashFile;
 		this.comment = comment;
 	}
 	
@@ -76,6 +79,7 @@ public class FileSystemImpl implements IFileSystem {
 		archiveExtraction(courseArchive);
 		setCourseType();
 		thumbCheck();
+		flashModif();
 		if( c.getType().equals("audio")) {
 			mp3Modif();
 			mp3Tag();
@@ -441,6 +445,26 @@ public class FileSystemImpl implements IFileSystem {
 	}
 	
 	/** 
+	 * Checks if a flash file exists and renames it
+	 */
+	private void flashModif() {
+		try {
+			if( new File(coursesFolder + mediaFolder + "/" + defaultFlashFile).exists() ) {
+				Process p = r.exec("mv " + defaultFlashFile + " " + mediaFileName + ".swf", null, new File(coursesFolder + mediaFolder));
+				if( p.waitFor() != 0 )
+					throw new DaoException("Error while renaming the flash file " + defaultFlashFile);
+			}
+		} catch (IOException ioe) {
+			System.out.println("Error while renaming the flash file " + defaultFlashFile);
+			ioe.printStackTrace();
+		}
+		catch( InterruptedException ie) {
+			System.out.println("Error while renaming the flash file " + defaultFlashFile);
+			ie.printStackTrace();
+		}
+	}
+	
+	/** 
 	 * Sets the "duration" attribute of the Course object by identifying the media file
 	 */
 	private void setCourseDuration() {
@@ -593,9 +617,9 @@ public class FileSystemImpl implements IFileSystem {
 	        description.setTextContent(rssDescription);
 	        channel.appendChild(description);
 	        
-	        /*Element lang = document.createElement("language");
+	        Element lang = document.createElement("language");
 	        lang.setTextContent(language);
-	        channel.appendChild(lang);*/
+	        channel.appendChild(lang);
 	        
 	        Element cr = document.createElement("copyright");
 	        cr.setTextContent(comment);
@@ -665,21 +689,25 @@ public class FileSystemImpl implements IFileSystem {
 			        Element coursEnclosure = document.createElement("enclosure");
 			        coursEnclosure.setAttribute("url",courseMediaUrl + ".mp3");
 			        coursEnclosure.setAttribute("type","audio/mpeg");
+			        coursEnclosure.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".mp3")));
 			        item.appendChild(coursEnclosure);
 			        
 			        Element coursEnclosure2 = document.createElement("enclosure");
 			        coursEnclosure2.setAttribute("url",courseMediaUrl + ".ogg");
 			        coursEnclosure2.setAttribute("type","application/ogg");
+			        coursEnclosure2.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".ogg")));
 			        item.appendChild(coursEnclosure2);
 			        
 			        Element coursEnclosure3 = document.createElement("enclosure");
 			        coursEnclosure3.setAttribute("url",courseMediaUrl + ".pdf");
 			        coursEnclosure3.setAttribute("type","application/pdf");
+			        coursEnclosure3.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".pdf")));
 			        item.appendChild(coursEnclosure3);
 			        
 			        Element coursEnclosure4 = document.createElement("enclosure");
 			        coursEnclosure4.setAttribute("url",courseMediaUrl + ".zip");
 			        coursEnclosure4.setAttribute("type","application/zip");
+			        coursEnclosure4.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".zip")));
 			        item.appendChild(coursEnclosure4);
 				}
 			}
@@ -717,6 +745,11 @@ public class FileSystemImpl implements IFileSystem {
         }catch(Exception e){
         	e.printStackTrace();
         }
+	}
+	
+	private static long getContentLength(String filePath) {
+		File f = new File(filePath);
+		return f.length();
 	}
 
 }

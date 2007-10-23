@@ -25,6 +25,7 @@
 		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
 	<![endif]-->
 	<!--[if lte IE 6]>
+		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie6.css" media="screen" />
 		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/help_ie6.css" media="screen" />
 	<![endif]-->
 	

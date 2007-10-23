@@ -3,12 +3,14 @@ package org.ulpmm.univrav.web;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -34,23 +36,40 @@ public class Application extends HttpServlet {
 	private ServiceImpl service;
 	private HttpSession session;
 	
+	/**
+	 *  The name of the bundle to search the corresponding language properties files
+	 */
+	private static final String BUNDLE_NAME = "org.ulpmm.univrav.language.messages"; 
+	
 	/* Configuration parameters */
-	private static String ftpFolder; // folder in which the courses are uploaded via FTP
-	private static String coursesFolder; // folder which contains all the media folders
-	private static String liveFolder; // folder which contains the media files for a live
+	
+	// The Url to access to the course on internet
 	private static String coursesUrl;
+	
+	// Folders on the file system
+	private static String ftpFolder;
+	private static String coursesFolder; 
+	private static String liveFolder; 
+	
+	// Default media filenames in the archive sent by the client
 	private static String defaultMp3File;
 	private static String defaultRmFile;
-	private static String comment;
-	private static String helixServerIp;
-	private static int clientSocketPort;
+	private static String defaultFlashFile;
 	
+	// Copyright comment
+	private static String comment;
+	
+	// IP address of the Helix Server for the video live
+	private static String helixServerIp;
+	
+	// The settings to connect to the database
 	private static String host;
 	private static String port;
 	private static String database;
 	private static String user;
 	private static String password;
 	
+	// The settings of the RSS files
 	private static String rssTitle;
 	private static String rssFileName;
 	private static String rssDescription;
@@ -59,8 +78,12 @@ public class Application extends HttpServlet {
 	private static String recordedInterfaceUrl;
 	private static String language;
 	
+	// The numbers of courses to display at the same time
 	private static int homeCourseNumber;
 	private static int recordedCourseNumber;
+	
+	// The client port for the Univ-R integration
+	private static int clientSocketPort;
 	
 	/**
 	 * Initialization of the servlet. <br>
@@ -76,24 +99,33 @@ public class Application extends HttpServlet {
 			/* configuration parameters loading */
 			p.load(new FileInputStream(getServletContext().getRealPath("/conf") + "/univrav.properties"));
 			
+			// The Url to access to the course on internet
+			coursesUrl = p.getProperty("coursesUrl");
+			
+			// Folders on the file system
 			ftpFolder = p.getProperty("ftpFolder");
 			coursesFolder = p.getProperty("coursesFolder");
 			liveFolder = p.getProperty("liveFolder");
-			coursesUrl = p.getProperty("coursesUrl");
+			
+			// Default media filenames in the archive sent by the client
 			defaultMp3File = p.getProperty("defaultMp3File");
 			defaultRmFile = p.getProperty("defaultRmFile");
-			comment = p.getProperty("comment");
-			helixServerIp = p.getProperty("helixServerIp");
-			clientSocketPort = Integer.parseInt(p.getProperty("clientSocketPort"));
+			defaultFlashFile = p.getProperty("defaultFlashFile");
 			
-			/* Loading of the settings to connect to the database */
+			// Copyright comment
+			comment = p.getProperty("comment");
+			
+			// IP address of the Helix Server for the video live
+			helixServerIp = p.getProperty("helixServerIp");
+			
+			// The settings to connect to the database
 			host = p.getProperty("host");
 			port = p.getProperty("port");
 			database = p.getProperty("database");
 			user = p.getProperty("user");
 			password = p.getProperty("password");
 			
-			/* Loading of the settings of the RSS files */
+			// The settings of the RSS files
 			rssTitle = p.getProperty("rssTitle");
 			rssFileName = p.getProperty("rssFileName");
 			rssDescription = p.getProperty("rssDescription");
@@ -102,15 +134,18 @@ public class Application extends HttpServlet {
 			recordedInterfaceUrl = p.getProperty("recordedInterfaceUrl");
 			language = p.getProperty("language");
 			
-			/* the numbers of courses to display at the same time */
+			// The numbers of courses to display at the same time
 			homeCourseNumber = Integer.parseInt(p.getProperty("homeCourseNumber"));
 			recordedCourseNumber = Integer.parseInt(p.getProperty("recordedCourseNumber"));
+			
+			// The client port for the Univ-R integration
+			clientSocketPort = Integer.parseInt(p.getProperty("clientSocketPort"));
 			
 			DatabaseImpl db = new DatabaseImpl(host, port, database, user, password);
 			FileSystemImpl fs = new FileSystemImpl(
 					getServletContext().getRealPath("/") + "scripts",
 					ftpFolder, coursesFolder, liveFolder, coursesUrl,
-					defaultMp3File, defaultRmFile, comment
+					defaultMp3File, defaultRmFile, defaultFlashFile, comment
 			);
 			service = ServiceImpl.getInstance();
 			service.setDb(db);
@@ -623,13 +658,8 @@ public class Application extends HttpServlet {
 	private void liveState(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 		
-		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		out
-				.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-		out.println("<HTML>");
-		out.println("  <HEAD><TITLE>A Servlet</TITLE></HEAD>");
-		out.println("  <BODY>");
+		String message = "";
+		String messageType = "information";
 		
 		String recordingPlace = request.getParameter("recordingPlace");
 		String status = request.getParameter("status");
@@ -638,18 +668,23 @@ public class Application extends HttpServlet {
 		if( recordingPlace != null && status != null && ! recordingPlace.equals("") && ! status.equals("")) {
 			
 			/* Vérification que status contient une des deux chaînes attendues */
-			if( status.equals("begin") || status.equals("end"))
+			if( status.equals("begin") || status.equals("end")) {
 				service.setAmphiStatus(recordingPlace, status.equals("begin"));
-			else
-				out.println("Erreur: valeurs de status attendues: {begin ; end}");
+				message = "Amphi : " + recordingPlace + " : " + status;
+			}
+			else {
+				messageType = "error";
+				message = "Error: possible status values for status : {begin ; end}";
+			}
 		} 
-		else
-			out.println("Erreur: param&egrave;tres attendus: recordingPlace, status");
+		else {
+			messageType = "error";
+			message = "Error: missing parameters: recordingPlace and status must be sent";
+		}
 		
-		out.println("  </BODY>");
-		out.println("</HTML>");
-		out.flush();
-		out.close();
+		request.setAttribute("messagetype", messageType);
+		request.setAttribute("message", message);
+		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 	}
 	
 	private void courseAccess(HttpServletRequest request, HttpServletResponse response) 
@@ -717,8 +752,9 @@ public class Application extends HttpServlet {
 			}
 		}
 		catch(DaoException de) {
+			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 			request.setAttribute("messagetype", "error");
-			request.setAttribute("message", "Wrong access code");
+			request.setAttribute("message", bundle.getString("wrongAccessCode"));
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 		}
 	}
@@ -736,7 +772,7 @@ public class Application extends HttpServlet {
 		}
 		else if( a.getType().equals("video")) {
 			service.createLiveVideo(ip, helixServerIp);
-			url = coursesUrl + "live/livevideo_" + ip.replace('.','_') + ".ram";
+			url =  "../../live/livevideo_" + ip.replace('.','_') + ".ram";
 		}
 		
 		request.setAttribute("amphi", amphi);
@@ -1042,7 +1078,7 @@ public class Application extends HttpServlet {
 	}
 	
 	private HashMap<String, String> getRssFileList() {
-		HashMap<String, String> rss = new HashMap<String, String>();
+		LinkedHashMap<String, String> rss = new LinkedHashMap<String, String>();
 		rss.put(rssTitle, "../rss/" + rssFileName);
 		
 		List<String[]> teachers = service.getTeachersWithRss();

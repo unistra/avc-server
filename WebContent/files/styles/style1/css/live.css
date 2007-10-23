@@ -39,6 +39,13 @@
 	padding-bottom: 2005px;
 }
 
+/* Name of the building */
+.buildingName {
+	font-weight: bold;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
 /* "building" div table */
 table {
 	width: 100%;

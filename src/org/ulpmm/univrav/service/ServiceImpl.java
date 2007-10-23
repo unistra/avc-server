@@ -275,15 +275,6 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
-	 * Deletes the slides of a course
-	 * @param courseId the id of the course
-	 */
-	public synchronized void deleteSlide(int courseId) {
-		db.deleteSlide(courseId);
-	}
-	
-	
-	/**
 	 * Adds a new building
 	 * @param b the building to add
 	 */

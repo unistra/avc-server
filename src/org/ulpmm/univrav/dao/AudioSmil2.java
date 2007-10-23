@@ -78,7 +78,7 @@ public class AudioSmil2 implements ISmil {
 			pw.println("</head>\n<body>\n<par>");
 			
 			/* Media display */
-			pw.println("<img region=\"Bg\" src=\"" + coursesUrl + "model/bgsmi.png\"/>");
+			pw.println("<img region=\"Bg\" src=\"" + coursesUrl + "model/bgsmil.jpg\"/>");
 			pw.println("<audio src=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".mp3\"/>");
 			pw.println("<text region=\"Texte\" src=\"" + coursesUrl + mediaFolder + "/description.txt\">");
 			pw.println("<param name=\"fontFace\" value=\"Arial\"/>");
