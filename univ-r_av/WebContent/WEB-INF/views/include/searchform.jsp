@@ -16,9 +16,9 @@
 				<c:set var="audio" value="checked" />
 				<c:set var="video" value="checked" />
 			</c:if>
-			<input type="checkbox" name="audio" value="checked" ${audio}><fmt:message key="Audio"/>
+			<input type="checkbox" class="checkbox" name="audio" value="checked" ${audio}><fmt:message key="Audio"/>
 			&nbsp;&nbsp;&nbsp;
-			<input type="checkbox" name="video" value="checked" ${video}><fmt:message key="Video"/>
+			<input type="checkbox" class="checkbox" name="video" value="checked" ${video}><fmt:message key="Video"/>
 		</fieldset>
 		<br><br>
 		<img src="../files/styles/${sessionScope.style}/img/arrowsearch.png" alt="arrowsearch"><input type="submit" class="submit" value="<fmt:message key="Lancez la recherche"/>">

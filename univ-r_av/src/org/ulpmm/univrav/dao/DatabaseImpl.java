@@ -745,6 +745,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the next course Id");
 			sqle.printStackTrace();
 		}
+		pa.disconnect();
 		
 		return id;
 	}
@@ -770,6 +771,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the teachers list");
 			sqle.printStackTrace();
 		}
+		pa.disconnect();
 		
 		return l;
 	}
@@ -795,6 +797,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the teachers list");
 			sqle.printStackTrace();
 		}
+		pa.disconnect();
 		
 		return l;
 	}
@@ -817,6 +820,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the formations list");
 			sqle.printStackTrace();
 		}
+		pa.disconnect();
 		
 		return l;
 	}
@@ -896,26 +900,6 @@ public class DatabaseImpl implements IDatabase {
 		}
 		pa.disconnect();
 		return l;
-	}
-	
-	/**
-	 * Deletes the slides of a course
-	 * @param courseId the id of the course
-	 */
-	public void deleteSlide(int courseId) {
-		Connection cnt = pa.getConnection();
-		String sql = "DELETE FROM slide WHERE courseid = ?";
-		try {
-			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, courseId);
-			if( pstmt.executeUpdate() == 0 )
-				throw new DaoException("The Slides of the course " + courseId + " have not been deleted");
-		}
-		catch( SQLException sqle) {
-			System.out.println("Error while deleting the slide of the course " + courseId);
-			sqle.printStackTrace();
-		}
-		pa.disconnect();
 	}
 	
 	/**

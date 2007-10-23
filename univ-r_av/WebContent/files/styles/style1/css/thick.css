@@ -11,3 +11,10 @@
 	margin: 5px;
 	padding: 5px;
 }
+
+.languages {
+	position: absolute;
+	text-align: left;
+	border: 1px dotted red;
+	width: 100px;
+}

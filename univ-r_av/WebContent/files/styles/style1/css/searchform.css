@@ -47,6 +47,10 @@ fieldset {
 	padding: 10px;
 }
 
+.checkbox {
+	margin-right: 5px;
+}
+
 /* Formatting of the submit button of the html form */
 .submit {
 	background: none;

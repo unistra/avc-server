@@ -159,12 +159,6 @@ public interface IService {
 	 */
 	public List<Slide> getSlides(int courseId);
 	
-	/**
-	 * Deletes the slides of a course
-	 * @param courseId the id of the course
-	 */
-	public void deleteSlide(int courseId);
-	
 	
 	/**
 	 * Adds a new building
