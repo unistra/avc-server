@@ -2,9 +2,8 @@ package org.ulpmm.univrav.service;
 
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
@@ -107,14 +106,6 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
-	 * Gets a list of all the courses without an access code
-	 * @return the list of courses
-	 */
-	public synchronized List<Course> getAllUnlockedCourses() {
-		return db.getAllUnlockedCourses();
-	}
-	
-	/**
 	 * Gets a list of the n last courses
 	 * @param n the number of courses to return
 	 * @return the list of courses
@@ -142,15 +133,6 @@ public class ServiceImpl implements IService {
 	 */
 	public synchronized List<Course> getCourses(HashMap<String, String> params, int number, int start) {
 		return db.getCourses(params, number, start);
-	}
-	
-	/**
-	 * Gets the list of courses without access code for a teacher
-	 * @param teacher the teacher
-	 * @return the list of courses
-	 */
-	public synchronized List<Course> getUnlockedCourses(String[] teacher) {
-		return db.getUnlockedCourses(teacher);
 	}
 	
 	/**
@@ -208,20 +190,23 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
-	 * Deletes the test courses
+	 * Deletes the test courses (courses with genre 'Suppression')
+	 * @param testKeyWord the key word which identifies a test
 	 */
-	public void deleteTests() {
+	public void deleteTests(String testKeyWord) {
 		List<String> mediaFolders = db.getTestsMediaFolders();
-		db.deleteTests();
+		db.deleteTests(testKeyWord);
 		for( String mediaFolder : mediaFolders)
 			fs.deleteCourse(mediaFolder);
 	}
 	
 	/**
-	 * Hides the test courses (courses beginning with 'test' or 'essai')
+	 * Hides the test courses (ie courses beginning with 'test' or 'essai')
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
 	 */
-	public void hideTests() {
-		db.hideTests();
+	public void hideTests(String testKeyWord1, String testKeyWord2) {
+		db.hideTests(testKeyWord1, testKeyWord2);
 	}
 	
 	/**
@@ -238,14 +223,6 @@ public class ServiceImpl implements IService {
 	 */
 	public synchronized List<String[]> getTeachers() {
 		return db.getTeachers();
-	}
-	
-	/**
-	 * Gets the list of all the teachers who have at least one course with no access code
-	 * @return the list of teachers
-	 */
-	public synchronized List<String[]> getTeachersWithRss() {
-		return db.getTeachersWithRss();
 	}
 	
 	/**
@@ -384,26 +361,6 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
-	 * Creates a RSS files for a list of courses
-	 * @param courses the list of courses
-	 * @param filePath the full path of the RSS file to create
-	 * @param rssTitle the title of the RSS file
-	 * @param rssDescription the description of the RSS file
-	 * @param serverUrl the URL of the application on the server
-	 * @param rssImageUrl the URL of the RSS image file
-	 * @param recordedInterfaceUrl the URL of the recorded interface
-	 * @param language the language of the RSS file
-	 * @throws ParserConfigurationException
-	 */
-	public synchronized void rssCreation( List<Course> courses, String filePath, String rssTitle, 
-			String rssDescription, String serverUrl, String rssImageUrl, 
-			String recordedInterfaceUrl, String language ) {
-		
-		fs.rssCreation(courses, filePath, rssTitle, rssDescription, serverUrl, 
-				rssImageUrl, recordedInterfaceUrl, language);
-	}
-	
-	/**
 	 * Creates the .ram file used by a live video
 	 * @param amphiIp the Ip address of the video amphi
 	 * @param helixServerIp the Ip address of the helix server
@@ -437,6 +394,87 @@ public class ServiceImpl implements IService {
 	 */
 	public synchronized void returnFile(String filename, OutputStream out) {
 		fs.returnFile(filename, out);
+	}
+	
+	/**
+	 * Creates the RSS files for all the courses and teachers
+	 * @param rssFolderPath the path of the folder to store the RSS files
+	 * @param rssName the filename of the general RSS file
+	 * @param rssTitle the title of the RSS files
+	 * @param rssDescription the description of the RSS files
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image files
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS files
+	 */
+	public void generateRss( String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
+			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language) {
+		// For all courses
+		List<Course> courses = db.getAllUnlockedCourses();
+		String rssPath = rssFolderPath + "/" + cleanFileName(rssName + ".xml");
+		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+		
+		// For the teachers
+		List<String[]> teachers = db.getTeachersWithRss();
+		for( String[] teacher : teachers) {
+			courses = db.getUnlockedCourses(teacher);
+			rssPath = rssFolderPath + "/" + cleanFileName((teacher[0] != null ? teacher[0] : "")
+				+ (! (teacher[0] == null || teacher[1] == null) ? "_" : "")
+				+ (teacher[1] != null ? teacher[1] : "") + ".xml");
+			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+		}
+	}
+	
+	/**
+	 * Creates the RSS files for all the courses and the teacher of the course in parameter
+	 * @param course c the course which has been modified or added
+	 * @param rssFolderPath the path of the folder to store the RSS files
+	 * @param rssName the filename of the general RSS file
+	 * @param rssTitle the title of the RSS files
+	 * @param rssDescription the description of the RSS files
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image files
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS files
+	 */
+	public void generateRss( Course c, String rssName, String rssFolderPath, String rssTitle, String rssDescription, 
+			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language) {
+		// For all courses
+		List<Course> courses = db.getAllUnlockedCourses();
+		String rssPath = rssFolderPath + "/" + cleanFileName(rssName + ".xml");
+		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+		
+		// For the teacher
+		courses = db.getUnlockedCourses(new String[]{c.getName(), c.getFirstname()});
+		rssPath = rssFolderPath + "/" + cleanFileName((c.getName() != null ? c.getName() : "")
+			+ (! (c.getName() == null || c.getFirstname() == null) ? "_" : "")
+			+ (c.getFirstname() != null ? c.getFirstname() : "") + ".xml");
+		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+	}
+	
+	/**
+	 * Gets the list of RSS files
+	 * @param rssTitle the title of the general RSS file
+	 * @param rssName the name of the general RSS file
+	 * @return the hashMap of the RSS titles and files
+	 */
+	public HashMap<String, String> getRssFileList( String rssTitle, String rssName) {
+		LinkedHashMap<String, String> rss = new LinkedHashMap<String, String>();
+		rss.put(rssTitle, "../rss/" + rssName + ".xml");
+		
+		List<String[]> teachers = db.getTeachersWithRss();
+		for( String[] teacher : teachers) {
+			rss.put(
+				(teacher[0] != null ? teacher[0] : "")
+					+ (! (teacher[0] == null || teacher[1] == null) ? " " : "")
+					+ (teacher[1] != null ? teacher[1] : ""),
+				"../rss/" + cleanFileName((teacher[0] != null ? teacher[0] : "")
+					+ (! (teacher[0] == null || teacher[1] == null) ? "_" : "")
+					+ (teacher[1] != null ? teacher[1] : "") + ".xml")
+			);
+		}
+		
+		return rss;
 	}
 	
 	/**
@@ -493,6 +531,55 @@ public class ServiceImpl implements IService {
 	 */
 	public boolean hasAccessToCourse(int uid, int courseId) {
 		return ud.hasAccessToCourse(uid, courseId);
+	}
+	
+	/**
+	 * Function which removes the undesirable characters of a String and the useless spaces at the end
+	 * @param string the string to clean
+	 * @return the cleaned string
+	 */
+	public String cleanString(String string) {
+		final String carSpeTotal = "&><\"%#+";
+		
+		String res = "";
+		
+		/* Removes the undesirable characters */
+		if( string != null ) {
+			for( int i=0 ; i < string.length() ; i++ ) {
+				if( carSpeTotal.indexOf(string.charAt(i)) == -1 )
+					res += string.charAt(i);
+			}
+		}
+
+		/* Removes the spaces at the end */
+		if( res.length() > 0 ) {
+			while( res.charAt(res.length()-1) == ' ' )
+				res = res.substring(0,res.length()-1);
+		}
+		
+		return res;
+	}
+	
+	/**
+	 * Function which removes the undesirable characters of a String (accents & company) to create a file
+	 * @param string the string to clean
+	 * @return the cleaned string
+	 */
+	public static String cleanFileName(String string){
+		
+		String res="";
+		
+		if( string != null ) {
+			for(int i=0 ; i< string.length() ; i++) {
+				char car = string.charAt(i);
+				if( ! ((car >= 'a' && car <='z') | (car >= 'A' && car <='Z') | (car >= '0' && car <='9')))
+					car = '_';
+				
+				res += car;
+			}
+		}
+		
+		return res;
 	}
 	
 }

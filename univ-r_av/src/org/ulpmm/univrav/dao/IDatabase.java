@@ -113,14 +113,17 @@ public interface IDatabase {
 	public List<String> getTestsMediaFolders();
 	
 	/**
-	 * Deletes the test courses
+	 * Deletes the test courses (courses with genre 'Suppression')
+	 * @param testKeyWord the key word which identifies a test
 	 */
-	public void deleteTests();
+	public void deleteTests(String testKeyWord);
 	
 	/**
-	 * Hides the test courses (courses beginning with 'test' or 'essai')
+	 * Hides the test courses (ie courses beginning with 'test' or 'essai')
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
 	 */
-	public void hideTests();
+	public void hideTests(String testKeyWord1, String testKeyWord2);
 	
 	/**
 	 * Gets the id of the next course which will be uploaded

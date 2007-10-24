@@ -311,7 +311,7 @@ public class DatabaseImpl implements IDatabase {
 					sql += param + " = ? ";
 			}
 			sql += "AND visible = true ORDER BY date DESC LIMIT " + number + " OFFSET " + start;
-			System.out.println(sql);
+
 			try {
 				PreparedStatement pstmt = cnt.prepareStatement(sql);
 
@@ -690,39 +690,49 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
-	 * Deletes the test courses (courses with genre 'Suppression')
+	 * Deletes the test courses (ie courses with genre 'Suppression')
+	 * @param testKeyWord the key word which identifies a test
 	 */
-	public void deleteTests() {
-		Connection cnt = pa.getConnection();
-		String sql = "DELETE FROM course WHERE initcap(genre) = 'Suppression'";
-		try {
-			Statement stmt = cnt.createStatement();
-			stmt.executeUpdate(sql);
+	public void deleteTests(String testKeyWord) {
+		if( testKeyWord != null && ! testKeyWord.equals("")) {
+			Connection cnt = pa.getConnection();
+			String sql = "DELETE FROM course WHERE initcap(genre) = '" + testKeyWord + "'";
+			try {
+				Statement stmt = cnt.createStatement();
+				stmt.executeUpdate(sql);
+			}
+			catch( SQLException sqle) {
+				System.out.println("Error while deleting the tests");
+				sqle.printStackTrace();
+			}
+			pa.disconnect();
 		}
-		catch( SQLException sqle) {
-			System.out.println("Error while deleting the tests");
-			sqle.printStackTrace();
-		}
-		pa.disconnect();
 	}
 	
 	/**
-	 * Hides the test courses (courses beginning with 'test' or 'essai')
+	 * Hides the test courses (ie courses beginning with 'test' or 'essai')
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
 	 */
-	public void hideTests() {
-		Connection cnt = pa.getConnection();
-		String sql = "UPDATE course SET visible=false " +
-				"WHERE INITCAP(title) LIKE 'Test%'" +
-				"OR INITCAP(title) LIKE 'Essai%'";
-		try {
-			Statement stmt = cnt.createStatement();
-			stmt.executeUpdate(sql);
+	public void hideTests(String testKeyWord1, String testKeyWord2) {
+		if( testKeyWord1 != null && ! testKeyWord1.equals("")) {
+			Connection cnt = pa.getConnection();
+			String sql = "UPDATE course SET visible=false " +
+					"WHERE INITCAP(title) LIKE '" + testKeyWord1 + "%'";
+			
+			if( testKeyWord2 != null && ! testKeyWord2.equals(""))
+				sql += "OR INITCAP(title) LIKE '" + testKeyWord2 + "%'";
+			
+			try {
+				Statement stmt = cnt.createStatement();
+				stmt.executeUpdate(sql);
+			}
+			catch( SQLException sqle) {
+				System.out.println("Error while hiding the tests");
+				sqle.printStackTrace();
+			}
+			pa.disconnect();
 		}
-		catch( SQLException sqle) {
-			System.out.println("Error while hiding the tests");
-			sqle.printStackTrace();
-		}
-		pa.disconnect();
 	}
 	
 	/**
@@ -932,7 +942,7 @@ public class DatabaseImpl implements IDatabase {
 	public List<Building> getBuildings() {
 		pa.connect();
 		List<Building> l = new ArrayList<Building>();
-		String sql = "SELECT * FROM building";
+		String sql = "SELECT * FROM building ORDER BY buildingid";
 		
 		try {
 			ResultSet rs = pa.query(sql);
@@ -1073,7 +1083,7 @@ public class DatabaseImpl implements IDatabase {
 	public void addAmphi(Amphi a) {
 		Connection cnt = pa.getConnection();
 		String sql = "INSERT INTO amphi(buildingid, name, type, ipaddress, status) values(?,?,?,?,?)";
-		System.out.println(sql);
+
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, a.getBuildingid());

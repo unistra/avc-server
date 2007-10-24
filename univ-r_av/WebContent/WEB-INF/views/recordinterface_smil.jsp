@@ -22,6 +22,7 @@
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
+	<script type="text/javascript" src="../files/js/ieupdate.js"></script>
 	<script type="text/javascript" src="../files/js/recordinterface.js"></script>
 	<script type="text/javascript">
 		var timecodes = ${slides};

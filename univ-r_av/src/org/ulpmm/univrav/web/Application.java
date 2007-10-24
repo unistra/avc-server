@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -71,7 +70,7 @@ public class Application extends HttpServlet {
 	
 	// The settings of the RSS files
 	private static String rssTitle;
-	private static String rssFileName;
+	private static String rssName;
 	private static String rssDescription;
 	private static String serverUrl;
 	private static String rssImageUrl;
@@ -81,6 +80,13 @@ public class Application extends HttpServlet {
 	// The numbers of courses to display at the same time
 	private static int homeCourseNumber;
 	private static int recordedCourseNumber;
+	
+	// The keyword to identify the tests to delete (genre is equal to this keyword)
+	private static String testKeyWord1;
+
+	// The keyword to identify the tests to hide (title begins with this keyword)
+	private static String testKeyWord2;
+	private static String testKeyWord3;
 	
 	// The client port for the Univ-R integration
 	private static int clientSocketPort;
@@ -96,6 +102,9 @@ public class Application extends HttpServlet {
 		
 		Properties p = new Properties();
 		try {
+			/* Gets the instance of the service layer */
+			service = ServiceImpl.getInstance();
+			
 			/* configuration parameters loading */
 			p.load(new FileInputStream(getServletContext().getRealPath("/conf") + "/univrav.properties"));
 			
@@ -113,7 +122,7 @@ public class Application extends HttpServlet {
 			defaultFlashFile = p.getProperty("defaultFlashFile");
 			
 			// Copyright comment
-			comment = p.getProperty("comment");
+			comment = service.cleanString(p.getProperty("comment"));
 			
 			// IP address of the Helix Server for the video live
 			helixServerIp = p.getProperty("helixServerIp");
@@ -127,7 +136,7 @@ public class Application extends HttpServlet {
 			
 			// The settings of the RSS files
 			rssTitle = p.getProperty("rssTitle");
-			rssFileName = p.getProperty("rssFileName");
+			rssName = p.getProperty("rssName");
 			rssDescription = p.getProperty("rssDescription");
 			serverUrl = p.getProperty("serverUrl");
 			rssImageUrl = p.getProperty("rssImageUrl");
@@ -138,35 +147,30 @@ public class Application extends HttpServlet {
 			homeCourseNumber = Integer.parseInt(p.getProperty("homeCourseNumber"));
 			recordedCourseNumber = Integer.parseInt(p.getProperty("recordedCourseNumber"));
 			
+			// The keyword to identify the tests to delete (genre is equal to this keyword)
+			testKeyWord1 = p.getProperty("testKeyWord1");
+
+			// The keyword to identify the tests to hide (title begins with this keyword)
+			testKeyWord2 = p.getProperty("testKeyWord2");
+			testKeyWord3 = p.getProperty("testKeyWord3");
+			
 			// The client port for the Univ-R integration
 			clientSocketPort = Integer.parseInt(p.getProperty("clientSocketPort"));
 			
+			/* Creates the instance of the data access layer */
 			DatabaseImpl db = new DatabaseImpl(host, port, database, user, password);
 			FileSystemImpl fs = new FileSystemImpl(
 					getServletContext().getRealPath("/") + "scripts",
 					ftpFolder, coursesFolder, liveFolder, coursesUrl,
 					defaultMp3File, defaultRmFile, defaultFlashFile, comment
 			);
-			service = ServiceImpl.getInstance();
+			
+			/* Links the data access layer to the service layer */
 			service.setDb(db);
 			service.setFs(fs);
 			
 			/* Creation of the RSS files */
-			
-			// For all courses
-			List<Course> courses = service.getAllUnlockedCourses();
-			/*** !!!!!! ***/
-			String rssPath = getServletContext().getRealPath("/rss") + "/" + rssFileName;
-			service.rssCreation(courses, rssPath, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
-			
-			// For the teachers
-			List<String[]> teachers = service.getTeachersWithRss();
-			for( String[] teacher : teachers) {
-				courses = service.getUnlockedCourses(teacher);
-				rssPath = getServletContext().getRealPath("/rss") + "/" 
-					+ teacher[0] +  (teacher[1] != null ? "_" + teacher[1] : "") + ".xml";
-				service.rssCreation(courses, rssPath, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
-			}
+			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		}
 		catch( IOException e) {
 			System.out.println("Impossible to find the configuration file");
@@ -261,12 +265,12 @@ public class Application extends HttpServlet {
 		else if( page.equals("/recorded"))
 			displayRecordedPage(request, response);
 		else if( page.equals("/search")) {
-			try {
+		//	try {
 			displaySearchResults(request, response);
-			}
-			catch( Exception e) {
-				e.printStackTrace();
-			}
+		//	}
+		//	catch( Exception e) {
+		//		e.printStackTrace();
+		//	}
 		}
 		else if( page.equals("/add"))
 			addCourse(request, response);
@@ -290,8 +294,10 @@ public class Application extends HttpServlet {
 			changeLanguage(request, response);
 		}
 		else if( page.equals("/deletetests")) {
-			service.deleteTests();
-			service.hideTests();
+			service.deleteTests(testKeyWord1);
+			service.hideTests(testKeyWord2, testKeyWord3);
+			/* Regeneration of the RSS files */
+			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		}
 		else if( page.equals("/thick_codeform")) {
 			request.setAttribute("id", request.getParameter("id"));
@@ -328,6 +334,8 @@ public class Application extends HttpServlet {
 		else if( page.equals("/admin_deletecourse")) {
 			int courseid = Integer.parseInt(request.getParameter("id"));
 			service.deleteCourse(courseid, service.getCourse(courseid).getMediaFolder());
+			/* Regeneration of the RSS files */
+			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 			response.sendRedirect(response.encodeRedirectURL("./admin_courses"));
 		}
 		else if( page.equals("/admin_validatecourse")) {
@@ -410,9 +418,9 @@ public class Application extends HttpServlet {
 		request.setAttribute("teachers", service.getTeachers());
 		request.setAttribute("formations", service.getFormations());
 		request.setAttribute("courses", service.getNLastCourses(homeCourseNumber));
-		request.setAttribute("rssFileName", rssFileName);
+		request.setAttribute("rssFileName", rssName);
 		
-		request.setAttribute("rssfiles", getRssFileList());
+		request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
 		
 		/* Saves the page for the style selection thickbox return */
 		session.setAttribute("previousPage", "/home");
@@ -455,7 +463,7 @@ public class Application extends HttpServlet {
 		request.setAttribute("number", recordedCourseNumber);
 		request.setAttribute("resultPage", "recorded");
 		
-		request.setAttribute("rssfiles", getRssFileList());
+		request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
 		
 		/* Saves the page for the style selection thickbox return */
 		session.setAttribute("previousPage", "/recorded?page=" + pageNumber);
@@ -537,7 +545,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("number", recordedCourseNumber);
 			request.setAttribute("resultPage", "search");
 			
-			request.setAttribute("rssfiles", getRssFileList());
+			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
 			
 			/* Saves the page for the style selection thickbox return */
 			session.setAttribute("previousPage", "/search?page=" + pageNumber);
@@ -565,11 +573,11 @@ public class Application extends HttpServlet {
 		mediapath = request.getParameter("mediapath");
 		timing = request.getParameter("timing");
 		
-		description = cleanString(request.getParameter("description"));
-		title = cleanString(request.getParameter("title"));
-		name = cleanString(request.getParameter("name"));
-		firstname = cleanString(request.getParameter("firstname"));
-		formation = cleanString(request.getParameter("ue"));
+		description = service.cleanString(request.getParameter("description"));
+		title = service.cleanString(request.getParameter("title"));
+		name = service.cleanString(request.getParameter("name"));
+		firstname = service.cleanString(request.getParameter("firstname"));
+		formation = service.cleanString(request.getParameter("ue"));
 		genre = request.getParameter("genre");
 		
 		/* Vérification que les paramètres essentiels ont bien été envoyés, annulation de l'upload dans le cas contraire */
@@ -628,19 +636,8 @@ public class Application extends HttpServlet {
 			}
 			
 			/* Generation of the RSS files */
-			if( c.getGenre() == null) {
-				// Regeneration for all courses
-				List<Course> courses = service.getAllUnlockedCourses();
-				/*** !!!!!! ***/
-				String rssPath = getServletContext().getRealPath("/rss") + "/" + rssFileName;
-				service.rssCreation(courses, rssPath, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
-				
-				// For the teacher
-				courses = service.getUnlockedCourses(new String[]{c.getName(), c.getFirstname()});
-				rssPath = getServletContext().getRealPath("/rss") + "/" 
-					+ c.getName() +  (c.getFirstname() != null ? "_" + c.getFirstname() : "") + ".xml";
-				service.rssCreation(courses, rssPath, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
-			}
+			if( c.getGenre() == null)
+				service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 			
 			message = "File successfully sent !";
 								
@@ -816,6 +813,10 @@ public class Application extends HttpServlet {
 			request.getParameter("mediaFolder")
 		);
 		service.modifyCourse(c);
+		
+		/* Regeneration of the RSS files */
+		if( c.getGenre() != null )
+			service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		response.sendRedirect(response.encodeRedirectURL("./admin_courses"));
 	}
 	
@@ -1075,48 +1076,6 @@ public class Application extends HttpServlet {
 		
 		/* If an error has occured, diplays an error message */
 		getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
-	}
-	
-	private HashMap<String, String> getRssFileList() {
-		LinkedHashMap<String, String> rss = new LinkedHashMap<String, String>();
-		rss.put(rssTitle, "../rss/" + rssFileName);
-		
-		List<String[]> teachers = service.getTeachersWithRss();
-		for( String[] teacher : teachers) {
-			rss.put(
-				teacher[0] +  (teacher[1] != null ? " " + teacher[1] : ""), 
-				"../rss/" + teacher[0] +  (teacher[1] != null ? "_" + teacher[1] : "") + ".xml"
-			);
-		}
-		
-		return rss;
-	}
-
-	/**
-	 * Function which removes the undesirable characters of a String and the useless spaces at the end
-	 * @param string the string to clean
-	 * @return the cleaned string
-	 */
-	private String cleanString(String string){
-		final String carSpeTotal = "&><\"%#+";
-		
-		String res = "";
-		
-		/* Removes the undesirable characters */
-		if( string != null ) {
-			for( int i=0 ; i < string.length() ; i++ ) {
-				if( carSpeTotal.indexOf(string.charAt(i)) == -1 )
-					res += string.charAt(i);
-			}
-		}
-
-		/* Removes the spaces at the end */
-		if( res.length() > 0 ) {
-			while( res.charAt(res.length()-1) == ' ' )
-				res = res.substring(0,res.length()-1);
-		}
-		
-		return res;
 	}
 	
 }

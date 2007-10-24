@@ -21,6 +21,8 @@
 		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/visualization_ie6.css" media="screen" />
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
+	
+	<script type="text/javascript" src="../files/js/ieupdate.js"></script>
 
   </head>
   

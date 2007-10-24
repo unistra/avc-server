@@ -32,6 +32,7 @@ public interface IFileSystem {
 	 * Creates a RSS files for a list of courses
 	 * @param courses the list of courses
 	 * @param filePath the full path of the RSS file to create
+	 * @param rssName the name of the RSS files
 	 * @param rssTitle the title of the RSS file
 	 * @param rssDescription the description of the RSS file
 	 * @param serverUrl the URL of the application on the server
@@ -40,8 +41,8 @@ public interface IFileSystem {
 	 * @param language the language of the RSS file
 	 * @throws ParserConfigurationException
 	 */
-	public void rssCreation( List<Course> courses, String filePath, String rssTitle, 
-			String rssDescription, String serverUrl, String rssImageUrl, 
+	public void rssCreation( List<Course> courses, String filePath, String rssName, 
+			String rssTitle, String rssDescription, String serverUrl, String rssImageUrl, 
 			String recordedInterfaceUrl, String language );
 	
 	/**
