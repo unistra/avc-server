@@ -62,14 +62,12 @@
 						
 						<h3><a id="live"></a>Cours en direct</h3>
 						<h5>Lieux et salles</h5>
-						<a href="../files/img/help/Live.png"><img alt="Live" src="../files/img/help/thumbs/Live.jpg"></a>
 						<p>Disponible uniquement &agrave; partir des salles et amphith&eacute;atres automatis&eacute;s et sur 
 						la volont&eacute; de l'enseignant, le direct est disponible sur le site de façon hi&eacute;rarchis&eacute;e 
-						par lieu puis par salle.<br>
-						Pour obtenir la liste des salles, il suffit de cliquer sur le lieu.<br>
+						par b&acirc;timent puis par salle.<br>
 						Cliquer sur une salle permet d'&eacute;couter et de suivre le cours en direct.</p>
+						<a class="link" href="../files/img/help/Live.png">Screenshot</a>
 						<h5>Diffusion et &eacute;coute du Live</h5>
-						<a href="../files/img/help/Live_audio.png"><img alt="Live_audio" src="../files/img/help/thumbs/Live_audio.jpg"></a>
 						<p>Les diapositives sont diffus&eacute;es simultan&eacute;ment avec le flux audio.<br>
 						Pour le flux audio, vous avez besoin d'avoir un plugin permettant leur lecture.</p>
 						<p><span class="underline">Exemples de plugins :</span><br>
@@ -80,33 +78,33 @@
 						qui permet de se substituer aux plugins web des players et d'utiliser n'importe quel logiciel audio 
 						install&eacute; sur la machine pour lire le flux.</p>
 						<p>Le live video n&eacute;cessite la pr&eacute;sence de RealMediaPlayer.</p>
+						<a class="link" href="../files/img/help/Live_audio.png">Screenshot</a>
 						
 						<h3><a id="podcasting"></a>Podcasting et flux RSS</h3>
-						<a href="../files/img/help/Podcast.png"><img alt="Podcast" src="../files/img/help/thumbs/Podcast.jpg"></a>
 						<p>Tous les cours sont disponibles au t&eacute;l&eacute;chargement via le site, en cliquant sur l'un des 
-						m&eacute;dias disponibles ou via l'abonnement à un flux RSS.</p><br>
+						m&eacute;dias disponibles ou via l'abonnement à un flux RSS.</p>
+						<a class="link" href="../files/img/help/Podcast.png">Screenshot</a>
 						<h5>Abonnement &agrave; un flux RSS</h5>
-						<a href="../files/img/help/Rss.png"><img alt="rss" src="../files/img/help/thumbs/Rss.png"></a>
 						<p>Cliquer sur l'ic&ocirc;ne orange dans la barre d'adresse de Firefox permet de lister les 
 						diff&eacute;rents flux disponibles.</p>
-						<br><br><br>
-						<a href="../files/img/help/Rss_FF.png"><img alt="Rss_FF" src="../files/img/help/thumbs/Rss_FF.jpg"></a>
+						<a class="link" href="../files/img/help/Rss.png">Screenshot</a>
 						<p>En s&eacute;lectionnant un flux dans cette liste, Firefox affiche une page permettant d'avoir le listing 
 						de tous les cours.<br>
 						Le lien donne un acc&egrave;s direct &agrave; la page de diffusion du cours.</p>
-						<br>
-						<a href="../files/img/help/Rss_opera.png"><img alt="Rss_opera" src="../files/img/help/thumbs/Rss_opera.jpg"></a>
+						<a class="link" href="../files/img/help/Rss_FF.png">Screenshot</a>
 						<p>Vous pouvez utiliser d'autres logiciels capables de g&eacute;rer les flux Rss comme le navigateur Opera ou 
 						les lecteurs audio de type itunes. Il vous suffit de r&eacute;cup&eacute;rer l'adresse du fichier XML et de 
 						la mettre dans votre logiciel de gestion des flux. Par exemple, un simple glisser-d&eacute;poser depuis 
 						la barre d'adresse de Firefox vers itunes suffit pour s'abonner.</p>
-						<a href="../files/img/help/Rss_podcast_amarok.png"><img alt="Amarok_pod" src="../files/img/help/thumbs/Rss_podcast_amarok.jpg"></a>
 						<p><span class="underline">Exemples :</span> Opera, Amarok et Itunes</p>
+						<a class="link" href="../files/img/help/Rss_opera.png">Screenshot</a>
+						<a class="link" href="../files/img/help/Rss_podcast_amarok.png">Screenshot</a>
+						<a class="link" href="../files/img/help/Rss_itunes.png">Screenshot</a>
+						
 						<p><span class="underline">NB :</span> Les lecteurs audios permettent de g&eacute;rer sa liste de cours et 
 						de les &eacute;couter directement apr&egrave;s obtention du m&eacute;dia. Attention, seul le fichier mp3 
 						est cependant disponible via les logiciels audio.</p>
 						<br>
-						<a href="../files/img/help/Rss_itunes.png"><img alt="Rss_itunes" src="../files/img/help/thumbs/Rss_itunes.jpg"></a>
 			    	</div>
 			    	
 			    	<div class="rightCol">
@@ -118,17 +116,16 @@
 						<h5>Filtrage de l'Affichage</h5>
 						<p>On dispose d'options de filtrage pour l'affichage des cours ainsi que d'une fonction de recherche.</p>
 						<h5>Listings des Cours</h5>
-						<a href="../files/img/help/Differe.png"><img alt="Differe" src="../files/img/help/thumbs/Differe.jpg"></a>
 						<p>Les cours sont disponibles selon diff&eacute;rents modes.</p>	
-						<p><b>Clic sur la diapositive :</b><br>
+						<p><b>Clic sur l'ic&ocirc;ne 'realplayer' :</b><br>
 						Mode en ligne. N&eacute;cessite la pr&eacute;sence du plugin RealPlayer sur votre machine. 
 						C'est le mode recommand&eacute; pour la visualisation des cours.</p>		
-						<p><b>Clic sur le logo 'Smil' :</b><br>
-						Ce mode permet d'avoir un acc&egrave;s direct au fichier de synchronisation des m&eacute;dias. 
-						Vous pouvez par ce biais utiliser n'importe quel logiciel capable de supporter Smil 
-						(MediaPlayerClassic, AmbulantPlayer, RealPlayer, Quicktime,....)</p>			
+						<p><b>Clic sur les ic&ocirc;nes 'smil', 'ogg', 'mp3', 'zip', ou 'pdf' :</b><br>
+						Ce mode permet d'avoir un acc&egrave;s direct aux fichiers des m&eacute;dias. 
+						Dans le cas du choix du m&eacute;dia Smil, Vous pouvez utiliser n'importe quel logiciel capable de supporter Smil 
+						(MediaPlayerClassic, AmbulantPlayer, RealPlayer, Quicktime,....)</p>
+						<a class="link" href="../files/img/help/Differe.png">Screenshot</a>			
 						<h5>Diffusion et &eacute;coute du diff&eacute;r&eacute; (Mode recommandé)</h5>
-						<a href="../files/img/help/Diff_layout.png"><img alt="Diff_layout" src="../files/img/help/thumbs/Diff_layout.jpg"></a>
 						<p>Le fichier Smil est lu dans le lecteur Reaplayer qui se charge de diffuser les diapositives et 
 						l'enregistrement audio du cours. Il est possible de d&eacute;placer le curseur pour se positionner 
 						&agrave; un endroit particulier du cours.<br>
@@ -141,6 +138,7 @@
 						un acc&egrave;s direct aux autres cours de l'enseignant.</p>	
 						<p><span class="underline">NB :</span> Dans le cas d'un cours vid&eacute;o, la vid&eacute;o est 
 						diffus&eacute;e dans le coin sup&eacute;rieur droit.</p>
+						<a class="link" href="../files/img/help/Diff_layout.png">Screenshot</a>
 	
 						<h3><a id="downloads"></a>T&eacute;l&eacute;chargement des logiciels et plugins</h3>
 						<h5>Realplayer</h5>

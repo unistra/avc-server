@@ -248,6 +248,159 @@ public class FileSystemImpl implements IFileSystem {
 	}
 	
 	/**
+	 * Creates a RSS files for a list of courses
+	 * @param courses the list of courses
+	 * @param filePath the full path of the RSS file to create
+	 * @param rssName the name of the RSS files
+	 * @param rssTitle the title of the RSS file
+	 * @param rssDescription the description of the RSS file
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image file
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS file
+	 * @throws ParserConfigurationException
+	 */
+	public void rssCreation( List<Course> courses, String filePath, String rssName, 
+			String rssTitle, String rssDescription, String serverUrl, String rssImageUrl, 
+			String recordedInterfaceUrl, String language ) {
+		
+		try {		
+			// Création d'un nouveau DOM
+	        DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
+	        DocumentBuilder constructeur = fabrique.newDocumentBuilder();
+	        Document document = constructeur.newDocument();
+	        
+	        // Propriétés du DOM
+	        document.setXmlVersion("1.0");
+	        document.setXmlStandalone(true);
+	        
+	        // Création de l'arborescence du DOM
+	        Element racine = document.createElement("rss");
+	        racine.setAttribute("version", "2.0");
+	        
+	        Element channel = document.createElement("channel");
+	        racine.appendChild(channel);
+	        
+	        // Ajout des informations sur le flux
+	        
+	        Element title = document.createElement("title");
+	        title.setTextContent(rssTitle);
+	        channel.appendChild(title);
+	        
+	        Element link = document.createElement("link");
+	        link.setTextContent(serverUrl);
+	        channel.appendChild(link);
+	        
+	        Element description = document.createElement("description");
+	        description.setTextContent(rssDescription);
+	        channel.appendChild(description);
+	        
+	        Element lang = document.createElement("language");
+	        lang.setTextContent(language);
+	        channel.appendChild(lang);
+	        
+	        Element cr = document.createElement("copyright");
+	        cr.setTextContent(comment);
+	        channel.appendChild(cr);
+	        
+	        // Ajout d'une image au flux RSS
+	        Element image = document.createElement("image");
+	        channel.appendChild(image);
+	        
+	        Element imageTitle = document.createElement("title");
+	        imageTitle.setTextContent(rssTitle);
+	        image.appendChild(imageTitle);
+	        
+	        Element urlLink = document.createElement("url");
+	        urlLink.setTextContent(rssImageUrl);
+	        image.appendChild(urlLink);
+	        
+	        Element imageLink = document.createElement("link");
+	        imageLink.setTextContent(serverUrl);
+	        image.appendChild(imageLink);
+	        
+	        // Recherche de cours et création d'un item pour chaque cours
+			for( Course course : courses) {
+				
+				if( course.getTitle() != null) {
+					// Conversion de la date dans le bon format	
+			    	Date d = course.getDate();
+			    	SimpleDateFormat sdf = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
+		        
+			        Element item = document.createElement("item");
+			        channel.appendChild(item);
+			        
+			        Element coursGuid = document.createElement("guid");
+			        coursGuid.setTextContent(rssName + "_" + course.getCourseid());
+			        coursGuid.setAttribute("isPermaLink","false");
+			        item.appendChild(coursGuid);
+			        
+			        Element coursTitle = document.createElement("title");
+			        coursTitle.setTextContent(course.getTitle());
+			        item.appendChild(coursTitle);
+			        
+			        Element coursDescription = document.createElement("description");
+			        coursDescription.setTextContent(
+			        		(course.getName() != null ? course.getName() : "") 
+			        		+ (! (course.getName() == null || course.getFirstname() == null) ? " " : "")
+			        		+ (course.getFirstname() != null ? course.getFirstname() : "")
+			        		+ (! ((course.getName() == null && course.getFirstname() == null) || course.getFormation() == null) ? " - " : "")
+			        		+ (course.getFormation() != null ? course.getFormation() : "")
+			        		+ (! ((course.getName() == null && course.getFirstname() == null && course.getFormation() == null) || course.getDescription() == null) ? " : " : "")
+			        		+ (course.getDescription() != null ? course.getDescription() : ""));
+			        item.appendChild(coursDescription);
+			        
+			        Element coursCategory = document.createElement("category");
+			        coursCategory.setTextContent(course.getType());
+			        item.appendChild(coursCategory);
+			        
+			        Element coursLink = document.createElement("link");
+			        coursLink.setTextContent(recordedInterfaceUrl + "?id=" + course.getCourseid() + "&type=real");
+			        item.appendChild(coursLink);
+			        
+			        Element coursPubDate = document.createElement("pubDate");
+			        coursPubDate.setTextContent(sdf.format(d));
+			        item.appendChild(coursPubDate);
+			        
+			        String courseMediaUrl = coursesUrl + course.getMediaFolder() + "/" + course.getMediasFileName();
+			        
+			        Element coursEnclosure = document.createElement("enclosure");
+			        coursEnclosure.setAttribute("url",courseMediaUrl + ".mp3");
+			        coursEnclosure.setAttribute("type","audio/mpeg");
+			        coursEnclosure.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".mp3")));
+			        item.appendChild(coursEnclosure);
+			        
+			        Element coursEnclosure2 = document.createElement("enclosure");
+			        coursEnclosure2.setAttribute("url",courseMediaUrl + ".ogg");
+			        coursEnclosure2.setAttribute("type","application/ogg");
+			        coursEnclosure2.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".ogg")));
+			        item.appendChild(coursEnclosure2);
+			        
+			        Element coursEnclosure3 = document.createElement("enclosure");
+			        coursEnclosure3.setAttribute("url",courseMediaUrl + ".pdf");
+			        coursEnclosure3.setAttribute("type","application/pdf");
+			        coursEnclosure3.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".pdf")));
+			        item.appendChild(coursEnclosure3);
+			        
+			        Element coursEnclosure4 = document.createElement("enclosure");
+			        coursEnclosure4.setAttribute("url",courseMediaUrl + ".zip");
+			        coursEnclosure4.setAttribute("type","application/zip");
+			        coursEnclosure4.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".zip")));
+			        item.appendChild(coursEnclosure4);
+				}
+			}
+		        
+			document.appendChild(racine);
+	        
+			svgXml(document, filePath);
+		}
+		catch( ParserConfigurationException pce) {
+			System.out.println("Error while creating the RSS file " + filePath);
+			pce.printStackTrace();
+		}
+	}
+	
+	/**
 	 * Extracts the course archive file to the courses folder and renames it
 	 * @param courseArchive the course archive file
 	 */
@@ -567,158 +720,6 @@ public class FileSystemImpl implements IFileSystem {
 		catch(InterruptedException ie) {
 			System.out.println("Error while creating the zip file " + mediaFileName + ".zip");
 			ie.printStackTrace();
-		}
-	}
-	
-	/**
-	 * Creates a RSS files for a list of courses
-	 * @param courses the list of courses
-	 * @param filePath the full path of the RSS file to create
-	 * @param rssTitle the title of the RSS file
-	 * @param rssDescription the description of the RSS file
-	 * @param serverUrl the URL of the application on the server
-	 * @param rssImageUrl the URL of the RSS image file
-	 * @param recordedInterfaceUrl the URL of the recorded interface
-	 * @param language the language of the RSS file
-	 * @throws ParserConfigurationException
-	 */
-	public void rssCreation( List<Course> courses, String filePath, String rssTitle, 
-			String rssDescription, String serverUrl, String rssImageUrl, 
-			String recordedInterfaceUrl, String language ) {
-		
-		try {		
-			// Création d'un nouveau DOM
-	        DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
-	        DocumentBuilder constructeur = fabrique.newDocumentBuilder();
-	        Document document = constructeur.newDocument();
-	        
-	        // Propriétés du DOM
-	        document.setXmlVersion("1.0");
-	        document.setXmlStandalone(true);
-	        
-	        // Création de l'arborescence du DOM
-	        Element racine = document.createElement("rss");
-	        racine.setAttribute("version", "2.0");
-	        
-	        Element channel = document.createElement("channel");
-	        racine.appendChild(channel);
-	        
-	        // Ajout des informations sur le flux
-	        
-	        Element title = document.createElement("title");
-	        title.setTextContent(rssTitle);
-	        channel.appendChild(title);
-	        
-	        Element link = document.createElement("link");
-	        link.setTextContent(serverUrl);
-	        channel.appendChild(link);
-	        
-	        Element description = document.createElement("description");
-	        description.setTextContent(rssDescription);
-	        channel.appendChild(description);
-	        
-	        Element lang = document.createElement("language");
-	        lang.setTextContent(language);
-	        channel.appendChild(lang);
-	        
-	        Element cr = document.createElement("copyright");
-	        cr.setTextContent(comment);
-	        channel.appendChild(cr);
-	        
-	        // Ajout d'une image au flux RSS
-	        Element image = document.createElement("image");
-	        channel.appendChild(image);
-	        
-	        Element imageTitle = document.createElement("title");
-	        imageTitle.setTextContent(rssTitle);
-	        image.appendChild(imageTitle);
-	        
-	        Element urlLink = document.createElement("url");
-	        urlLink.setTextContent(rssImageUrl);
-	        image.appendChild(urlLink);
-	        
-	        Element imageLink = document.createElement("link");
-	        imageLink.setTextContent(serverUrl);
-	        image.appendChild(imageLink);
-	        
-	        // Recherche de cours et création d'un item pour chaque cours
-			for( Course course : courses) {
-				
-				if( course.getTitle() != null) {
-					// Conversion de la date dans le bon format	
-			    	Date d = course.getDate();
-			    	SimpleDateFormat sdf = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
-		        
-			        Element item = document.createElement("item");
-			        channel.appendChild(item);
-			        
-			        Element coursGuid = document.createElement("guid");
-			        coursGuid.setTextContent(Integer.toString(course.getCourseid()));
-			        coursGuid.setAttribute("isPermaLink","false");
-			        item.appendChild(coursGuid);
-			        
-			        Element coursTitle = document.createElement("title");
-			        coursTitle.setTextContent(course.getTitle());
-			        item.appendChild(coursTitle);
-			        
-			        Element coursDescription = document.createElement("description");
-			        coursDescription.setTextContent(
-			        		(course.getName() != null ? course.getName() : "") 
-			        		+ (! (course.getName() == null || course.getFirstname() == null) ? " " : "")
-			        		+ (course.getFirstname() != null ? course.getFirstname() : "")
-			        		+ (! ((course.getName() == null && course.getFirstname() == null) || course.getFormation() == null) ? " - " : "")
-			        		+ (course.getFormation() != null ? course.getFormation() : "")
-			        		+ (! ((course.getName() == null && course.getFirstname() == null && course.getFormation() == null) || course.getDescription() == null) ? " : " : "")
-			        		+ (course.getDescription() != null ? course.getDescription() : ""));
-			        item.appendChild(coursDescription);
-			        
-			        Element coursCategory = document.createElement("category");
-			        coursCategory.setTextContent(course.getType());
-			        item.appendChild(coursCategory);
-			        
-			        Element coursLink = document.createElement("link");
-			        coursLink.setTextContent(recordedInterfaceUrl + "?id=" + course.getCourseid() + "&type=real");
-			        item.appendChild(coursLink);
-			        
-			        Element coursPubDate = document.createElement("pubDate");
-			        coursPubDate.setTextContent(sdf.format(d));
-			        item.appendChild(coursPubDate);
-			        
-			        String courseMediaUrl = coursesUrl + course.getMediaFolder() + "/" + course.getMediasFileName();
-			        
-			        Element coursEnclosure = document.createElement("enclosure");
-			        coursEnclosure.setAttribute("url",courseMediaUrl + ".mp3");
-			        coursEnclosure.setAttribute("type","audio/mpeg");
-			        coursEnclosure.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".mp3")));
-			        item.appendChild(coursEnclosure);
-			        
-			        Element coursEnclosure2 = document.createElement("enclosure");
-			        coursEnclosure2.setAttribute("url",courseMediaUrl + ".ogg");
-			        coursEnclosure2.setAttribute("type","application/ogg");
-			        coursEnclosure2.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".ogg")));
-			        item.appendChild(coursEnclosure2);
-			        
-			        Element coursEnclosure3 = document.createElement("enclosure");
-			        coursEnclosure3.setAttribute("url",courseMediaUrl + ".pdf");
-			        coursEnclosure3.setAttribute("type","application/pdf");
-			        coursEnclosure3.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".pdf")));
-			        item.appendChild(coursEnclosure3);
-			        
-			        Element coursEnclosure4 = document.createElement("enclosure");
-			        coursEnclosure4.setAttribute("url",courseMediaUrl + ".zip");
-			        coursEnclosure4.setAttribute("type","application/zip");
-			        coursEnclosure4.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".zip")));
-			        item.appendChild(coursEnclosure4);
-				}
-			}
-		        
-			document.appendChild(racine);
-	        
-			svgXml(document, filePath);
-		}
-		catch( ParserConfigurationException pce) {
-			System.out.println("Error while creating the RSS file " + filePath);
-			pce.printStackTrace();
 		}
 	}
 	

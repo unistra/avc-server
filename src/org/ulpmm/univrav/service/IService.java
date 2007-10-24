@@ -4,8 +4,6 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
@@ -34,12 +32,6 @@ public interface IService {
 	public List<Course> getAllCourses();
 	
 	/**
-	 * Gets a list of all the courses without an access code
-	 * @return the list of courses
-	 */
-	public List<Course> getAllUnlockedCourses();
-	
-	/**
 	 * Gets a list of the n last courses
 	 * @param n the number of courses to return
 	 * @return the list of courses
@@ -62,13 +54,6 @@ public interface IService {
 	 * @return the list of courses
 	 */
 	public List<Course> getCourses(HashMap<String, String> params, int number, int start);
-	
-	/**
-	 * Gets the list of courses without access code for a teacher
-	 * @param teacher the teacher
-	 * @return the list of courses
-	 */
-	public List<Course> getUnlockedCourses(String[] teacher);
 	
 	/**
 	 * Gets a course by providing its id
@@ -112,14 +97,17 @@ public interface IService {
 	public void deleteCourse(int courseId, String mediaFolder);
 	
 	/**
-	 * Deletes the test courses
+	 * Deletes the test courses (courses with genre 'Suppression')
+	 * @param testKeyWord the key word which identifies a test
 	 */
-	public void deleteTests();
+	public void deleteTests(String testKeyWord);
 	
 	/**
-	 * Hides the test courses (courses beginning with 'test' or 'essai')
+	 * Hides the test courses (ie courses beginning with 'test' or 'essai')
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
 	 */
-	public void hideTests();
+	public void hideTests(String testKeyWord1, String testKeyWord2);
 	
 	/**
 	 * Gets the id of the next course which will be uploaded
@@ -132,12 +120,6 @@ public interface IService {
 	 * @return the list of teachers
 	 */
 	public List<String[]> getTeachers();
-	
-	/**
-	 * Gets the list of all the teachers who have at least one course with no access code
-	 * @return the list of teachers
-	 */
-	public List<String[]> getTeachersWithRss();
 	
 	/**
 	 * Gets the list of all the formations
@@ -244,22 +226,6 @@ public interface IService {
 	public void deleteAmphi(int amphiId);
 	
 	/**
-	 * Creates a RSS files for a list of courses
-	 * @param courses the list of courses
-	 * @param filePath the full path of the RSS file to create
-	 * @param rssTitle the title of the RSS file
-	 * @param rssDescription the description of the RSS file
-	 * @param serverUrl the URL of the application on the server
-	 * @param rssImageUrl the URL of the RSS image file
-	 * @param recordedInterfaceUrl the URL of the recorded interface
-	 * @param language the language of the RSS file
-	 * @throws ParserConfigurationException
-	 */
-	public void rssCreation( List<Course> courses, String filePath, String rssTitle, 
-			String rssDescription, String serverUrl, String rssImageUrl, 
-			String recordedInterfaceUrl, String language );
-	
-	/**
 	 * Creates the .ram file used by a live video
 	 * @param amphiIp the Ip address of the video amphi
 	 * @param helixServerIp the Ip address of the helix server
@@ -286,6 +252,35 @@ public interface IService {
 	 * @param out the stream in which send the file
 	 */
 	public void returnFile(String filename, OutputStream out);
+	
+	/**
+	 * Creates the RSS files for all the courses and teachers
+	 * @param rssFolderPath the path of the folder to store the RSS files
+	 * @param rssFileName the filename of the general RSS file
+	 * @param rssTitle the title of the RSS files
+	 * @param rssDescription the description of the RSS files
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image files
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS files
+	 */
+	public void generateRss( String rssFolderPath, String rssFileName, String rssTitle, String rssDescription, 
+			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language);
+	
+	/**
+	 * Creates the RSS files for all the courses and the teacher of the course in parameter
+	 * @param course c the course which has been modified or added
+	 * @param rssFolderPath the path of the folder to store the RSS files
+	 * @param rssFileName the filename of the general RSS file
+	 * @param rssTitle the title of the RSS files
+	 * @param rssDescription the description of the RSS files
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image files
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS files
+	 */
+	public void generateRss( Course c, String rssFileName, String rssFolderPath, String rssTitle, String rssDescription, 
+			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language);
 	
 	/**
 	 * Sends a message over a socket to the Univ-R AV client
@@ -330,4 +325,11 @@ public interface IService {
 	 * @return true if the user has access to the course
 	 */
 	public boolean hasAccessToCourse(int uid, int courseId);
+	
+	/**
+	 * Function which removes the undesirable characters of a String and the useless spaces at the end
+	 * @param string the string to clean
+	 * @return the cleaned string
+	 */
+	public String cleanString(String string);
 }

@@ -58,11 +58,11 @@ public class VideoSmil2 implements ISmil {
 			pw.println("<smil xmlns=\"http://www.w3.org/2001/SMIL20/Language\">");
 			pw.println("<head>");
 			if( c.getTitle() != null)
-				pw.println("<meta name=\"title\" content=\"" + cleanString(c.getTitle()) + "\"/>");
+				pw.println("<meta name=\"title\" content=\"" + c.getTitle() + "\"/>");
 			if( c.getName() != null)
-				pw.println("<meta name=\"author\" content=\"" + cleanString(c.getName())  + (c.getFirstname() == null ? "" : " " + cleanString(c.getFirstname())) + "\"/>");
+				pw.println("<meta name=\"author\" content=\"" + c.getName()  + (c.getFirstname() == null ? "" : " " + c.getFirstname()) + "\"/>");
 			if( ! comment.equals(""))
-				pw.println("<meta name=\"copyright\" content=\"" + cleanString(comment) + "\"/>");
+				pw.println("<meta name=\"copyright\" content=\"" + comment + "\"/>");
 			
 			/* Regions definition */
 			pw.println("<layout>");
@@ -144,26 +144,6 @@ public class VideoSmil2 implements ISmil {
 			System.out.println("Error while writing the smil file");
 			ioe.printStackTrace();
 		}	
-	}
-	
-	/**
-	 * Function which removes the characters of a string which make a general error in RealPlayer
-	 * @param str the string to clean
-	 * @return the string cleaned
-	 */
-	private static String cleanString(String str){
-		final String carSpeTotal = "&><\"%#+";
-		
-		String res = "";
-		
-		if( str != null ) {
-			for( int i=0 ; i < str.length() ; i++ ) {
-				if( carSpeTotal.indexOf(str.charAt(i)) == -1 )
-					res += str.charAt(i);
-			}
-		}
-		
-		return res;
 	}
 	
 }
