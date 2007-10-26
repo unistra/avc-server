@@ -15,8 +15,19 @@ public interface IService {
 	/**
 	 * Adds a new course
 	 * @param c the course to add
+	 * @param courseArchive the archive file of the course to add
+	 * @param rssFolderPath the path of the folder to store the RSS files
+	 * @param rssName the filename of the general RSS file
+	 * @param rssTitle the title of the RSS files
+	 * @param rssDescription the description of the RSS files
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image files
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS files
 	 */
-	public void addCourse(Course c, String courseArchive);
+	public void addCourse(Course c, String courseArchive, String rssFolderPath, 
+			String rssName, String rssTitle, String rssDescription, String serverUrl, 
+			String rssImageUrl, String recordedInterfaceUrl, String language);
 	
 	/**
 	 * Adds a new course from Univ-R
@@ -26,10 +37,33 @@ public interface IService {
 	public void addUnivrCourse(Course c, Univr u);
 	
 	/**
-	 * Gets a list of all the courses
+	 * Completes a Univr course
+	 * @param c the Univr course to complete
+	 * @param courseArchive the archive file of the course to complete
+	 * @param rssFolderPath the path of the folder to store the RSS files
+	 * @param rssName the filename of the general RSS file
+	 * @param rssTitle the title of the RSS files
+	 * @param rssDescription the description of the RSS files
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image files
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS files
+	 */
+	public void completeUnivrCourse(Course c, String courseArchive , String rssFolderPath, 
+			String rssName, String rssTitle, String rssDescription, String serverUrl, 
+			String rssImageUrl, String recordedInterfaceUrl, String language);
+	
+	/**
+	 * Gets a list of all the courses (non-Univr)
 	 * @return the list of courses
 	 */
 	public List<Course> getAllCourses();
+	
+	/**
+	 * Gets a list of all the Univ-R courses
+	 * @return the list of Univ-R courses
+	 */
+	public List<Course> getUnivrCourses();
 	
 	/**
 	 * Gets a list of the n last courses
@@ -209,8 +243,9 @@ public interface IService {
 	/**
 	 * Modifies an amphi
 	 * @param a the amphi to modify
+	 * @param oldAmphiip the old Ip address of this amphi
 	 */
-	public void modifyAmphi(Amphi a);
+	public void modifyAmphi(Amphi a, String oldAmphiip);
 	
 	/**
 	 * Sets the status of the live in an amphi
@@ -224,6 +259,14 @@ public interface IService {
 	 * @param amphiId the id of the amphi
 	 */
 	public void deleteAmphi(int amphiId);
+	
+	/**
+	 * Checks wether a video amphi is diffusing an audio stream or a video stream
+	 * @param amphiIp the Ip address of the video amphi
+	 * @param audioLivePort the port used by the audio live
+	 * @return the stream type diffused by the amphi
+	 */
+	public String getLiveStreamType(String amphiIp, int audioLivePort);
 	
 	/**
 	 * Creates the .ram file used by a live video
@@ -271,7 +314,7 @@ public interface IService {
 	 * Creates the RSS files for all the courses and the teacher of the course in parameter
 	 * @param course c the course which has been modified or added
 	 * @param rssFolderPath the path of the folder to store the RSS files
-	 * @param rssFileName the filename of the general RSS file
+	 * @param rssName the filename of the general RSS file
 	 * @param rssTitle the title of the RSS files
 	 * @param rssDescription the description of the RSS files
 	 * @param serverUrl the URL of the application on the server
@@ -279,7 +322,7 @@ public interface IService {
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
 	 */
-	public void generateRss( Course c, String rssFileName, String rssFolderPath, String rssTitle, String rssDescription, 
+	public void generateRss( Course c, String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language);
 	
 	/**

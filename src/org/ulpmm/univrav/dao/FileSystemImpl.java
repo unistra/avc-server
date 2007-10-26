@@ -137,6 +137,42 @@ public class FileSystemImpl implements IFileSystem {
 	}
 	
 	/**
+	 * Checks wether a video amphi is diffusing an audio stream or a video stream
+	 * @param amphiIp the Ip address of the video amphi
+	 * @param audioLivePort the port used by the audio live
+	 * @return the stream type diffused by the amphi
+	 */
+	public String getLiveStreamType(String amphiIp, int audioLivePort) {
+		
+		String result="";
+		
+		try {
+			String command = "wget -o live_" + amphiIp + ".log --timeout=2 -t2 --spider -S http://" + amphiIp + ":" + audioLivePort;
+			Process p = r.exec(command, null, new File("/tmp"));
+			p.waitFor();
+			
+			FileInputStream fis = new FileInputStream("/tmp/live_" + amphiIp + ".log");
+			BufferedReader entree = new BufferedReader(new InputStreamReader(fis));
+			String text="";
+			while( (text = entree.readLine()) != null )
+				result+= text;
+		}
+		catch( IOException ioe) {
+			System.out.println("Error while checking the Stream type for the amphi " + amphiIp);
+			ioe.printStackTrace();
+		}
+		catch( InterruptedException ie) {
+			System.out.println("Error while checking the Stream type for the amphi " + amphiIp);
+			ie.printStackTrace();
+		}
+		
+		if( result.indexOf("200 OK") != -1)
+			return "audio";
+		else
+			return "video";
+	}
+	
+	/**
 	 * Creates the .ram file used by a live video
 	 * @param amphiIp the Ip address of the video amphi
 	 * @param helixServerIp the Ip address of the helix server
