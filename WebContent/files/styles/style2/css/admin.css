@@ -49,11 +49,11 @@ th a {
 
 /* Classes to alternate the color of the rows of the courses table */
 .odd {
-	background-color: #FFD557;
+	background-color: #77BBFF;
 }
 
 .even {
-	background-color: #E3DABA;
+	background-color: #AADDFF;
 }
 
 .editform {

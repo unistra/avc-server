@@ -59,27 +59,27 @@ li a {
 
 /* the block containing the two columns with the text */
 .columns {
-	position: relative;
-	width: 900px;
+	width: 920px;
 	margin-left: 20px;
+	margin: 5px;
+	padding: 5px;
 }
 
 .columns p {
 	font-size: 12px;
-	padding-left: 40px;
+	margin-left: 40px;
 	text-align: justify;
+	margin-top: 15px;
+	margin-bottom: 15px;
 }
 
-.columns a {
+.link {
 	color: #FFFFFF;
 	text-decoration: underline;
-}
-
-.columns img {
-	float: right;
-	margin-left: 5px;
-	width: 128px;
-	height: 96px;
+	font-size: 12px;
+	margin-top: 15px;
+	margin-bottom: 15px;
+	margin-left: 40px;
 }
 
 /* left column */
@@ -96,8 +96,15 @@ li a {
 	width: 440px;
 }
 
+h3 {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
 h5 {
-	padding-left: 40px;
+	margin-left: 40px;
+	margin-top: 15px;
+	margin-bottom: 15px;
 }
 
 .underline {

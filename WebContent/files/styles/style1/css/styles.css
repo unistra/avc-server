@@ -166,6 +166,6 @@ a, .linkText, .helpText, h5, .buildingName, .searchText {
 	color: #FF9602;
 }
 
-.tableheader {
+.tableheader, .displaytag th {
 	background-color: #FF9602;
 }
