@@ -1,45 +1,23 @@
 package org.ulpmm.univrav.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.sql.DataSource;
+
 /**
- * 
- * @author laurent
- *
+ * Provides access to the SQl database
+ * @author ULP Multimedia, 2007
  */
 public class PgsqlAccess {
 	
-	private final static String DRIVER = "org.postgresql.Driver";
-	
-	private String host;
-	private String port;
-	private String database;
-	private String user;
-	private String password;
-	
 	private Connection cnt;
+	private DataSource ds;
 	
-	public PgsqlAccess(String host, String port, String database, String user, String password) {
-		
-		/* Loading of the driver */
-		try {
-			Class.forName(DRIVER);
-		}
-		catch( ClassNotFoundException cnfe) {
-			System.out.println("Error loading the driver : " + DRIVER);
-			cnfe.printStackTrace();
-		}
-		
-		/* Loading of the settings to connect to the database */
-		this.host = host;
-		this.port = port;
-		this.database = database;
-		this.user = user;
-		this.password = password;
+	public PgsqlAccess(DataSource ds) {
+		this.ds = ds;
 	}
 	
 	/**
@@ -49,14 +27,18 @@ public class PgsqlAccess {
 	public void connect() {
 		try {
 			if( cnt == null || cnt.isClosed())
-				cnt = DriverManager.getConnection("jdbc:postgresql://" + host + ":" + port + "/" + database, user, password);
+				cnt = ds.getConnection();
 		}
 		catch( SQLException sqle) {
-			System.out.println("The connection to the database " + database + " has failed");
+			System.out.println("The connection to the database has failed");
 			sqle.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Gets the connection to the database
+	 * @return the connection to the database
+	 */
 	public Connection getConnection() {
 		try {
 			if( cnt == null || cnt.isClosed())
@@ -70,6 +52,11 @@ public class PgsqlAccess {
 		return cnt;
 	}
 	
+	/**
+	 * Executes a SELECT SQL query without parameters
+	 * @param sql the SQL query to execute
+	 * @return the Resultset of the query
+	 */
 	public ResultSet query(String sql) {
 		ResultSet rs = null;
 		
@@ -87,6 +74,9 @@ public class PgsqlAccess {
 		return rs;
 	}
 	
+	/**
+	 * Closes the connection to the Database
+	 */
 	public void disconnect() {
 		try {
 			if( cnt != null && ! cnt.isClosed())

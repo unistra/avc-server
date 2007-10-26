@@ -71,9 +71,22 @@ public class ServiceImpl implements IService {
 	 * Adds a new course
 	 * @param c the course to add
 	 * @param courseArchive the archive file of the course to add
+	 * @param rssFolderPath the path of the folder to store the RSS files
+	 * @param rssName the filename of the general RSS file
+	 * @param rssTitle the title of the RSS files
+	 * @param rssDescription the description of the RSS files
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image files
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS files
 	 */
-	public synchronized void addCourse(Course c, String courseArchive) {
-		CourseAddition ca = new CourseAddition(db, fs, c, courseArchive);
+	public synchronized void addCourse(Course c, String courseArchive, String rssFolderPath, 
+			String rssName, String rssTitle, String rssDescription, String serverUrl, 
+			String rssImageUrl, String recordedInterfaceUrl, String language) {
+		
+		CourseAddition ca = new CourseAddition(db, fs, c, courseArchive, 
+				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
+				rssImageUrl, recordedInterfaceUrl, language);
 		ca.start();
 	}
 	
@@ -82,7 +95,7 @@ public class ServiceImpl implements IService {
 	 * @param c the course to add
 	 * @param u the Univ-R infos
 	 */
-	public void addUnivrCourse(Course c, Univr u) {
+	public synchronized void addUnivrCourse(Course c, Univr u) {
 		db.addCourse(c);
 		db.addUnivr(u);
 	}
@@ -91,18 +104,39 @@ public class ServiceImpl implements IService {
 	 * Completes a Univr course
 	 * @param c the Univr course to complete
 	 * @param courseArchive the archive file of the course to complete
+	 * @param rssFolderPath the path of the folder to store the RSS files
+	 * @param rssName the filename of the general RSS file
+	 * @param rssTitle the title of the RSS files
+	 * @param rssDescription the description of the RSS files
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image files
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS files
 	 */
-	public void completeUnivrCourse(Course c, String courseArchive) {
-		UnivrCourseCompletion ucc = new UnivrCourseCompletion(db, fs, c, courseArchive);
+	public synchronized void completeUnivrCourse(Course c, String courseArchive , String rssFolderPath, 
+			String rssName, String rssTitle, String rssDescription, String serverUrl, 
+			String rssImageUrl, String recordedInterfaceUrl, String language) {
+		
+		UnivrCourseCompletion ucc = new UnivrCourseCompletion(db, fs, c, courseArchive,
+				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
+				rssImageUrl, recordedInterfaceUrl, language);
 		ucc.start();
 	}
 	
 	/**
-	 * Gets a list of all the courses
+	 * Gets a list of all the courses (non-Univr)
 	 * @return the list of courses
 	 */
 	public synchronized List<Course> getAllCourses() {
 		return db.getAllCourses();
+	}
+	
+	/**
+	 * Gets a list of all the Univ-R courses
+	 * @return the list of Univ-R courses
+	 */
+	public List<Course> getUnivrCourses() {
+		return db.getUnivrCourses();
 	}
 	
 	/**
@@ -193,8 +227,9 @@ public class ServiceImpl implements IService {
 	 * Deletes the test courses (courses with genre 'Suppression')
 	 * @param testKeyWord the key word which identifies a test
 	 */
-	public void deleteTests(String testKeyWord) {
-		List<String> mediaFolders = db.getTestsMediaFolders();
+	public synchronized void deleteTests(String testKeyWord) {
+		List<String> mediaFolders = db.getTestsMediaFolders(testKeyWord);
+		System.out.println(mediaFolders);
 		db.deleteTests(testKeyWord);
 		for( String mediaFolder : mediaFolders)
 			fs.deleteCourse(mediaFolder);
@@ -205,7 +240,7 @@ public class ServiceImpl implements IService {
 	 * @param testKeyWord1 the first key word which identifies a test
 	 * @param testKeyWord2 the second key word which identifies a test
 	 */
-	public void hideTests(String testKeyWord1, String testKeyWord2) {
+	public synchronized void hideTests(String testKeyWord1, String testKeyWord2) {
 		db.hideTests(testKeyWord1, testKeyWord2);
 	}
 	
@@ -331,16 +366,17 @@ public class ServiceImpl implements IService {
 	 * @param ip the IP address of the amphi
 	 * @return the amphi
 	 */
-	public Amphi getAmphi(String ip) {
+	public synchronized Amphi getAmphi(String ip) {
 		return db.getAmphi(ip);
 	}
 	
 	/**
 	 * Modifies an amphi
 	 * @param a the amphi to modify
+	 * @param oldAmphiip the old Ip address of this amphi
 	 */
-	public synchronized void modifyAmphi(Amphi a) {
-		db.modifyAmphi(a);
+	public void modifyAmphi(Amphi a, String oldAmphiip) {
+		db.modifyAmphi(a, oldAmphiip);
 	}
 
 	/**
@@ -356,8 +392,18 @@ public class ServiceImpl implements IService {
 	 * Deletes an amphi by providing its id
 	 * @param amphiId the id of the amphi
 	 */
-	public void deleteAmphi(int amphiId) {
+	public synchronized void deleteAmphi(int amphiId) {
 		db.deleteAmphi(amphiId);
+	}
+	
+	/**
+	 * Checks wether a video amphi is diffusing an audio stream or a video stream
+	 * @param amphiIp the Ip address of the video amphi
+	 * @param audioLivePort the port used by the audio live
+	 * @return the stream type diffused by the amphi
+	 */
+	public synchronized String getLiveStreamType(String amphiIp, int audioLivePort) {
+		return fs.getLiveStreamType(amphiIp, audioLivePort);
 	}
 	
 	/**
@@ -407,11 +453,11 @@ public class ServiceImpl implements IService {
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
 	 */
-	public void generateRss( String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
+	public synchronized void generateRss( String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language) {
 		// For all courses
 		List<Course> courses = db.getAllUnlockedCourses();
-		String rssPath = rssFolderPath + "/" + cleanFileName(rssName + ".xml");
+		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		
 		// For the teachers
@@ -420,7 +466,7 @@ public class ServiceImpl implements IService {
 			courses = db.getUnlockedCourses(teacher);
 			rssPath = rssFolderPath + "/" + cleanFileName((teacher[0] != null ? teacher[0] : "")
 				+ (! (teacher[0] == null || teacher[1] == null) ? "_" : "")
-				+ (teacher[1] != null ? teacher[1] : "") + ".xml");
+				+ (teacher[1] != null ? teacher[1] : "")) + ".xml";
 			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		}
 	}
@@ -437,18 +483,18 @@ public class ServiceImpl implements IService {
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
 	 */
-	public void generateRss( Course c, String rssName, String rssFolderPath, String rssTitle, String rssDescription, 
+	public synchronized void generateRss( Course c, String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language) {
 		// For all courses
 		List<Course> courses = db.getAllUnlockedCourses();
-		String rssPath = rssFolderPath + "/" + cleanFileName(rssName + ".xml");
+		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		
 		// For the teacher
 		courses = db.getUnlockedCourses(new String[]{c.getName(), c.getFirstname()});
 		rssPath = rssFolderPath + "/" + cleanFileName((c.getName() != null ? c.getName() : "")
 			+ (! (c.getName() == null || c.getFirstname() == null) ? "_" : "")
-			+ (c.getFirstname() != null ? c.getFirstname() : "") + ".xml");
+			+ (c.getFirstname() != null ? c.getFirstname() : "")) + ".xml";
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 	}
 	
@@ -458,7 +504,7 @@ public class ServiceImpl implements IService {
 	 * @param rssName the name of the general RSS file
 	 * @return the hashMap of the RSS titles and files
 	 */
-	public HashMap<String, String> getRssFileList( String rssTitle, String rssName) {
+	public synchronized HashMap<String, String> getRssFileList( String rssTitle, String rssName) {
 		LinkedHashMap<String, String> rss = new LinkedHashMap<String, String>();
 		rss.put(rssTitle, "../rss/" + rssName + ".xml");
 		
@@ -470,7 +516,7 @@ public class ServiceImpl implements IService {
 					+ (teacher[1] != null ? teacher[1] : ""),
 				"../rss/" + cleanFileName((teacher[0] != null ? teacher[0] : "")
 					+ (! (teacher[0] == null || teacher[1] == null) ? "_" : "")
-					+ (teacher[1] != null ? teacher[1] : "") + ".xml")
+					+ (teacher[1] != null ? teacher[1] : "")) + ".xml"
 			);
 		}
 		
@@ -482,7 +528,7 @@ public class ServiceImpl implements IService {
 	 * @param message the message to send
 	 * @return the answer of the client
 	 */
-	public String sendMessageToClient(String message, String ip, int port) {
+	public synchronized String sendMessageToClient(String message, String ip, int port) {
 		return fs.sendMessageToClient(message, ip, port);
 	}
 	
@@ -529,7 +575,7 @@ public class ServiceImpl implements IService {
 	 * @param courseId the course
 	 * @return true if the user has access to the course
 	 */
-	public boolean hasAccessToCourse(int uid, int courseId) {
+	public synchronized boolean hasAccessToCourse(int uid, int courseId) {
 		return ud.hasAccessToCourse(uid, courseId);
 	}
 	

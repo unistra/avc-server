@@ -46,6 +46,14 @@ public interface IFileSystem {
 			String recordedInterfaceUrl, String language );
 	
 	/**
+	 * Checks wether a video amphi is diffusing an audio stream or a video stream
+	 * @param amphiIp the Ip address of the video amphi
+	 * @param audioLivePort the port used by the audio live
+	 * @return the stream type diffused by the amphi
+	 */
+	public String getLiveStreamType(String amphiIp, int audioLivePort);
+	
+	/**
 	 * Creates the .ram file used by a live video
 	 * @param amphiIp the Ip address of the video amphi
 	 * @param helixServerIp the Ip address of the helix server

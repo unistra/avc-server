@@ -24,10 +24,16 @@ public interface IDatabase {
 	public void addUnivr(Univr u);
 	
 	/**
-	 * Gets a list of all the courses
+	 * Gets a list of all the courses (non-Univr)
 	 * @return the list of courses
 	 */
 	public List<Course> getAllCourses();
+	
+	/**
+	 * Gets a list of all the Univ-R courses
+	 * @return the list of Univ-R courses
+	 */
+	public List<Course> getUnivrCourses();
 	
 	/**
 	 * Gets a list of all the courses without an access code
@@ -109,8 +115,9 @@ public interface IDatabase {
 	/**
 	 * Gets the list of the media folders of the test courses
 	 * @return the list of media folders
+	 * @param testKeyWord the key word which identifies a test
 	 */
-	public List<String> getTestsMediaFolders();
+	public List<String> getTestsMediaFolders(String testKeyWord);
 	
 	/**
 	 * Deletes the test courses (courses with genre 'Suppression')
@@ -237,8 +244,9 @@ public interface IDatabase {
 	/**
 	 * Modifies an amphi
 	 * @param a the amphi to modify
+	 * @param oldAmphiip the old Ip address of this amphi
 	 */
-	public void modifyAmphi(Amphi a);
+	public void modifyAmphi(Amphi a, String oldAmphiip);
 	
 	/**
 	 * Sets the status of the live in an amphi

@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
@@ -22,8 +24,8 @@ public class DatabaseImpl implements IDatabase {
 	
 	private static PgsqlAccess pa;
 	
-	public DatabaseImpl(String host, String port, String database, String user, String password) {
-		pa = new PgsqlAccess(host, port, database, user, password);
+	public DatabaseImpl(DataSource ds) {
+		pa = new PgsqlAccess(ds);
 	}
 	
 	/**
@@ -125,12 +127,52 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
-	 * Gets a list of all the courses
+	 * Gets a list of all the courses (non-Univr)
 	 * @return the list of courses
 	 */
 	public List<Course> getAllCourses() {
 		pa.connect();
-		ResultSet rs = pa.query("SELECT * From course ORDER BY date DESC");
+		ResultSet rs = pa.query("SELECT * From course WHERE courseid NOT IN " +
+				"( SELECT courseid FROM univr ) ORDER BY date DESC");
+		List<Course> l = new ArrayList<Course>();
+		try {
+			while(rs.next()) {
+				l.add(new Course(
+					rs.getInt("courseid"),
+					rs.getTimestamp("date"),
+					rs.getString("type"),
+					rs.getString("title"),
+					rs.getString("description"),
+					rs.getString("formation"),
+					rs.getString("name"),
+					rs.getString("firstname"),
+					rs.getString("ipaddress"),
+					rs.getInt("duration"),
+					rs.getString("genre"),
+					rs.getBoolean("visible"),
+					rs.getInt("consultations"),
+					rs.getString("timing"),
+					rs.getString("mediafolder")
+				));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the courses list");
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		return l;
+	}
+	
+	/**
+	 * Gets a list of all the Univ-R courses
+	 * @return the list of Univ-R courses
+	 */
+	public List<Course> getUnivrCourses() {
+		pa.connect();
+		ResultSet rs = pa.query("SELECT * From course WHERE courseid IN " +
+				"( SELECT courseid FROM univr ) ORDER BY date DESC");
 		List<Course> l = new ArrayList<Course>();
 		try {
 			while(rs.next()) {
@@ -304,14 +346,14 @@ public class DatabaseImpl implements IDatabase {
 				
 				String param = it.next();
 				if( param.equals("fullname") )
-					sql += "name || ' ' || firstname = ? ";
+					sql += "COALESCE(name,'') || ' ' || COALESCE(firstname,'') = ? ";
 				else if( param.equals("keyword") )
 					sql += "(INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?)) ";
 				else
 					sql += param + " = ? ";
 			}
 			sql += "AND visible = true ORDER BY date DESC LIMIT " + number + " OFFSET " + start;
-
+			
 			try {
 				PreparedStatement pstmt = cnt.prepareStatement(sql);
 
@@ -380,8 +422,7 @@ public class DatabaseImpl implements IDatabase {
 				(teacher[0] != null ? " name = ?" : "") +
 				(teacher[0] != null && teacher[1] != null ? "AND" : "") + 
 				(teacher[1] != null ? " firstname = ? " : "") +
-				"AND genre IS NULL AND visible = true";
-		
+				"AND genre IS NULL AND visible = true ORDER BY date DESC";
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			if( teacher[0] != null)
@@ -560,12 +601,13 @@ public class DatabaseImpl implements IDatabase {
 				
 				String param = it.next();
 				if( param.equals("fullname") )
-					sql += "name || ' ' || firstname = ? ";
+					sql += "COALESCE(name,'') || ' ' || COALESCE(firstname,'') = ? ";
 				else if( param.equals("keyword") )
 					sql += "(INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?)) ";
 				else
 					sql += param + " = ? ";
 			}
+			sql += "AND visible = true"; 
 			
 			try {
 				PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -621,19 +663,58 @@ public class DatabaseImpl implements IDatabase {
 			
 			/* Applies the parameters to the query */
 			pstmt.setTimestamp(1, c.getDate());
-			pstmt.setString(2, c.getType());
-			pstmt.setString(3, c.getTitle());
-			pstmt.setString(4, c.getDescription());
-			pstmt.setString(5, c.getFormation());
-			pstmt.setString(6, c.getName());
-			pstmt.setString(7, c.getFirstname());
+			
+			if( c.getType() != null)
+				pstmt.setString(2, c.getType());
+			else
+				pstmt.setNull(2, Types.VARCHAR);
+			
+			if( c.getTitle() != null)
+				pstmt.setString(3, c.getTitle());
+			else
+				pstmt.setNull(3, Types.VARCHAR);
+			
+			if( c.getDescription() != null)
+				pstmt.setString(4, c.getDescription());
+			else
+				pstmt.setNull(4, Types.VARCHAR);
+			
+			if( c.getFormation() != null)
+				pstmt.setString(5, c.getFormation());
+			else
+				pstmt.setNull(5, Types.VARCHAR);
+			
+			if( c.getName() != null)
+				pstmt.setString(6, c.getName());
+			else
+				pstmt.setNull(6, Types.VARCHAR);
+			
+			if( c.getFirstname() != null)
+				pstmt.setString(7, c.getFirstname());
+			else
+				pstmt.setNull(7, Types.VARCHAR);
+			
 			pstmt.setString(8, c.getIpaddress());
 			pstmt.setInt(9, c.getDuration());
-			pstmt.setString(10, c.getGenre());
+			
+			if( c.getGenre() != null)
+				pstmt.setString(10, c.getGenre());
+			else
+				pstmt.setNull(10, Types.VARCHAR);
+			
 			pstmt.setBoolean(11, c.isVisible());
 			pstmt.setInt(12, c.getConsultations());
-			pstmt.setString(13, c.getTiming());
-			pstmt.setString(14, c.getMediaFolder());
+			
+			if( c.getTiming() != null)
+				pstmt.setString(13, c.getTiming());
+			else
+				pstmt.setNull(13, Types.VARCHAR);
+			
+			if( c.getMediaFolder() != null)
+				pstmt.setString(14, c.getMediaFolder());
+			else
+				pstmt.setNull(14, Types.VARCHAR);
+			
 			pstmt.setInt(15, c.getCourseid());
 			
 			if( pstmt.executeUpdate() == 0 )
@@ -670,10 +751,11 @@ public class DatabaseImpl implements IDatabase {
 	/**
 	 * Gets the list of the media folders of the test courses
 	 * @return the list of media folders
+	 * @param testKeyWord the key word which identifies a test
 	 */
-	public List<String> getTestsMediaFolders() {
+	public List<String> getTestsMediaFolders(String testKeyWord) {
 		pa.connect();
-		ResultSet rs = pa.query("SELECT mediafolder FROM course WHERE initcap(genre) = 'Suppression'");
+		ResultSet rs = pa.query("SELECT mediafolder FROM course WHERE initcap(genre) = '" + testKeyWord + "'");
 		List<String> l = new ArrayList<String>();
 		try {
 			while(rs.next()) {
@@ -1132,7 +1214,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the amphis list");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
+		
 		return l;
 	}
 
@@ -1205,8 +1287,9 @@ public class DatabaseImpl implements IDatabase {
 	/**
 	 * Modifies an amphi
 	 * @param a the amphi to modify
+	 * @param oldAmphiip the old Ip address of this amphi
 	 */
-	public void modifyAmphi(Amphi a) {
+	public void modifyAmphi(Amphi a, String oldAmphiip) {
 		Connection cnt = pa.getConnection();
 		
 		/* Creation of the SQL query string */
@@ -1226,6 +1309,13 @@ public class DatabaseImpl implements IDatabase {
 			
 			if( pstmt.executeUpdate() == 0 )
 				throw new DaoException("The amphi " + a + " has not been modified");
+			
+			/* If the Ip address has changed, updates the references in the course table */
+			if( ! oldAmphiip.equals(a.getIpAddress())) {
+				sql = "UPDATE course SET ipaddress='"+ a.getIpAddress() + 
+					"' WHERE ipaddress='" + oldAmphiip + "'";
+				pstmt = cnt.prepareStatement(sql);
+			}
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while modifying the amphi " + a);

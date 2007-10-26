@@ -13,6 +13,15 @@ public class UnivrCourseCompletion extends Thread {
 	private IFileSystem fs;
 	private Course c;
 	private String courseArchive;
+	private IService service;
+	private String rssName;
+	private String rssFolderPath;
+	private String rssTitle;
+	private String rssDescription;
+	private String serverUrl;
+	private String rssImageUrl;
+	private String recordedInterfaceUrl;
+	private String language;
 
 	/**
 	 * @param db
@@ -20,13 +29,25 @@ public class UnivrCourseCompletion extends Thread {
 	 * @param c
 	 * @param courseArchive
 	 */
-	public UnivrCourseCompletion(IDatabase db, IFileSystem fs, Course c,
-			String courseArchive) {
+	public UnivrCourseCompletion(IDatabase db, IFileSystem fs, Course c, String courseArchive, 
+			IService service, String rssFolderPath, String rssName, String rssTitle, 
+			String rssDescription, String serverUrl, String rssImageUrl, 
+			String recordedInterfaceUrl, String language) {
+		
 		super();
 		this.db = db;
 		this.fs = fs;
 		this.c = c;
 		this.courseArchive = courseArchive;
+		this.service = service;
+		this.rssFolderPath = rssFolderPath;
+		this.rssName = rssName;
+		this.rssTitle = rssTitle;
+		this.rssDescription = rssDescription;
+		this.serverUrl = serverUrl;
+		this.rssImageUrl = rssImageUrl;
+		this.recordedInterfaceUrl = recordedInterfaceUrl;
+		this.language = language;
 	}
 
 	/**
@@ -50,6 +71,10 @@ public class UnivrCourseCompletion extends Thread {
 		
 		for( int i = 0 ; i< list.size() - (time-1) ; i++)
 			db.addSlide(new Slide(c.getCourseid(),(int) Float.parseFloat(list.get(i))));
+		
+		/* Generation of the RSS files */
+		if( c.getGenre() == null)
+			service.generateRss(c, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 	}
 	
 	
