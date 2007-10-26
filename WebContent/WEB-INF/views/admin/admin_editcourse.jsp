@@ -34,71 +34,80 @@
 	    	<c:import url="../include/banner.jsp" />
 	    </div>
 	    <div class="contents">
-	    	<form method="POST" action="./admin_validatecourse">
-		    	<table>
-		    		<tr>
-			    		<td>N°</td>
-			    		<td><input type="hidden" name="courseid" value="${course.courseid}">${course.courseid}</td>
-		    		</tr>
-		    		<tr>
-			    		<td>Date</td>
-			    		<td><input type="hidden" name="date" value="${course.date.time}">${course.date}</td>
-		    		</tr>
-		    		<tr>
-			    		<td>Type</td>
-			    		<td><input type="hidden" name="type" value="${course.type}">${course.type}</td>
-		    		</tr>
-		    		<tr>
-			    		<td>Title</td>
-			    		<td><input type="text" name="title" value="${course.title}"></td>
-		    		</tr>
-		    		<tr>
-			    		<td>Description</td>
-			    		<td><input type="text" name="description" value="${course.description}"></td>
-		    		</tr>
-		    		<tr>
-			    		<td>Formation</td>
-			    		<td><input type="text" name="formation" value="${course.formation}"></td>
-		    		</tr>
-		    		<tr>
-			    		<td>Name</td>
-			    		<td><input type="text" name="name" value="${course.name}"></td>
-		    		</tr>
-		    		<tr>
-			    		<td>Firstname</td>
-			    		<td><input type="text" name="firstname" value="${course.firstname}"></td>
-		    		</tr>
-		    		<tr>
-			    		<td>Ipaddress</td>
-			    		<td><input type="hidden" name="ipaddress" value="${course.ipaddress}">${course.ipaddress}</td>
-		    		</tr>
-		    		<tr>
-			    		<td>Duration</td>
-			    		<td><input type="hidden" name="duration" value="${course.duration}">${course.durationString}</td>
-		    		</tr>
-		    		<tr>
-			    		<td>Genre</td>
-			    		<td><input type="text" name="genre" value="${course.genre}"></td>
-		    		</tr>
-		    		<tr>
-			    		<td>Visible</td>
-			    		<td><input type="checkbox" name="visible" ${course.visible == true ? 'checked' : ''} ></td>
-		    		</tr>
-		    		<tr>
-			    		<td>Consultations</td>
-			    		<td><input type="hidden" name="consultations" value="${course.consultations}">${course.consultations}</td>
-		    		</tr>
-		    		<tr>
-			    		<td>Timing</td>
-			    		<td><input type="hidden" name="timing" value="${course.timing}">${course.timing}</td>
-		    		</tr>
-		    		<tr>
-			    		<td>MediaFolder</td>
-			    		<td><input type="hidden" name="mediaFolder" value="${course.mediaFolder}">${course.mediaFolder}</td>
-		    		</tr>
-		    	</table>
-		    	<input type="submit" value="Validate">
-	    	</form>
+	    	<div class="links">
+		    	<c:import url="./links.jsp" />
+	    	</div>
+	    	
+	    	<div class="editform">
+		    	<form method="POST" action="<c:url value="${posturl}" />">
+			    	<table>
+			    		<tr class="odd">
+				    		<td>N°</td>
+				    		<td><input type="hidden" name="courseid" value="${course.courseid}">${course.courseid}</td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>Date</td>
+				    		<td><input type="hidden" name="date" value="${course.date.time}">${course.date}</td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>Type</td>
+				    		<td><input type="hidden" name="type" value="${course.type}">${course.type}</td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>Title</td>
+				    		<td><input type="hidden" name="title" value="${course.title}">${course.title}</td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>Description</td>
+				    		<td><input type="text" name="description" value="${course.description}" class="field"></td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>Formation</td>
+				    		<td><input type="text" name="formation" value="${course.formation}" class="field"></td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>Name</td>
+				    		<td><input type="text" name="name" value="${course.name}" class="field"></td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>Firstname</td>
+				    		<td><input type="text" name="firstname" value="${course.firstname}" class="field"></td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>Ipaddress</td>
+				    		<td><input type="hidden" name="ipaddress" value="${course.ipaddress}">${course.ipaddress}</td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>Duration</td>
+				    		<td><input type="hidden" name="duration" value="${course.duration}">${course.durationString}</td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>Genre</td>
+				    		<td><input type="text" name="genre" value="${course.genre}" class="field"></td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>Visible</td>
+				    		<td><input type="checkbox" name="visible" ${course.visible == true ? 'checked' : ''} ></td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>Consultations</td>
+				    		<td><input type="hidden" name="consultations" value="${course.consultations}">${course.consultations}</td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>Timing</td>
+				    		<td><input type="hidden" name="timing" value="${course.timing}">${course.timing}</td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>MediaFolder</td>
+				    		<td><input type="hidden" name="mediaFolder" value="${course.mediaFolder}">${course.mediaFolder}</td>
+			    		</tr>
+			    	</table>
+			    	<br>
+			    	<input type="submit" value="Validate">
+			    	<br><br>
+			    	<a href="<c:url value="${gobackurl}" />">Go back</a>
+		    	</form>
+	    	</div>
 	    </div>
 	    	
 	    <div class="footer">

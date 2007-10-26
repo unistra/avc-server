@@ -39,28 +39,6 @@
 	    	<div class="links">
 		    	<c:import url="./links.jsp" />
 	    	</div>
-	    	
-	    	<c:out value="${buildingName}" />
-	    	<br>
-	    	
-	    	<display:table id="amphis" name="amphis" requestURI="./admin_amphis" class="displaytag">
-	    		<display:column property="amphiid" sortable="true"/>
-	    		<display:column property="buildingid" />
-				<display:column property="name" sortable="true" />
-				<display:column property="type" sortable="true" />
-				<display:column property="ipAddress" sortable="true" />
-				<display:column title="status">
-					<input type="checkbox" disabled="disabled" ${amphi.status == true ? 'checked' : '' } />
-				</display:column>
-				<display:column>
-					<a href="<c:url value="./admin_editamphi?id=${amphis.amphiid}&buildingId=${buildingId}" />">Edit</a>
-				</display:column>
-				<display:column>
-					<a href="javascript:confirmation('Delete the amphi ?','./admin_deleteamphi?id=${amphis.amphiid}&buildingId=${buildingId}')">Delete</a>
-				</display:column>
-	    	</display:table>
-	    	<br>
-	    	<a href="<c:url value="./admin_addamphi?buildingId=${buildingId}" />">Add</a>		
 	    </div>
 	    	
 	    <div class="footer">

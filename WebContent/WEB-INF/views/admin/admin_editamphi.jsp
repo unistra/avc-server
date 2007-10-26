@@ -34,41 +34,51 @@
 	    	<c:import url="../include/banner.jsp" />
 	    </div>
 	    <div class="contents">
-	    	<form method="POST" action="./admin_validateamphi">
-		    	<table>
-		    		<tr>
-			    		<td>AmphiId</td>
-			    		<td><input type="hidden" name="amphiid" value="${amphi.amphiid}">${amphi.amphiid}</td>
-		    		</tr>
-		    		<tr>
-			    		<td>Building</td>
-			    		<td><input type="hidden" name="buildingid" value="${buildingId}">${amphi.buildingid}</td>
-		    		</tr>
-		    		<tr>
-			    		<td>Name</td>
-			    		<td><input type="text" name="name" value="${amphi.name}"></td>
-		    		</tr>
-		    		<tr>
-			    		<td>Type</td>
-			    		<td>
-			    			<select name="type" title="Type">
-			    				<option value="audio">Audio</option>
-			    				<option value="video">Video</option>
-			    			</select>
-			    		</td>
-		    		</tr>
-		    		<tr>
-			    		<td>IpAddress</td>
-			    		<td><input type="text" name="ipaddress" value="${amphi.ipAddress}"></td>
-		    		</tr>
-		    		<tr>
-			    		<td>Status</td>
-			    		<td><input type="hidden" name="status" value="${amphi.status}">${amphi.status}</td>
-		    		</tr>
-		    	</table>
-		    	<input type="hidden" name="action" value="${action}">
-		    	<input type="submit" value="Validate">
-	    	</form>
+	    	<div class="links">
+		    	<c:import url="./links.jsp" />
+	    	</div>
+	    	
+	    	<div class="editform">
+		    	<form method="POST" action="<c:url value="./admin_validateamphi" />">
+			    	<table>
+			    		<tr class="odd">
+				    		<td>AmphiId</td>
+				    		<td><input type="hidden" name="amphiid" value="${amphi.amphiid}">${amphi.amphiid}</td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>Building</td>
+				    		<td><input type="hidden" name="buildingid" value="${buildingId}">${buildingName}</td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>Name</td>
+				    		<td><input type="text" name="name" value="${amphi.name}" class="field"></td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>Type</td>
+				    		<td>
+				    			<select name="type" title="Type" class="field">
+				    				<option value="audio">Audio</option>
+				    				<option value="video">Video</option>
+				    			</select>
+				    		</td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>IpAddress</td>
+				    		<td><input type="text" name="ipaddress" value="${amphi.ipAddress}" class="field"></td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>Status</td>
+				    		<td><input type="hidden" name="status" value="${amphi.status}">${amphi.status}</td>
+			    		</tr>
+			    	</table>
+			    	<br>
+			    	<input type="hidden" name="oldAmphiip" value="${amphi.ipAddress}">
+			    	<input type="hidden" name="action" value="${action}">
+			    	<input type="submit" value="Validate">
+			    	<br><br>
+			    	<a href="<c:url value="./admin_amphis?buildingId=${buildingId}" />">Go back</a>
+		    	</form>
+		    </div>
 	    </div>
 	    	
 	    <div class="footer">
