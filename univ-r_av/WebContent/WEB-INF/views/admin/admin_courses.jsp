@@ -36,7 +36,11 @@
 	    	<c:import url="../include/banner.jsp" />
 	    </div>
 	    <div class="contents">
-	    	<display:table id="courses" name="courses" requestURI="./admin_courses">
+	    	<div class="links">
+		    	<c:import url="./links.jsp" />
+	    	</div>
+	    	
+	    	<display:table id="courses" name="courses" requestURI="${viewurl}" class="displaytag">
 	    		<display:column property="courseid" title="N°" sortable="true"/>
 	    		<display:column property="date" sortable="true" />
 				<display:column property="type" sortable="true" />
@@ -51,10 +55,10 @@
 				</display:column>
 				<display:column property="consultations" title="views" />
 				<display:column>
-					<a href="./admin_editcourse?id=${courses.courseid}">Edit</a>
+					<a href="<c:url value="${editurl}?id=${courses.courseid}" />">Edit</a>
 				</display:column>
 				<display:column>
-					<a href="javascript:confirmation('Delete the course ?','./admin_deletecourse?id=${courses.courseid}')">Delete</a>
+					<a href="javascript:confirmation('Delete the course ?','${deleteurl}?id=${courses.courseid}')">Delete</a>
 				</display:column>
 	    	</display:table>   	
 	    </div>

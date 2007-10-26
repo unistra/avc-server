@@ -1191,7 +1191,7 @@ public class DatabaseImpl implements IDatabase {
 	public List<Amphi> getAmphis(int buildingId) {
 		Connection cnt = pa.getConnection();
 		List<Amphi> l = new ArrayList<Amphi>();
-		String sql = "SELECT * FROM amphi WHERE buildingid = ? ORDER BY name";
+		String sql = "SELECT * FROM amphi WHERE buildingid = ? ORDER BY amphiid";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);

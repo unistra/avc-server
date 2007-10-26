@@ -36,22 +36,26 @@
 	    	<c:import url="../include/banner.jsp" />
 	    </div>
 	    <div class="contents">
-	    	<display:table id="buildings" name="buildings" requestURI="./admin_buildings">
+	    	<div class="links">
+		    	<c:import url="./links.jsp" />
+	    	</div>
+	    	
+	    	<display:table id="buildings" name="buildings" requestURI="./admin_buildings" class="displaytag">
 	    		<display:column property="buildingid" sortable="true"/>
 	    		<display:column property="name" sortable="true" />
 				<display:column property="imageFile" />
 				<display:column>
-					<a href="./admin_editbuilding?id=${buildings.buildingid}">Edit</a>
+					<a href="<c:url value="./admin_editbuilding?id=${buildings.buildingid}" />">Edit</a>
 				</display:column>
 				<display:column>
 					<a href="javascript:confirmation('Delete the building ?','./admin_deletebuilding?id=${buildings.buildingid}')">Delete</a>
 				</display:column>
 				<display:column>
-					<a href="./admin_amphis?buildingId=${buildings.buildingid}">Amphis</a>
+					<a href="<c:url value="./admin_amphis?buildingId=${buildings.buildingid}" />">Amphis</a>
 				</display:column>
 	    	</display:table> 
 	    	<br>
-	    	<a href="./admin_addbuilding">Add</a>	
+	    	<a href="<c:url value="./admin_addbuilding" />">Add</a>	
 	    </div>
 	    	
 	    <div class="footer">

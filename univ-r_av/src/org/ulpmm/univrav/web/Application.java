@@ -12,7 +12,6 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -152,16 +151,16 @@ public class Application extends HttpServlet {
 			// The client port for the Univ-R integration
 			clientSocketPort = Integer.parseInt(p.getProperty("clientSocketPort"));
 			
-			/* Bordel ajouté */
+			/* Datasource retrieving */
 			InitialContext cxt = new InitialContext();
 			if ( cxt == null ) {
-			   //throw new Exception("Uh oh -- no context!");
+			   throw new Exception("No context found!");
 			}
 
 			DataSource ds = (DataSource) cxt.lookup( "java:/comp/env/jdbc/postgres" );
 
 			if ( ds == null ) {
-			   //throw new Exception("Data source not found!");
+			   throw new Exception("Data source not found!");
 			}
 			
 			/* Creates the instance of the data access layer */
@@ -272,9 +271,9 @@ public class Application extends HttpServlet {
 			displayRecordedPage(request, response);
 		else if( page.equals("/search"))
 			displaySearchResults(request, response);
-		else if( page.equals("/add"))
+		else if( page.equals("/add") || page.equals("/UploadClient"))
 			addCourse(request, response);
-		else if(page.equals("/livestate"))
+		else if(page.equals("/livestate") || page.equals("/LiveState"))
 			liveState(request, response);
 		else if( page.equals("/courseaccess")) 
 			courseAccess(request, response);
@@ -323,10 +322,15 @@ public class Application extends HttpServlet {
 		}
 		else if( page.equals("/admin_courses")) {
 			request.setAttribute("courses", service.getAllCourses());
+			request.setAttribute("viewurl", "./admin_courses");
+			request.setAttribute("editurl", "./admin_editcourse");
+			request.setAttribute("deleteurl", "./admin_deletecourse");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_courses.jsp").forward(request, response);
 		}
 		else if( page.equals("/admin_editcourse")) {
 			request.setAttribute("course", service.getCourse(Integer.parseInt(request.getParameter("id"))));
+			request.setAttribute("posturl", "./admin_validatecourse");
+			request.setAttribute("gobackurl", "./admin_courses");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editcourse.jsp").forward(request, response);
 		}
 		else if( page.equals("/admin_deletecourse")) {
@@ -337,7 +341,7 @@ public class Application extends HttpServlet {
 			response.sendRedirect(response.encodeRedirectURL("./admin_courses"));
 		}
 		else if( page.equals("/admin_validatecourse"))
-			validateCourse(request, response);
+			validateCourse(request, response, "./admin_courses");
 		else if( page.equals("/admin_buildings")) {
 			request.setAttribute("buildings", service.getBuildings());
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_buildings.jsp").forward(request, response);
@@ -385,8 +389,26 @@ public class Application extends HttpServlet {
 			validateAmphi(request, response);
 		else if( page.equals("/admin_univr")) {
 			request.setAttribute("courses", service.getUnivrCourses());
+			request.setAttribute("viewurl", "./admin_univr");
+			request.setAttribute("editurl", "./admin_editunivr");
+			request.setAttribute("deleteurl", "./admin_deleteunivr");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_courses.jsp").forward(request, response);
 		}
+		else if( page.equals("/admin_editunivr")) {
+			request.setAttribute("course", service.getCourse(Integer.parseInt(request.getParameter("id"))));
+			request.setAttribute("posturl", "./admin_validateunivr");
+			request.setAttribute("gobackurl", "./admin_univr");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editcourse.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_deleteunivr")) {
+			int courseid = Integer.parseInt(request.getParameter("id"));
+			service.deleteCourse(courseid, service.getCourse(courseid).getMediaFolder());
+			/* Regeneration of the RSS files */
+			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			response.sendRedirect(response.encodeRedirectURL("./admin_univr"));
+		}
+		else if( page.equals("/admin_validateunivr"))
+			validateCourse(request, response, "./admin_univr");
 		else if( page.equals("/univr_creation")) 
 			univrCreation(request, response);
 		else if( page.equals("/univr_courseaccess")) 
@@ -471,6 +493,7 @@ public class Application extends HttpServlet {
 		getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void displaySearchResults(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 		
@@ -798,7 +821,7 @@ public class Application extends HttpServlet {
 		getServletContext().getRequestDispatcher("/WEB-INF/views/include/iframe_liveslide.jsp").forward(request, response);
 	}
 	
-	private void validateCourse(HttpServletRequest request, HttpServletResponse response) 
+	private void validateCourse(HttpServletRequest request, HttpServletResponse response, String redirectUrl) 
 		throws ServletException, IOException {
 		
 		Course c= new Course(
@@ -823,7 +846,7 @@ public class Application extends HttpServlet {
 		/* Generation of the RSS files */
 		if( c.getGenre() == null)
 			service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
-		response.sendRedirect(response.encodeRedirectURL("./admin_courses"));
+		response.sendRedirect(response.encodeRedirectURL(redirectUrl));
 	}
 	
 	private void validateBuilding(HttpServletRequest request, HttpServletResponse response) 
@@ -965,7 +988,7 @@ public class Application extends HttpServlet {
 						String formation = service.getGroupName(Integer.parseInt(groupCode));
 						
 						String msg = "(id:" + courseId + ")";
-						String answer = service.sendMessageToClient(msg, ip, clientSocketPort);
+						service.sendMessageToClient(msg, ip, clientSocketPort);
 						
 						Course c = new Course(
 								courseId,

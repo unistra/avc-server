@@ -34,24 +34,33 @@
 	    	<c:import url="../include/banner.jsp" />
 	    </div>
 	    <div class="contents">
-	    	<form method="POST" action="./admin_validatebuilding">
-		    	<table>
-		    		<tr>
-			    		<td>BuildingId</td>
-			    		<td><input type="hidden" name="buildingid" value="${building.buildingid}">${building.buildingid}</td>
-		    		</tr>
-		    		<tr>
-			    		<td>Name</td>
-			    		<td><input type="text" name="name" value="${building.name}"></td>
-		    		</tr>
-		    		<tr>
-			    		<td>ImageFile</td>
-			    		<td><input type="text" name="imagefile" value="${building.imageFile}"></td>
-		    		</tr>
-		    	</table>
-		    	<input type="hidden" name="action" value="${action}">
-		    	<input type="submit" value="Validate">
-	    	</form>
+	    	<div class="links">
+		    	<c:import url="./links.jsp" />
+	    	</div>
+	    	
+	    	<div class="editform">
+		    	<form method="POST" action="<c:url value="./admin_validatebuilding" />">
+			    	<table>
+			    		<tr class="odd">
+				    		<td>BuildingId</td>
+				    		<td><input type="hidden" name="buildingid" value="${building.buildingid}">${building.buildingid}</td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>Name</td>
+				    		<td><input type="text" name="name" value="${building.name}" class="field"></td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>ImageFile</td>
+				    		<td><input type="text" name="imagefile" value="${building.imageFile}" class="field"></td>
+			    		</tr>
+			    	</table>
+			    	<br>
+			    	<input type="hidden" name="action" value="${action}">
+			    	<input type="submit" value="Validate">
+			    	<br><br>
+			    	<a href="<c:url value="./admin_buildings" />">Go back</a>
+		    	</form>
+		    </div>
 	    </div>
 	    	
 	    <div class="footer">

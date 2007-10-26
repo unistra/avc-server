@@ -6,7 +6,7 @@
 <description>Bibliothèque de taglibs</description>
 <tag>
 	<name>PaginationTag</name>
-	<tag-class>org.ulpmm.univrav.serverclasses.PaginationTag</tag-class>
+	<tag-class>org.ulpmm.univrav.web.PaginationTag</tag-class>
 	<attribute>
 		<name>itemsNumber</name>
 		<required>true</required>

@@ -161,6 +161,6 @@ a, .linkText, .helpText, h5, .buildingName, .searchText {
 	color: #5284FD;
 }
 
-.tableheader {
-	background-image: url("../img/th_Horizon.png");
+.tableheader, .displaytag th {
+	background-image: url("../img/array_title.png");
 }
