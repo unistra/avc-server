@@ -1,0 +1,5 @@
+/* To remove the borders of the pictures which are links */
+a img {
+	border: 0px;
+}
+
