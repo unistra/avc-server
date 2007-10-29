@@ -419,10 +419,11 @@ public class DatabaseImpl implements IDatabase {
 		List<Course> l = new ArrayList<Course>();
 		Connection cnt = pa.getConnection();
 		String sql = "SELECT * FROM course WHERE" +
-				(teacher[0] != null ? " name = ?" : "") +
+				(teacher[0] != null ? " name = ? " : "") +
 				(teacher[0] != null && teacher[1] != null ? "AND" : "") + 
 				(teacher[1] != null ? " firstname = ? " : "") +
 				"AND genre IS NULL AND visible = true ORDER BY date DESC";
+
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			if( teacher[0] != null)

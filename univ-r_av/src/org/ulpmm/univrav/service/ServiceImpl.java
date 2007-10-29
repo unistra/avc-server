@@ -491,7 +491,8 @@ public class ServiceImpl implements IService {
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		
 		// For the teacher
-		courses = db.getUnlockedCourses(new String[]{c.getName(), c.getFirstname()});
+		if( ! (c.getName() == null && c.getFirstname() == null))
+			courses = db.getUnlockedCourses(new String[]{c.getName(), c.getFirstname()});
 		rssPath = rssFolderPath + "/" + cleanFileName((c.getName() != null ? c.getName() : "")
 			+ (! (c.getName() == null || c.getFirstname() == null) ? "_" : "")
 			+ (c.getFirstname() != null ? c.getFirstname() : "")) + ".xml";
