@@ -127,12 +127,20 @@ public class FileSystemImpl implements IFileSystem {
 	 * @param mediaFolder the media folder of the course
 	 */
 	public void deleteCourse(String mediaFolder) {
-		try {
-			r.exec("rm -Rf " + coursesFolder + mediaFolder);
-		}
-		catch(IOException ioe) {
-			System.out.println("Impossible to delete the course folder");
-			ioe.printStackTrace();
+		if( mediaFolder != null && ! mediaFolder.equals("")) {
+			try {
+				Process p = r.exec("rm -Rf " + coursesFolder + mediaFolder);
+				if( p.waitFor() != 0)
+					System.out.println("the course folder " + mediaFolder + " mediaFolder has not been deleted");
+			}
+			catch(IOException ioe) {
+				System.out.println("Impossible to delete the course folder");
+				ioe.printStackTrace();
+			}
+			catch(InterruptedException ie) {
+				System.out.println("Impossible to delete the course folder");
+				ie.printStackTrace();
+			}
 		}
 	}
 	
@@ -529,7 +537,7 @@ public class FileSystemImpl implements IFileSystem {
 		
 		try {
 			/* Regeneration of the mp3 file to fix the play problems with RealPlayer */
-			Process p = r.exec("mp3cleaner " + coursesFolder + mediaFolder + " " + defaultMp3File, null, scriptsFolder);
+			Process p = r.exec("bash ./mp3cl.sh " + coursesFolder + mediaFolder + " " + defaultMp3File, null, scriptsFolder);
 			if( p.waitFor() != 0 )
 				throw new DaoException("Error while cleaning the mp3 file " + defaultMp3File);
 			

@@ -170,6 +170,7 @@ public class Application extends HttpServlet {
 					ftpFolder, coursesFolder, liveFolder, coursesUrl,
 					defaultMp3File, defaultRmFile, defaultFlashFile, comment
 			);
+			System.out.println(getServletContext().getRealPath("/") + "scripts");
 			
 			/* Links the data access layer to the service layer */
 			service.setDb(db);
