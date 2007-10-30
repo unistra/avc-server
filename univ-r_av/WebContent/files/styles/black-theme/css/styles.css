@@ -70,24 +70,40 @@ body {
 .styles {
 	position: absolute;
 	font-size: 12px;
-	margin-left:845px;
-	margin-top: 130px;
+	margin-left:870px;
+	margin-top: 80px;
 }
 
 /* Div containing the "Languages" link */
 .languages {
 	position: absolute;
 	font-size: 12px;
-	margin-left:845px;
+	margin-left:870px;
+	margin-top: 105px;
+}
+
+/* Div containing the "Help" link */
+.help {
+	position: absolute;
+	font-size: 12px;
+	margin-left:870px;
+	margin-top: 130px;
+}
+
+/* Div containing the "Downloads" link */
+.download {
+	position: absolute;
+	font-size: 12px;
+	margin-left:820px;
 	margin-top: 155px;
 }
 
-.styles a, .languages a {
+.styles a, .languages a, .download a, .help a {
 	color: white;
 }
 
 /*  Div containing the "Live" button */
-.live {
+.recorded {
 	position: absolute;
 	margin-left: 312px;
 	width: 115px;
@@ -95,7 +111,7 @@ body {
 }
 
 /* Clickable zone, link to the "Live" page */
-.liveZone {
+.recordedZone {
 	position: absolute;
 	width : 105px;
 	height: 28px;
@@ -104,7 +120,7 @@ body {
 }
 
 /*  Div containing the "Recorded" button */
-.recorded {
+.live {
 	position: absolute;
 	margin-left: 428px;
 	width: 115px;
@@ -112,7 +128,7 @@ body {
 }
 
 /* Clickable zone, link to the "Recorded" page */
-.recordedZone {
+.liveZone {
 	position: absolute;
 	width : 105px;
 	height: 28px;

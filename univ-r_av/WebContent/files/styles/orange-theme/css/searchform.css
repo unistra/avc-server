@@ -30,18 +30,21 @@
 /* Float div containing search criteria */
 .criteria {
 	float: right;
-	padding: 15px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	padding-left: 8px;
+	padding-right: 8px;
 	text-align: right;
 }
 
 /* A field of the html form */
 .field {
-	width: 130px;
+	width: 200px;
 	margin: 3px;
 }
 
 fieldset {
-	width: 200px;
+	width: 190px;
 	text-align: left;
 	border: 1px solid #DDDDDD;
 	padding: 10px;
@@ -65,7 +68,7 @@ hr {
 	position: absolute;
 	background-color: #DDDDDD;
 	border: 0;
-	left: 350px;
+	left: 335px;
 	margin-top: 10px;
 	height: 105px;
 	width: 1px;

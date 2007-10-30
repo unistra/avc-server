@@ -58,8 +58,25 @@
 				<c:when test="${course.type == 'video'}">
 					<c:set var="typeImg" value="video_locked" />
 				</c:when>
-			</c:choose> 
-			<td><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></td>
+			</c:choose>
+			<c:choose>
+				<c:when test="${course.genre == null}">
+					<c:url var="courseaccess" scope="page" value="./courseaccess">
+						<c:param name="id" value="${course.courseid}"/>
+						<c:param name="type" value="real"/>
+					</c:url>
+					<td><a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a></td>
+				</c:when>
+				<c:otherwise>
+					<c:url var="thick_codeform" scope="page" value="./thick_codeform">
+						<c:param name="id" value="${course.courseid}"/>
+						<c:param name="type" value="real"/>
+						<c:param name="width" value="250"/>
+						<c:param name="height" value="120"/>
+					</c:url>
+					<td><a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a></td>
+				</c:otherwise>
+			</c:choose>
 			<td>	    				
 				<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br>
 				<b><fmt:message key="Enseignant :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>
@@ -99,7 +116,7 @@
 							<c:param name="id" value="${course.courseid}"/>
 							<c:param name="type" value="smil"/>
 							<c:param name="width" value="250"/>
-							<c:param name="height" value="100"/>
+							<c:param name="height" value="120"/>
 						</c:url>
 						<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
@@ -119,7 +136,7 @@
 							<c:param name="id" value="${course.courseid}"/>
 							<c:param name="type" value="real"/>
 							<c:param name="width" value="250"/>
-							<c:param name="height" value="100"/>
+							<c:param name="height" value="120"/>
 						</c:url>
 						<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
@@ -139,7 +156,7 @@
 							<c:param name="id" value="${course.courseid}"/>
 							<c:param name="type" value="ogg"/>
 							<c:param name="width" value="250"/>
-							<c:param name="height" value="100"/>
+							<c:param name="height" value="120"/>
 						</c:url>
 						<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
@@ -159,7 +176,7 @@
 							<c:param name="id" value="${course.courseid}"/>
 							<c:param name="type" value="mp3"/>
 							<c:param name="width" value="250"/>
-							<c:param name="height" value="100"/>
+							<c:param name="height" value="120"/>
 						</c:url>
 						<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
@@ -179,7 +196,7 @@
 							<c:param name="id" value="${course.courseid}"/>
 							<c:param name="type" value="zip"/>
 							<c:param name="width" value="250"/>
-							<c:param name="height" value="100"/>
+							<c:param name="height" value="120"/>
 						</c:url>
 						<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>
@@ -199,7 +216,7 @@
 							<c:param name="id" value="${course.courseid}"/>
 							<c:param name="type" value="pdf"/>
 							<c:param name="width" value="250"/>
-							<c:param name="height" value="100"/>
+							<c:param name="height" value="120"/>
 						</c:url>
 						<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
 					</c:otherwise>

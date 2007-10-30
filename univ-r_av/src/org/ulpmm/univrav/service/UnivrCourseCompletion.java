@@ -56,7 +56,7 @@ public class UnivrCourseCompletion extends Thread {
 	public void run() {
 		fs.addCourse(c, courseArchive);
 		db.modifyCourse(c);
-		ArrayList<String> list = fs.getTimecodes();
+		ArrayList<String> list = fs.getTimecodes(c.getMediaFolder());
 		
 		int time;
 		/* Determines if the times of the slides must be changed or not */

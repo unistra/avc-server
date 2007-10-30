@@ -70,7 +70,7 @@ public interface IDatabase {
 	 * @param teacher the teacher
 	 * @return the list of courses
 	 */
-	public List<Course> getUnlockedCourses(String[] teacher);
+	public List<Course> getUnlockedCourses(String teacher);
 	
 	/**
 	 * Gets a course by providing its id
@@ -142,13 +142,21 @@ public interface IDatabase {
 	 * Gets the list of all the teachers
 	 * @return the list of teachers
 	 */
-	public List<String[]> getTeachers();
+	public List<String> getTeachers();
+	
+	/**
+	 * Gets the full name of a teacher with the correct case
+	 * @param name the name of the teacher
+	 * @param firstname the firstname of the teacher
+	 * @return the full name of the teacher 
+	 */
+	public String getTeacherFullName(String name, String firstname);
 	
 	/**
 	 * Gets the list of all the teachers who have at least one course with no access code
 	 * @return the list of teachers
 	 */
-	public List<String[]> getTeachersWithRss();
+	public List<String> getTeachersWithRss();
 	
 	/**
 	 * Gets the list of all the formations

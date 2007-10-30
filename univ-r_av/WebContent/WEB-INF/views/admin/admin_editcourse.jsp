@@ -83,7 +83,7 @@
 			    		</tr>
 			    		<tr class="odd">
 				    		<td>Genre</td>
-				    		<td><input type="text" name="genre" value="${course.genre}" class="field"></td>
+				    		<td><input type="text" name="password" value="${course.genre}" class="field"></td>
 			    		</tr>
 			    		<tr class="even">
 				    		<td>Visible</td>
