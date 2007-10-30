@@ -79,6 +79,9 @@ public class Application extends HttpServlet {
 	private static int homeCourseNumber;
 	private static int recordedCourseNumber;
 	
+	// The default style
+	private static String defaultStyle;
+	
 	// The keyword to identify the tests to delete (genre is equal to this keyword)
 	private static String testKeyWord1;
 
@@ -148,6 +151,9 @@ public class Application extends HttpServlet {
 			testKeyWord2 = p.getProperty("testKeyWord2");
 			testKeyWord3 = p.getProperty("testKeyWord3");
 			
+			// The default style
+			defaultStyle = p.getProperty("defaultStyle");
+			
 			// The client port for the Univ-R integration
 			clientSocketPort = Integer.parseInt(p.getProperty("clientSocketPort"));
 			
@@ -170,7 +176,6 @@ public class Application extends HttpServlet {
 					ftpFolder, coursesFolder, liveFolder, coursesUrl,
 					defaultMp3File, defaultRmFile, defaultFlashFile, comment
 			);
-			System.out.println(getServletContext().getRealPath("/") + "scripts");
 			
 			/* Links the data access layer to the service layer */
 			service.setDb(db);
@@ -240,8 +245,8 @@ public class Application extends HttpServlet {
 			}
 			
 			/* If not, store the default values in the cookies */
-			if( style == null) {
-				style = "style1";
+			if( style == null || style.equals("style1") || style.equals("style2")) {
+				style = defaultStyle;
 				Cookie styleCookie = new Cookie("style", style);
 				styleCookie.setMaxAge(31536000);
 				response.addCookie(styleCookie);
@@ -630,7 +635,7 @@ public class Application extends HttpServlet {
 			
 			Course c;
 			
-			if( id.equals("") || id.equals("(id:no)")) {
+			if( id.equals("") || id.equals("(id:no)") || id.equals("None") ) {
 				c = new Course(
 						service.getNextCoursId(),
 						new Timestamp(new Date().getTime()),
@@ -689,6 +694,7 @@ public class Application extends HttpServlet {
 			
 			/* Vérification que status contient une des deux chaînes attendues */
 			if( status.equals("begin") || status.equals("end")) {
+				recordingPlace = recordingPlace.replace('_', '.');
 				service.setAmphiStatus(recordingPlace, status.equals("begin"));
 				message = "Amphi : " + recordingPlace + " : " + status;
 			}
@@ -723,7 +729,7 @@ public class Application extends HttpServlet {
 			
 			service.incrementConsultations(c);
 			
-			if( type.equals("real")) {
+			if( type == null || type.equals("real")) {
 				//redirection interface
 				request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
 				request.setAttribute("slidesurl", coursesUrl + c.getMediaFolder() + "/screenshots/");

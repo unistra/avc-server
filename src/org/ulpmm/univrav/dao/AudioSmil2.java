@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.ulpmm.univrav.entities.Course;
@@ -84,7 +85,7 @@ public class AudioSmil2 implements ISmil {
 			pw.println("<param name=\"fontFace\" value=\"Arial\"/>");
 			pw.println("<param name=\"fontColor\" value=\"#ffffff\"/>");
 			pw.println("<param name=\"backgroundColor\" value=\"#999999\"/>");
-			pw.println("<param name=\"charset\" value=\"utf-8\"/>");
+			//pw.println("<param name=\"charset\" value=\"utf-8\"/>");
 			pw.println("</text>");
 				
 			int time;
@@ -128,7 +129,7 @@ public class AudioSmil2 implements ISmil {
 			/* creates the .txt description file */
 			File descriptionFile = new File(absoluteMediaFolder + "description.txt");
 			descriptionFile.createNewFile();
-			pw = new PrintWriter( new OutputStreamWriter( new FileOutputStream( descriptionFile)));
+			pw = new PrintWriter( new OutputStreamWriter( new FileOutputStream( descriptionFile), "ISO8859-15"));
 			pw.println("Author: " +  (c.getName() != null ? c.getName() + ( c.getFirstname() != null ? " " + c.getFirstname() : "") : "-"));
 			pw.println("Formation: " +  (c.getFormation() != null ? c.getFormation() : "-"));
 			pw.println("Title: " +  (c.getTitle() != null ? c.getTitle() : "-"));

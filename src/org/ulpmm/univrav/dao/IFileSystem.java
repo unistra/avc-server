@@ -18,9 +18,10 @@ public interface IFileSystem {
 	
 	/**
 	 * Reads the timecodes csv file and creates the timecodes list
+	 * @param mediaFolder the folder where the timecode list is stored
 	 * @return the timecodes list
 	 */
-	public ArrayList<String> getTimecodes();
+	public ArrayList<String> getTimecodes(String mediaFolder);
 	
 	/**
 	 * Removes the media folder of a course on the file system

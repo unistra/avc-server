@@ -47,21 +47,17 @@
 	    	</div>
 	    	
 			<div class="links">
-		    	<div class="downloadImage">
-		    		<c:url var="thick_download" scope="page" value="./thick_download">
-						<c:param name="width" value="250"/>
-						<c:param name="height" value="100"/>
-					</c:url>
-		    		<span class="linkText"><a href="<c:out value="${thick_download}" />" title="<fmt:message key="T&eacute;l&eacute;chargements"/>" class="thickbox"><fmt:message key="T&eacute;l&eacute;chargements"/></a></span>
-		    		<span class="linkDescription"><fmt:message key="Acc&eacute;dez aux T&eacute;l&eacute;chargements du site"/></span>
+				<div class="recordedImage">
+		    		<span class="linkText"><a href="<c:url value="./recorded" />"><fmt:message key="Enregistr&eacute;"/></a></span>
+		    		<span class="linkDescription"><fmt:message key="Consultez les cours enregistr&eacute;s"/></span>
+		    	</div>
+		    	<div class="liveImage">
+		    		<span class="linkText"><a href="<c:url value="./live" />"><fmt:message key="Direct"/></a></span>
+		    		<span class="linkDescription"><fmt:message key="Consultez les cours en direct"/></span>
 		    	</div>
 		    	<div class="rssImage">
 		    		<span class="linkText"><a href="../rss/${rssFileName}"><fmt:message key="Fil d'abonnement"/></a></span>
 		    		<span class="linkDescription"><fmt:message key="Abonnez-vous au fil d'abonnement"/></span>
-		    	</div>
-		    	<div class="helpImage">
-		    		<span class="linkText"><a href="<c:url value="./help" />"><fmt:message key="Aide"/></a></span>
-		    		<span class="linkDescription"><fmt:message key="Utilisation d'Univ-R AV"/></span>
 		    	</div>
 	    	</div>
 	    	

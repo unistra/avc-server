@@ -26,23 +26,23 @@
 }
 
 /* Div containing the images div */
-.downloadImage, .rssImage, .helpImage {
+.liveImage, .recordedImage, .rssImage{
 	float: left;
 	width:237px;
 	height:139px;
 	margin-left: 67px;
 }
 
-.downloadImage {
-	background-image: url(../img/downloads.png);
+.liveImage {
+	background-image: url(../img/live.png);
+}
+
+.recordedImage {
+	background-image: url(../img/recorded.png);
 }
 
 .rssImage {
 	background-image: url(../img/rss.png);
-}
-
-.helpImage {
-	background-image: url(../img/help.png);
 }
 
 /* Div containing the text of the link image */

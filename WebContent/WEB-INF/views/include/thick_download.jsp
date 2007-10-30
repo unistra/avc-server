@@ -11,8 +11,10 @@
 	</head>
 	<body>
 		<br>
-			<a href="../../releases/AudioVideoCours.exe">Client AudioVideoCours StandAlone</a>
+			<a href="../../releases/AudioVideoCours.exe"><fmt:message key="clientLink"/></a>
+			<p><fmt:message key="clientDescription"/></p>
 			<br><br>
-			<a href="http://ulpmm-projets.u-strasbg.fr/projets/videocours">Lien vers le site de d&eacute;veloppement (TRAC)</a>
+			<a href="http://ulpmm-projets.u-strasbg.fr/projets/videocours"><fmt:message key="tracLink"/></a>
+			<p><fmt:message key="tracDescription"/></p>
 	</body>
 </html>

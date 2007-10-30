@@ -92,8 +92,10 @@ public class DatabaseImpl implements IDatabase {
 			else
 				pstmt.setNull(15, Types.VARCHAR);
 				
-			if( pstmt.executeUpdate() == 0)
+			if( pstmt.executeUpdate() == 0) {
+				System.out.println("The course " + c + " has not been added to the database");
 				throw new DaoException("The course " + c + " has not been added to the database");
+			}
 			pa.disconnect();
 		}
 		catch(SQLException sqle){
@@ -116,8 +118,10 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setInt(2, u.getUid());
 			pstmt.setInt(3, u.getGroupCode());
 			
-			if( pstmt.executeUpdate() == 0)
+			if( pstmt.executeUpdate() == 0) {
+				System.out.println("The Univr course " + u + " has not been added to the database");
 				throw new DaoException("The Univr course " + u + " has not been added to the database");
+			}
 			pa.disconnect();
 		}
 		catch(SQLException sqle){
@@ -249,7 +253,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getNLastCourses(int n) {
 		pa.connect();
-		ResultSet rs = pa.query("SELECT * From course WHERE genre IS NULL AND visible = true ORDER BY date DESC LIMIT " + n);
+		ResultSet rs = pa.query("SELECT * From course WHERE genre IS NULL AND visible = true ORDER BY date DESC, courseid DESC LIMIT " + n);
 		List<Course> l = new ArrayList<Course>();
 		try {
 			while(rs.next()) {
@@ -289,7 +293,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getCourses(int number, int start) {
 		pa.connect();
-		ResultSet rs = pa.query("SELECT * From course WHERE visible = true ORDER BY date DESC LIMIT " + number + " OFFSET " + start);
+		ResultSet rs = pa.query("SELECT * From course WHERE visible = true ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start);
 		List<Course> l = new ArrayList<Course>();
 		try {
 			while(rs.next()) {
@@ -346,14 +350,15 @@ public class DatabaseImpl implements IDatabase {
 				
 				String param = it.next();
 				if( param.equals("fullname") )
-					sql += "COALESCE(name,'') || ' ' || COALESCE(firstname,'') = ? ";
+					sql += "(COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = ? ";
 				else if( param.equals("keyword") )
 					sql += "(INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?)) ";
 				else
 					sql += param + " = ? ";
 			}
-			sql += "AND visible = true ORDER BY date DESC LIMIT " + number + " OFFSET " + start;
-			
+			sql += "AND visible = true ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start;
+			System.out.println(sql);
+			System.out.println(params.get("fullname"));
 			try {
 				PreparedStatement pstmt = cnt.prepareStatement(sql);
 
@@ -414,24 +419,18 @@ public class DatabaseImpl implements IDatabase {
 	 * @param teacher the teacher
 	 * @return the list of courses
 	 */
-	public List<Course> getUnlockedCourses(String[] teacher) {
+	public List<Course> getUnlockedCourses(String teacher) {
 		
 		List<Course> l = new ArrayList<Course>();
 		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM course WHERE" +
-				(teacher[0] != null ? " name = ? " : "") +
-				(teacher[0] != null && teacher[1] != null ? "AND" : "") + 
-				(teacher[1] != null ? " firstname = ? " : "") +
+		String sql = "SELECT * FROM course WHERE " +
+				"(COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = INITCAP(?) " +
 				"AND genre IS NULL AND visible = true ORDER BY date DESC";
-
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			if( teacher[0] != null)
-				pstmt.setString(1, teacher[0]);
-			else if( teacher[1] != null)
-				pstmt.setString(1, teacher[1]);
-			if( teacher[0] != null && teacher[1] != null)
-				pstmt.setString(2, teacher[1]);
+			
+			pstmt.setString(1, teacher);
+			
 			ResultSet rs = pstmt.executeQuery();
 			
 			/* Retrieves the records */
@@ -458,7 +457,7 @@ public class DatabaseImpl implements IDatabase {
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the courses list for the teacher " 
-					+ teacher[0] + " " + teacher[1]);
+					+ teacher);
 			sqle.printStackTrace();
 		}
 		
@@ -718,8 +717,10 @@ public class DatabaseImpl implements IDatabase {
 			
 			pstmt.setInt(15, c.getCourseid());
 			
-			if( pstmt.executeUpdate() == 0 )
+			if( pstmt.executeUpdate() == 0 ) {
+				System.out.println("The course " + c + " has not been modified");
 				throw new DaoException("The course " + c + " has not been modified");
+			}
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while modifying the course " + c);
@@ -739,8 +740,10 @@ public class DatabaseImpl implements IDatabase {
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseId);
-			if( pstmt.executeUpdate() == 0)
+			if( pstmt.executeUpdate() == 0) {
+				System.out.println("the course " + courseId + " has not been deleted");
 				throw new DaoException("the course " + courseId + " has not been deleted");
+			}
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the course " + courseId);
@@ -831,6 +834,7 @@ public class DatabaseImpl implements IDatabase {
 			if( rs.next() ) 
 				id = rs.getInt("nextval");
 			else {
+				System.out.println("The next course Id hasn't been retrieved");
 				throw new DaoException("The next course Id hasn't been retrieved");
 			}
 		}
@@ -847,17 +851,14 @@ public class DatabaseImpl implements IDatabase {
 	 * Gets the list of all the teachers
 	 * @return the list of teachers
 	 */
-	public List<String[]> getTeachers() {
-		List<String[]> l = new ArrayList<String[]>();
+	public List<String> getTeachers() {
+		List<String> l = new ArrayList<String>();
 		
 		pa.connect();
-		ResultSet rs = pa.query("SELECT DISTINCT name, firstname FROM course WHERE visible = true AND NOT (name IS NULL AND firstname IS NULL)");
+		ResultSet rs = pa.query("SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE visible = true AND NOT (name IS NULL AND firstname IS NULL)");
 		try {
 			while( rs.next() ) {
-				String[] t = new String[2];
-				t[0]= rs.getString("name");
-				t[1]= rs.getString("firstname");
-				l.add(t);
+				l.add(rs.getString("fullname"));
 			}
 		}
 		catch( SQLException sqle) {
@@ -870,20 +871,56 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
+	 * Gets the full name of a teacher with the correct case
+	 * @param name the name of the teacher
+	 * @param firstname the firstname of the teacher
+	 * @return the full name of the teacher 
+	 */
+	public String getTeacherFullName(String name, String firstname) {
+		Connection cnt = pa.getConnection();
+		String fullname = "";
+		String sql = "SELECT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE" +
+				(name != null ? " INITCAP(name) = INITCAP(?) " : "") +
+				( ! (name == null || firstname == null) ? "AND" : "") + 
+				(firstname != null ? " INITCAP(firstname) = INITCAP(?) " : "") ;
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			if(name != null)
+				pstmt.setString(1, name);
+			else if( firstname != null)
+				pstmt.setString(1, firstname);
+			
+			if(name != null && firstname != null)
+				pstmt.setString(2, firstname);
+			
+			ResultSet rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				fullname = rs.getString("fullname");
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the teacher full name");
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		return fullname;
+	}
+	
+	/**
 	 * Gets the list of all the teachers who have at least one course with no access code
 	 * @return the list of teachers
 	 */
-	public List<String[]> getTeachersWithRss() {
-		List<String[]> l = new ArrayList<String[]>();
+	public List<String> getTeachersWithRss() {
+		List<String> l = new ArrayList<String>();
 		
 		pa.connect();
-		ResultSet rs = pa.query("SELECT DISTINCT name, firstname FROM course WHERE genre IS NULL AND title IS NOT NULL AND visible = true AND NOT (name IS NULL AND firstname IS NULL)");
+		ResultSet rs = pa.query("SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE genre IS NULL AND title IS NOT NULL AND visible = true AND NOT (name IS NULL AND firstname IS NULL)");
 		try {
 			while( rs.next() ) {
-				String[] t = new String[2];
-				t[0]= rs.getString("name");
-				t[1]= rs.getString("firstname");
-				l.add(t);
+				l.add(rs.getString("fullname"));
 			}
 		}
 		catch( SQLException sqle) {
@@ -932,8 +969,10 @@ public class DatabaseImpl implements IDatabase {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, consultations);
 			pstmt.setInt(2, c.getCourseid());
-			if( pstmt.executeUpdate() == 0 )
+			if( pstmt.executeUpdate() == 0 ) {
+				System.out.println("The consultations have not been incremented");
 				throw new DaoException("The consultations have not been incremented");
+			}
 			pa.disconnect();
 		}
 		catch(SQLException sqle){
@@ -954,8 +993,10 @@ public class DatabaseImpl implements IDatabase {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, s.getCourseid());
 			pstmt.setInt(2, s.getSlidetime());
-			if( pstmt.executeUpdate() == 0 )
+			if( pstmt.executeUpdate() == 0 ) {
+				System.out.println("The slide has not been added");
 				throw new DaoException("The slide has not been added");
+			}
 			pa.disconnect();
 		}
 		catch(SQLException sqle){
@@ -1008,8 +1049,10 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setString(1, b.getName());
 			pstmt.setString(2, b.getImageFile());
 			
-			if( pstmt.executeUpdate() == 0)
+			if( pstmt.executeUpdate() == 0) {
+				System.out.println("The building " + b + " has not been added to the database");
 				throw new DaoException("The building " + b + " has not been added to the database");
+			}
 			pa.disconnect();
 		}
 		catch(SQLException sqle){
@@ -1128,8 +1171,10 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setString(2, b.getImageFile());
 			pstmt.setInt(3, b.getBuildingid());
 			
-			if( pstmt.executeUpdate() == 0 )
+			if( pstmt.executeUpdate() == 0 ) {
+				System.out.println("The building " + b + " has not been modified");
 				throw new DaoException("The building " + b + " has not been modified");
+			}
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while modifying the building " + b);
@@ -1149,8 +1194,10 @@ public class DatabaseImpl implements IDatabase {
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, buildingId);
-			if( pstmt.executeUpdate() == 0)
+			if( pstmt.executeUpdate() == 0) {
+				System.out.println("the building " + buildingId + " has not been deleted");
 				throw new DaoException("the building " + buildingId + " has not been deleted");
+			}
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the course " + buildingId);
@@ -1175,8 +1222,10 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setString(4, a.getIpAddress());
 			pstmt.setBoolean(5, false);
 			
-			if( pstmt.executeUpdate() == 0)
+			if( pstmt.executeUpdate() == 0) {
+				System.out.println("The amphi " + a + " has not been added to the database");
 				throw new DaoException("The amphi " + a + " has not been added to the database");
+			}
 			pa.disconnect();
 		}
 		catch(SQLException sqle){
@@ -1308,8 +1357,10 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setBoolean(5, a.isStatus());
 			pstmt.setInt(6, a.getAmphiid());
 			
-			if( pstmt.executeUpdate() == 0 )
+			if( pstmt.executeUpdate() == 0 ) {
+				System.out.println("The amphi " + a + " has not been modified");
 				throw new DaoException("The amphi " + a + " has not been modified");
+			}
 			
 			/* If the Ip address has changed, updates the references in the course table */
 			if( ! oldAmphiip.equals(a.getIpAddress())) {
@@ -1336,8 +1387,10 @@ public class DatabaseImpl implements IDatabase {
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, amphiId);
-			if( pstmt.executeUpdate() == 0)
+			if( pstmt.executeUpdate() == 0) {
+				System.out.println("the amphi " + amphiId + " has not been deleted");
 				throw new DaoException("the amphi " + amphiId + " has not been deleted");
+			}
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the amphi " + amphiId);
@@ -1358,8 +1411,10 @@ public class DatabaseImpl implements IDatabase {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setBoolean(1, status);
 			pstmt.setString(2, ip);
-			if( pstmt.executeUpdate() == 0)
+			if( pstmt.executeUpdate() == 0) {
+				System.out.println("The status of the amphi has not been changed");
 				throw new DaoException("The status of the amphi has not been changed");
+			}
 			
 		}
 		catch( SQLException sqle) {

@@ -9,7 +9,7 @@
 <html>
   <head>
     
-    <title><fmt:message key="Cours en direct"/></title>
+    <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/> - <fmt:message key="Cours en direct"/></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
@@ -44,7 +44,7 @@
 					</c:if>
 		    		
 			    		<div class="building">
-				    	<img src="../files/img/buildings/${building.imageFile}" alt="Institut Le Bel">
+				    	<img src="../files/img/buildings/${building.imageFile}" alt="<c:out value="${building.name}" />">
 				    	<p class="buildingName"><c:out value="${building.name}" /></p>
 				    	<table>
 				    		<tr class="tableheader">

@@ -28,11 +28,10 @@
 		<select class="field" name="fullname" title="<fmt:message key="Enseignant"/>">
 			<option value="*"><fmt:message key="Tous"/></option>
 			<c:forEach var="teacher" items="${teachers}">
-				<c:set var="fullname" value="${teacher[0]} ${teacher[1]}"/>
-				<c:if test="${nameSelected == fullname}">
+				<c:if test="${nameSelected == teacher}">
 					<c:set var="selected" value="selected" />
 				</c:if>
-				<option value="${fullname}" ${selected}>${fullname}</option>
+				<option value="${teacher}" ${selected}>${teacher}</option>
 				<c:remove var="selected"/>
 			</c:forEach>
 		</select>

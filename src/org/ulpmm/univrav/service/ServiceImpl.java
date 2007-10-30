@@ -256,7 +256,7 @@ public class ServiceImpl implements IService {
 	 * Gets the list of all the teachers
 	 * @return the list of teachers
 	 */
-	public synchronized List<String[]> getTeachers() {
+	public synchronized List<String> getTeachers() {
 		return db.getTeachers();
 	}
 	
@@ -461,12 +461,10 @@ public class ServiceImpl implements IService {
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		
 		// For the teachers
-		List<String[]> teachers = db.getTeachersWithRss();
-		for( String[] teacher : teachers) {
+		List<String> teachers = db.getTeachersWithRss();
+		for( String teacher : teachers) {
 			courses = db.getUnlockedCourses(teacher);
-			rssPath = rssFolderPath + "/" + cleanFileName((teacher[0] != null ? teacher[0] : "")
-				+ (! (teacher[0] == null || teacher[1] == null) ? "_" : "")
-				+ (teacher[1] != null ? teacher[1] : "")) + ".xml";
+			rssPath = rssFolderPath + "/" + cleanFileName(teacher) + ".xml";
 			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		}
 	}
@@ -491,12 +489,14 @@ public class ServiceImpl implements IService {
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		
 		// For the teacher
-		if( ! (c.getName() == null && c.getFirstname() == null))
-			courses = db.getUnlockedCourses(new String[]{c.getName(), c.getFirstname()});
-		rssPath = rssFolderPath + "/" + cleanFileName((c.getName() != null ? c.getName() : "")
-			+ (! (c.getName() == null || c.getFirstname() == null) ? "_" : "")
-			+ (c.getFirstname() != null ? c.getFirstname() : "")) + ".xml";
-		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+		if( ! (c.getName() == null && c.getFirstname() == null)) {
+			String teacher = db.getTeacherFullName(c.getName(), c.getFirstname());
+			System.out.println(teacher);
+			courses = db.getUnlockedCourses(teacher);
+			rssPath = rssFolderPath + "/" + cleanFileName(teacher) + ".xml";
+			System.out.println(rssPath);
+			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+		}
 	}
 	
 	/**
@@ -509,15 +509,11 @@ public class ServiceImpl implements IService {
 		LinkedHashMap<String, String> rss = new LinkedHashMap<String, String>();
 		rss.put(rssTitle, "../rss/" + rssName + ".xml");
 		
-		List<String[]> teachers = db.getTeachersWithRss();
-		for( String[] teacher : teachers) {
+		List<String> teachers = db.getTeachersWithRss();
+		for( String teacher : teachers) {
 			rss.put(
-				(teacher[0] != null ? teacher[0] : "")
-					+ (! (teacher[0] == null || teacher[1] == null) ? " " : "")
-					+ (teacher[1] != null ? teacher[1] : ""),
-				"../rss/" + cleanFileName((teacher[0] != null ? teacher[0] : "")
-					+ (! (teacher[0] == null || teacher[1] == null) ? "_" : "")
-					+ (teacher[1] != null ? teacher[1] : "")) + ".xml"
+				teacher,
+				"../rss/" + cleanFileName(teacher) + ".xml"
 			);
 		}
 		

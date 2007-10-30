@@ -9,7 +9,7 @@
 <html>
   <head>
     
-    <title><fmt:message key="Aide"/></title>
+    <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/> - <fmt:message key="Aide"/></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">

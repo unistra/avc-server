@@ -18,14 +18,14 @@
 	background-image: url(../img/search.gif);
 }
 
-.downloadImage {
-	background-image: url(../img/downloads.gif);
+.liveImage {
+	background-image: url(../img/live.png);
+}
+
+.recordedImage {
+	background-image: url(../img/recorded.png);
 }
 
 .rssImage {
-	background-image: url(../img/rss.gif);
-}
-
-.helpImage {
-	background-image: url(../img/help.gif);
+	background-image: url(../img/rss.png);
 }

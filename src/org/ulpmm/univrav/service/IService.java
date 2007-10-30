@@ -153,7 +153,7 @@ public interface IService {
 	 * Gets the list of all the teachers
 	 * @return the list of teachers
 	 */
-	public List<String[]> getTeachers();
+	public List<String> getTeachers();
 	
 	/**
 	 * Gets the list of all the formations
