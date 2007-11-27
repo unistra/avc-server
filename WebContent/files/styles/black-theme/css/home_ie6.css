@@ -9,7 +9,7 @@
 }
 
 /* Div containing the images div */
-.downloadImage, .rssImage, .helpImage {
+.liveImage, .recordedImage, .rssImage {
 	margin-left: 45px;
 }
 
@@ -19,13 +19,13 @@
 }
 
 .liveImage {
-	background-image: url(../img/live.png);
+	background-image: url(../img/live.gif);
 }
 
 .recordedImage {
-	background-image: url(../img/recorded.png);
+	background-image: url(../img/recorded.gif);
 }
 
 .rssImage {
-	background-image: url(../img/rss.png);
+	background-image: url(../img/rss.gif);
 }

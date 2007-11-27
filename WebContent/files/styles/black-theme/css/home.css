@@ -26,7 +26,7 @@
 }
 
 /* Div containing the images div */
-.liveImage, .recordedImage, .rssImage{
+.liveImage, .recordedImage, .rssImage {
 	float: left;
 	width:237px;
 	height:139px;

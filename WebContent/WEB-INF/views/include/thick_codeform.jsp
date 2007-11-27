@@ -12,11 +12,10 @@
 	</head>
 	<body>
 		<div id="codeForm">
-			<form method="post" action="./courseaccess">
+			<form method="post" action="./courseaccess?id=${id}">
 				<br>
 				<legend><fmt:message key="Code d'acc&egrave;s"/></legend>
 				<input type="text" name="code">
-				<input type="hidden" name="id" value="${id}">
 				<input type="hidden" name="type" value="${type}">
 				<br><br>
 				<input type="submit" value="<fmt:message key="Valider"/>">

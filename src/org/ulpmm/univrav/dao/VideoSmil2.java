@@ -80,7 +80,7 @@ public class VideoSmil2 implements ISmil {
 			
 			/* Media display */
 			pw.println("<img region=\"Bg\" src=\"" + coursesUrl + "model/bgsmil.jpg\"/>");
-			pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".mp3\" external=\"true\"> " +
+			pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".rm\" external=\"true\"> " +
 					"<video src=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".rm" + "\" region=\"Video\" /> </a>");
 			pw.println("<text region=\"Texte\" src=\"" + coursesUrl + mediaFolder + "/description.txt\">");
 			pw.println("<param name=\"fontFace\" value=\"Arial\"/>");
