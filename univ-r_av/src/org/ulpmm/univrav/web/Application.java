@@ -103,8 +103,6 @@ public class Application extends HttpServlet {
 		
 		Properties p = new Properties();
 		try {
-			/* Gets the instance of the service layer */
-			service = ServiceImpl.getInstance();
 			
 			/* configuration parameters loading */
 			p.load(new FileInputStream(getServletContext().getRealPath("/conf") + "/univrav.properties"));
@@ -123,7 +121,7 @@ public class Application extends HttpServlet {
 			defaultFlashFile = p.getProperty("defaultFlashFile");
 			
 			// Copyright comment
-			comment = service.cleanString(p.getProperty("comment"));
+			comment = ServiceImpl.cleanString(p.getProperty("comment"));
 			
 			// IP address of the Helix Server for the video live
 			helixServerIp = p.getProperty("helixServerIp");
@@ -177,6 +175,9 @@ public class Application extends HttpServlet {
 					defaultMp3File, defaultRmFile, defaultFlashFile, comment
 			);
 			
+			/* Gets an instance of the service layer */
+			service = new ServiceImpl();
+			
 			/* Links the data access layer to the service layer */
 			service.setDb(db);
 			service.setFs(fs);
@@ -220,7 +221,7 @@ public class Application extends HttpServlet {
 			throws ServletException, IOException {
 		
 		request.setCharacterEncoding("UTF-8");
-		
+
 		/* Retrieves the current session or creates a new one if no session exists */
 		session = request.getSession(true);
 		//System.out.println("new session : " + session.isNew());
@@ -727,54 +728,64 @@ public class Application extends HttpServlet {
 			else
 				c = service.getCourse(courseid, genre);
 			
-			service.incrementConsultations(c);
-			
-			if( type == null || type.equals("real")) {
-				//redirection interface
-				request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
-				request.setAttribute("slidesurl", coursesUrl + c.getMediaFolder() + "/screenshots/");
-				List<Slide> slides = service.getSlides(c.getCourseid());
-				request.setAttribute("slides", slides);
-				Amphi a = service.getAmphi(c.getIpaddress());
-				String amphi = a != null ? a.getName() : c.getIpaddress();
-				String building = service.getBuildingName(c.getIpaddress());
-				request.setAttribute("amphi", amphi);
-				request.setAttribute("building", building);
-				if( c.getTiming().equals("n-1"))
-					request.setAttribute("timing", 1);
-				else
-					request.setAttribute("timing", 0);
+			if( genre == null && c.getGenre() != null) { // The user tries to access to the protected course directly via the URL
 				
-				// affichage de la vue [list]
-				getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_smil.jsp").forward(request, response);
-			}
-			else if( type.equals("flash")) {
-				//redirection interface
-				request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".swf");
-				Amphi a = service.getAmphi(c.getIpaddress());
-				String amphi = a != null ? a.getName() : c.getIpaddress();
-				String building = service.getBuildingName(c.getIpaddress());
-				request.setAttribute("amphi", amphi);
-				request.setAttribute("building", building);
-				
-				// affichage de la vue [list]
-				getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
+				// Redirect the client to the access code typing form
+				request.setAttribute("id", courseid);
+				request.setAttribute("type", type != null ? type : "real");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/codeform.jsp").forward(request, response);
 			}
 			else {
-				String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
 				
-				// Initialisation des en-têtes.
-				response.setContentType("application/x-download");
-				response.setHeader("Content-Disposition", "attachment; filename=" + c.getMediasFileName() + "." + type);
-
-				// Envoi du fichier.
-				OutputStream out = response.getOutputStream();
-				service.returnFile(filename, out);
+				service.incrementConsultations(c);
 				
-				/*String previousPage = (String) request.getSession().getAttribute("previousPage");
-				if( previousPage == null)
-					previousPage = "/home";
-				response.sendRedirect("." + previousPage);*/
+				if( type == null || type.equals("real")) {
+					//redirection interface
+					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
+					request.setAttribute("slidesurl", coursesUrl + c.getMediaFolder() + "/screenshots/");
+					List<Slide> slides = service.getSlides(c.getCourseid());
+					request.setAttribute("slides", slides);
+					Amphi a = service.getAmphi(c.getIpaddress());
+					String amphi = a != null ? a.getName() : c.getIpaddress();
+					String building = service.getBuildingName(c.getIpaddress());
+					request.setAttribute("amphi", amphi);
+					request.setAttribute("building", building);
+					if( c.getTiming().equals("n-1"))
+						request.setAttribute("timing", 1);
+					else
+						request.setAttribute("timing", 0);
+					
+					// affichage de la vue [list]
+					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_smil.jsp").forward(request, response);
+				}
+				else if( type.equals("flash")) {
+					//redirection interface
+					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".swf");
+					Amphi a = service.getAmphi(c.getIpaddress());
+					String amphi = a != null ? a.getName() : c.getIpaddress();
+					String building = service.getBuildingName(c.getIpaddress());
+					request.setAttribute("amphi", amphi);
+					request.setAttribute("building", building);
+					
+					// affichage de la vue [list]
+					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
+				}
+				else {
+					String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
+					
+					// Initialisation des en-têtes.
+					response.setContentType("application/x-download");
+					response.setHeader("Content-Disposition", "attachment; filename=" + c.getMediasFileName() + "." + type);
+	
+					// Envoi du fichier.
+					OutputStream out = response.getOutputStream();
+					service.returnFile(filename, out);
+					
+					/*String previousPage = (String) request.getSession().getAttribute("previousPage");
+					if( previousPage == null)
+						previousPage = "/home";
+					response.sendRedirect("." + previousPage);*/
+				}
 			}
 		}
 		catch(DaoException de) {

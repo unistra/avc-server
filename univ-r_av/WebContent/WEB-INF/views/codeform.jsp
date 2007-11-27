@@ -13,7 +13,7 @@
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/message.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/codeform.css">
 	
 	<!--[if IE]>
    		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
@@ -21,6 +21,7 @@
 	<!--[if lte IE 6]>
 		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie6.css" media="screen" />
 		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/menus_off_ie6.css" media="screen" />
+		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
@@ -34,9 +35,15 @@
 	    	<c:import url="include/banner.jsp" />
 	    </div>
 	    <div class="contents">
-	    	<div class="message">
-	    		<p class="${messagetype}"><c:out value="${message}" /></p>
-	    	</div>
+	    	<div id="codeForm">
+		    	<form method="post" action="./courseaccess?id=${id}">
+					<legend><fmt:message key="Code d'acc&egrave;s"/></legend>
+					<input type="text" name="code">
+					<input type="hidden" name="type" value="${type}">
+					<br><br>
+					<input type="submit" value="<fmt:message key="Valider"/>">
+				</form>
+			</div>
     	</div>
 	    	
 	    <div class="footer">

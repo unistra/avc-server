@@ -19,11 +19,6 @@ public class ServiceImpl implements IService {
 	private IDatabase db;
 	private IFileSystem fs;
 	private IUnivrDao ud;
-	private static ServiceImpl instance = new ServiceImpl();
-	
-	public static ServiceImpl getInstance() {
-		return instance;
-	}
 	
 	/**
 	 * @return the db
@@ -127,7 +122,7 @@ public class ServiceImpl implements IService {
 	 * Gets a list of all the courses (non-Univr)
 	 * @return the list of courses
 	 */
-	public synchronized List<Course> getAllCourses() {
+	public List<Course> getAllCourses() {
 		return db.getAllCourses();
 	}
 	
@@ -144,7 +139,7 @@ public class ServiceImpl implements IService {
 	 * @param n the number of courses to return
 	 * @return the list of courses
 	 */
-	public synchronized List<Course> getNLastCourses(int n) {
+	public List<Course> getNLastCourses(int n) {
 		return db.getNLastCourses(n);
 	}
 	
@@ -154,7 +149,7 @@ public class ServiceImpl implements IService {
 	 * @param start the start number of the courses
 	 * @return the list of courses
 	 */
-	public synchronized List<Course> getCourses(int number, int start) {
+	public List<Course> getCourses(int number, int start) {
 		return db.getCourses(number, start);
 	}
 	
@@ -165,7 +160,7 @@ public class ServiceImpl implements IService {
 	 * @param start the start number of the courses
 	 * @return the list of courses
 	 */
-	public synchronized List<Course> getCourses(HashMap<String, String> params, int number, int start) {
+	public List<Course> getCourses(HashMap<String, String> params, int number, int start) {
 		return db.getCourses(params, number, start);
 	}
 	
@@ -174,7 +169,7 @@ public class ServiceImpl implements IService {
 	 * @param courseId the id of the course
 	 * @return the course
 	 */
-	public synchronized Course getCourse(int courseId) {
+	public Course getCourse(int courseId) {
 		return db.getCourse(courseId);
 	}
 
@@ -184,7 +179,7 @@ public class ServiceImpl implements IService {
 	 * @param genre the genre of the course
 	 * @return the course
 	 */
-	public synchronized Course getCourse(int courseId, String genre) {
+	public Course getCourse(int courseId, String genre) {
 		return db.getCourse(courseId, genre);
 	}
 	
@@ -192,7 +187,7 @@ public class ServiceImpl implements IService {
 	 * Gets the total number of courses
 	 * @return the number of courses
 	 */
-	public synchronized int getCourseNumber() {
+	public int getCourseNumber() {
 		return db.getCourseNumber();
 	}
 	
@@ -201,7 +196,7 @@ public class ServiceImpl implements IService {
 	 * @param params the criteria of the searched courses
 	 * @return the number of courses
 	 */
-	public synchronized int getCourseNumber(HashMap<String, String> params) {
+	public int getCourseNumber(HashMap<String, String> params) {
 		return db.getCourseNumber(params);
 	}
 	
@@ -227,7 +222,7 @@ public class ServiceImpl implements IService {
 	 * Deletes the test courses (courses with genre 'Suppression')
 	 * @param testKeyWord the key word which identifies a test
 	 */
-	public synchronized void deleteTests(String testKeyWord) {
+	public void deleteTests(String testKeyWord) {
 		List<String> mediaFolders = db.getTestsMediaFolders(testKeyWord);
 		System.out.println(mediaFolders);
 		db.deleteTests(testKeyWord);
@@ -240,7 +235,7 @@ public class ServiceImpl implements IService {
 	 * @param testKeyWord1 the first key word which identifies a test
 	 * @param testKeyWord2 the second key word which identifies a test
 	 */
-	public synchronized void hideTests(String testKeyWord1, String testKeyWord2) {
+	public void hideTests(String testKeyWord1, String testKeyWord2) {
 		db.hideTests(testKeyWord1, testKeyWord2);
 	}
 	
@@ -256,7 +251,7 @@ public class ServiceImpl implements IService {
 	 * Gets the list of all the teachers
 	 * @return the list of teachers
 	 */
-	public synchronized List<String> getTeachers() {
+	public List<String> getTeachers() {
 		return db.getTeachers();
 	}
 	
@@ -264,7 +259,7 @@ public class ServiceImpl implements IService {
 	 * Gets the list of all the formations
 	 * @return the list of formations
 	 */
-	public synchronized List<String> getFormations() {
+	public List<String> getFormations() {
 		return db.getFormations();
 	}
 
@@ -282,7 +277,7 @@ public class ServiceImpl implements IService {
 	 * @param courseId the id of the course
 	 * @return the list of slides
 	 */
-	public synchronized List<Slide> getSlides(int courseId) {
+	public List<Slide> getSlides(int courseId) {
 		return db.getSlides(courseId);
 	}
 	
@@ -298,7 +293,7 @@ public class ServiceImpl implements IService {
 	 * Gets the list of the buildings
 	 * @return the list of buildings
 	 */
-	public synchronized List<Building> getBuildings() {
+	public List<Building> getBuildings() {
 		return db.getBuildings();
 	}
 	
@@ -307,7 +302,7 @@ public class ServiceImpl implements IService {
 	 * @param buildingId the id of the building
 	 * @return the building
 	 */
-	public synchronized Building getBuilding(int buildingId) {
+	public Building getBuilding(int buildingId) {
 		return db.getBuilding(buildingId);
 	}
 	
@@ -316,7 +311,7 @@ public class ServiceImpl implements IService {
 	 * @param amphiIp the amphi IP address
 	 * @return the building name
 	 */
-	public synchronized String getBuildingName(String amphiIp) {
+	public String getBuildingName(String amphiIp) {
 		return db.getBuildingName(amphiIp);
 	}
 	
@@ -348,7 +343,7 @@ public class ServiceImpl implements IService {
 	 * Gets a list of all the amphis
 	 * @return the list of amphis
 	 */
-	public synchronized List<Amphi> getAmphis(int buildingId) {
+	public List<Amphi> getAmphis(int buildingId) {
 		return db.getAmphis(buildingId);
 	}
 
@@ -357,7 +352,7 @@ public class ServiceImpl implements IService {
 	 * @param ip the IP address of the amphi
 	 * @return the amphi
 	 */
-	public synchronized Amphi getAmphi(int amphiId) {
+	public Amphi getAmphi(int amphiId) {
 		return db.getAmphi(amphiId);
 	}
 	
@@ -366,7 +361,7 @@ public class ServiceImpl implements IService {
 	 * @param ip the IP address of the amphi
 	 * @return the amphi
 	 */
-	public synchronized Amphi getAmphi(String ip) {
+	public Amphi getAmphi(String ip) {
 		return db.getAmphi(ip);
 	}
 	
@@ -384,7 +379,7 @@ public class ServiceImpl implements IService {
 	 * @param ip the IP address of the amphi
 	 * @param status the status od the live in the amphi
 	 */
-	public synchronized void setAmphiStatus(String ip, boolean status) {
+	public void setAmphiStatus(String ip, boolean status) {
 		db.setAmphiStatus(ip, status);
 	}
 	
@@ -402,7 +397,7 @@ public class ServiceImpl implements IService {
 	 * @param audioLivePort the port used by the audio live
 	 * @return the stream type diffused by the amphi
 	 */
-	public synchronized String getLiveStreamType(String amphiIp, int audioLivePort) {
+	public String getLiveStreamType(String amphiIp, int audioLivePort) {
 		return fs.getLiveStreamType(amphiIp, audioLivePort);
 	}
 	
@@ -411,7 +406,7 @@ public class ServiceImpl implements IService {
 	 * @param amphiIp the Ip address of the video amphi
 	 * @param helixServerIp the Ip address of the helix server
 	 */
-	public synchronized void createLiveVideo(String amphiIp, String helixServerIp) {
+	public void createLiveVideo(String amphiIp, String helixServerIp) {
 		fs.createLiveVideo(amphiIp, helixServerIp);
 	}
 	
@@ -420,7 +415,7 @@ public class ServiceImpl implements IService {
 	 * @param stylesFolder the folder in which the themes are stored
 	 * @return the list of themes
 	 */
-	public synchronized List<String> getStyles(String stylesFolder) {
+	public List<String> getStyles(String stylesFolder) {
 		return fs.getStyles(stylesFolder);
 	}
 	
@@ -429,7 +424,7 @@ public class ServiceImpl implements IService {
 	 * @param languagesFolder the folder in which the language property files are stored
 	 * @return the list of languages
 	 */
-	public synchronized List<String> getLanguages(String languagesFolder) {
+	public List<String> getLanguages(String languagesFolder) {
 		return fs.getLanguages(languagesFolder);
 	}
 	
@@ -438,7 +433,7 @@ public class ServiceImpl implements IService {
 	 * @param filename the name of the file to send
 	 * @param out the stream in which send the file
 	 */
-	public synchronized void returnFile(String filename, OutputStream out) {
+	public void returnFile(String filename, OutputStream out) {
 		fs.returnFile(filename, out);
 	}
 	
@@ -453,7 +448,7 @@ public class ServiceImpl implements IService {
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
 	 */
-	public synchronized void generateRss( String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
+	public void generateRss( String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language) {
 		// For all courses
 		List<Course> courses = db.getAllUnlockedCourses();
@@ -481,7 +476,7 @@ public class ServiceImpl implements IService {
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
 	 */
-	public synchronized void generateRss( Course c, String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
+	public void generateRss( Course c, String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language) {
 		// For all courses
 		List<Course> courses = db.getAllUnlockedCourses();
@@ -505,7 +500,7 @@ public class ServiceImpl implements IService {
 	 * @param rssName the name of the general RSS file
 	 * @return the hashMap of the RSS titles and files
 	 */
-	public synchronized HashMap<String, String> getRssFileList( String rssTitle, String rssName) {
+	public HashMap<String, String> getRssFileList( String rssTitle, String rssName) {
 		LinkedHashMap<String, String> rss = new LinkedHashMap<String, String>();
 		rss.put(rssTitle, "../rss/" + rssName + ".xml");
 		
@@ -525,7 +520,7 @@ public class ServiceImpl implements IService {
 	 * @param message the message to send
 	 * @return the answer of the client
 	 */
-	public synchronized String sendMessageToClient(String message, String ip, int port) {
+	public String sendMessageToClient(String message, String ip, int port) {
 		return fs.sendMessageToClient(message, ip, port);
 	}
 	
@@ -535,7 +530,7 @@ public class ServiceImpl implements IService {
 	 * @param uuid Univ-R session identifier
 	 * @return true if the user is logged on Univ-R
 	 */
-	public synchronized boolean isUserAuth(int uid, String uuid) {
+	public boolean isUserAuth(int uid, String uuid) {
 		return ud.isUserAuth(uid, uuid);
 	}
 	
@@ -544,7 +539,7 @@ public class ServiceImpl implements IService {
 	 * @param uid the uid of the user
 	 * @return the information about the user
 	 */
-	public synchronized HashMap<String, String> getUserInfos(int uid) {
+	public HashMap<String, String> getUserInfos(int uid) {
 		return ud.getUserInfos(uid);
 	}
 	
@@ -553,7 +548,7 @@ public class ServiceImpl implements IService {
 	 * @param groupCode the code of the group
 	 * @return the group name
 	 */
-	public synchronized String getGroupName(int groupCode) {
+	public String getGroupName(int groupCode) {
 		return ud.getGroupName(groupCode);
 	}
 	
@@ -562,7 +557,7 @@ public class ServiceImpl implements IService {
 	 * @param courseId the id of the course to publish
 	 * @param groupCode the code of the group which will have access to the course
 	 */
-	public synchronized void publishCourse(int courseId, int groupCode) {
+	public void publishCourse(int courseId, int groupCode) {
 		ud.publishCourse(courseId, groupCode);
 	}
 	
@@ -572,7 +567,7 @@ public class ServiceImpl implements IService {
 	 * @param courseId the course
 	 * @return true if the user has access to the course
 	 */
-	public synchronized boolean hasAccessToCourse(int uid, int courseId) {
+	public boolean hasAccessToCourse(int uid, int courseId) {
 		return ud.hasAccessToCourse(uid, courseId);
 	}
 	
@@ -581,7 +576,7 @@ public class ServiceImpl implements IService {
 	 * @param string the string to clean
 	 * @return the cleaned string
 	 */
-	public String cleanString(String string) {
+	public static String cleanString(String string) {
 		final String carSpeTotal = "&><\"%#+";
 		
 		String res = "";

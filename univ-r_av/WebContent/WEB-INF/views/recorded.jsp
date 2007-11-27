@@ -47,8 +47,14 @@
 	    		<c:import url="include/searchform.jsp" />
 	    	</div>
 	    	<div class="course">
-	    		
-				<c:import url="include/courselist.jsp" />
+				<table cellspacing="0">
+					<tr class="tableheader">
+						<th colspan="3" id="courses"><fmt:message key="Les cours"/></th>
+						<th colspan="2"><fmt:message key="Visualisez"/></th>
+						<th colspan="4"><fmt:message key="T&eacute;l&eacute;chargez"/></th>
+					</tr>
+					<c:import url="include/courselist.jsp" />
+				</table>
 				
 	    		<div class="pagination">
 	    			<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" />

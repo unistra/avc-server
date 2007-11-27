@@ -369,10 +369,4 @@ public interface IService {
 	 */
 	public boolean hasAccessToCourse(int uid, int courseId);
 	
-	/**
-	 * Function which removes the undesirable characters of a String and the useless spaces at the end
-	 * @param string the string to clean
-	 * @return the cleaned string
-	 */
-	public String cleanString(String string);
 }

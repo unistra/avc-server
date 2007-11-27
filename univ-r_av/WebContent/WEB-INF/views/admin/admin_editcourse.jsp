@@ -19,7 +19,8 @@
    		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
 	<![endif]-->
 	<!--[if lte IE 6]>
-		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/home_ie6.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie6.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/menus_off_ie6.css" media="screen" />
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
@@ -75,15 +76,15 @@
 			    		</tr>
 			    		<tr class="odd">
 				    		<td>Ipaddress</td>
-				    		<td><input type="hidden" name="ipaddress" value="${course.ipaddress}">${course.ipaddress}</td>
+				    		<td><input type="text" name="ipaddress" value="${course.ipaddress}" class="field"></td>
 			    		</tr>
 			    		<tr class="even">
 				    		<td>Duration</td>
 				    		<td><input type="hidden" name="duration" value="${course.duration}">${course.durationString}</td>
 			    		</tr>
 			    		<tr class="odd">
-				    		<td>Genre</td>
-				    		<td><input type="text" name="password" value="${course.genre}" class="field"></td>
+				    		<td>Password</td>
+				    		<td><input type="text" name="genre" value="${course.genre}" class="field"></td>
 			    		</tr>
 			    		<tr class="even">
 				    		<td>Visible</td>

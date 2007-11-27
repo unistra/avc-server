@@ -352,13 +352,12 @@ public class DatabaseImpl implements IDatabase {
 				if( param.equals("fullname") )
 					sql += "(COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = ? ";
 				else if( param.equals("keyword") )
-					sql += "(INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?)) ";
+					sql += "(INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?) OR INITCAP(name) LIKE INITCAP(?) OR INITCAP(firstname) LIKE INITCAP(?)) ";
 				else
 					sql += param + " = ? ";
 			}
 			sql += "AND visible = true ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start;
-			System.out.println(sql);
-			System.out.println(params.get("fullname"));
+
 			try {
 				PreparedStatement pstmt = cnt.prepareStatement(sql);
 
@@ -368,6 +367,10 @@ public class DatabaseImpl implements IDatabase {
 				while( it.hasNext()) {
 					String param = it.next();
 					if( param.equals("keyword") ) {
+						pstmt.setString(i, "%" + params.get(param) + "%");
+						i++;
+						pstmt.setString(i, "%" + params.get(param) + "%");
+						i++;
 						pstmt.setString(i, "%" + params.get(param) + "%");
 						i++;
 						pstmt.setString(i, "%" + params.get(param) + "%");
@@ -601,9 +604,9 @@ public class DatabaseImpl implements IDatabase {
 				
 				String param = it.next();
 				if( param.equals("fullname") )
-					sql += "COALESCE(name,'') || ' ' || COALESCE(firstname,'') = ? ";
+					sql += "(COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = ? ";
 				else if( param.equals("keyword") )
-					sql += "(INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?)) ";
+					sql += "(INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?) OR INITCAP(name) LIKE INITCAP(?) OR INITCAP(firstname) LIKE INITCAP(?)) ";
 				else
 					sql += param + " = ? ";
 			}
@@ -618,6 +621,10 @@ public class DatabaseImpl implements IDatabase {
 				while( it.hasNext()) {
 					String param = it.next();
 					if( param.equals("keyword") ) {
+						pstmt.setString(i, "%" + params.get(param) + "%");
+						i++;
+						pstmt.setString(i, "%" + params.get(param) + "%");
+						i++;
 						pstmt.setString(i, "%" + params.get(param) + "%");
 						i++;
 						pstmt.setString(i, "%" + params.get(param) + "%");

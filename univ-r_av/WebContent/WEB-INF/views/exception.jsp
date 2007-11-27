@@ -25,6 +25,7 @@ response.setStatus(200);
 	<![endif]-->
 	<!--[if lte IE 6]>
 		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie6.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/menus_off_ie6.css" media="screen" />
 	<![endif]-->
 
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>

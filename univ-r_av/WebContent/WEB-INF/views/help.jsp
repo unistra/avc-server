@@ -59,11 +59,11 @@
 						<p>Disponible uniquement &agrave; partir des salles et amphith&eacute;atres automatis&eacute;s et sur 
 						la volont&eacute; de l'enseignant, le direct est disponible sur le site de façon hi&eacute;rarchis&eacute;e 
 						par b&acirc;timent puis par salle.<br>
-						Cliquer sur une salle permet d'&eacute;couter et de suivre le cours en direct.</p>
+						Cliquer sur une salle allum&eacute;e (Malette3 sur l'image) permet d'&eacute;couter et de suivre le cours en direct.</p>
 						<a class="link" href="../files/img/help/Live.png">Screenshot</a>
 						<h5>Diffusion et &eacute;coute du Live</h5>
 						<p>Les diapositives sont diffus&eacute;es simultan&eacute;ment avec le flux audio.<br>
-						Pour le flux audio, vous avez besoin d'avoir un plugin permettant leur lecture.</p>
+						Pour &eacute;couter le flux audio, vous avez besoin d'avoir un plugin permettant leur lecture.</p>
 						<p><span class="underline">Exemples de plugins :</span><br>
 						Mplayerplug-in sous Linux<br>
 						Windows Media Player sous Windows<br>
@@ -95,7 +95,7 @@
 						<a class="link" href="../files/img/help/Rss_podcast_amarok.png">Screenshot</a>
 						<a class="link" href="../files/img/help/Rss_itunes.png">Screenshot</a>
 						
-						<p><span class="underline">NB :</span> Les lecteurs audios permettent de g&eacute;rer sa liste de cours et 
+						<p><span class="underline">NB :</span> Les lecteurs audio permettent de g&eacute;rer sa liste de cours et 
 						de les &eacute;couter directement apr&egrave;s obtention du m&eacute;dia. Attention, seul le fichier mp3 
 						est cependant disponible via les logiciels audio.</p>
 						<br>
@@ -108,14 +108,14 @@
 						
 						<h3><a id="recorded"></a>Cours en différé</h3>
 						<h5>Filtrage de l'Affichage</h5>
-						<p>On dispose d'options de filtrage pour l'affichage des cours ainsi que d'une fonction de recherche.</p>
+						<p>On dispose d'une fonction de recherche (Launch Search) avec des options de filtrage pour l'affichage des cours.</p>
 						<h5>Listings des Cours</h5>
 						<p>Les cours sont disponibles selon diff&eacute;rents modes.</p>	
-						<p><b>Clic sur l'ic&ocirc;ne 'realplayer' :</b><br>
+						<p><b>Clic sur l'ic&ocirc;ne à gauche ou sur l'ic&ocirc;ne sous l'intitul&eacute; 'realplayer' :</b><br>
 						Mode en ligne. N&eacute;cessite la pr&eacute;sence du plugin RealPlayer sur votre machine. 
 						C'est le mode recommand&eacute; pour la visualisation des cours.</p>		
-						<p><b>Clic sur les ic&ocirc;nes 'smil', 'ogg', 'mp3', 'zip', ou 'pdf' :</b><br>
-						Ce mode permet d'avoir un acc&egrave;s direct aux fichiers des m&eacute;dias. 
+						<p><b>Clic sur les ic&ocirc;nes sous les intitul&eacute;s 'smil', 'ogg', 'mp3', 'zip', ou 'pdf':</b><br>
+						Ces modes permettent d'avoir un acc&egrave;s direct aux fichiers des m&eacute;dias. 
 						Dans le cas du choix du m&eacute;dia Smil, Vous pouvez utiliser n'importe quel logiciel capable de supporter Smil 
 						(MediaPlayerClassic, AmbulantPlayer, RealPlayer, Quicktime,....)</p>
 						<a class="link" href="../files/img/help/Differe.png">Screenshot</a>			
@@ -123,15 +123,13 @@
 						<p>Le fichier Smil est lu dans le lecteur Reaplayer qui se charge de diffuser les diapositives et 
 						l'enregistrement audio du cours. Il est possible de d&eacute;placer le curseur pour se positionner 
 						&agrave; un endroit particulier du cours.<br>
+						Les points correspondant &agrave; des diapositives sont cliquables et permettent de positionner automatiquement le lecteur &agrave; l'endroit de diffusion de la diapo.<br>
 						Les diapositives du Smil sont cliquables et ouvrent un popup contenant la diapositive dans son format 
 						d'origine pour une meilleure lecture. Cela met cependant la lecture du Smil en pause.<br>
-						Les petites diapositives du cours sont cliquables et permettent de positionner automatiquement le lecteur 
-						&agrave; l'endroit de diffusion de la diapo.<br>
 						Sur la partie droite, on trouve les informations concernant le cours, un acc&egrave;s direct aux 
-						t&eacute;l&eacute;chargement des diff&eacute;rents m&eacute;dias le composant, mais &eacute;galement 
-						un acc&egrave;s direct aux autres cours de l'enseignant.</p>	
+						t&eacute;l&eacute;chargement des diff&eacute;rents m&eacute;dias le composant.</p>	
 						<p><span class="underline">NB :</span> Dans le cas d'un cours vid&eacute;o, la vid&eacute;o est 
-						diffus&eacute;e dans le coin sup&eacute;rieur droit.</p>
+						diffus&eacute;e dans la partie droite. Cette vid&eacute;o est cliquable pour &ecirc;tre diffus&eacute;e dans son format d'origine. La lecture du smil est mise en pause.</p>
 						<a class="link" href="../files/img/help/Diff_layout.png">Screenshot</a>
 	
 						<h3><a id="downloads"></a>T&eacute;l&eacute;chargement des logiciels et plugins</h3>

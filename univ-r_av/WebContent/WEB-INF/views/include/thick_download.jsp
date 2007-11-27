@@ -11,7 +11,7 @@
 	</head>
 	<body>
 		<br>
-			<a href="../../releases/AudioVideoCours.exe"><fmt:message key="clientLink"/></a>
+			<a href="http://ulpmm-projets.u-strasbg.fr/projets/videocours/wiki/DownloadAudiovideocours"><fmt:message key="clientLink"/></a>
 			<p><fmt:message key="clientDescription"/></p>
 			<br><br>
 			<a href="http://ulpmm-projets.u-strasbg.fr/projets/videocours"><fmt:message key="tracLink"/></a>
