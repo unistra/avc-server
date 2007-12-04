@@ -523,7 +523,7 @@ public class DatabaseImpl implements IDatabase {
 	public Course getCourse(int courseId, String genre) {
 		Course c = null;
 		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM course WHERE courseid = ? AND GENRE = ? AND visible = true";
+		String sql = "SELECT * FROM course WHERE courseid = ? AND GENRE = ?";
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseId);

@@ -30,39 +30,38 @@
 
 /* Line containing the timecodes points */
 div#videoLine {
+	position: absolute;
 	width: 970px;
 	height: 11px;
+	margin-bottom: 40px;
+	left: 0px;
 	background-image: url("../img/1px_video_line.png");
 	background-repeat: repeat-x;
 }
 
-
-/* Div containing all the thumbs of the media */
-div#thumbLine {
-	position: absolute;
-	width: 970px;
-	margin-top: 10px;
+/* The thumb corresponding to the media's current play position */
+.currentThumb {
+	border-color: #FF9602;
 }
 
 /* One thumb corresponding to a timecode */
-.thumb {
-	float: left;
-	visibility: hidden;
-	width: 115px;
-	height: 77px;
-	margin-right: -54px; /* unables to superpose the hidden thumbs */
+.otherThumb {
+	border-color: #FFFFFF;
 }
 
-/* one timecode point */
-.videoTime {
+.otherThumb, .currentThumb {
 	float: left;
-	margin-left: 50px;
+	width: 52px;
+	height: 39px;
+	margin-left: 35px;
+	border-width: 2px;
+	border-style: solid;
 }
 
-/* Div of the pagination line */
-div#pagination {
-	position: absolute;
-	width: 970px;
+/* Zooms on a thumb when the mouse is over it */
+a:hover .otherThumb, a:hover .currentThumb {
+	width: 104px;
+	height: 78px;
 }
 
 /* Left part of the pagination */
@@ -83,4 +82,5 @@ div#pagination {
 	color: #FFFFFF;
 	font-size: 12px;
 	margin : 4px;
+	margin-top: 50px;
 }

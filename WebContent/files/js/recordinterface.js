@@ -3,6 +3,7 @@ var oldSlide = 0; // previous slide number displayed in the smil media
 var pageNumber = 1; // current page of the pagination
 var paginationUpdateTime = 10000; // after having clicked on the pagination, the time bar is not updated during this time
 var update = true; // if the time bar has to be updated or not
+var numberPerPage = 10; // number of time points in a page
 
 /* function to call when the page starts */
 window.onload = function(){
@@ -35,14 +36,14 @@ function setTimeFromSlide(slide) {
 function checkPageChange() {
 	var res = false;
 	
-	if( Math.ceil((currentSlide)/15) > pageNumber) { //next page
-		pageNumber = Math.ceil((currentSlide)/15);
+	if( Math.ceil(currentSlide/numberPerPage) > pageNumber) { //next page
+		pageNumber = Math.ceil(currentSlide/numberPerPage);
 		initTimeBar();
 		oldSlide = 0;
 		res = true;
 	}
-	else if( Math.ceil((currentSlide)/15) < pageNumber) { // previous page
-		pageNumber = Math.ceil((currentSlide)/15);
+	else if( Math.ceil(currentSlide/numberPerPage) < pageNumber) { // previous page
+		pageNumber = Math.ceil(currentSlide/numberPerPage);
 		initTimeBar();
 		oldSlide = 0;
 		res = true;
@@ -56,13 +57,11 @@ function initTimeBar() {
 	
 	// erases the previous time bar and thumb line
 	document.getElementById("videoLine").innerHTML = "";
-	document.getElementById("thumbLine").innerHTML = "";
-	var firstSlide = (pageNumber-1)*15 + 1;
+	var firstSlide = (pageNumber-1)*numberPerPage + 1;
 	
 	// adds each time point and corresponding thumb
-	for( i=0 ; i< 15 && (firstSlide + i <= timecodes.length) ; i++) {
-		document.getElementById("videoLine").innerHTML += '<a href="javascript:setTimeFromSlide(' + (firstSlide + i)  + ')" onmouseover="showThumb(' + (firstSlide + i)  + ')" onmouseout="hideThumb(' + (firstSlide + i)  + ')" id="time' + (firstSlide + i)  + '" class="videoTime"><img src="../files/styles/' + style + '/img/video_time_off.gif"></a>';
-		document.getElementById("thumbLine").innerHTML += '<img class="thumb" id="thumb' + (firstSlide + i) + '" src="' + slidesurl + 'D' + (firstSlide + i + timing) + '-thumb.jpg">';
+	for( i=0 ; i< numberPerPage && (firstSlide + i <= timecodes.length) ; i++) {
+		document.getElementById("videoLine").innerHTML += '<a href="javascript:setTimeFromSlide(' + (firstSlide + i)  + ')"><img id="time' + (firstSlide + i)  + '" class="otherThumb" src="' + slidesurl + 'D' + (firstSlide + i + timing) + '-thumb.jpg"></a>';
 	}
 }
 
@@ -78,16 +77,16 @@ function updateTimeBar() {
 			if( currentSlide != oldSlide ) {
 		
 				// if the time bar must be updated
-				if( update || Math.ceil((currentSlide)/15) == pageNumber) {
+				if( update || Math.ceil(currentSlide/numberPerPage) == pageNumber) {
 				
 					// verifies if the page has changed in the pagination
 					checkPageChange();
 					
 					// changes the points images for the current and old slide
-					document.getElementById('time' + currentSlide).innerHTML =  "<img src=\"../files/styles/" + style + "/img/video_time_on.gif\">";
+					document.getElementById('time' + currentSlide).className="currentThumb";
 					
 					if(oldSlide > 0)
-						document.getElementById('time' + oldSlide).innerHTML =  "<img src=\"../files/styles/" + style + "/img/video_time_off.gif\">";
+						document.getElementById('time' + oldSlide).className="otherThumb";
 						
 					oldSlide=currentSlide;
 				}
@@ -105,7 +104,7 @@ function updateTimeBar() {
 /* Updates the page and slide numbers in the HTML code */
 function updatePagination() {
 	document.getElementById("slideNumber").innerHTML = currentSlide + "/" + timecodes.length;
-	document.getElementById("pageNumber").innerHTML = pageNumber + "/" + Math.ceil(timecodes.length/15);
+	document.getElementById("pageNumber").innerHTML = pageNumber + "/" + Math.ceil(timecodes.length/numberPerPage);
 }
 
 /* Sets the position of the smil media to the previous slide */
@@ -142,7 +141,7 @@ function previousPage() {
 
 /* Sets the position of the smil media to the next page */
 function nextPage() {
-	if( pageNumber < Math.ceil(timecodes.length/15) ) {
+	if( pageNumber < Math.ceil(timecodes.length/numberPerPage) ) {
 		pageNumber++;
 		// disables the time bar update and then enables it again
 		update = false;
@@ -161,18 +160,4 @@ function setPos(temps) {
 /* Returns the position of the smil media in seconds */
 function getPos() {
 	return document.getElementById('video').GetPosition()/1000;
-}
-
-/* Shows the div element corresponding to a thumb by specifying its number */
-function showThumb(elem) {
-	var thumb = "thumb" + elem;
-	document.getElementById("pagination").style.visibility="hidden";	
-	document.getElementById(thumb).style.visibility="visible";
-}
-
-/* Hides the div element corresponding to a thumb by specifying its number */
-function hideThumb(elem) {
-	var thumb = "thumb" + elem;
-	document.getElementById(thumb).style.visibility="hidden";
-	document.getElementById("pagination").style.visibility="visible";	
 }

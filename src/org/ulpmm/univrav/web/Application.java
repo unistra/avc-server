@@ -55,7 +55,9 @@ public class Application extends HttpServlet {
 	// Default media filenames in the archive sent by the client
 	private static String defaultMp3File;
 	private static String defaultRmFile;
+	private static String defaultSmilFile;
 	private static String defaultFlashFile;
+	private static String defaultScreenshotsFolder;
 	
 	// Copyright comment
 	private static String comment;
@@ -118,7 +120,9 @@ public class Application extends HttpServlet {
 			// Default media filenames in the archive sent by the client
 			defaultMp3File = p.getProperty("defaultMp3File");
 			defaultRmFile = p.getProperty("defaultRmFile");
+			defaultSmilFile = p.getProperty("defaultSmilFile");
 			defaultFlashFile = p.getProperty("defaultFlashFile");
+			defaultScreenshotsFolder = p.getProperty("defaultScreenshotsFolder");
 			
 			// Copyright comment
 			comment = ServiceImpl.cleanString(p.getProperty("comment"));
@@ -172,7 +176,8 @@ public class Application extends HttpServlet {
 			FileSystemImpl fs = new FileSystemImpl(
 					getServletContext().getRealPath("/") + "scripts",
 					ftpFolder, coursesFolder, liveFolder, coursesUrl,
-					defaultMp3File, defaultRmFile, defaultFlashFile, comment
+					defaultMp3File, defaultRmFile, defaultSmilFile, 
+					defaultFlashFile, defaultScreenshotsFolder, comment
 			);
 			
 			/* Gets an instance of the service layer */
@@ -204,7 +209,6 @@ public class Application extends HttpServlet {
 	 */
 	public void destroy() {
 		super.destroy(); // Just puts "destroy" string in log
-		// Put your code here
 	}
 
 	/**
@@ -594,10 +598,10 @@ public class Application extends HttpServlet {
 		String message = "";
 		String messageType = "information";
 		
-		/* Le client envoie les informations en ISO8859-15 */
+		/* The client sends parameters in the ISO8859-15 encoding */
 		request.setCharacterEncoding("ISO8859-15");
 		
-		/* récupération des paramètres du client */
+		/* Retrieves the parameters sent by the client */
 		id = request.getParameter("id");
 		mediapath = request.getParameter("mediapath");
 		timing = request.getParameter("timing");
@@ -609,7 +613,7 @@ public class Application extends HttpServlet {
 		formation = service.cleanString(request.getParameter("ue"));
 		genre = request.getParameter("genre");
 		
-		/* Vérification que les paramètres essentiels ont bien été envoyés, annulation de l'upload dans le cas contraire */
+		/* Verifies that all essential parameters are sent, cancels the upload if not */
 		if(id != null && description != null && mediapath != null && title != null && name != null && formation != null) {
 			
 			if( timing == null )
@@ -617,7 +621,7 @@ public class Application extends HttpServlet {
 			
 			String clientIP = request.getRemoteAddr();
 			
-			/* Affichage des informations reçues */
+			/* Displays the paramters retrived */
 			/*message += "ID : " + id + "<br/>";
 			message += "Title : " + title + "<br/>";
 			message += "Description : " + description + "<br/>";
@@ -627,7 +631,7 @@ public class Application extends HttpServlet {
 			message += "Genre : " + genre + "<br>";
 			message += "Timing : " + timing + "<br>";*/
 			
-			/* Récupération du nom du fichier à partir de son chemin d'accès */
+			/* Retrieves the filename from the media path */
 			media = mediapath.substring(mediapath.lastIndexOf("\\") + 1, mediapath.length());
 			if( media.length() == mediapath.length() )
 				media = mediapath.substring(mediapath.lastIndexOf("/") + 1, mediapath.length());
@@ -636,39 +640,47 @@ public class Application extends HttpServlet {
 			
 			Course c;
 			
-			if( id.equals("") || id.equals("(id:no)") || id.equals("None") ) {
-				c = new Course(
-						service.getNextCoursId(),
-						new Timestamp(new Date().getTime()),
-						null, // The type can't be set yet
-						title.equals("") ? null : title,
-						description.equals("") ? null : description,
-						formation.equals("") ? null : formation,
-						name.equals("") ? null : name,
-						(firstname == null || firstname.equals("")) ? null : firstname,
-						clientIP,
-						0, // The duration can't be set yet
-						(genre == null || genre.equals("")) ? null : genre,
-						true,
-						0,
-						timing,
-						null // The media folder can't be set yet
-				);
-				service.addCourse(c, media, getServletContext().getRealPath("/rss"), 
-						rssName, rssTitle, rssDescription, serverUrl, 
-						rssImageUrl, recordedInterfaceUrl, language);
-			}
-			else {
-				c = service.getCourse(Integer.parseInt(id));
-				c.setDate(new Timestamp(new Date().getTime()));
-				c.setVisible(true);
-				c.setTiming(timing);
-				service.completeUnivrCourse(c, media, getServletContext().getRealPath("/rss"), 
-						rssName, rssTitle, rssDescription, serverUrl, 
-						rssImageUrl, recordedInterfaceUrl, language);
-			}
+			try {
 			
-			message = "File successfully sent !";
+				// Standard course
+				if( id.equals("") || id.equals("(id:no)") || id.equals("None") ) {
+					c = new Course(
+							service.getNextCoursId(),
+							new Timestamp(new Date().getTime()),
+							null, // The type can't be set yet
+							title.equals("") ? null : title,
+							description.equals("") ? null : description,
+							formation.equals("") ? null : formation,
+							name.equals("") ? null : name,
+							(firstname == null || firstname.equals("")) ? null : firstname,
+							clientIP,
+							0, // The duration can't be set yet
+							(genre == null || genre.equals("")) ? null : genre,
+							true,
+							0,
+							timing,
+							null // The media folder can't be set yet
+					);
+					service.addCourse(c, media, getServletContext().getRealPath("/rss"), 
+							rssName, rssTitle, rssDescription, serverUrl, 
+							rssImageUrl, recordedInterfaceUrl, language);
+				}
+				else { // Univ-R course
+					c = service.getCourse(Integer.parseInt(id));
+					c.setDate(new Timestamp(new Date().getTime()));
+					c.setVisible(true);
+					c.setTiming(timing);
+					service.completeUnivrCourse(c, media, getServletContext().getRealPath("/rss"), 
+							rssName, rssTitle, rssDescription, serverUrl, 
+							rssImageUrl, recordedInterfaceUrl, language);
+				}
+				
+				message = "File successfully sent !";
+			}
+			catch( DaoException de) {
+				messageType = "error";
+				message = de.getMessage();
+			}
 								
 		}
 		else {
@@ -767,7 +779,7 @@ public class Application extends HttpServlet {
 					request.setAttribute("amphi", amphi);
 					request.setAttribute("building", building);
 					
-					// affichage de la vue [list]
+					/* displays the .jsp view */
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
 				}
 				else {
