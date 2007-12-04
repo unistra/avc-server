@@ -1,0 +1,86 @@
+/* Page content div */
+.contents {
+	width: 970px;
+	margin-top: 0;
+	margin-left: 0;
+	margin-right: 0;
+	padding-bottom: 100px;
+	overflow: hidden;
+}
+
+/* The amphiteatre name*/
+.amphitheatre {
+	float: left;
+	padding: 4px;
+	font-size: 12px;
+}
+
+/* link to quit the visualization interface */
+.closeButton {
+	float: right;
+	color: #FFFFFF;
+	margin-top: 4px;
+	margin-bottom: 4px;
+	font-size: 12px;
+}
+
+.closeButton img {
+	vertical-align: middle;
+}
+
+/* Line containing the timecodes points */
+div#videoLine {
+	position: absolute;
+	width: 970px;
+	height: 11px;
+	margin-bottom: 40px;
+	left: 0px;
+	background-image: url("../img/1px_video_line.png");
+	background-repeat: repeat-x;
+}
+
+/* The thumb corresponding to the media's current play position */
+.currentThumb {
+	border-color: #FF9602;
+}
+
+/* One thumb corresponding to a timecode */
+.otherThumb {
+	border-color: #FFFFFF;
+}
+
+.otherThumb, .currentThumb {
+	float: left;
+	width: 52px;
+	height: 39px;
+	margin-left: 35px;
+	border-width: 2px;
+	border-style: solid;
+}
+
+/* Zooms on a thumb when the mouse is over it */
+a:hover .otherThumb, a:hover .currentThumb {
+	width: 104px;
+	height: 78px;
+}
+
+/* Left part of the pagination */
+.leftPagination {
+	float: left;
+}
+
+/* right part of the pagination */
+.rightPagination {
+	float: right;
+}
+
+.rightPagination a {
+	color: #FFFFFF;
+}
+
+.leftPagination, .rightPagination {
+	color: #FFFFFF;
+	font-size: 12px;
+	margin : 4px;
+	margin-top: 50px;
+}

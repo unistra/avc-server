@@ -1,0 +1,37 @@
+/*  Div containing the "Live" button */
+.live {
+	background-image: url(../img/menu_off.png);
+}
+
+/*  Div containing the "Recorded" button */
+.recorded {
+	background-image: url(../img/menu_on.png);
+}
+
+/* Clickable zone, link to the "Live" page */
+.liveZone {
+	color: #FFFFFF;
+}
+
+/* Clickable zone, link to the "Recorded" page */
+.recordedZone {
+	color: #FF9602;
+}
+
+/* Div which prints the courses list with the pagination links */
+.course {
+	margin-top: 20px;
+}
+
+/* Div containing the pagination links */
+.pagination {
+	color: #FFFFFF;
+	font-size: 12px;
+	text-align: right;
+	margin: 5px;
+}
+
+.pagination a {
+	color: #FFFFFF;
+	font-size: 12px;
+}
