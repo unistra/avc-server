@@ -50,12 +50,15 @@ public class FileSystemImpl implements IFileSystem {
 	private static String coursesUrl;
 	private static String defaultMp3File;
 	private static String defaultRmFile;
+	private static String defaultSmilFile;
 	private static String defaultFlashFile;
+	private static String defaultScreenshotsFolder;
 	private static String comment;
 	
 	public FileSystemImpl(String scriptsFolder, String ftpFolder, String coursesFolder, 
 		String liveFolder, String coursesUrl, String defaultMp3File, String defaultRmFile, 
-		String defaultFlashFile, String comment) {
+		String defaultSmilFile, String defaultFlashFile, String defaultScreenshotsFolder, 
+		String comment) {
 		
 		r = Runtime.getRuntime();
 		this.scriptsFolder = new File(scriptsFolder);
@@ -65,7 +68,9 @@ public class FileSystemImpl implements IFileSystem {
 		this.coursesUrl = coursesUrl;
 		this.defaultMp3File = defaultMp3File;
 		this.defaultRmFile = defaultRmFile;
-		this.defaultFlashFile =defaultFlashFile;
+		this.defaultSmilFile = defaultSmilFile;
+		this.defaultFlashFile = defaultFlashFile;
+		this.defaultScreenshotsFolder = defaultScreenshotsFolder;
 		this.comment = comment;
 	}
 	
@@ -534,18 +539,18 @@ public class FileSystemImpl implements IFileSystem {
 	 */
 	private static void thumbCheck(String mediaFolder) {
 		try {
-			Process p = r.exec("python2.5 thumbCheck.py " + coursesFolder + mediaFolder + "/screenshots", null, scriptsFolder); 
+			Process p = r.exec("python2.5 thumbCheck.py " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder, null, scriptsFolder); 
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/screenshots");
-				throw new DaoException("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/screenshots");
+				System.out.println("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder);
+				throw new DaoException("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder);
 			}
 		}
 		catch(IOException ioe) {
-			System.out.println("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/screenshots");
+			System.out.println("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder);
 			ioe.printStackTrace();
 		}
 		catch(InterruptedException ie) {
-			System.out.println("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/screenshots");
+			System.out.println("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder);
 			ie.printStackTrace();
 		}
 	}
@@ -570,13 +575,6 @@ public class FileSystemImpl implements IFileSystem {
 			if( p.waitFor() != 0 ) {
 				System.out.println("Error while renaming the mp3 file clean_" + defaultMp3File);
 				throw new DaoException("Error while renaming the mp3 file clean_" + defaultMp3File);
-			}
-			
-			/* Removes the default mp3 file */
-			p = r.exec("rm " + defaultMp3File, null, new File(coursesFolder + mediaFolder));
-			if( p.waitFor() != 0 ) {
-				System.out.println("Error while deleting the mp3 file " + defaultMp3File);
-				throw new DaoException("Error while deleting the mp3 file " + defaultMp3File);
 			}
 		}
 		catch( IOException ioe) {
@@ -638,23 +636,23 @@ public class FileSystemImpl implements IFileSystem {
 	}
 	
 	/** 
-	 * Renames the rm file 
+	 * Copies the rm file 
 	 * @param mediaFolder the folder which contains the media files of a course
 	 * @param mediaFileName the name used by all the media files of a course
 	 */ 
 	private static void rmModif( String mediaFolder, String mediaFileName) {
 		try {
-			Process p = r.exec("mv " + defaultRmFile + " " + mediaFileName + ".rm", null, new File(coursesFolder + mediaFolder));
+			Process p = r.exec("cp " + defaultRmFile + " " + mediaFileName + ".rm", null, new File(coursesFolder + mediaFolder));
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while renaming the rm file " + defaultRmFile);
-				throw new DaoException("Error while renaming the rm file " + defaultRmFile);
+				System.out.println("Error while copying the rm file " + defaultRmFile);
+				throw new DaoException("Error while copying the rm file " + defaultRmFile);
 			}
 		} catch (IOException ioe) {
-			System.out.println("Error while renaming the rm file " + defaultRmFile);
+			System.out.println("Error while copying the rm file " + defaultRmFile);
 			ioe.printStackTrace();
 		}
 		catch( InterruptedException ie) {
-			System.out.println("Error while renaming the rm file " + defaultRmFile);
+			System.out.println("Error while copying the rm file " + defaultRmFile);
 			ie.printStackTrace();
 		}
 	}
@@ -809,13 +807,13 @@ public class FileSystemImpl implements IFileSystem {
 	 * @param mediaFileName the name used by all the media files of a course
 	 */
 	private static void courseZip(Course c, String mediaFolder, String mediaFileName) {
-		String mediaFileExtension = "";
+		String mediaFile = "";
 		if( c.getType().equals("audio") )
-			mediaFileExtension = ".mp3";
+			mediaFile = defaultMp3File;
 		else if( c.getType().equals("video") )
-			mediaFileExtension = ".rm";
+			mediaFile = defaultRmFile;
 		
-		String command = "zip -r " + mediaFileName + ".zip " + mediaFileName + ".smil " + mediaFileName + mediaFileExtension + " " + mediaFileName + ".pdf";
+		String command = "zip -r " + mediaFileName + ".zip " + defaultSmilFile + " " + defaultScreenshotsFolder + " " + mediaFile + " " + mediaFileName + ".pdf";
 		
 		try {
 			Process p = r.exec(command, null, new File(coursesFolder + mediaFolder));
@@ -823,6 +821,14 @@ public class FileSystemImpl implements IFileSystem {
 				System.out.println("Error while creating the zip file " + mediaFileName + ".zip");
 				throw new DaoException("Error while creating the zip file " + mediaFileName + ".zip");
 			}
+			
+			/* Removes the default media file to free disk space */
+			p = r.exec("rm " + mediaFile, null, new File(coursesFolder + mediaFolder));
+			if( p.waitFor() != 0 ) {
+				System.out.println("Error while deleting the media file " + mediaFile);
+				throw new DaoException("Error while deleting the media file " + mediaFile);
+			}
+			
 		} catch (IOException ioe) {
 			System.out.println("Error while creating the zip file " + mediaFileName + ".zip");
 			ioe.printStackTrace();

@@ -28,7 +28,7 @@
 		var timecodes = ${slides};
 		var style = "${sessionScope.style}";
 		var slidesurl = "${slidesurl}";
-		var timing = ${timing}
+		var timing = ${timing};
 	</script>
 
   </head>
@@ -61,21 +61,14 @@
 			
 			<br>
 			
-			<div id="thumbLine">
-			</div>
-			
 			<div id="videoLine">
 			</div>
-
-			<br>
 			
-			<div id="pagination">
-				<a class="leftPagination" href="javascript:previousPage()">&lt;&lt;</a>
-				<div class="rightPagination">
-				<fmt:message key="Page"/> <span id="pageNumber"></span>
-				<a href="javascript:nextPage()">&gt;&gt;</a>
-				| <fmt:message key="diapositive"/> <span id="slideNumber"></span>
-				</div>
+			<a class="leftPagination" href="javascript:previousPage()">&lt;&lt;</a>
+			<div class="rightPagination">
+			<fmt:message key="Page"/> <span id="pageNumber"></span>
+			<a href="javascript:nextPage()">&gt;&gt;</a>
+			| <fmt:message key="diapositive"/> <span id="slideNumber"></span>
 			</div>
 
     	</div>
