@@ -1,6 +1,7 @@
 #!/bin/bash
-# Script qui créé des podcasts MP3 de fichiers RM
-# Prend en argument le répertoire et le nom du fichier à créer
+# Script which creates MP3 podcasts from RM files
+# First argument: the RM folder
+# Second argument: the name of the file to create (without extension)
 
 cd $1
 # Enregistrement intermédiaire en avi

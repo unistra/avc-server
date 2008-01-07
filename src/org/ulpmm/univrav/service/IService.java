@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
@@ -52,6 +53,23 @@ public interface IService {
 	public void completeUnivrCourse(Course c, String courseArchive , String rssFolderPath, 
 			String rssName, String rssTitle, String rssDescription, String serverUrl, 
 			String rssImageUrl, String recordedInterfaceUrl, String language);
+	
+	/**
+	 * Creates a course from an uploaded audio or video media file
+	 * @param c the course to create
+	 * @param mediaFile the media file of the course to create
+	 * @param rssFolderPath the path of the folder to store the RSS files
+	 * @param rssName the filename of the general RSS file
+	 * @param rssTitle the title of the RSS files
+	 * @param rssDescription the description of the RSS files
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image files
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS files
+	 */
+	public void mediaUpload( Course c, FileItem mediaFile , String rssFolderPath, 
+		String rssName, String rssTitle, String rssDescription, String serverUrl, 
+		String rssImageUrl, String recordedInterfaceUrl, String language);
 	
 	/**
 	 * Gets a list of all the courses (non-Univr)

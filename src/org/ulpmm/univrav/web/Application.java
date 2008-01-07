@@ -4,8 +4,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -20,6 +25,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.ulpmm.univrav.dao.DaoException;
 import org.ulpmm.univrav.dao.DatabaseImpl;
 import org.ulpmm.univrav.dao.FileSystemImpl;
@@ -282,8 +293,12 @@ public class Application extends HttpServlet {
 			displayRecordedPage(request, response);
 		else if( page.equals("/search"))
 			displaySearchResults(request, response);
+		else if( page.equals("/upload"))
+			getServletContext().getRequestDispatcher("/WEB-INF/views/uploadpage.jsp").forward(request, response);
 		else if( page.equals("/add") || page.equals("/UploadClient"))
 			addCourse(request, response);
+		else if( page.equals("/mediaupload"))
+			mediaUpload(request, response);
 		else if(page.equals("/livestate") || page.equals("/LiveState"))
 			liveState(request, response);
 		else if( page.equals("/courseaccess")) 
@@ -457,7 +472,7 @@ public class Application extends HttpServlet {
 		/* Saves the page for the style selection thickbox return */
 		session.setAttribute("previousPage", "/home");
 		
-		// affichage de la vue [list]
+		/* Displays the view */
 		getServletContext().getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
 	}
 	
@@ -469,7 +484,7 @@ public class Application extends HttpServlet {
 		/* Saves the page for the style selection thickbox return */
 		session.setAttribute("previousPage", "/live");
 		
-		// affichage de la vue [list] 
+		/* Displays the view */ 
 		getServletContext().getRequestDispatcher("/WEB-INF/views/live.jsp").forward(request, response);
 	}
 	
@@ -500,7 +515,7 @@ public class Application extends HttpServlet {
 		/* Saves the page for the style selection thickbox return */
 		session.setAttribute("previousPage", "/recorded?page=" + pageNumber);
 		
-		// affichage de la vue [list]
+		/* Displays the view */
 		getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
 	}
 	
@@ -583,7 +598,7 @@ public class Application extends HttpServlet {
 			/* Saves the page for the style selection thickbox return */
 			session.setAttribute("previousPage", "/search?page=" + pageNumber);
 			
-			// affichage de la vue [list]
+			/* Displays the view */
 			getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
 		}
 		else { // if the session is not valid anymore
@@ -621,7 +636,7 @@ public class Application extends HttpServlet {
 			
 			String clientIP = request.getRemoteAddr();
 			
-			/* Displays the paramters retrived */
+			/* Displays the parameters retrieved */
 			/*message += "ID : " + id + "<br/>";
 			message += "Title : " + title + "<br/>";
 			message += "Description : " + description + "<br/>";
@@ -685,12 +700,126 @@ public class Application extends HttpServlet {
 		}
 		else {
 			messageType = "error";
-			message = "Erreur: One ore more parameters have not been given";
+			message = "Error: One ore more parameters have not been given";
 		}
 		
 		request.setAttribute("messagetype", messageType);
 		request.setAttribute("message", message);
 		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+	}
+	
+	private void mediaUpload(HttpServletRequest request, HttpServletResponse response)
+		throws ServletException, IOException {
+		
+   		String title, description, name, firstname, date, formation, genre, media;
+   		String message = "";
+		String messageType = "information";
+   		
+   		Calendar cal = new GregorianCalendar();        	
+   	
+   		title = description = name = firstname = date = formation = genre = "";
+
+   		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+   		Date d = new Date();
+   		boolean continuer=true;
+   	
+   		// Teste si la requête est bien une requête d'envoi de fichier
+		if( ServletFileUpload.isMultipartContent(new ServletRequestContext(request)) ) {
+			
+			try {
+				/* Prepares to parse the request to get the different elements of the POST */
+				FileItemFactory factory = new DiskFileItemFactory();
+				ServletFileUpload upload = new ServletFileUpload(factory);
+				List items = upload.parseRequest(request);
+				
+				/* Processes the different elements */
+				Iterator iter = items.iterator();
+				while (iter.hasNext() && continuer) {
+				    FileItem item = (FileItem) iter.next();
+		
+				    /* If the element is a form field */
+				    if (item.isFormField()) {
+				        
+				    	if(item.getFieldName().equals("title"))
+				        	title = item.getString("UTF8");
+				    	if(item.getFieldName().equals("description"))
+				        	description = item.getString("UTF8");
+				        else if(item.getFieldName().equals("name"))
+				        	name = item.getString("UTF8");
+				        else if(item.getFieldName().equals("firstname"))
+				        	firstname = item.getString("UTF8");
+				        else if(item.getFieldName().equals("date")){
+				        	date = item.getString("UTF8");
+				        	try {
+					        	d = sdf.parse(item.getString("UTF8"));
+					        	cal.setTime(d);
+				        	}
+				        	catch( ParseException e) {
+				        		
+				        	}
+				        }
+				        else if(item.getFieldName().equals("formation"))
+				        	formation = item.getString("UTF8");
+				        else if(item.getFieldName().equals("genre")) {
+				        	genre = item.getString("UTF8");
+				        }
+				    	
+				    } /* If the element is a file */
+				    else {
+				    	String fileName = item.getName();
+				    	String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()) : "";
+				    	
+				    	if( extension.equals("mp3") || extension.equals("ogg") || extension.equals("avi") || extension.equals("divx") 
+				    			|| extension.equals("rm") || extension.equals("rv") || extension.equals("mp4") || extension.equals("mpg") 
+				    			|| extension.equals("mpeg") || extension.equals("mov") || extension.equals("wmv") || extension.equals("mkv") ) {
+				    	
+					    	String clientIP = request.getRemoteAddr();
+					    	String timing = "n-1";
+					    	
+					    	Course c = new Course(
+									service.getNextCoursId(),
+									new Timestamp(new Date().getTime()),
+									null, // The type can't be set yet
+									title.equals("") ? null : title,
+									description.equals("") ? null : description,
+									formation.equals("") ? null : formation,
+									name.equals("") ? null : name,
+									(firstname == null || firstname.equals("")) ? null : firstname,
+									clientIP,
+									0, // The duration can't be set yet
+									(genre == null || genre.equals("")) ? null : genre,
+									true,
+									0,
+									timing,
+									null // The media folder can't be set yet
+							);
+							service.mediaUpload(c, item, getServletContext().getRealPath("/rss"), 
+									rssName, rssTitle, rssDescription, serverUrl, 
+									rssImageUrl, recordedInterfaceUrl, language);
+							
+							message = "File successfully sent !";
+				    	}
+				    	else {
+				    		messageType = "error";
+							message = "Error: Not supported file format : " + extension;
+				    	}
+				    }
+				}
+			}
+			catch( FileUploadException fue) {
+				messageType = "error";
+				message = fue.getMessage();
+			}
+		}
+		else {
+			messageType = "error";
+			message = "Error: Incorrect file upload request";
+		}
+		
+		request.setAttribute("messagetype", messageType);
+		request.setAttribute("message", message);
+		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+		
 	}
 	
 	private void liveState(HttpServletRequest request, HttpServletResponse response)
@@ -767,7 +896,7 @@ public class Application extends HttpServlet {
 					else
 						request.setAttribute("timing", 0);
 					
-					// affichage de la vue [list]
+					/* Displays the view */
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_smil.jsp").forward(request, response);
 				}
 				else if( type.equals("flash")) {
@@ -918,7 +1047,8 @@ public class Application extends HttpServlet {
 				request.getParameter("name"),
 				request.getParameter("type"),
 				request.getParameter("ipaddress"),
-				Boolean.parseBoolean(request.getParameter("status"))
+				Boolean.parseBoolean(request.getParameter("status")),
+				request.getParameter("gmapurl").equals("") ? null : request.getParameter("gmapurl")
 			);
 			
 			String oldAmphiip = request.getParameter("oldAmphiip");

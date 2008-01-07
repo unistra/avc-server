@@ -15,6 +15,7 @@ public class Amphi {
 	private String type;
 	private String ipAddress;
 	private boolean status;
+	private String gmapurl;
 	
 	public Amphi(){
 	}
@@ -25,9 +26,10 @@ public class Amphi {
 	 * @param type
 	 * @param ipAddress
 	 * @param status
+	 * @param gmapurl
 	 */
 	public Amphi(int amphiid, int buildingid, String name, String type, String ipAddress,
-			boolean status) {
+			boolean status, String gmapurl) {
 		super();
 		this.amphiid = amphiid;
 		this.buildingid = buildingid;
@@ -35,6 +37,7 @@ public class Amphi {
 		this.type = type;
 		this.ipAddress = ipAddress;
 		this.status = status;
+		this.gmapurl = gmapurl;
 	}
 	
 	/**
@@ -77,6 +80,13 @@ public class Amphi {
 	 */
 	public boolean isStatus() {
 		return status;
+	}
+	
+	/**
+	 * @return the gmapurl
+	 */
+	public String getGmapurl() {
+		return gmapurl;
 	}
 	
 	/**

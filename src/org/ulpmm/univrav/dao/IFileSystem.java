@@ -6,15 +6,24 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.entities.Course;
 
 public interface IFileSystem {
 
 	/**
 	 * Creates a course with all its media files on the file system
+	 * @param c the course to create
 	 * @param courseArchive the name of the archive file of the course to create
 	 */
 	public void addCourse(Course c, String courseArchive);
+	
+	/**
+	 * Creates a course from an uploaded audio or video media file
+	 * @param c the course to create
+	 * @param mediaFile the media file of the course to create
+	 */
+	public void mediaUpload(Course c, FileItem mediaFile);
 	
 	/**
 	 * Reads the timecodes csv file and creates the timecodes list

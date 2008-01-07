@@ -1219,7 +1219,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addAmphi(Amphi a) {
 		Connection cnt = pa.getConnection();
-		String sql = "INSERT INTO amphi(buildingid, name, type, ipaddress, status) values(?,?,?,?,?)";
+		String sql = "INSERT INTO amphi(buildingid, name, type, ipaddress, status, gmapurl) values(?,?,?,?,?,?)";
 
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -1228,6 +1228,10 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setString(3, a.getType());
 			pstmt.setString(4, a.getIpAddress());
 			pstmt.setBoolean(5, false);
+			if( a.getGmapurl() != null)
+				pstmt.setString(6, a.getGmapurl());
+			else
+				pstmt.setNull(6, Types.VARCHAR);
 			
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("The amphi " + a + " has not been added to the database");
@@ -1262,7 +1266,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("name"),
 					rs.getString("type"),
 					rs.getString("ipaddress"),
-					rs.getBoolean("status")
+					rs.getBoolean("status"),
+					rs.getString("gmapurl")
 				));
 			}
 			rs.close();
@@ -1295,7 +1300,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("name"),
 					rs.getString("type"),
 					rs.getString("ipaddress"),
-					rs.getBoolean("status")
+					rs.getBoolean("status"),
+					rs.getString("gmapurl")
 				);
 			}
 		}
@@ -1328,7 +1334,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("name"),
 					rs.getString("type"),
 					rs.getString("ipaddress"),
-					rs.getBoolean("status")
+					rs.getBoolean("status"),
+					rs.getString("gmapurl")
 				);
 			}
 		}
@@ -1351,7 +1358,7 @@ public class DatabaseImpl implements IDatabase {
 		
 		/* Creation of the SQL query string */
 		String sql = "UPDATE amphi SET buildingid = ?, name = ? , type = ?, ";
-		sql += "ipaddress = ?, status = ? WHERE amphiid = ?";
+		sql += "ipaddress = ?, status = ?, gmapurl = ? WHERE amphiid = ?";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -1362,7 +1369,11 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setString(3, a.getType());
 			pstmt.setString(4, a.getIpAddress());
 			pstmt.setBoolean(5, a.isStatus());
-			pstmt.setInt(6, a.getAmphiid());
+			if( a.getGmapurl() != null)
+				pstmt.setString(6, a.getGmapurl());
+			else
+				pstmt.setNull(6, Types.VARCHAR);
+			pstmt.setInt(7, a.getAmphiid());
 			
 			if( pstmt.executeUpdate() == 0 ) {
 				System.out.println("The amphi " + a + " has not been modified");

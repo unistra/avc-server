@@ -54,7 +54,7 @@
 				<display:column title="visible" sortable="true">
 					<input type="checkbox" disabled="disabled" ${courses.visible == true ? 'checked' : '' } />
 				</display:column>
-				<display:column property="consultations" title="views" />
+				<display:column property="consultations" title="views" sortable="true" />
 				<display:column>
 					<a href="<c:url value="${editurl}?id=${courses.courseid}" />">Edit</a>
 				</display:column>

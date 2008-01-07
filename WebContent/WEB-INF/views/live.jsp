@@ -58,13 +58,34 @@
 					    			<c:url var="liveaccess" scope="page" value="./liveaccess">
 										<c:param name="amphi" value="${amphi.ipAddress}"/>
 									</c:url>
+					    			
 					    			<c:choose>
 					    				<c:when test="${amphi.status == true}">
-											<td> <img src="../files/styles/${sessionScope.style}/img/amphi_icon.png" alt="amphi_icon"> <a href="${liveaccess}"> <c:out value="${amphi.name}"/> </a> </td>
+											<td> 
+												<c:choose>
+													<c:when test="${amphi.gmapurl == null}">
+														<img src="../files/styles/${sessionScope.style}/img/amphi_icon.png" alt="amphi_icon">
+													</c:when>
+													<c:otherwise>
+														<a href="<c:url value="${amphi.gmapurl}" />" target="_blank"> <img src="../files/styles/${sessionScope.style}/img/amphi_icon_g.png" alt="Google Maps Url"> </a>
+													</c:otherwise>
+												</c:choose>
+												<a href="${liveaccess}"> <c:out value="${amphi.name}"/> </a> 
+											</td>
 											<td> <img src="../files/styles/${sessionScope.style}/img/chip_direct_on.png" alt="chip_direct_on"><fmt:message key="En cours"/> </td>
 										</c:when>
 										<c:otherwise>
-											<td> <img src="../files/styles/${sessionScope.style}/img/amphi_icon.png" alt="amphi_icon"> <c:out value="${amphi.name}" /> </td>
+											<td> 
+												<c:choose>
+													<c:when test="${amphi.gmapurl == null}">
+														<img src="../files/styles/${sessionScope.style}/img/amphi_icon.png" alt="amphi_icon">
+													</c:when>
+													<c:otherwise>
+														<a href="<c:url value="${amphi.gmapurl}" />" target="_blank"> <img src="../files/styles/${sessionScope.style}/img/amphi_icon_g.png" alt="Google Maps Url"> </a>
+													</c:otherwise>
+												</c:choose>
+												<c:out value="${amphi.name}" /> 
+											</td>
 											<td> <img src="../files/styles/${sessionScope.style}/img/chip_direct.png" alt="chip_direct"><fmt:message key="En attente"/> </td>
 										</c:otherwise>
 					    			</c:choose>

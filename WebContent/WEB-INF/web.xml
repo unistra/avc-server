@@ -64,12 +64,31 @@
 			<role-name>ulpmm</role-name>
 		</auth-constraint>
 	</security-constraint>
+	<security-constraint>
+		<display-name>Univ-R AV media upload restriction</display-name>
+		<!-- List of the protected pages -->
+		<web-resource-collection>
+			<web-resource-name>Media upload</web-resource-name>
+			<url-pattern>/avc/upload</url-pattern>
+			<url-pattern>/avc/mediaupload</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<!-- roles of the authorized users -->
+		<auth-constraint>
+			<role-name>mediaupload</role-name>
+		</auth-constraint>
+	</security-constraint>
 	<!-- authentication type -->
 	<login-config>
 		<auth-method>BASIC</auth-method>
 		<realm-name>Authentification</realm-name>
 	</login-config>
 	<!-- roles used in the application -->
+	<security-role>
+		<description>Univ-R AV media upload</description>
+		<role-name>mediaupload</role-name>
+	</security-role>
 	<security-role>
 		<description>Univ-R AV administrators</description>
 		<role-name>ulpmm</role-name>
