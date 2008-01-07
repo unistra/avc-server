@@ -71,6 +71,10 @@
 				    		<td>Status</td>
 				    		<td><input type="hidden" name="status" value="${amphi.status}">${amphi.status}</td>
 			    		</tr>
+			    		<tr class="odd">
+				    		<td>Google Map</td>
+				    		<td><input type="text" name="gmapurl" value="${amphi.gmapurl}" class="field"></td>
+			    		</tr>
 			    	</table>
 			    	<br>
 			    	<input type="hidden" name="oldAmphiip" value="${amphi.ipAddress}">

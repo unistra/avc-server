@@ -6,3 +6,5 @@
 <a href="<c:url value="./admin_univr" />">Univ-R courses</a>
 &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
 <a href="<c:url value="./admin_buildings" />">Buildings &amp; Amphis</a>
+&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
+<a href="<c:url value="./admin_teachers" />">Teachers</a>

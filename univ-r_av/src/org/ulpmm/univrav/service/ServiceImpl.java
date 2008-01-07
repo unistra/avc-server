@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.dao.IUnivrDao;
@@ -116,6 +117,29 @@ public class ServiceImpl implements IService {
 				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
 				rssImageUrl, recordedInterfaceUrl, language);
 		ucc.start();
+	}
+	
+	/**
+	 * Creates a course from an uploaded audio or video media file
+	 * @param c the course to create
+	 * @param mediaFile the media file of the course to create
+	 * @param rssFolderPath the path of the folder to store the RSS files
+	 * @param rssName the filename of the general RSS file
+	 * @param rssTitle the title of the RSS files
+	 * @param rssDescription the description of the RSS files
+	 * @param serverUrl the URL of the application on the server
+	 * @param rssImageUrl the URL of the RSS image files
+	 * @param recordedInterfaceUrl the URL of the recorded interface
+	 * @param language the language of the RSS files
+	 */
+	public synchronized void mediaUpload( Course c, FileItem mediaFile , String rssFolderPath, 
+		String rssName, String rssTitle, String rssDescription, String serverUrl, 
+		String rssImageUrl, String recordedInterfaceUrl, String language) {
+		
+		MediaUpload mu = new MediaUpload(db, fs, c, mediaFile,
+				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
+				rssImageUrl, recordedInterfaceUrl, language);
+		mu.start();
 	}
 	
 	/**
@@ -486,10 +510,8 @@ public class ServiceImpl implements IService {
 		// For the teacher
 		if( ! (c.getName() == null && c.getFirstname() == null)) {
 			String teacher = db.getTeacherFullName(c.getName(), c.getFirstname());
-			System.out.println(teacher);
 			courses = db.getUnlockedCourses(teacher);
 			rssPath = rssFolderPath + "/" + cleanFileName(teacher) + ".xml";
-			System.out.println(rssPath);
 			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		}
 	}

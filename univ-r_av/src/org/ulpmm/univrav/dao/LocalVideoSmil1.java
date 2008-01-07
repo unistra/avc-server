@@ -5,17 +5,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.ulpmm.univrav.entities.Course;
 
 /**
- * Class to create an audio smil file
+ * Class to create a video smil file
  * @author Laurent Kieffer
  *
  */
-public class AudioSmil2 implements ISmil {
+public class LocalVideoSmil1 implements ISmil {
 
 	private Course c;
 	private String absoluteMediaFolder;
@@ -31,7 +30,7 @@ public class AudioSmil2 implements ISmil {
 	 * @param mediaFolder the media folder name of the course in the file system
 	 * @param mediaFileName the name of all the media files
 	 */
-	public AudioSmil2(Course c, String absoluteMediaFolder, String mediaFolder, String mediaFileName, 
+	public LocalVideoSmil1(Course c, String absoluteMediaFolder, String mediaFolder, String mediaFileName, 
 			String coursesUrl, String comment, ArrayList<String> timecodes) {
 		this.c = c;
 		this.absoluteMediaFolder = absoluteMediaFolder;
@@ -49,7 +48,7 @@ public class AudioSmil2 implements ISmil {
 		
 		try {
 			/* creates the .smil file */
-			File smilFile = new File(absoluteMediaFolder + mediaFileName + ".smil");
+			File smilFile = new File(absoluteMediaFolder + "local_" + mediaFileName + ".smil");
 			smilFile.createNewFile();
 			PrintWriter pw = new PrintWriter( new OutputStreamWriter( new FileOutputStream( smilFile)));
 			
@@ -68,26 +67,27 @@ public class AudioSmil2 implements ISmil {
 			/* Regions definition */
 			pw.println("<layout>");
 			pw.println("<root-layout width=\"970\" height=\"550\" />");
-			pw.println("<region id=\"Bg\" left=\"0\" width=\"970\" height=\"550\" fit=\"meet\" />");
+			//pw.println("<region id=\"Bg\" left=\"0\" width=\"970\" height=\"550\" fit=\"meet\" />");
 			pw.println("<region id=\"Images\" left=\"0\" top=\"0\" bottom=\"0\" right=\"0\" width=\"733\" height=\"550\" fit=\"meet\" />");
 			pw.println("<region id=\"Texte\" left=\"740\" top=\"20\" width=\"220\" height=\"160\" fit=\"meet\" />");
-			pw.println("<region id=\"mp3\" left=\"770\" top=\"260\" width=\"58\" height=\"45\" fit=\"meet\" />");
-			pw.println("<region id=\"ogg\" left=\"770\" top=\"340\" width=\"58\" height=\"45\" fit=\"meet\" />");
-			pw.println("<region id=\"pdf\" left=\"880\" top=\"260\" width=\"58\" height=\"45\" fit=\"meet\" />");
-			pw.println("<region id=\"zip\" left=\"880\" top=\"340\" width=\"58\" height=\"45\" fit=\"meet\" />");
+			pw.println("<region id=\"Video\" left=\"740\" top=\"170\" width=\"220\" height=\"165\" fit=\"meet\"/>");
+			//pw.println("<region id=\"mp3\" left=\"770\" top=\"380\" width=\"58\" height=\"45\" fit=\"meet\" />");
+			//pw.println("<region id=\"ogg\" left=\"770\" top=\"460\" width=\"58\" height=\"45\" fit=\"meet\" />");
+			//pw.println("<region id=\"pdf\" left=\"880\" top=\"380\" width=\"58\" height=\"45\" fit=\"meet\" />");
+			//pw.println("<region id=\"zip\" left=\"880\" top=\"460\" width=\"58\" height=\"45\" fit=\"meet\" />");
 			pw.println("</layout>");
 			pw.println("</head>\n<body>\n<par>");
 			
 			/* Media display */
-			pw.println("<img region=\"Bg\" src=\"" + coursesUrl + "model/bgsmil.jpg\"/>");
-			pw.println("<audio src=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".mp3\"/>");
-			pw.println("<text region=\"Texte\" src=\"" + coursesUrl + mediaFolder + "/description.txt\">");
+			//pw.println("<img region=\"Bg\" src=\"" + coursesUrl + "model/bgsmil.jpg\"/>");
+			pw.println("<a href=\"./" + mediaFileName + ".rm\" external=\"true\"> " +
+					"<video src=\"./" + mediaFileName + ".rm" + "\" region=\"Video\" /> </a>");
+			pw.println("<text region=\"Texte\" src=\"./description.txt\">");
 			pw.println("<param name=\"fontFace\" value=\"Arial\"/>");
 			pw.println("<param name=\"fontColor\" value=\"#ffffff\"/>");
 			pw.println("<param name=\"backgroundColor\" value=\"#999999\"/>");
-			//pw.println("<param name=\"charset\" value=\"utf-8\"/>");
 			pw.println("</text>");
-				
+			
 			int time;
 			/* Determines if the times of the slides must be changed or not */
 			if( c.getTiming().equals("n") ) {
@@ -103,7 +103,7 @@ public class AudioSmil2 implements ISmil {
 			for(int i=0 ; i< timecodes.size() - (time-1)  ; i++){
 				float currentSlide = Float.parseFloat(timecodes.get(i)) ;
 				
-				pw.println("<a href=\""+ coursesUrl + mediaFolder + "/screenshots/D" + (i+time) + ".jpg\"  external=\"true\">" );
+				pw.println("<a href=\"./screenshots/D" + (i+time) + ".jpg\"  external=\"true\">" );
 				pw.print("<img begin=\"" + Math.round(currentSlide) + "\"");
 				
 				/* Doesn't write the length for the last slide */
@@ -112,15 +112,15 @@ public class AudioSmil2 implements ISmil {
 					pw.print(" dur=\"" + (int) Math.ceil(nextSlide - currentSlide) + "\"");
 				}
 				
-				pw.println(" region=\"Images\" src=\"" + coursesUrl + mediaFolder + "/screenshots/D" + (i+time) + ".jpg\"/>");
+				pw.println(" region=\"Images\" src=\"./screenshots/D" + (i+time) + ".jpg\"/>");
 				pw.println("</a>");
 			}
 			
 			/* Downloads links display */
-			pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".mp3\" external=\"true\"> <img region=\"mp3\" src=\"" + coursesUrl + "model/mp3_v2.png\"/> </a>");
-			pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".ogg\" external=\"true\"> <img region=\"ogg\" src=\"" + coursesUrl + "model/ogg_v2.png\"/> </a>");
-			pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".pdf\" external=\"true\"> <img region=\"pdf\" src=\"" + coursesUrl + "model/acrobat.png\"/> </a>");
-			pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".zip\" external=\"true\"> <img region=\"zip\" src=\"" + coursesUrl + "model/winzip3.png\"/> </a>");
+			//pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".mp3\" external=\"true\"> <img region=\"mp3\" src=\"" + coursesUrl + "model/mp3_v2.png\"/> </a>");
+			//pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".ogg\" external=\"true\"> <img region=\"ogg\" src=\"" + coursesUrl + "model/ogg_v2.png\"/> </a>");
+			//pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".pdf\" external=\"true\"> <img region=\"pdf\" src=\"" + coursesUrl + "model/acrobat.png\"/> </a>");
+			//pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".zip\" external=\"true\"> <img region=\"zip\" src=\"" + coursesUrl + "model/winzip3.png\"/> </a>");
 			
 			/* End of the Smil file */
 			pw.println("</par>\n</body>\n</smil>");
@@ -130,7 +130,7 @@ public class AudioSmil2 implements ISmil {
 			File descriptionFile = new File(absoluteMediaFolder + "description.txt");
 			descriptionFile.createNewFile();
 			pw = new PrintWriter( new OutputStreamWriter( new FileOutputStream( descriptionFile), "ISO8859-15"));
-			pw.println("Author: " +  (c.getName() != null ? c.getName() + ( c.getFirstname() != null ? " " + c.getFirstname() : "") : "-"));
+			pw.println("Teacher: " +  (c.getName() != null ? c.getName() + ( c.getFirstname() != null ? " " + c.getFirstname() : "") : "-"));
 			pw.println("Formation: " +  (c.getFormation() != null ? c.getFormation() : "-"));
 			pw.println("Title: " +  (c.getTitle() != null ? c.getTitle() : "-"));
 			pw.println("Subject: " +  (c.getDescription() != null ? c.getDescription() : "-"));
@@ -138,7 +138,6 @@ public class AudioSmil2 implements ISmil {
 			pw.println("Type: " + c.getType());
 			pw.println("Duration: " + c.getDurationString());
 			pw.close();
-			
 		}
 		catch( IOException ioe) {
 			System.out.println("Error while writing the smil file");

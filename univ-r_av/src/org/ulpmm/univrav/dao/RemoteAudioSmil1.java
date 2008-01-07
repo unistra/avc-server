@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import org.ulpmm.univrav.entities.Course;
 
 /**
- * Class to create a video smil file
+ * Class to create an audio smil file
  * @author Laurent Kieffer
  *
  */
-public class VideoSmil2 implements ISmil {
+public class RemoteAudioSmil1 implements ISmil {
 
 	private Course c;
 	private String absoluteMediaFolder;
@@ -30,7 +30,7 @@ public class VideoSmil2 implements ISmil {
 	 * @param mediaFolder the media folder name of the course in the file system
 	 * @param mediaFileName the name of all the media files
 	 */
-	public VideoSmil2(Course c, String absoluteMediaFolder, String mediaFolder, String mediaFileName, 
+	public RemoteAudioSmil1(Course c, String absoluteMediaFolder, String mediaFolder, String mediaFileName, 
 			String coursesUrl, String comment, ArrayList<String> timecodes) {
 		this.c = c;
 		this.absoluteMediaFolder = absoluteMediaFolder;
@@ -70,25 +70,23 @@ public class VideoSmil2 implements ISmil {
 			pw.println("<region id=\"Bg\" left=\"0\" width=\"970\" height=\"550\" fit=\"meet\" />");
 			pw.println("<region id=\"Images\" left=\"0\" top=\"0\" bottom=\"0\" right=\"0\" width=\"733\" height=\"550\" fit=\"meet\" />");
 			pw.println("<region id=\"Texte\" left=\"740\" top=\"20\" width=\"220\" height=\"160\" fit=\"meet\" />");
-			pw.println("<region id=\"Video\" left=\"740\" top=\"170\" width=\"220\" height=\"165\" fit=\"meet\"/>");
-			pw.println("<region id=\"mp3\" left=\"770\" top=\"380\" width=\"58\" height=\"45\" fit=\"meet\" />");
-			pw.println("<region id=\"ogg\" left=\"770\" top=\"460\" width=\"58\" height=\"45\" fit=\"meet\" />");
-			pw.println("<region id=\"pdf\" left=\"880\" top=\"380\" width=\"58\" height=\"45\" fit=\"meet\" />");
-			pw.println("<region id=\"zip\" left=\"880\" top=\"460\" width=\"58\" height=\"45\" fit=\"meet\" />");
+			pw.println("<region id=\"mp3\" left=\"770\" top=\"260\" width=\"58\" height=\"45\" fit=\"meet\" />");
+			pw.println("<region id=\"ogg\" left=\"770\" top=\"340\" width=\"58\" height=\"45\" fit=\"meet\" />");
+			pw.println("<region id=\"pdf\" left=\"880\" top=\"260\" width=\"58\" height=\"45\" fit=\"meet\" />");
+			pw.println("<region id=\"zip\" left=\"880\" top=\"340\" width=\"58\" height=\"45\" fit=\"meet\" />");
 			pw.println("</layout>");
 			pw.println("</head>\n<body>\n<par>");
 			
 			/* Media display */
 			pw.println("<img region=\"Bg\" src=\"" + coursesUrl + "model/bgsmil.jpg\"/>");
-			pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".rm\" external=\"true\"> " +
-					"<video src=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".rm" + "\" region=\"Video\" /> </a>");
+			pw.println("<audio src=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".mp3\"/>");
 			pw.println("<text region=\"Texte\" src=\"" + coursesUrl + mediaFolder + "/description.txt\">");
 			pw.println("<param name=\"fontFace\" value=\"Arial\"/>");
 			pw.println("<param name=\"fontColor\" value=\"#ffffff\"/>");
 			pw.println("<param name=\"backgroundColor\" value=\"#999999\"/>");
 			//pw.println("<param name=\"charset\" value=\"utf-8\"/>");
 			pw.println("</text>");
-			
+				
 			int time;
 			/* Determines if the times of the slides must be changed or not */
 			if( c.getTiming().equals("n") ) {
@@ -131,7 +129,7 @@ public class VideoSmil2 implements ISmil {
 			File descriptionFile = new File(absoluteMediaFolder + "description.txt");
 			descriptionFile.createNewFile();
 			pw = new PrintWriter( new OutputStreamWriter( new FileOutputStream( descriptionFile), "ISO8859-15"));
-			pw.println("Teacher: " +  (c.getName() != null ? c.getName() + ( c.getFirstname() != null ? " " + c.getFirstname() : "") : "-"));
+			pw.println("Author: " +  (c.getName() != null ? c.getName() + ( c.getFirstname() != null ? " " + c.getFirstname() : "") : "-"));
 			pw.println("Formation: " +  (c.getFormation() != null ? c.getFormation() : "-"));
 			pw.println("Title: " +  (c.getTitle() != null ? c.getTitle() : "-"));
 			pw.println("Subject: " +  (c.getDescription() != null ? c.getDescription() : "-"));
@@ -139,6 +137,7 @@ public class VideoSmil2 implements ISmil {
 			pw.println("Type: " + c.getType());
 			pw.println("Duration: " + c.getDurationString());
 			pw.close();
+			
 		}
 		catch( IOException ioe) {
 			System.out.println("Error while writing the smil file");
