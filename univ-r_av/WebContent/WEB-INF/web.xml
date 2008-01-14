@@ -56,6 +56,8 @@
 			<url-pattern>/avc/admin_editunivr</url-pattern>
 			<url-pattern>/avc/admin_deleteunivr</url-pattern>
 			<url-pattern>/avc/admin_validateunivr</url-pattern>
+			<url-pattern>/avc/admin_teachers</url-pattern>
+			<url-pattern>/avc/admin_stats</url-pattern>
 			<http-method>GET</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>

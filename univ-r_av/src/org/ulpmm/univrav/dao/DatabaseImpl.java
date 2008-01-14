@@ -18,6 +18,7 @@ import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 
 public class DatabaseImpl implements IDatabase {
@@ -855,7 +856,7 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
-	 * Gets the list of all the teachers
+	 * Gets the list of the teachers with visible courses
 	 * @return the list of teachers
 	 */
 	public List<String> getTeachers() {
@@ -866,6 +867,36 @@ public class DatabaseImpl implements IDatabase {
 		try {
 			while( rs.next() ) {
 				l.add(rs.getString("fullname"));
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the teachers list");
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		
+		return l;
+	}
+	
+	/**
+	 * Gets the list of all the teachers
+	 * @return the list of teachers
+	 */
+	public List<Teacher> getAllTeachers() {
+		List<Teacher> l = new ArrayList<Teacher>();
+		
+		pa.connect();
+		ResultSet rs = pa.query("SELECT INITCAP(name) AS ic_name, INITCAP(firstname) AS ic_firstname, count(*) FROM course " +
+				"WHERE NOT (name IS NULL AND firstname IS NULL) GROUP BY ic_name, ic_firstname ORDER BY ic_name");
+		
+		try {			
+			while( rs.next() ) {
+				l.add( 
+					new Teacher(
+						rs.getString("ic_name"),
+						rs.getString("ic_firstname"),
+						rs.getInt("count"))
+				);
 			}
 		}
 		catch( SQLException sqle) {
@@ -1252,7 +1283,11 @@ public class DatabaseImpl implements IDatabase {
 	public List<Amphi> getAmphis(int buildingId) {
 		Connection cnt = pa.getConnection();
 		List<Amphi> l = new ArrayList<Amphi>();
-		String sql = "SELECT * FROM amphi WHERE buildingid = ? ORDER BY amphiid";
+		String sql = "SELECT amphi.*, count(course.ipaddress) FROM amphi LEFT OUTER JOIN course " +
+				"ON amphi.ipaddress = course.ipaddress " +
+				"WHERE amphi.buildingid = ? " +
+				"GROUP BY amphi.amphiid, amphi.buildingid, amphi.name, amphi.type, amphi.ipaddress, amphi.status, amphi.gmapurl " +
+				"ORDER BY amphi.amphiid";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -1260,7 +1295,7 @@ public class DatabaseImpl implements IDatabase {
 			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
-				l.add(new Amphi(
+				Amphi a = new Amphi(
 					rs.getInt("amphiid"),
 					rs.getInt("buildingid"),
 					rs.getString("name"),
@@ -1268,7 +1303,9 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("ipaddress"),
 					rs.getBoolean("status"),
 					rs.getString("gmapurl")
-				));
+				);
+				a.setNumber(rs.getInt("count"));
+				l.add(a);
 			}
 			rs.close();
 		}

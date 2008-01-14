@@ -514,6 +514,36 @@ public class FileSystemImpl implements IFileSystem {
 	}
 	
 	/**
+	 * Retrieves information about used and free disk space on the server
+	 * @return the string containing the info
+	 */
+	public String getDiskSpaceInfo() {
+		
+		String result = "";
+		
+		try {
+			/* Execution of the df program */
+			Process p = r.exec("df -m");
+			if( p.waitFor() != 0) {
+				System.out.println("Error while getting disk space info");
+				throw new DaoException("Error while getting disk space info");
+			}
+			
+			InputStream is = p.getInputStream();
+			BufferedReader entree = new BufferedReader(new InputStreamReader(is));
+			String text="";
+			while( (text = entree.readLine()) != null )
+				result+= "\n" + text ;
+		}
+		catch( Exception e ) {
+			System.out.println("Error while getting disk space info");
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	/**
 	 * Extracts the course archive file to the courses folder and renames it
 	 * @param c the course corresponding to the archive
 	 * @param courseArchive the course archive file

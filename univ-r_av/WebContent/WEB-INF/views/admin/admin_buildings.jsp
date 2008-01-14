@@ -43,7 +43,7 @@
 	    	
 	    	<display:table id="buildings" name="buildings" requestURI="./admin_buildings" class="displaytag">
 	    		<display:column property="buildingid" sortable="true"/>
-	    		<display:column property="name" sortable="true" />
+	    		<display:column property="name" title="Name" sortable="true" />
 				<display:column property="imageFile" />
 				<display:column>
 					<a href="<c:url value="./admin_editbuilding?id=${buildings.buildingid}" />">Edit</a>

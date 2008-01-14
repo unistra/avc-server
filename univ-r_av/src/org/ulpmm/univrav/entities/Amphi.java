@@ -16,6 +16,7 @@ public class Amphi {
 	private String ipAddress;
 	private boolean status;
 	private String gmapurl;
+	private int number; // number of courses for this amphi
 	
 	public Amphi(){
 	}
@@ -94,5 +95,19 @@ public class Amphi {
 	 */
 	public String toString() {
 		return this.name;
+	}
+
+	/**
+	 * @return the number
+	 */
+	public int getNumber() {
+		return number;
+	}
+
+	/**
+	 * @param number the number to set
+	 */
+	public void setNumber(int number) {
+		this.number = number;
 	}
 }

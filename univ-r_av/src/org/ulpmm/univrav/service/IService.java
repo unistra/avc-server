@@ -9,6 +9,7 @@ import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 
 public interface IService {
@@ -168,10 +169,16 @@ public interface IService {
 	public int getNextCoursId();
 	
 	/**
-	 * Gets the list of all the teachers
+	 * Gets the list of the teachers with visible courses
 	 * @return the list of teachers
 	 */
 	public List<String> getTeachers();
+	
+	/**
+	 * Gets the list of all the teachers
+	 * @return the list of teachers
+	 */
+	public List<Teacher> getAllTeachers();
 	
 	/**
 	 * Gets the list of all the formations
@@ -349,6 +356,12 @@ public interface IService {
 	 * @return the answer of the client
 	 */
 	public String sendMessageToClient(String message, String ip, int port);
+	
+	/**
+	 * Retrieves information about used and free disk space on the server
+	 * @return the string containing the info
+	 */
+	public String getDiskSpaceInfo();
 	
 	/**
 	 * Verifies if a user is logged on Univ-R

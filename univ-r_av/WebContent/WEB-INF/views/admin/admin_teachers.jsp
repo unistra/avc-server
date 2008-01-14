@@ -1,5 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 
@@ -25,7 +26,6 @@
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
-	<script type="text/javascript" src="../files/js/confirmation.js"></script>
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
 
@@ -41,28 +41,14 @@
 		    	<c:import url="./links.jsp" />
 	    	</div>
 	    	
-	    	<c:out value="${buildingName}" />
-	    	<br>
-	    	
-	    	<display:table id="amphis" name="amphis" requestURI="./admin_amphis" class="displaytag">
-	    		<display:column property="amphiid" sortable="true"/>
-	    		<display:column property="buildingid" />
-				<display:column property="name" title="Name" sortable="true" />
-				<display:column property="type" sortable="true" />
-				<display:column property="ipAddress" sortable="true" />
-				<display:column property="number" title="Courses" sortable="true" />
-				<display:column title="status">
-					<input type="checkbox" disabled="disabled" ${amphi.status == true ? 'checked' : '' } />
-				</display:column>
-				<display:column>
-					<a href="<c:url value="./admin_editamphi?id=${amphis.amphiid}&buildingId=${buildingId}" />">Edit</a>
-				</display:column>
-				<display:column>
-					<a href="javascript:confirmation('Delete the amphi ?','./admin_deleteamphi?id=${amphis.amphiid}&buildingId=${buildingId}')">Delete</a>
-				</display:column>
+	    	<display:table id="teachers" name="teachers" requestURI="${viewurl}" class="displaytag">
+	    		<display:column property="name" title="Name" sortable="true"/>
+	    		<display:column property="firstname" title="First Name" sortable="true"/>
+	    		<display:column property="number" title="Courses" sortable="true"/>
 	    	</display:table>
+	    	
 	    	<br>
-	    	<a href="<c:url value="./admin_addamphi?buildingId=${buildingId}" />">Add</a>		
+	    	<p>${number} teachers</p>
 	    </div>
 	    	
 	    <div class="footer">
