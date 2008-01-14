@@ -13,6 +13,7 @@ import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 
 public class ServiceImpl implements IService {
@@ -272,11 +273,19 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
-	 * Gets the list of all the teachers
+	 * Gets the list of the teachers with visible courses
 	 * @return the list of teachers
 	 */
 	public List<String> getTeachers() {
 		return db.getTeachers();
+	}
+	
+	/**
+	 * Gets the list of all the teachers
+	 * @return the list of teachers
+	 */
+	public List<Teacher> getAllTeachers() {
+		return db.getAllTeachers();
 	}
 	
 	/**
@@ -544,6 +553,14 @@ public class ServiceImpl implements IService {
 	 */
 	public String sendMessageToClient(String message, String ip, int port) {
 		return fs.sendMessageToClient(message, ip, port);
+	}
+	
+	/**
+	 * Retrieves information about used and free disk space on the server
+	 * @return the string containing the info
+	 */
+	public String getDiskSpaceInfo() {
+		return fs.getDiskSpaceInfo();
 	}
 	
 	/**

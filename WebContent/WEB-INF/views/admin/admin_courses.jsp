@@ -61,7 +61,10 @@
 				<display:column>
 					<a href="javascript:confirmation('Delete the course ?','${deleteurl}?id=${courses.courseid}')">Delete</a>
 				</display:column>
-	    	</display:table>   	
+	    	</display:table>
+	    	
+	    	<br>
+	    	<p>${number} courses</p>
 	    </div>
 	    	
 	    <div class="footer">

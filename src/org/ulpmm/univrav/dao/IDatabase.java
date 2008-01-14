@@ -7,6 +7,7 @@ import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 
 public interface IDatabase {
@@ -139,10 +140,16 @@ public interface IDatabase {
 	public int getNextCoursId();
 	
 	/**
-	 * Gets the list of all the teachers
+	 * Gets the list of the teachers with visible courses
 	 * @return the list of teachers
 	 */
 	public List<String> getTeachers();
+	
+	/**
+	 * Gets the list of all the teachers
+	 * @return the list of teachers
+	 */
+	public List<Teacher> getAllTeachers();
 	
 	/**
 	 * Gets the full name of a teacher with the correct case

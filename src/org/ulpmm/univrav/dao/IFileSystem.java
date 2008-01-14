@@ -98,4 +98,10 @@ public interface IFileSystem {
 	 */
 	public String sendMessageToClient(String message, String ip, int port);
 	
+	/**
+	 * Retrieves information about used and free disk space on the server
+	 * @return the string containing the info
+	 */
+	public String getDiskSpaceInfo();
+	
 }
