@@ -102,6 +102,13 @@ public interface IDatabase {
 	public int getCourseNumber(HashMap<String, String> params);
 	
 	/**
+	 * Gets a Univr course by providing its id
+	 * @param courseId the id of the Univr course
+	 * @return the Univr object
+	 */
+	public Univr getUnivr(int courseId);
+	
+	/**
 	 * Modifies a course
 	 * @param c the course to modify
 	 */

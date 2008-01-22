@@ -99,7 +99,8 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Completes a Univr course
-	 * @param c the Univr course to complete
+	 * @param c the course to complete
+	 * @param u the Univr course to complete
 	 * @param courseArchive the archive file of the course to complete
 	 * @param rssFolderPath the path of the folder to store the RSS files
 	 * @param rssName the filename of the general RSS file
@@ -110,11 +111,11 @@ public class ServiceImpl implements IService {
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
 	 */
-	public synchronized void completeUnivrCourse(Course c, String courseArchive , String rssFolderPath, 
+	public synchronized void completeUnivrCourse(Course c, Univr u, String courseArchive , String rssFolderPath, 
 			String rssName, String rssTitle, String rssDescription, String serverUrl, 
 			String rssImageUrl, String recordedInterfaceUrl, String language) {
 		
-		UnivrCourseCompletion ucc = new UnivrCourseCompletion(db, fs, c, courseArchive,
+		UnivrCourseCompletion ucc = new UnivrCourseCompletion(db, fs, ud, c, u, courseArchive,
 				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
 				rssImageUrl, recordedInterfaceUrl, language);
 		ucc.start();
@@ -223,6 +224,15 @@ public class ServiceImpl implements IService {
 	 */
 	public int getCourseNumber(HashMap<String, String> params) {
 		return db.getCourseNumber(params);
+	}
+	
+	/**
+	 * Gets a Univr course by providing its id
+	 * @param courseId the id of the Univr course
+	 * @return the Univr object
+	 */
+	public Univr getUnivr(int courseId) {
+		return db.getUnivr(courseId);
 	}
 	
 	/**
