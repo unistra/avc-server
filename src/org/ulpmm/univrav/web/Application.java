@@ -34,6 +34,7 @@ import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.ulpmm.univrav.dao.DaoException;
 import org.ulpmm.univrav.dao.DatabaseImpl;
 import org.ulpmm.univrav.dao.FileSystemImpl;
+import org.ulpmm.univrav.dao.UnivrDaoImpl;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
@@ -199,6 +200,7 @@ public class Application extends HttpServlet {
 					defaultMp3File, defaultRmFile, defaultSmilFile, 
 					defaultFlashFile, defaultScreenshotsFolder, comment
 			);
+			UnivrDaoImpl ud = new UnivrDaoImpl();
 			
 			/* Gets an instance of the service layer */
 			service = new ServiceImpl();
@@ -206,6 +208,7 @@ public class Application extends HttpServlet {
 			/* Links the data access layer to the service layer */
 			service.setDb(db);
 			service.setFs(fs);
+			service.setUd(ud);
 			
 			/* Creation of the RSS files */
 			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
@@ -707,11 +710,13 @@ public class Application extends HttpServlet {
 							rssImageUrl, recordedInterfaceUrl, language);
 				}
 				else { // Univ-R course
-					c = service.getCourse(Integer.parseInt(id));
+					int courseid = Integer.parseInt(id);
+					c = service.getCourse(courseid);
+					Univr u = service.getUnivr(courseid);
 					c.setDate(new Timestamp(new Date().getTime()));
 					c.setVisible(true);
 					c.setTiming(timing);
-					service.completeUnivrCourse(c, media, getServletContext().getRealPath("/rss"), 
+					service.completeUnivrCourse(c, u, media, getServletContext().getRealPath("/rss"), 
 							rssName, rssTitle, rssDescription, serverUrl, 
 							rssImageUrl, recordedInterfaceUrl, language);
 				}
@@ -1292,6 +1297,13 @@ public class Application extends HttpServlet {
 			catch( NumberFormatException nfe) {
 				nfe.printStackTrace();
 				message = "Erreur: paramètres incorrects (valeurs numériques attendues)";
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", message);
+				forwardUrl = "/WEB-INF/views/message.jsp";
+			}
+			catch( DaoException de) {
+				de.printStackTrace();
+				message = "Erreur: cours " + id + " inconnu";
 				request.setAttribute("messagetype", "error");
 				request.setAttribute("message", message);
 				forwardUrl = "/WEB-INF/views/message.jsp";

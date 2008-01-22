@@ -4,14 +4,18 @@ import java.util.ArrayList;
 
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
+import org.ulpmm.univrav.dao.IUnivrDao;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Univr;
 
 public class UnivrCourseCompletion extends Thread {
 	
 	private IDatabase db;
 	private IFileSystem fs;
+	private IUnivrDao ud;
 	private Course c;
+	private Univr u;
 	private String courseArchive;
 	private IService service;
 	private String rssName;
@@ -29,7 +33,7 @@ public class UnivrCourseCompletion extends Thread {
 	 * @param c
 	 * @param courseArchive
 	 */
-	public UnivrCourseCompletion(IDatabase db, IFileSystem fs, Course c, String courseArchive, 
+	public UnivrCourseCompletion(IDatabase db, IFileSystem fs, IUnivrDao ud, Course c, Univr u, String courseArchive, 
 			IService service, String rssFolderPath, String rssName, String rssTitle, 
 			String rssDescription, String serverUrl, String rssImageUrl, 
 			String recordedInterfaceUrl, String language) {
@@ -37,7 +41,9 @@ public class UnivrCourseCompletion extends Thread {
 		super();
 		this.db = db;
 		this.fs = fs;
+		this.ud = ud;
 		this.c = c;
+		this.u = u;
 		this.courseArchive = courseArchive;
 		this.service = service;
 		this.rssFolderPath = rssFolderPath;
@@ -71,6 +77,8 @@ public class UnivrCourseCompletion extends Thread {
 		
 		for( int i = 0 ; i< list.size() - (time-1) ; i++)
 			db.addSlide(new Slide(c.getCourseid(),(int) Float.parseFloat(list.get(i))));
+		
+		ud.publishCourse(u.getCourseid(), u.getGroupCode());
 		
 		/* Generation of the RSS files */
 		if( c.getGenre() == null)

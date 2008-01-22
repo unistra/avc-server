@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: *.zip$
+Disallow: *.zip
+Disallow: *.mp3
+Disallow: *.ogg
+Disallow: *.pdf
+Disallow: *.rm

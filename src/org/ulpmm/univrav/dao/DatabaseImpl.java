@@ -654,6 +654,39 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
+	 * Gets a Univr course by providing its id
+	 * @param courseId the id of the Univr course
+	 * @return the Univr object
+	 */
+	public Univr getUnivr(int courseId) {
+		Univr u = null;
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * FROM univr WHERE courseid = ?";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, courseId);
+			ResultSet rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				u = new Univr(
+					rs.getInt("courseid"),
+					rs.getInt("uid"),
+					rs.getInt("groupcode")
+				);
+			}
+			else
+				throw new DaoException("Univr course " + courseId + " not found");
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the Univr course " + courseId);
+			sqle.printStackTrace();
+		}
+		pa.disconnect();
+		
+		return u;
+	}
+	
+	/**
 	 * Modifies a course
 	 * @param c the course to modify
 	 */
