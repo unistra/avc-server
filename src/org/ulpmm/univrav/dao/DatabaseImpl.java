@@ -97,7 +97,6 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The course " + c + " has not been added to the database");
 				throw new DaoException("The course " + c + " has not been added to the database");
 			}
-			pa.disconnect();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new Course " + c);
@@ -123,7 +122,6 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The Univr course " + u + " has not been added to the database");
 				throw new DaoException("The Univr course " + u + " has not been added to the database");
 			}
-			pa.disconnect();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new Univr course " + u);
@@ -136,7 +134,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getAllCourses() {
-		pa.connect();
+		
 		ResultSet rs = pa.query("SELECT * From course WHERE courseid NOT IN " +
 				"( SELECT courseid FROM univr ) ORDER BY date DESC");
 		List<Course> l = new ArrayList<Course>();
@@ -166,7 +164,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the courses list");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
+		
 		return l;
 	}
 	
@@ -175,7 +173,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the list of Univ-R courses
 	 */
 	public List<Course> getUnivrCourses() {
-		pa.connect();
+		
 		ResultSet rs = pa.query("SELECT * From course WHERE courseid IN " +
 				"( SELECT courseid FROM univr ) ORDER BY date DESC");
 		List<Course> l = new ArrayList<Course>();
@@ -205,7 +203,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the courses list");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
+		
 		return l;
 	}
 	
@@ -214,7 +212,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getAllUnlockedCourses() {
-		pa.connect();
+		
 		ResultSet rs = pa.query("SELECT * From course WHERE genre IS NULL AND visible = true ORDER BY date DESC");
 		List<Course> l = new ArrayList<Course>();
 		try {
@@ -243,7 +241,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the courses list");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
+
 		return l;
 	}
 	
@@ -253,7 +251,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getNLastCourses(int n) {
-		pa.connect();
+		
 		ResultSet rs = pa.query("SELECT * From course WHERE genre IS NULL AND visible = true ORDER BY date DESC, courseid DESC LIMIT " + n);
 		List<Course> l = new ArrayList<Course>();
 		try {
@@ -282,7 +280,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the courses list");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
+		
 		return l;
 	}
 	
@@ -293,7 +291,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getCourses(int number, int start) {
-		pa.connect();
+		
 		ResultSet rs = pa.query("SELECT * From course WHERE visible = true ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start);
 		List<Course> l = new ArrayList<Course>();
 		try {
@@ -322,7 +320,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the courses list");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
+		
 		return l;
 	}
 	
@@ -410,7 +408,6 @@ public class DatabaseImpl implements IDatabase {
 				sqle.printStackTrace();
 			}
 			
-			pa.disconnect();
 		}
 		else
 			l = getCourses(number, start);
@@ -465,8 +462,6 @@ public class DatabaseImpl implements IDatabase {
 			sqle.printStackTrace();
 		}
 		
-		pa.disconnect();
-		
 		return l;
 	}
 	
@@ -510,7 +505,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the course " + courseId);
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 		
 		return c;
 	}
@@ -556,7 +550,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the course " + courseId);
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 		
 		return c;
 	}
@@ -568,7 +561,7 @@ public class DatabaseImpl implements IDatabase {
 	public int getCourseNumber() {
 		int number = 0;
 		String sql = "SELECT COUNT(*) FROM course WHERE visible = true";
-		pa.connect();
+		
 		try {
 			ResultSet rs = pa.query(sql);
 			
@@ -580,7 +573,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the course number");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
+
 		return number;
 	}
 	
@@ -645,7 +638,6 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("Error while retrieving the buildings list");
 				sqle.printStackTrace();
 			}
-			pa.disconnect();
 		}
 		else
 			number = getCourseNumber();
@@ -681,7 +673,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the Univr course " + courseId);
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 		
 		return u;
 	}
@@ -768,7 +759,6 @@ public class DatabaseImpl implements IDatabase {
 			sqle.printStackTrace();
 		}
 		
-		pa.disconnect();
 	}
 	
 	/**
@@ -790,7 +780,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while deleting the course " + courseId);
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 	}
 	
 	/**
@@ -799,7 +788,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @param testKeyWord the key word which identifies a test
 	 */
 	public List<String> getTestsMediaFolders(String testKeyWord) {
-		pa.connect();
+		
 		ResultSet rs = pa.query("SELECT mediafolder FROM course WHERE initcap(genre) = '" + testKeyWord + "'");
 		List<String> l = new ArrayList<String>();
 		try {
@@ -812,7 +801,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the media folders list");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
+		
 		return l;
 	}
 	
@@ -832,7 +821,6 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("Error while deleting the tests");
 				sqle.printStackTrace();
 			}
-			pa.disconnect();
 		}
 	}
 	
@@ -858,7 +846,6 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("Error while hiding the tests");
 				sqle.printStackTrace();
 			}
-			pa.disconnect();
 		}
 	}
 	
@@ -869,7 +856,6 @@ public class DatabaseImpl implements IDatabase {
 	public int getNextCoursId() {
 		int id = 0 ;
 		
-		pa.connect();
 		ResultSet rs = pa.query("SELECT nextval('course_courseid_seq')");
 		try {
 			if( rs.next() ) 
@@ -883,7 +869,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the next course Id");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 		
 		return id;
 	}
@@ -895,7 +880,6 @@ public class DatabaseImpl implements IDatabase {
 	public List<String> getTeachers() {
 		List<String> l = new ArrayList<String>();
 		
-		pa.connect();
 		ResultSet rs = pa.query("SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE visible = true AND NOT (name IS NULL AND firstname IS NULL)");
 		try {
 			while( rs.next() ) {
@@ -906,7 +890,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the teachers list");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 		
 		return l;
 	}
@@ -918,7 +901,6 @@ public class DatabaseImpl implements IDatabase {
 	public List<Teacher> getAllTeachers() {
 		List<Teacher> l = new ArrayList<Teacher>();
 		
-		pa.connect();
 		ResultSet rs = pa.query("SELECT INITCAP(name) AS ic_name, INITCAP(firstname) AS ic_firstname, count(*) FROM course " +
 				"WHERE NOT (name IS NULL AND firstname IS NULL) GROUP BY ic_name, ic_firstname ORDER BY ic_name");
 		
@@ -936,7 +918,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the teachers list");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 		
 		return l;
 	}
@@ -976,7 +957,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the teacher full name");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
+		
 		return fullname;
 	}
 	
@@ -987,7 +968,6 @@ public class DatabaseImpl implements IDatabase {
 	public List<String> getTeachersWithRss() {
 		List<String> l = new ArrayList<String>();
 		
-		pa.connect();
 		ResultSet rs = pa.query("SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE genre IS NULL AND title IS NOT NULL AND visible = true AND NOT (name IS NULL AND firstname IS NULL)");
 		try {
 			while( rs.next() ) {
@@ -998,7 +978,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the teachers list");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 		
 		return l;
 	}
@@ -1009,8 +988,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<String> getFormations() {
 		List<String> l = new ArrayList<String>();
-		
-		pa.connect();
+
 		ResultSet rs = pa.query("SELECT DISTINCT formation from course WHERE visible = true AND formation IS NOT NULL");
 		try {
 			while( rs.next() ) {
@@ -1021,7 +999,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the formations list");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 		
 		return l;
 	}
@@ -1044,7 +1021,6 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The consultations have not been incremented");
 				throw new DaoException("The consultations have not been incremented");
 			}
-			pa.disconnect();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while incrementing the consultations");
@@ -1068,7 +1044,6 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The slide has not been added");
 				throw new DaoException("The slide has not been added");
 			}
-			pa.disconnect();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the Slide");
@@ -1103,7 +1078,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the slides list");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
+
 		return l;
 	}
 	
@@ -1124,7 +1099,6 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The building " + b + " has not been added to the database");
 				throw new DaoException("The building " + b + " has not been added to the database");
 			}
-			pa.disconnect();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new Building " + b);
@@ -1137,7 +1111,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the list of buildings
 	 */
 	public List<Building> getBuildings() {
-		pa.connect();
+		
 		List<Building> l = new ArrayList<Building>();
 		String sql = "SELECT * FROM building ORDER BY buildingid";
 		
@@ -1159,7 +1133,7 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the buildings list");
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
+		
 		return l;
 	}
 	
@@ -1191,7 +1165,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the building " + buildingId);
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 		
 		return b;
 	}
@@ -1218,7 +1191,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the building of amphi " + amphiIp);
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 		
 		return name;
 	}
@@ -1252,7 +1224,6 @@ public class DatabaseImpl implements IDatabase {
 			sqle.printStackTrace();
 		}
 		
-		pa.disconnect();
 	}
 	
 	/**
@@ -1274,7 +1245,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while deleting the course " + buildingId);
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 	}
 	
 	/**
@@ -1301,7 +1271,6 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The amphi " + a + " has not been added to the database");
 				throw new DaoException("The amphi " + a + " has not been added to the database");
 			}
-			pa.disconnect();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new amphi " + a);
@@ -1379,7 +1348,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the amphi " + amphiId);
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 		
 		return a;
 	}	
@@ -1413,7 +1381,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while retrieving the amphi " + ip);
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 		
 		return a;
 	}
@@ -1461,8 +1428,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while modifying the amphi " + a);
 			sqle.printStackTrace();
 		}
-		
-		pa.disconnect();
 	}
 
 	/**
@@ -1484,7 +1449,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while deleting the amphi " + amphiId);
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 	}
 	
 	/**
@@ -1509,7 +1473,6 @@ public class DatabaseImpl implements IDatabase {
 			System.out.println("Error while updating the status of the amphi " + ip);
 			sqle.printStackTrace();
 		}
-		pa.disconnect();
 	}
 	
 }

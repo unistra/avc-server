@@ -625,7 +625,7 @@ public class ServiceImpl implements IService {
 	 * @param string the string to clean
 	 * @return the cleaned string
 	 */
-	public static String cleanString(String string) {
+	public String cleanString(String string) {
 		final String carSpeTotal = "&><\"%#+";
 		
 		String res = "";
@@ -652,7 +652,7 @@ public class ServiceImpl implements IService {
 	 * @param string the string to clean
 	 * @return the cleaned string
 	 */
-	public static String cleanFileName(String string){
+	public String cleanFileName(String string){
 		
 		String res="";
 		

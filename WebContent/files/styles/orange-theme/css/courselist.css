@@ -12,7 +12,7 @@ th, td {
 }
 
 th {
-	padding-left: 25px;
+	padding-left: 15px;
 	font-size: 12px;
 }
 
@@ -22,7 +22,7 @@ th#courses {
 }
 
 td {
-	padding-left: 15px;
+	padding-left: 5px;
 	font-size: 11px;
 	border-width: 0px;
 }

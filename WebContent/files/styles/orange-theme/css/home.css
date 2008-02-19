@@ -18,9 +18,17 @@
 	color: #FFFFFF;
 }
 
+/* Zone to display a temporary message */
+.message {
+	height: 36px;
+	margin: 8px;
+	text-align: center;
+	overflow: hidden;
+	color: #ff0000;
+}
+
 /* Line containing the links images div */
 .links {
-	margin-top: 50px;
 	width: 940px;
 	height: 139px;
 }

@@ -47,13 +47,16 @@ import org.ulpmm.univrav.service.ServiceImpl;
 public class Application extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
+	
+	// Instance of the service layer
 	private ServiceImpl service;
+	
+	// Used to managed user sessions
 	private HttpSession session;
 	
-	/**
-	 *  The name of the bundle to search the corresponding language properties files
-	 */
+	// The name of the bundle to search the corresponding language properties files
 	private static final String BUNDLE_NAME = "org.ulpmm.univrav.language.messages"; 
+	
 	
 	/* Configuration parameters */
 	
@@ -120,10 +123,15 @@ public class Application extends HttpServlet {
 		
 		System.out.println("Univ-R AV : init method called");
 		
+		/* Gets an instance of the service layer */	
+		service = new ServiceImpl();
+		
 		Properties p = new Properties();
+		
 		try {
 			
 			/* configuration parameters loading */
+			
 			p.load(new FileInputStream(getServletContext().getRealPath("/conf") + "/univrav.properties"));
 			
 			// The Url to access to the course on internet
@@ -146,7 +154,7 @@ public class Application extends HttpServlet {
 			defaultScreenshotsFolder = p.getProperty("defaultScreenshotsFolder");
 			
 			// Copyright comment
-			comment = ServiceImpl.cleanString(p.getProperty("comment"));
+			comment = service.cleanString(p.getProperty("comment"));
 			
 			// IP address of the Helix Server for the video live
 			helixServerIp = p.getProperty("helixServerIp");
@@ -180,7 +188,9 @@ public class Application extends HttpServlet {
 			// The client port for the Univ-R integration
 			clientSocketPort = Integer.parseInt(p.getProperty("clientSocketPort"));
 			
+			
 			/* Datasource retrieving */
+			
 			InitialContext cxt = new InitialContext();
 			if ( cxt == null ) {
 			   throw new Exception("No context found!");
@@ -192,7 +202,9 @@ public class Application extends HttpServlet {
 			   throw new Exception("Data source not found!");
 			}
 			
-			/* Creates the instance of the data access layer */
+			
+			/* Creates the instances of the data access layer */
+			
 			DatabaseImpl db = new DatabaseImpl(ds);
 			FileSystemImpl fs = new FileSystemImpl(
 					getServletContext().getRealPath("/") + "scripts",
@@ -202,16 +214,18 @@ public class Application extends HttpServlet {
 			);
 			UnivrDaoImpl ud = new UnivrDaoImpl();
 			
-			/* Gets an instance of the service layer */
-			service = new ServiceImpl();
 			
 			/* Links the data access layer to the service layer */
+			
 			service.setDb(db);
 			service.setFs(fs);
 			service.setUd(ud);
 			
+			
 			/* Creation of the RSS files */
+			
 			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			
 		}
 		catch( IOException e) {
 			System.out.println("Impossible to find the configuration file");
@@ -224,6 +238,7 @@ public class Application extends HttpServlet {
 		}
 		catch( Exception e) {
 			e.printStackTrace();
+			destroy();
 		}
 	}
 	
@@ -247,21 +262,23 @@ public class Application extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
+		/* Sets the character encoding as UTF-8 */
 		request.setCharacterEncoding("UTF-8");
 
 		/* Retrieves the current session or creates a new one if no session exists */
 		session = request.getSession(true);
-		//System.out.println("new session : " + session.isNew());
 		
 		String style = null;
 		String language = null;
 		
 		/* If the session didn't exist and has just been created */
 		if( session.isNew()) {
+			
 			/* Checks if the style and language are stored in the cookies */
+			
 			Cookie[] cookies = request.getCookies();
 			
-			/* If the browser has not disabled cookies */
+			// If the browser has not disabled cookies ...
 			if( cookies != null ) {
 				for(int i=0 ; i<cookies.length ; i++) {
 					String cookieName = cookies[i].getName();
@@ -273,6 +290,7 @@ public class Application extends HttpServlet {
 			}
 			
 			/* If not, store the default values in the cookies */
+			
 			if( style == null || style.equals("style1") || style.equals("style2")) {
 				style = defaultStyle;
 				Cookie styleCookie = new Cookie("style", style);
@@ -292,6 +310,7 @@ public class Application extends HttpServlet {
 			session.setAttribute("language", language);
 		}
 		
+		/* Retrieves the path info from the browser's URL */
 		String page = request.getPathInfo();
 		
 		if( page == null )
@@ -485,6 +504,7 @@ public class Application extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		/* Calls the DoGet method */
 		doGet(request, response);
 	}
 	
@@ -650,6 +670,7 @@ public class Application extends HttpServlet {
 		mediapath = request.getParameter("mediapath");
 		timing = request.getParameter("timing");
 		
+		description = service.cleanString("kjh");
 		description = service.cleanString(request.getParameter("description"));
 		title = service.cleanString(request.getParameter("title"));
 		name = service.cleanString(request.getParameter("name"));
@@ -739,10 +760,11 @@ public class Application extends HttpServlet {
 		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void mediaUpload(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 		
-   		String title, description, name, firstname, date, formation, genre, media;
+   		String title, description, name, firstname, date, formation, genre;
    		String message = "";
 		String messageType = "information";
    		
@@ -754,21 +776,22 @@ public class Application extends HttpServlet {
    		Date d = new Date();
    		boolean continuer=true;
    	
-   		// Teste si la requête est bien une requête d'envoi de fichier
+   		/* Tests if the request is a good media upload request */
+   		
 		if( ServletFileUpload.isMultipartContent(new ServletRequestContext(request)) ) {
 			
 			try {
 				/* Prepares to parse the request to get the different elements of the POST */
 				FileItemFactory factory = new DiskFileItemFactory();
 				ServletFileUpload upload = new ServletFileUpload(factory);
-				List items = upload.parseRequest(request);
+				List<FileItem> items = upload.parseRequest(request);
 				
 				/* Processes the different elements */
-				Iterator iter = items.iterator();
+				Iterator<FileItem> iter = items.iterator();
 				while (iter.hasNext() && continuer) {
 				    FileItem item = (FileItem) iter.next();
 		
-				    /* If the element is a form field */
+				    /* If the element is a form field, retrieves the info */
 				    if (item.isFormField()) {
 				        
 				    	if(item.getFieldName().equals("title"))
@@ -782,11 +805,13 @@ public class Application extends HttpServlet {
 				        else if(item.getFieldName().equals("date")){
 				        	date = item.getString("UTF8");
 				        	try {
-					        	d = sdf.parse(item.getString("UTF8"));
-					        	cal.setTime(d);
+					        	d = sdf.parse(date);					        	
 				        	}
-				        	catch( ParseException e) {
-				        		
+				        	catch( ParseException pe) {
+				        		pe.printStackTrace();
+				        	}
+				        	finally {
+				        		cal.setTime(d);
 				        	}
 				        }
 				        else if(item.getFieldName().equals("formation"))
@@ -800,6 +825,7 @@ public class Application extends HttpServlet {
 				    	String fileName = item.getName();
 				    	String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()) : "";
 				    	
+				    	/* Checks the extension of the item to have a supported file format */
 				    	if( extension.equals("mp3") || extension.equals("ogg") || extension.equals("avi") || extension.equals("divx") 
 				    			|| extension.equals("rm") || extension.equals("rv") || extension.equals("mp4") || extension.equals("mpg") 
 				    			|| extension.equals("mpeg") || extension.equals("mov") || extension.equals("wmv") || extension.equals("mkv") ) {
@@ -824,11 +850,14 @@ public class Application extends HttpServlet {
 									timing,
 									null // The media folder can't be set yet
 							);
-							service.mediaUpload(c, item, getServletContext().getRealPath("/rss"), 
+							
+					    	/* Sends the creation of the course to the service layer */
+					    	service.mediaUpload(c, item, getServletContext().getRealPath("/rss"), 
 									rssName, rssTitle, rssDescription, serverUrl, 
 									rssImageUrl, recordedInterfaceUrl, language);
 							
-							message = "File successfully sent !";
+							message = "File successfully sent ! ";
+							message += "Don't panic if your your vidéo doesn't appear in the list right now. The conversion may be long (30 minutes for 1 hour video)";
 				    	}
 				    	else {
 				    		messageType = "error";
@@ -847,6 +876,7 @@ public class Application extends HttpServlet {
 			message = "Error: Incorrect file upload request";
 		}
 		
+		/* Displays the result of the upload process */
 		request.setAttribute("messagetype", messageType);
 		request.setAttribute("message", message);
 		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
@@ -912,7 +942,7 @@ public class Application extends HttpServlet {
 				service.incrementConsultations(c);
 				
 				if( type == null || type.equals("real")) {
-					//redirection interface
+					//redirection to the SMIL interface
 					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
 					request.setAttribute("slidesurl", coursesUrl + c.getMediaFolder() + "/screenshots/");
 					List<Slide> slides = service.getSlides(c.getCourseid());
@@ -931,13 +961,21 @@ public class Application extends HttpServlet {
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_smil.jsp").forward(request, response);
 				}
 				else if( type.equals("flash")) {
-					//redirection interface
-					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".swf");
+					//redirection to the FlvPlay JS interface
+					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".flv");
+					request.setAttribute("slidesurl", coursesUrl + c.getMediaFolder() + "/screenshots/");
+					request.setAttribute("course", c);
+					List<Slide> slides = service.getSlides(c.getCourseid());
+					request.setAttribute("slides", slides);
 					Amphi a = service.getAmphi(c.getIpaddress());
 					String amphi = a != null ? a.getName() : c.getIpaddress();
 					String building = service.getBuildingName(c.getIpaddress());
 					request.setAttribute("amphi", amphi);
 					request.setAttribute("building", building);
+					if( c.getTiming().equals("n-1"))
+						request.setAttribute("timing", 1);
+					else
+						request.setAttribute("timing", 0);
 					
 					/* displays the .jsp view */
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
@@ -1139,8 +1177,8 @@ public class Application extends HttpServlet {
 
 		int courseId = service.getNextCoursId();
 		
-		/* Récupération des paramètres envoyés par Univers */
-		/* (envoi des informations en LATIN9) */
+		/* Retrieves the parameters sent by Univ-R */
+		/* (parameters sent in LATIN9) */
 		request.setCharacterEncoding("LATIN9");
 		
 		String uid = request.getParameter("uid");
@@ -1152,7 +1190,7 @@ public class Application extends HttpServlet {
 		String title = request.getParameter("titre");
 		String genre = request.getParameter("genre");
 		
-		/* Vérification que les paramètres ont bien été envoyés */
+		/* Verifies that all parameters were sent */
 		if( uid != null && uuid != null && groupCode != null && ip != null && (! groupCode.equals("")) && (! ip.equals(""))) {
 		
 			/*out.println("ID du cours : " + courseId + "<br>");
@@ -1170,7 +1208,7 @@ public class Application extends HttpServlet {
 					int user = Integer.parseInt(uid);
 					int group = Integer.parseInt(groupCode);
 					
-					/* Si l'utilisateur est autorisé , vérification des droits pour le cours */
+					/* If the user is authorized, verifies his rights for the course */
 					if( service.isUserAuth(user, uuid)) {
 						
 						HashMap<String, String> map = service.getUserInfos(user);
@@ -1179,29 +1217,39 @@ public class Application extends HttpServlet {
 						String formation = service.getGroupName(Integer.parseInt(groupCode));
 						
 						String msg = "(id:" + courseId + ")";
-						service.sendMessageToClient(msg, ip, clientSocketPort);
+						String clientResponse = service.sendMessageToClient(msg, ip, clientSocketPort);
 						
-						Course c = new Course(
-								courseId,
-								new Timestamp(new Date().getTime()),
-								null, // The type can't be set yet
-								title.equals("") ? null : title,
-								description.equals("") ? null : description,
-								formation.equals("") ? null : formation,
-								name.equals("") ? null : name,
-								firstname.equals("") ? null : firstname,
-								ip,
-								0, // The duration can't be set yet
-								genre.equals("") ? null : genre,
-								false,
-								0,
-								null, // The timing can't be set yet
-								null // The media folder can't be set yet
-						);
-						
-						Univr u = new Univr(courseId, user, group);
-						
-						service.addUnivrCourse(c,u);
+						/* If the client is not already recording */
+						if( clientResponse.indexOf("!!! already recording !!!") == -1 ) {
+
+							Course c = new Course(
+									courseId,
+									new Timestamp(new Date().getTime()),
+									null, // The type can't be set yet
+									title.equals("") ? null : title,
+									description.equals("") ? null : description,
+									formation.equals("") ? null : formation,
+									name.equals("") ? null : name,
+									firstname.equals("") ? null : firstname,
+									ip,
+									0, // The duration can't be set yet
+									genre.equals("") ? null : genre,
+									false,
+									0,
+									null, // The timing can't be set yet
+									null // The media folder can't be set yet
+							);
+							
+							Univr u = new Univr(courseId, user, group);
+							
+							service.addUnivrCourse(c,u);
+						}
+						else {
+							messageType = "error";
+							message = "Erreur: ";
+							message += clientResponse;
+							System.out.println(clientResponse);
+						}
 					}
 					else {
 						messageType = "error";

@@ -61,10 +61,12 @@ public class PgsqlAccess {
 		ResultSet rs = null;
 		
 		try {
-			if( cnt != null && ! cnt.isClosed()) {
+			if( cnt == null || cnt.isClosed())
+				connect();
+			//if( cnt != null && ! cnt.isClosed()) {
 				Statement stmt = cnt.createStatement();
 				rs = stmt.executeQuery(sql);
-			}
+			//}
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error executing the query :" + sql);

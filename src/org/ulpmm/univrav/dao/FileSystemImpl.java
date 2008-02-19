@@ -83,7 +83,7 @@ public class FileSystemImpl implements IFileSystem {
 		archiveExtraction(c, courseArchive);
 		setCourseType(c);
 		thumbCheck(c.getMediaFolder());
-		//renameFile(c.getMediaFolder(), defaultFlashFile, c.getMediasFileName() + ".swf");
+		
 		if( c.getType().equals("audio")) {
 			mp3Modif(c.getMediaFolder(), defaultMp3File, c.getMediasFileName() + ".mp3");
 			mp3Tag(c, c.getMediaFolder(), c.getMediasFileName());
@@ -95,13 +95,26 @@ public class FileSystemImpl implements IFileSystem {
 		}
 		else if( c.getType().equals("video")) {
 			renameFile(c.getMediaFolder(), defaultRmFile, c.getMediasFileName() + ".rm");
-			rmToMp3(c.getMediaFolder(), c.getMediasFileName());
+			rmFlvToMp3(c.getMediaFolder(), c.getMediasFileName(), "rm");
 			mp3Tag(c, c.getMediaFolder(), c.getMediasFileName());
 			setCourseDuration(c, c.getMediaFolder(), c.getMediasFileName());
 			pdfCreation(c.getMediaFolder(), c.getMediasFileName());
 			smilCreation(c, c.getMediaFolder(), c.getMediasFileName());
 			mp3ToOgg(c.getMediaFolder(), c.getMediasFileName());
 			courseZip(c, c.getMediaFolder(), c.getMediasFileName());
+			rmMkvConvert(c.getMediaFolder(), c.getMediasFileName() + ".rm", c.getMediasFileName());
+		}
+		else if( c.getType().equals("flash")) {
+			renameFile(c.getMediaFolder(), defaultFlashFile, c.getMediasFileName() + ".flv");
+			rmFlvToMp3(c.getMediaFolder(), c.getMediasFileName(), "flv");
+			mp3Tag(c, c.getMediaFolder(), c.getMediasFileName());
+			setCourseDuration(c, c.getMediaFolder(), c.getMediasFileName());
+			pdfCreation(c.getMediaFolder(), c.getMediasFileName());
+			smilCreation(c, c.getMediaFolder(), c.getMediasFileName());
+			mp3ToOgg(c.getMediaFolder(), c.getMediasFileName());
+			courseZip(c, c.getMediaFolder(), c.getMediasFileName());
+			
+			c.setType("video");
 		}
 	}
 	
@@ -149,22 +162,24 @@ public class FileSystemImpl implements IFileSystem {
     			|| extension.equals("mpeg") || extension.equals("mov") || extension.equals("wmv")
     			|| extension.equals("mkv")) { // video files
 			
-			c.setType("video");
+			c.setType("flash");
 			
-			if( extension.equals("rm") || extension.equals("rv") )
-				renameFile(c.getMediaFolder(), fileName, c.getMediasFileName() + ".rm");
-			else if( extension.equals("wmv") )
-				wmvConvert(c.getMediaFolder(), fileName, c.getMediasFileName());
+			if( extension.equals("flv") )
+				renameFile(c.getMediaFolder(), fileName, c.getMediasFileName() + ".flv");
+			/*else if( extension.equals("rm") || extension.equals("rv") || extension.equals("mkv") )
+				rmMkvConvert(c.getMediaFolder(), fileName, c.getMediasFileName());*/
 			else
 				videoConvert(c.getMediaFolder(), fileName, c.getMediasFileName());
-				
-			rmToMp3(c.getMediaFolder(), c.getMediasFileName());
+			
+			rmFlvToMp3(c.getMediaFolder(), c.getMediasFileName(), "flv");
 			mp3Tag(c, c.getMediaFolder(), c.getMediasFileName());
 			setCourseDuration(c, c.getMediaFolder(), c.getMediasFileName());
 			emptyPdfCopy(c.getMediaFolder(), c.getMediasFileName());
 			smilCreation(c, c.getMediaFolder(), c.getMediasFileName());
 			mp3ToOgg(c.getMediaFolder(), c.getMediasFileName());
 			courseZip(c, c.getMediaFolder(), c.getMediasFileName());
+			
+			c.setType("video");
 		}
 
 	}
@@ -620,6 +635,8 @@ public class FileSystemImpl implements IFileSystem {
 			c.setType("audio");
 		else if(new File(coursesFolder + c.getMediaFolder() + "/" + defaultRmFile).exists())
 			c.setType("video");
+		else if(new File(coursesFolder + c.getMediaFolder() + "/" + defaultFlashFile).exists())
+			c.setType("flash");
 		else {
 			System.out.println("No course media file found in the " + coursesFolder + c.getMediaFolder() + " folder");
 			throw new DaoException("No course media file found in the " + coursesFolder + c.getMediaFolder() + " folder");
@@ -809,24 +826,24 @@ public class FileSystemImpl implements IFileSystem {
 	}
 	
 	/** 
-	 * Launches a bash script which converts a rm media file to mp3
+	 * Launches a bash script which converts a rm or flv media file to mp3
 	 * @param mediaFolder the folder which contains the media files of a course
 	 * @param mediaFileName the name used by all the media files of a course
 	 */
-	private static void rmToMp3( String mediaFolder, String mediaFileName) {
-		try {						
-			Process p = r.exec("bash ExRmv2mp3.sh "  + coursesFolder + mediaFolder + " " + mediaFileName, null, scriptsFolder);
+	private static void rmFlvToMp3( String mediaFolder, String mediaFileName, String mediaFileExtension) {
+		try {
+			Process p = r.exec("bash ExRmvFlv2mp3.sh "  + coursesFolder + mediaFolder + " " + mediaFileName + " " + mediaFileExtension, null, scriptsFolder);
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while converting the rm file " + mediaFileName + ".rm to mp3");
-				throw new DaoException("Error while converting the rm file " + mediaFileName + ".rm to mp3");
+				System.out.println("Error while converting the file " + mediaFileName + "." + mediaFileExtension + " to mp3");
+				throw new DaoException("Error while converting file " + mediaFileName + "." + mediaFileExtension + " to mp3");
 			}
 		}
 		catch(IOException ioe) {
-			System.out.println("Error while converting the rm file " + mediaFileName + ".rm to mp3");
+			System.out.println("Error while converting file " + mediaFileName + "." + mediaFileExtension + " to mp3");
 			ioe.printStackTrace();
 		}
 		catch(InterruptedException ie) {
-			System.out.println("Error while converting the rm file " + mediaFileName + ".rm to mp3");
+			System.out.println("Error while converting file " + mediaFileName + "." + mediaFileExtension + " to mp3");
 			ie.printStackTrace();
 		}
 	}
@@ -962,22 +979,30 @@ public class FileSystemImpl implements IFileSystem {
 	 */
 	private void smilCreation(Course c, String mediaFolder, String mediaFileName) {
 		ISmil smil1, smil2;
+		
 		if( c.getType().equals("audio")) {
 			smil1 = new RemoteAudioSmil1(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, coursesUrl, comment, getTimecodes(c.getMediaFolder()));
 			smil1.smilCreation();
 			smil2 = new LocalAudioSmil1(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, coursesUrl, comment, getTimecodes(c.getMediaFolder()));
 			smil2.smilCreation();
 		}
-		else if( c.getType().equals("video")) {
-			smil1 = new RemoteVideoSmil1(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, coursesUrl, comment, getTimecodes(c.getMediaFolder()));
+		else if( c.getType().equals("video") || c.getType().equals("flash") ) {
+			
+			String mediaFileExtension = "";
+			if( c.getType().equals("video") )
+				mediaFileExtension = ".rm";
+			else if( c.getType().equals("flash") )
+				mediaFileExtension = ".flv";
+			
+			smil1 = new RemoteVideoSmil1(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, mediaFileExtension, coursesUrl, comment, getTimecodes(c.getMediaFolder()));
 			smil1.smilCreation();
-			smil2 = new LocalVideoSmil1(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, coursesUrl, comment, getTimecodes(c.getMediaFolder()));
+			smil2 = new LocalVideoSmil1(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, mediaFileExtension, coursesUrl, comment, getTimecodes(c.getMediaFolder()));
 			smil2.smilCreation();
 		}
 	}
 	
 	/**
-	 * Creates a zip file containing the mp3 or rm file, the smil file, and the pdf file
+	 * Creates a zip file containing the mp3, rm, or flv file, the smil file, and the pdf file
 	 * @param c the course
 	 * @param mediaFolder the folder which contains the media files of a course
 	 * @param mediaFileName the name used by all the media files of a course
@@ -988,6 +1013,8 @@ public class FileSystemImpl implements IFileSystem {
 			mediaFileExtension = ".mp3";
 		else if( c.getType().equals("video") )
 			mediaFileExtension = ".rm";
+		else if( c.getType().equals("flash") )
+			mediaFileExtension = ".flv";
 		
 		String command = "zip -r " + mediaFileName + ".zip description.txt local_" + mediaFileName + ".smil" + " " + defaultScreenshotsFolder + " " + mediaFileName + mediaFileExtension + " " + mediaFileName + ".pdf";
 		
@@ -1033,6 +1060,11 @@ public class FileSystemImpl implements IFileSystem {
         }
 	}
 	
+	/**
+	 * Returns the content length of a file
+	 * @param filePath the path of the file
+	 * @return the content length
+	 */
 	private static long getContentLength(String filePath) {
 		File f = new File(filePath);
 		return f.length();
@@ -1064,7 +1096,7 @@ public class FileSystemImpl implements IFileSystem {
 	}
 	
 	/** 
-	 * converts a video format in .rm format
+	 * converts a video format into .flv format
 	 * @param mediaFolder the folder which contains the media files of a course
 	 * @param inputFileName the input video filename (with extension)
 	 * @param outputName the output video name (without extension)
@@ -1072,51 +1104,58 @@ public class FileSystemImpl implements IFileSystem {
 	private static void videoConvert( String mediaFolder, String inputFileName, String outputName) {
 		
 		try {						
-			Process p = r.exec("bash convertAll2Rm.sh "  + coursesFolder + mediaFolder + " " + inputFileName + " " + outputName, null, scriptsFolder);
+			System.out.println("bash convertAll2Flv.sh "  + coursesFolder + mediaFolder + " " + inputFileName + " " + outputName);
+			Process p = r.exec("bash convertAll2Flv.sh "  + coursesFolder + mediaFolder + " " + inputFileName + " " + outputName, null, scriptsFolder);
 			
-			/* Used to avoid mencoder crash ... */
+			/* Used to avoid ffmpeg crash ... */
 			InputStream in=p.getInputStream();
 			BufferedReader entree = new BufferedReader(new InputStreamReader(in));
-			while( entree.readLine() != null );
-				
+			String txt;
+			while( (txt = entree.readLine()) != null )
+				System.out.println(txt);
 			
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while converting the file " + inputFileName + " to rm");
-				throw new DaoException("Error while converting the file " + inputFileName + " to rm");
+				System.out.println("Error while converting the file " + inputFileName + " to flv");
+				throw new DaoException("Error while converting the file " + inputFileName + " to flv");
 			}
 		}
 		catch(IOException ioe) {
-			System.out.println("Error while converting the file " + inputFileName + " to rm");
+			System.out.println("Error while converting the file " + inputFileName + " to flv");
 			ioe.printStackTrace();
 		}
 		catch(InterruptedException ie) {
-			System.out.println("Error while converting the file " + inputFileName + " to rm");
+			System.out.println("Error while converting the file " + inputFileName + " to flv");
 			ie.printStackTrace();
 		}
 	}
 	
 	/** 
-	 * converts a video format in .rm format
+	 * converts a video in .rm/.rv/.mkv format into .flv format
 	 * @param mediaFolder the folder which contains the media files of a course
 	 * @param inputFileName the input video filename (with extension)
 	 * @param outputName the output video name (without extension)
 	 */
-	private static void wmvConvert( String mediaFolder, String inputFileName, String outputName) {
+	private static void rmMkvConvert( String mediaFolder, String inputFileName, String outputName) {
 		
-		try {						
-			Process p = r.exec("bash convertWmv2Rm.sh "  + coursesFolder + mediaFolder + " " + inputFileName + " " + outputName, null, scriptsFolder);
+		try {
+			Process p = r.exec("bash convertRmMkv2Flv.sh "  + coursesFolder + mediaFolder + " " + inputFileName + " " + outputName, null, scriptsFolder);
+			
+			/* Used to avoid mencoder crash ... */
+			/*InputStream in=p.getInputStream();
+			BufferedReader entree = new BufferedReader(new InputStreamReader(in));
+			while( entree.readLine() != null );*/
 			
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while converting the file " + inputFileName + " to rm");
-				throw new DaoException("Error while converting the file " + inputFileName + " to rm");
+				System.out.println("Error while converting the file " + inputFileName + " to flv");
+				throw new DaoException("Error while converting the file " + inputFileName + " to flv");
 			}
 		}
 		catch(IOException ioe) {
-			System.out.println("Error while converting the file " + inputFileName + " to rm");
+			System.out.println("Error while converting the file " + inputFileName + " to flv");
 			ioe.printStackTrace();
 		}
 		catch(InterruptedException ie) {
-			System.out.println("Error while converting the file " + inputFileName + " to rm");
+			System.out.println("Error while converting the file " + inputFileName + " to flv");
 			ie.printStackTrace();
 		}
 	}
