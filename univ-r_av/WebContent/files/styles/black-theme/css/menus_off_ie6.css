@@ -1,0 +1,9 @@
+/*  Div containing the "Live" button */
+.live {
+	background-image: url(../img/menu_off.gif);
+}
+
+/*  Div containing the "Recorded" button */
+.recorded {
+	background-image: url(../img/menu_off.gif);
+}

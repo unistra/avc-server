@@ -1,0 +1,48 @@
+/* Courses list table */
+table {
+	width: 100%;
+	text-align: left;
+	border-spacing: 0px;
+	color: #000000;
+}
+
+th, td {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+th {
+	padding-left: 15px;
+	font-size: 12px;
+}
+
+th#courses {
+	color: #FFFFFF;
+	font-size: 14px;
+}
+
+td {
+	padding-left: 5px;
+	font-size: 11px;
+	border-width: 0px;
+}
+
+/* Classes to alternate the color of the rows of the courses table */
+.row1 {
+	background-color: #FFD557;
+}
+
+.row2 {
+	background-color: #E3DABA;
+}
+
+/* Aligned cells in the table */
+.tdalign {
+	text-align: center;
+	width: 55px;
+}
+
+/* Div with its content hidden */
+.hidden {
+	display: none;
+}
