@@ -144,7 +144,7 @@
 			<c:choose>
 
 				<c:when test="${course.type == 'audio'}">
-					<img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip">
+					<img src="../files/styles/${sessionScope.style}/img/chip-no.png" alt="chip">
 				</c:when>
 				<c:when test="${course.genre == null}">
 					<c:url var="courseaccess" scope="page" value="./courseaccess">

@@ -857,7 +857,7 @@ public class Application extends HttpServlet {
 									rssImageUrl, recordedInterfaceUrl, language);
 							
 							message = "File successfully sent ! ";
-							message += "Don't panic if your your vidéo doesn't appear in the list right now. The conversion may be long (30 minutes for 1 hour video)";
+							message += "Don't panic if your video doesn't appear in the list right now. The conversion may be long (30 minutes for 1 hour video)";
 				    	}
 				    	else {
 				    		messageType = "error";

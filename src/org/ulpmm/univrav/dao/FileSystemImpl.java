@@ -1104,15 +1104,14 @@ public class FileSystemImpl implements IFileSystem {
 	private static void videoConvert( String mediaFolder, String inputFileName, String outputName) {
 		
 		try {						
-			System.out.println("bash convertAll2Flv.sh "  + coursesFolder + mediaFolder + " " + inputFileName + " " + outputName);
-			Process p = r.exec("bash convertAll2Flv.sh "  + coursesFolder + mediaFolder + " " + inputFileName + " " + outputName, null, scriptsFolder);
+			String[] cmd = new String[] {"bash" , "convertAll2Flv.sh" , coursesFolder + mediaFolder , inputFileName , outputName};
+			Process p = r.exec(cmd, null, scriptsFolder);
 			
 			/* Used to avoid ffmpeg crash ... */
 			InputStream in=p.getInputStream();
 			BufferedReader entree = new BufferedReader(new InputStreamReader(in));
-			String txt;
-			while( (txt = entree.readLine()) != null )
-				System.out.println(txt);
+
+			while( entree.readLine() != null );
 			
 			if( p.waitFor() != 0 ) {
 				System.out.println("Error while converting the file " + inputFileName + " to flv");

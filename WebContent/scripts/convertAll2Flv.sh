@@ -11,9 +11,9 @@ TYPE=$(cat type.txt | sed s/"$2: "//)
 rm type.txt
 
 # Padding calculation
-mplayer -nosound -vo null -ss 03:00:00 -really-quiet -identify $2 | grep ID_VIDEO_HEIGHT= > lh.txt
+mplayer -nosound -vo null -ss 03:00:00 -really-quiet -identify "$2" | grep ID_VIDEO_HEIGHT= > lh.txt
 HAUTEUR=$(cat lh.txt | sed s/ID_VIDEO_HEIGHT=//)
-mplayer -nosound -vo null -ss 03:00:00 -really-quiet -identify $2 | grep ID_VIDEO_WIDTH= > lh.txt
+mplayer -nosound -vo null -ss 03:00:00 -really-quiet -identify "$2" | grep ID_VIDEO_WIDTH= > lh.txt
 LARGEUR=$(cat lh.txt | sed s/ID_VIDEO_WIDTH=//)
 HCALC=$(echo $((320*($HAUTEUR)/($LARGEUR))))
 PAD=$(echo $(((240-($HCALC))/2)))
@@ -45,3 +45,5 @@ else
 	fi
 	rm TTmp.avi
 fi
+
+echo "fin" > fin.txt
