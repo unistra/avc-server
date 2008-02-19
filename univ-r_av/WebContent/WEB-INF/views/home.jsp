@@ -33,7 +33,9 @@
 	<script type="text/javascript" src="../files/js/details.js"></script>
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
-
+	
+	<meta name="keywords" content="SMIL, cours audio, cours video, cours live, cours en direct, synchronisation de médias">
+	
   </head>
   
   <body>
@@ -44,6 +46,10 @@
 	    <div class="contents">
 	    	<div class="search">
 	    		<c:import url="include/searchform.jsp" />
+	    	</div>
+	    	
+	    	<div class="message">
+	    		<!-- <p>Type an information message here</p> -->
 	    	</div>
 	    	
 			<div class="links">
@@ -66,7 +72,7 @@
 					<tr class="tableheader">
 						<th colspan="3" id="courses"><fmt:message key="Les derniers cours"/></th>
 						<th colspan="2"><fmt:message key="Visualisez"/></th>
-						<th colspan="4"><fmt:message key="T&eacute;l&eacute;chargez"/></th>
+						<th colspan="5"><fmt:message key="T&eacute;l&eacute;chargez"/></th>
 					</tr>
 					<c:import url="include/courselist.jsp" />
 				</table>

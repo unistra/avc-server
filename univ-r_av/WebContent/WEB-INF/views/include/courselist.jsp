@@ -17,6 +17,10 @@
 		realplayer
 	</td>
 	<td class="tdalign">
+		<img src="../files/styles/${sessionScope.style}/img/flash.png" alt="flash"><br>
+		flash
+	</td>
+	<td class="tdalign">
 		<img src="../files/styles/${sessionScope.style}/img/ogg_v2.png" alt="ogg"><br>
 		ogg
 	</td>
@@ -129,6 +133,30 @@
 					<c:url var="thick_codeform" scope="page" value="./thick_codeform">
 						<c:param name="id" value="${course.courseid}"/>
 						<c:param name="type" value="real"/>
+						<c:param name="width" value="250"/>
+						<c:param name="height" value="120"/>
+					</c:url>
+					<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+				</c:otherwise>
+			</c:choose>
+		</td>
+		<td class="tdalign">
+			<c:choose>
+
+				<c:when test="${course.type == 'audio'}">
+					<img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip">
+				</c:when>
+				<c:when test="${course.genre == null}">
+					<c:url var="courseaccess" scope="page" value="./courseaccess">
+						<c:param name="id" value="${course.courseid}"/>
+						<c:param name="type" value="flash"/>
+					</c:url>
+					<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
+				</c:when>
+				<c:otherwise>
+					<c:url var="thick_codeform" scope="page" value="./thick_codeform">
+						<c:param name="id" value="${course.courseid}"/>
+						<c:param name="type" value="flash"/>
 						<c:param name="width" value="250"/>
 						<c:param name="height" value="120"/>
 					</c:url>

@@ -20,6 +20,7 @@ public class RemoteVideoSmil1 implements ISmil {
 	private String absoluteMediaFolder;
 	private String mediaFolder;
 	private String mediaFileName;
+	private String mediaFileExtension;
 	private String coursesUrl;
 	private String comment;
 	private ArrayList<String> timecodes;
@@ -31,11 +32,12 @@ public class RemoteVideoSmil1 implements ISmil {
 	 * @param mediaFileName the name of all the media files
 	 */
 	public RemoteVideoSmil1(Course c, String absoluteMediaFolder, String mediaFolder, String mediaFileName, 
-			String coursesUrl, String comment, ArrayList<String> timecodes) {
+			String mediaFileExtension, String coursesUrl, String comment, ArrayList<String> timecodes) {
 		this.c = c;
 		this.absoluteMediaFolder = absoluteMediaFolder;
 		this.mediaFolder = mediaFolder;
 		this.mediaFileName = mediaFileName;
+		this.mediaFileExtension = mediaFileExtension;
 		this.coursesUrl = coursesUrl;
 		this.comment = comment;
 		this.timecodes = timecodes;
@@ -80,8 +82,8 @@ public class RemoteVideoSmil1 implements ISmil {
 			
 			/* Media display */
 			pw.println("<img region=\"Bg\" src=\"" + coursesUrl + "model/bgsmil.jpg\"/>");
-			pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".rm\" external=\"true\"> " +
-					"<video src=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + ".rm" + "\" region=\"Video\" /> </a>");
+			pw.println("<a href=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + mediaFileExtension + "\" external=\"true\"> " +
+					"<video src=\"" + coursesUrl + mediaFolder + "/" + mediaFileName + mediaFileExtension + "\" region=\"Video\" /> </a>");
 			pw.println("<text region=\"Texte\" src=\"" + coursesUrl + mediaFolder + "/description.txt\">");
 			pw.println("<param name=\"fontFace\" value=\"Arial\"/>");
 			pw.println("<param name=\"fontColor\" value=\"#ffffff\"/>");
