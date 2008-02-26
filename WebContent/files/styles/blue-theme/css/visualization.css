@@ -37,25 +37,27 @@
 /* Div containing the flash video and the current slide */
 .flashslide {
 	position: relative;
-	height: 460px;
+	height: 442px;
+	background-image: url("../../../img/Lava_bg.png");
 }
 
 p#flash {
 	float: left;
 	margin-top: 0px;
 	margin-bottom: 20px;
-	margin-left: 20px;
-	margin-right: 20px;
+	margin-left: 15px;
 }
 
 /* Displays information about the course */
 p#info {
 	margin-left: 20px;
+	font-size: 12px;
 }
 
 /* Displays the current slide in a big size */
 div#currentDia img{
 	float: right;
+	margin-right: 15px;
 }
 
 /* The current slide which is displayed */

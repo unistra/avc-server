@@ -962,7 +962,13 @@ public class Application extends HttpServlet {
 				}
 				else if( type.equals("flash")) {
 					//redirection to the FlvPlay JS interface
-					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".flv");
+					String courseExtension = "";
+					if( c.getType().equals("audio"))
+						courseExtension = ".mp3";
+					else if( c.getType().equals("video"))
+						courseExtension = ".flv";
+					
+					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + courseExtension);
 					request.setAttribute("slidesurl", coursesUrl + c.getMediaFolder() + "/screenshots/");
 					request.setAttribute("course", c);
 					List<Slide> slides = service.getSlides(c.getCourseid());

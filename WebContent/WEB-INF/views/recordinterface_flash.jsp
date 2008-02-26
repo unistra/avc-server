@@ -53,13 +53,15 @@
 		            so.addVariable('width','320');
 		            so.addVariable('height','260');
 		            so.addVariable('file','${courseurl}');
+		            so.addVariable("image","../files/img/logo_audio.png");
 		            so.addVariable('autostart','true');
 		            so.addVariable('javascriptid','flashvideo');
 		            so.addVariable('enablejs','true');
 		            so.write('flash');
 	            </script>
 	            
-	            <div id="currentDia">		
+	            <div id="currentDia">
+	            	<img class="slide" src="../files/img/DiaVide.png" />	
 				</div>
 				
 				<p id="info">
