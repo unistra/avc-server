@@ -39,6 +39,26 @@ public class UnivrDaoImpl implements IUnivrDao {
 	}
 	
 	/**
+	 * Gets information about an user
+	 * @param login the login of the user
+	 * @return the information about the user
+	 */
+	public HashMap<String, String> getUserInfos(String login) {
+		HashMap<String, String> infos = null;
+		
+		try {
+			User u = new User(login);
+			infos = u.getUserInfos();
+		}
+		catch( Exception e) {
+			System.out.println("Error while retrieving the information about the user");
+			e.printStackTrace();
+		}
+		
+		return infos;
+	}
+	
+	/**
 	 * Gets the group name of a group
 	 * @param groupCode the code of the group
 	 * @return the group name

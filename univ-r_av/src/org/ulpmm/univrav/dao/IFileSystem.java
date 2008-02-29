@@ -64,13 +64,6 @@ public interface IFileSystem {
 	public String getLiveStreamType(String amphiIp, int audioLivePort);
 	
 	/**
-	 * Creates the .ram file used by a live video
-	 * @param amphiIp the Ip address of the video amphi
-	 * @param helixServerIp the Ip address of the helix server
-	 */
-	public void createLiveVideo(String amphiIp, String helixServerIp);
-	
-	/**
 	 * Retrieves a list of the website's available themes
 	 * @param stylesFolder the folder in which the themes are stored
 	 * @return the list of themes

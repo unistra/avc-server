@@ -445,15 +445,6 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
-	 * Creates the .ram file used by a live video
-	 * @param amphiIp the Ip address of the video amphi
-	 * @param helixServerIp the Ip address of the helix server
-	 */
-	public void createLiveVideo(String amphiIp, String helixServerIp) {
-		fs.createLiveVideo(amphiIp, helixServerIp);
-	}
-	
-	/**
 	 * Retrieves a list of the website's available themes
 	 * @param stylesFolder the folder in which the themes are stored
 	 * @return the list of themes
@@ -590,6 +581,15 @@ public class ServiceImpl implements IService {
 	 */
 	public HashMap<String, String> getUserInfos(int uid) {
 		return ud.getUserInfos(uid);
+	}
+	
+	/**
+	 * Gets information about an user
+	 * @param login the login of the user
+	 * @return the information about the user
+	 */
+	public HashMap<String, String> getUserInfos(String login) {
+		return ud.getUserInfos(login);
 	}
 	
 	/**

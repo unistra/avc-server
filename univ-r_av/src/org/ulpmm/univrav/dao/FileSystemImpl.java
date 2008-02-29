@@ -4,13 +4,11 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -45,11 +43,9 @@ public class FileSystemImpl implements IFileSystem {
 	private static File scriptsFolder; //folder which contains the scripts
 	private static String ftpFolder; // folder in which the courses are uploaded via FTP
 	private static String coursesFolder; // folder which contains all the media folders
-	private static String liveFolder; // folder which contains the media files for a live
 	private static String coursesUrl;
 	private static String defaultMp3File;
 	private static String defaultRmFile;
-	private static String defaultSmilFile;
 	private static String defaultFlashFile;
 	private static String defaultScreenshotsFolder;
 	private static String comment;
@@ -63,11 +59,9 @@ public class FileSystemImpl implements IFileSystem {
 		this.scriptsFolder = new File(scriptsFolder);
 		this.ftpFolder = ftpFolder;
 		this.coursesFolder = coursesFolder;
-		this.liveFolder = liveFolder;
 		this.coursesUrl = coursesUrl;
 		this.defaultMp3File = defaultMp3File;
 		this.defaultRmFile = defaultRmFile;
-		this.defaultSmilFile = defaultSmilFile;
 		this.defaultFlashFile = defaultFlashFile;
 		this.defaultScreenshotsFolder = defaultScreenshotsFolder;
 		this.comment = comment;
@@ -262,30 +256,6 @@ public class FileSystemImpl implements IFileSystem {
 			return "audio";
 		else
 			return "video";
-	}
-	
-	/**
-	 * Creates the .ram file used by a live video
-	 * @param amphiIp the Ip address of the video amphi
-	 * @param helixServerIp the Ip address of the helix server
-	 */
-	public void createLiveVideo(String amphiIp, String helixServerIp) {
-
-		File ramFile = new File(liveFolder + "livevideo_" + amphiIp.replace('.','_') + ".ram");
-		
-		/* Checks if the .ram file already exists */
-		if( ! ramFile.exists() ) {
-			try {
-				ramFile.createNewFile();
-				PrintWriter pw = new PrintWriter( new OutputStreamWriter( new FileOutputStream(ramFile),"UTF8"));
-				pw.println("rtsp://" + helixServerIp + "/broadcast/" + amphiIp.replace(".","_") + ".rm");
-				pw.close();
-			}
-			catch( IOException ioe) {
-				System.out.println("Error while creating the video live ram file");
-				ioe.printStackTrace();
-			}
-		}
 	}
 	
 	/**

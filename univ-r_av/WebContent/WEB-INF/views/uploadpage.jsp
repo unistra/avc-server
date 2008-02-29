@@ -46,11 +46,11 @@
 				 </tr>
 				<tr>
 					<td><fmt:message key="name"/> : </td>
-					<td><input type="text" name="name"> </td>
+					<td><input type="text" value="${name}" readonly="readonly"> </td>
 				</tr>
 				<tr>
 					<td><fmt:message key="firstname"/> : </td>
-					<td><input type="text" name="firstname"> </td>
+					<td><input type="text" value="${firstname}" readonly="readonly"> </td>
 				</tr>
 				<tr>
 					<td><fmt:message key="ue"/> : </td>

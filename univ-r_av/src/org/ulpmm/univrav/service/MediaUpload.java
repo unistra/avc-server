@@ -1,12 +1,9 @@
 package org.ulpmm.univrav.service;
 
-import java.util.ArrayList;
-
 import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.entities.Course;
-import org.ulpmm.univrav.entities.Slide;
 
 public class MediaUpload extends Thread {
 	

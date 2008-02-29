@@ -23,6 +23,7 @@
 	<![endif]-->
 	
 	<script type="text/javascript" src="../files/js/ieupdate.js"></script>
+	<script type="text/javascript" src="../files/jwflvplayer/swfobject.js"></script>
 
   </head>
   
@@ -40,7 +41,7 @@
 					<embed name="live" pluginspage="http://www.microsoft.com/Windows/MediaPlayer/" src="${url}" type="application/x-mplayer2" autostart="true" showstatusbar="1" width="300" height="65" />
 				</c:when>
 				<c:when test="${type == 'video'}">
-					<object id="video" classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="320" height="240">
+					<!-- <object id="video" classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="320" height="240">
 						<param name="src" value="${url}">
 						<param name="controls" value="ImageWindow">
 						<param name="console" value="console">
@@ -52,7 +53,23 @@
 						<param name="controls" value="ControlPanel">
 						<param name="console" value="console">
 						<embed type="audio/x-pn-realaudio-plugin" width="320" height="40" align="middle" controls="ControlPanel" console="console">
-					</object>
+					</object> -->
+					
+					<p id="flash">This text will be replaced</p>
+		            <script type="text/javascript">
+			            var so = new SWFObject('../files/jwflvplayer/mediaplayer.swf','flashvideo','320','260','8');
+			            so.addParam('allowscriptaccess','always');
+			            so.addParam('allowfullscreen','true');
+			            so.addVariable('width','320');
+			            so.addVariable('height','260');
+			            so.addVariable('file','${url}');
+			            so.addVariable("image","../files/img/logo_audio.png");
+			            so.addVariable('autostart','true');
+			            so.addVariable('javascriptid','flashvideo');
+			            so.addVariable('enablejs','true');
+			            so.write('flash');
+		            </script>
+					
 				</c:when>
 			</c:choose>
 

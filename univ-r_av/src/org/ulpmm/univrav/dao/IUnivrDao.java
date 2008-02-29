@@ -20,6 +20,13 @@ public interface IUnivrDao {
 	public HashMap<String, String> getUserInfos(int uid);
 	
 	/**
+	 * Gets information about an user
+	 * @param login the login of the user
+	 * @return the information about the user
+	 */
+	public HashMap<String, String> getUserInfos(String login);
+	
+	/**
 	 * Gets the group name of a group
 	 * @param groupCode the code of the group
 	 * @return the group name

@@ -66,21 +66,7 @@
 			<role-name>ulpmm</role-name>
 		</auth-constraint>
 	</security-constraint>
-	<security-constraint>
-		<display-name>Univ-R AV media upload restriction</display-name>
-		<!-- List of the protected pages -->
-		<web-resource-collection>
-			<web-resource-name>Media upload</web-resource-name>
-			<url-pattern>/avc/upload</url-pattern>
-			<url-pattern>/avc/mediaupload</url-pattern>
-			<http-method>GET</http-method>
-			<http-method>POST</http-method>
-		</web-resource-collection>
-		<!-- roles of the authorized users -->
-		<auth-constraint>
-			<role-name>mediaupload</role-name>
-		</auth-constraint>
-	</security-constraint>
+	
 	<!-- authentication type -->
 	<login-config>
 		<auth-method>BASIC</auth-method>
@@ -95,5 +81,30 @@
 		<description>Univ-R AV administrators</description>
 		<role-name>ulpmm</role-name>
 	</security-role>
+	
+	<filter> 
+		<filter-name>CAS filter</filter-name> 
+		<filter-class>edu.yale.its.tp.cas.client.filter.CASFilter</filter-class> 
+		<init-param> 
+			<param-name>edu.yale.its.tp.cas.client.filter.loginUrl</param-name> 
+			<param-value>https://cas-ent.u-strasbg.fr:8443/cas/login</param-value> 
+		</init-param> 
+		<init-param> 
+			<param-name>edu.yale.its.tp.cas.client.filter.validateUrl</param-name> 
+			<param-value>https://cas-ent.u-strasbg.fr:8443/cas/proxyValidate</param-value> 
+		</init-param> 
+		<init-param>                     
+			<param-name>edu.yale.its.tp.cas.client.filter.serverName</param-name>                     
+			<param-value>univ-rav.u-strasbg.fr</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CAS filter</filter-name> 
+		<url-pattern>/avc/upload</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CAS filter</filter-name> 
+		<url-pattern>/avc/mediaupload</url-pattern>
+	</filter-mapping>  
 	
 </web-app>
