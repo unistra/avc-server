@@ -18,9 +18,7 @@ public class LocalAudioSmil1 implements ISmil {
 
 	private Course c;
 	private String absoluteMediaFolder;
-	private String mediaFolder;
 	private String mediaFileName;
-	private String coursesUrl;
 	private String comment;
 	private ArrayList<String> timecodes;
 	
@@ -34,9 +32,7 @@ public class LocalAudioSmil1 implements ISmil {
 			String coursesUrl, String comment, ArrayList<String> timecodes) {
 		this.c = c;
 		this.absoluteMediaFolder = absoluteMediaFolder;
-		this.mediaFolder = mediaFolder;
 		this.mediaFileName = mediaFileName;
-		this.coursesUrl = coursesUrl;
 		this.comment = comment;
 		this.timecodes = timecodes;
 	}

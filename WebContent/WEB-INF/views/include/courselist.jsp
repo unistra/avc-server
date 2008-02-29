@@ -61,14 +61,14 @@
 			<c:when test="${course.genre == null}">
 				<c:url var="courseaccess" scope="page" value="./courseaccess">
 					<c:param name="id" value="${course.courseid}"/>
-					<c:param name="type" value="real"/>
+					<c:param name="type" value="flash"/>
 				</c:url>
 				<td><a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a></td>
 			</c:when>
 			<c:otherwise>
 				<c:url var="thick_codeform" scope="page" value="./thick_codeform">
 					<c:param name="id" value="${course.courseid}"/>
-					<c:param name="type" value="real"/>
+					<c:param name="type" value="flash"/>
 					<c:param name="width" value="250"/>
 					<c:param name="height" value="120"/>
 				</c:url>
