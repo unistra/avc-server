@@ -341,6 +341,8 @@ public class Application extends HttpServlet {
 			session.setAttribute("previousPage", "/help");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/help.jsp").forward(request, response);
 		}
+		else if( page.equals("/test"))
+			displayTestPage(request, response);
 		else if( page.equals("/changestyle"))
 			changeStyle(request, response);
 		else if( page.equals("/changelanguage"))
@@ -513,7 +515,7 @@ public class Application extends HttpServlet {
 		/* initializes the model */
 		request.setAttribute("teachers", service.getTeachers());
 		request.setAttribute("formations", service.getFormations());
-		request.setAttribute("courses", service.getNLastCourses(homeCourseNumber));
+		request.setAttribute("courses", service.getNLastCourses(homeCourseNumber, testKeyWord2, testKeyWord3));
 		request.setAttribute("rssFileName", rssName + ".xml");
 		
 		request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
@@ -554,7 +556,7 @@ public class Application extends HttpServlet {
 		request.setAttribute("page", pageNumber);
 		request.setAttribute("teachers", service.getTeachers());
 		request.setAttribute("formations", service.getFormations());
-		request.setAttribute("courses", service.getCourses(recordedCourseNumber, start));
+		request.setAttribute("courses", service.getCourses(recordedCourseNumber, start, testKeyWord1, testKeyWord2, testKeyWord3));
 		request.setAttribute("items", service.getCourseNumber());
 		request.setAttribute("number", recordedCourseNumber);
 		request.setAttribute("resultPage", "recorded");
@@ -563,6 +565,37 @@ public class Application extends HttpServlet {
 		
 		/* Saves the page for the style selection thickbox return */
 		session.setAttribute("previousPage", "/recorded?page=" + pageNumber);
+		
+		/* Displays the view */
+		getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
+	}
+	
+	private void displayTestPage(HttpServletRequest request, HttpServletResponse response)
+		throws ServletException, IOException {
+		
+		int start = 0;
+		int pageNumber;
+		
+		/* initializes the model */
+		if( request.getParameter("page") != null) {
+			pageNumber = Integer.parseInt( request.getParameter("page"));
+			start = recordedCourseNumber * (pageNumber - 1) ;
+		}
+		else
+			pageNumber = 1;
+		
+		request.setAttribute("page", pageNumber);
+		request.setAttribute("teachers", service.getTeachers());
+		request.setAttribute("formations", service.getFormations());
+		request.setAttribute("courses", service.getTests(recordedCourseNumber, start, testKeyWord1, testKeyWord2, testKeyWord3));
+		request.setAttribute("items", service.getCourseNumber());
+		request.setAttribute("number", recordedCourseNumber);
+		request.setAttribute("resultPage", "test");
+		
+		request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
+		
+		/* Saves the page for the style selection thickbox return */
+		session.setAttribute("previousPage", "/test?page=" + pageNumber);
 		
 		/* Displays the view */
 		getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
@@ -637,7 +670,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("page", pageNumber);
 			request.setAttribute("teachers", service.getTeachers());
 			request.setAttribute("formations", service.getFormations());
-			request.setAttribute("courses", service.getCourses(params, recordedCourseNumber, start));
+			request.setAttribute("courses", service.getCourses(params, recordedCourseNumber, start, testKeyWord1, testKeyWord2, testKeyWord3));
 			request.setAttribute("items", service.getCourseNumber(params));
 			request.setAttribute("number", recordedCourseNumber);
 			request.setAttribute("resultPage", "search");

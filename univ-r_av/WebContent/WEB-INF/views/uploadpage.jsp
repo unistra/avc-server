@@ -65,10 +65,17 @@
 					<td><input type="file" name="media"> </td>
 				</tr>
 				<tr>
-					<td><input type="submit" name="valider" value="<fmt:message key="sendFile"/>"> </td>
+					<td><input type="submit" name="valider" onclick="javascript:document.getElementById('process').style.visibility='visible'" value="<fmt:message key="sendFile"/>"> </td>
+					<td><img id="process" src="../files/img/squaresCircle.gif" /></td>
 				</tr>
 				</table>
 			</form>
+			
+			<br>
+			<p><fmt:message key="uploadmessage1"/></p>
+			<br>
+			<p><fmt:message key="uploadmessage2"/></p>
+
     	</div>
 	    	
 	    <div class="footer">

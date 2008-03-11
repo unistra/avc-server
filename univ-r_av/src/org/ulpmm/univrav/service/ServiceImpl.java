@@ -163,20 +163,25 @@ public class ServiceImpl implements IService {
 	/**
 	 * Gets a list of the n last courses
 	 * @param n the number of courses to return
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
 	 * @return the list of courses
 	 */
-	public List<Course> getNLastCourses(int n) {
-		return db.getNLastCourses(n);
+	public List<Course> getNLastCourses(int n, String testKeyWord1, String testKeyWord2) {
+		return db.getNLastCourses(n, testKeyWord1, testKeyWord2);
 	}
 	
 	/**
 	 * Gets a restricted list of courses
 	 * @param number the number of courses to return
 	 * @param start the start number of the courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the list of courses
 	 */
-	public List<Course> getCourses(int number, int start) {
-		return db.getCourses(number, start);
+	public List<Course> getCourses(int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
+		return db.getCourses(number, start, testKeyWord1, testKeyWord2, testKeyWord3);
 	}
 	
 	/**
@@ -184,10 +189,13 @@ public class ServiceImpl implements IService {
 	 * @param params the criteria of the searched courses
 	 * @param number the number of courses to return
 	 * @param start the start number of the courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the list of courses
 	 */
-	public List<Course> getCourses(HashMap<String, String> params, int number, int start) {
-		return db.getCourses(params, number, start);
+	public List<Course> getCourses(HashMap<String, String> params, int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
+		return db.getCourses(params, number, start, testKeyWord1, testKeyWord2, testKeyWord3);
 	}
 	
 	/**
@@ -251,6 +259,19 @@ public class ServiceImpl implements IService {
 	public synchronized void deleteCourse(int courseId, String mediaFolder) {
 		db.deleteCourse(courseId);
 		fs.deleteCourse(mediaFolder);
+	}
+	
+	/**
+	 * Gets a restricted list of test courses
+	 * @param number the number of courses to return
+	 * @param start the start number of the courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getTests(int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
+		return db.getTests(number, start, testKeyWord1, testKeyWord2, testKeyWord3);
 	}
 	
 	/**

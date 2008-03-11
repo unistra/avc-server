@@ -23,6 +23,6 @@ td {
 	padding: 5px;
 }
 
-input { 
-
+img#process { 
+	visibility: hidden;
 }

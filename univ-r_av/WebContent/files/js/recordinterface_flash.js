@@ -51,7 +51,7 @@ function updateTimeBar(time) {
 			document.getElementById('time' + currentSlide).className="currentThumb";
 			
 			// changes the current slide
-			document.getElementById("currentDia").innerHTML = '<a target="external" href="' + slidesurl + 'D' + currentSlide + '.jpg"><img class="slide" src="' + slidesurl + 'D' + currentSlide + '.jpg" /></a>';
+			document.getElementById("currentDia").innerHTML = '<a target="external" href="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg"><img class="slide" src="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg" /></a>';
 			
 			if(oldSlide > 0)
 				document.getElementById('time' + oldSlide).className="otherThumb";
