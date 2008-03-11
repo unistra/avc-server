@@ -88,26 +88,34 @@ public interface IService {
 	/**
 	 * Gets a list of the n last courses
 	 * @param n the number of courses to return
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
 	 * @return the list of courses
 	 */
-	public List<Course> getNLastCourses(int n);
+	public List<Course> getNLastCourses(int n, String testKeyWord1, String testKeyWord2);
 	
 	/**
 	 * Gets a restricted list of courses
 	 * @param number the number of courses to return
 	 * @param start the start number of the courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the list of courses
 	 */
-	public List<Course> getCourses(int number, int start);
+	public List<Course> getCourses(int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3);
 	
 	/**
 	 * Gets a restricted list of courses corresponding to the given criteria
 	 * @param params the criteria of the searched courses
 	 * @param number the number of courses to return
 	 * @param start the start number of the courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the list of courses
 	 */
-	public List<Course> getCourses(HashMap<String, String> params, int number, int start);
+	public List<Course> getCourses(HashMap<String, String> params, int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3);
 	
 	/**
 	 * Gets a course by providing its id
@@ -156,6 +164,17 @@ public interface IService {
 	 * @param mediaFolder the folder of the course to delete
 	 */
 	public void deleteCourse(int courseId, String mediaFolder);
+	
+	/**
+	 * Gets a restricted list of test courses
+	 * @param number the number of courses to return
+	 * @param start the start number of the courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getTests(int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3);
 	
 	/**
 	 * Deletes the test courses (courses with genre 'Suppression')

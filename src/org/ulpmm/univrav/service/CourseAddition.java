@@ -25,10 +25,20 @@ public class CourseAddition extends Thread {
 	
 
 	/**
+	 * 
 	 * @param db
 	 * @param fs
 	 * @param c
 	 * @param courseArchive
+	 * @param service
+	 * @param rssFolderPath
+	 * @param rssName
+	 * @param rssTitle
+	 * @param rssDescription
+	 * @param serverUrl
+	 * @param rssImageUrl
+	 * @param recordedInterfaceUrl
+	 * @param language
 	 */
 	public CourseAddition(IDatabase db, IFileSystem fs, Course c, String courseArchive, 
 			IService service, String rssFolderPath, String rssName, String rssTitle, 

@@ -28,10 +28,22 @@ public class UnivrCourseCompletion extends Thread {
 	private String language;
 
 	/**
+	 * 
 	 * @param db
 	 * @param fs
+	 * @param ud
 	 * @param c
+	 * @param u
 	 * @param courseArchive
+	 * @param service
+	 * @param rssFolderPath
+	 * @param rssName
+	 * @param rssTitle
+	 * @param rssDescription
+	 * @param serverUrl
+	 * @param rssImageUrl
+	 * @param recordedInterfaceUrl
+	 * @param language
 	 */
 	public UnivrCourseCompletion(IDatabase db, IFileSystem fs, IUnivrDao ud, Course c, Univr u, String courseArchive, 
 			IService service, String rssFolderPath, String rssName, String rssTitle, 
@@ -57,7 +69,7 @@ public class UnivrCourseCompletion extends Thread {
 	}
 
 	/**
-	 * 
+	 * The process to create a course inside a thread
 	 */
 	public void run() {
 		fs.addCourse(c, courseArchive);

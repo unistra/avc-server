@@ -248,11 +248,21 @@ public class DatabaseImpl implements IDatabase {
 	/**
 	 * Gets a list of the n last courses
 	 * @param n the number of courses to return
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
 	 * @return the list of courses
 	 */
-	public List<Course> getNLastCourses(int n) {
+	public List<Course> getNLastCourses(int n, String testKeyWord1, String testKeyWord2) {
 		
-		ResultSet rs = pa.query("SELECT * From course WHERE genre IS NULL AND visible = true ORDER BY date DESC, courseid DESC LIMIT " + n);
+		String sql = "SELECT * From course WHERE genre IS NULL AND visible = true " +
+			"AND INITCAP(title) NOT LIKE '" + testKeyWord1 + "%' ";
+		
+		if( testKeyWord2 != null && ! testKeyWord2.equals(""))
+			sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+		
+		sql += "ORDER BY date DESC, courseid DESC LIMIT " + n;
+		
+		ResultSet rs = pa.query(sql);
 		List<Course> l = new ArrayList<Course>();
 		try {
 			while(rs.next()) {
@@ -288,11 +298,24 @@ public class DatabaseImpl implements IDatabase {
 	 * Gets a restricted list of courses
 	 * @param number the number of courses to return
 	 * @param start the start number of the courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the list of courses
 	 */
-	public List<Course> getCourses(int number, int start) {
+	public List<Course> getCourses(int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
 		
-		ResultSet rs = pa.query("SELECT * From course WHERE visible = true ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start);
+		String sql = "SELECT * From course WHERE visible = true " +
+			"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
+			"AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+			
+			if( testKeyWord3 != null && ! testKeyWord3.equals(""))
+				sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord3 + "%' ";
+			
+		sql += "ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start;
+
+		ResultSet rs = pa.query(sql);
+		
 		List<Course> l = new ArrayList<Course>();
 		try {
 			while(rs.next()) {
@@ -329,9 +352,12 @@ public class DatabaseImpl implements IDatabase {
 	 * @param params the criteria of the searched courses
 	 * @param number the number of courses to return
 	 * @param start the start number of the courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the list of courses
 	 */
-	public List<Course> getCourses(HashMap<String, String> params, int number, int start) {
+	public List<Course> getCourses(HashMap<String, String> params, int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
 			
 		List<Course> l = new ArrayList<Course>();
 		
@@ -341,21 +367,27 @@ public class DatabaseImpl implements IDatabase {
 			Set<String> keys = params.keySet();
 			
 			/* Creation of the SQL query string */
-			String sql = "SELECT * FROM course WHERE ";
+			String sql = "SELECT * FROM course WHERE visible = true " +
+				"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
+				"AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+			
+			if( testKeyWord3 != null && ! testKeyWord3.equals(""))
+				sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord3 + "%' ";
+			
 			Iterator<String> it = keys.iterator();
 			while( it.hasNext()) {
 				if( ! sql.endsWith("WHERE "))
-					sql += "AND ";
+					sql += "";
 				
 				String param = it.next();
 				if( param.equals("fullname") )
-					sql += "(COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = ? ";
+					sql += "AND (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = ? ";
 				else if( param.equals("keyword") )
-					sql += "(INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?) OR INITCAP(name) LIKE INITCAP(?) OR INITCAP(firstname) LIKE INITCAP(?)) ";
+					sql += "AND (INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?) OR INITCAP(name) LIKE INITCAP(?) OR INITCAP(firstname) LIKE INITCAP(?)) ";
 				else
-					sql += param + " = ? ";
+					sql += "AND " + param + " = ? ";
 			}
-			sql += "AND visible = true ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start;
+			sql += "ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start;
 
 			try {
 				PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -410,7 +442,7 @@ public class DatabaseImpl implements IDatabase {
 			
 		}
 		else
-			l = getCourses(number, start);
+			l = getCourses(number, start, testKeyWord1, testKeyWord2, testKeyWord3);
 		
 		return l;
 	}
@@ -806,13 +838,66 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
+	 * Gets a restricted list of test courses
+	 * @param number the number of courses to return
+	 * @param start the start number of the courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getTests(int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
+		
+		String sql = "SELECT * From course " +
+			"WHERE INITCAP(genre) = '" + testKeyWord1 + "' " +
+			"OR INITCAP(title) LIKE '" + testKeyWord2 + "%' ";
+			
+			if( testKeyWord3 != null && ! testKeyWord3.equals(""))
+				sql += "OR INITCAP(title) LIKE '" + testKeyWord3 + "%' ";
+			
+		sql += "ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start;
+
+		ResultSet rs = pa.query(sql);
+		
+		List<Course> l = new ArrayList<Course>();
+		try {
+			while(rs.next()) {
+				l.add(new Course(
+					rs.getInt("courseid"),
+					rs.getTimestamp("date"),
+					rs.getString("type"),
+					rs.getString("title"),
+					rs.getString("description"),
+					rs.getString("formation"),
+					rs.getString("name"),
+					rs.getString("firstname"),
+					rs.getString("ipaddress"),
+					rs.getInt("duration"),
+					rs.getString("genre"),
+					rs.getBoolean("visible"),
+					rs.getInt("consultations"),
+					rs.getString("timing"),
+					rs.getString("mediafolder")
+				));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the courses list");
+			sqle.printStackTrace();
+		}
+		
+		return l;
+	}
+	
+	/**
 	 * Deletes the test courses (ie courses with genre 'Suppression')
 	 * @param testKeyWord the key word which identifies a test
 	 */
 	public void deleteTests(String testKeyWord) {
 		if( testKeyWord != null && ! testKeyWord.equals("")) {
 			Connection cnt = pa.getConnection();
-			String sql = "DELETE FROM course WHERE initcap(genre) = '" + testKeyWord + "'";
+			String sql = "DELETE FROM course WHERE INITCAP(genre) = '" + testKeyWord + "'";
 			try {
 				Statement stmt = cnt.createStatement();
 				stmt.executeUpdate(sql);

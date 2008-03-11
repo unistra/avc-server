@@ -23,10 +23,20 @@ public class MediaUpload extends Thread {
 	
 
 	/**
+	 * 
 	 * @param db
 	 * @param fs
 	 * @param c
-	 * @param courseArchive
+	 * @param mediaFile
+	 * @param service
+	 * @param rssFolderPath
+	 * @param rssName
+	 * @param rssTitle
+	 * @param rssDescription
+	 * @param serverUrl
+	 * @param rssImageUrl
+	 * @param recordedInterfaceUrl
+	 * @param language
 	 */
 	public MediaUpload(IDatabase db, IFileSystem fs, Course c, FileItem mediaFile, 
 			IService service, String rssFolderPath, String rssName, String rssTitle, 
