@@ -7,7 +7,7 @@ package org.ulpmm.univrav.entities;
  * @author laurent
  *
  */
-public class Amphi {
+public class Amphi implements Comparable<Amphi>{
 	
 	private int amphiid;
 	private int buildingid;
@@ -109,5 +109,13 @@ public class Amphi {
 	 */
 	public void setNumber(int number) {
 		this.number = number;
+	}
+
+	/**
+	 * To sort amphi by name
+	 * @param amphi 
+	 */
+	public int compareTo(Amphi o) {
+		return this.name.compareTo(o.name);
 	}
 }
