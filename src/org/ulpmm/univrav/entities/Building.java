@@ -1,5 +1,6 @@
 package org.ulpmm.univrav.entities;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Building {
@@ -43,9 +44,10 @@ public class Building {
 	}
 
 	/**
-	 * @return the amphis
+	 * @return the amphis sort by name
 	 */
 	public List<Amphi> getAmphis() {
+		Collections.sort(amphis);
 		return amphis;
 	}
 
@@ -62,5 +64,10 @@ public class Building {
 	public String toString() {
 		return this.name;
 	}
+	
+	
+	
+	
+	
 	
 }
