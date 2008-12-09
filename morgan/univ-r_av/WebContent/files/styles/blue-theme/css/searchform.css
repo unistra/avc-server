@@ -1,0 +1,76 @@
+/* Div of the search part of the page */
+.search {
+	width: 728px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 20px;
+	background-color: #747474;
+	overflow: hidden;
+	font-size: 12px;
+}
+
+/* Div containing the search image */
+.searchImage {
+	position: absolute;
+	width: 237px;
+	height: 139px;
+	margin-left: -20px;
+	margin-top: -20px;
+	background-image: url(../img/search.png);
+}
+
+/* Div containing the "search" text */
+.searchText {
+	position: absolute;
+	font-size: 20px;
+	left: 10px;
+	top: 18px;
+}
+
+/* Float div containing search criteria */
+.criteria {
+	float: right;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	padding-left: 8px;
+	padding-right: 8px;
+	text-align: right;
+}
+
+/* A field of the html form */
+.field {
+	width: 200px;
+	margin: 3px;
+}
+
+fieldset {
+	width: 190px;
+	text-align: left;
+	border: 1px solid #DDDDDD;
+	padding: 10px;
+}
+
+.checkbox {
+	margin-right: 5px;
+}
+
+/* Formatting of the submit button of the html form */
+.submit {
+	background: none;
+	border:0;
+	color: white;
+	font-size: 14px;
+	font-family: helvetica, arial;
+}
+
+/* vertical line in the "search" div */
+hr {
+	position: relative;
+	background-color: #DDDDDD;
+	border: 0;
+	left: 28%;
+	margin-top: 10px;
+	height: 105px;
+	width: 1px;
+	text-align:left;
+}
