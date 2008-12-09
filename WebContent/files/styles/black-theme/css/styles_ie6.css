@@ -1,0 +1,19 @@
+/* Clickable zone to go back to the banner page */
+.bannerPageZone {
+	background-image: url(../img/univr-av-logo.gif);
+}
+
+/* Clickable zone, link to the ULPMM website */
+.ulpmmZone {
+	background-image: url(../img/ulpmm-logo.gif);
+}
+
+/* Clickable zone, link to the ULP website */
+.ulpZone {
+	background-image: url(../img/ulp-logo.gif);
+}
+
+.banner {
+	background: url(../img/banner_bk.gif) 50% 50%;
+  	background-repeat: no-repeat;
+}
