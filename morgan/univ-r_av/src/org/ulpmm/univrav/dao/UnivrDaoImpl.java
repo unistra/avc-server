@@ -67,9 +67,18 @@ public class UnivrDaoImpl implements IUnivrDao {
 	 * @return the group name
 	 */
 	public String getGroupName(int groupCode, String estab) {
-		Group g = new Group(groupCode,estab);
+		
+		Group g=null;
+		
+		try {
+			g = new Group(groupCode,estab);
+		}
+		catch(Exception e) {
+			System.out.println("Error while retrieving the group");
+			e.printStackTrace();
+		}
 		//Group g = new Group(groupCode);
-		return g.getName();
+		return g.getGroupName();
 	}
 	
 	/**
