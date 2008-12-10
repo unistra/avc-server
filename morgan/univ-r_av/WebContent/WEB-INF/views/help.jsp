@@ -62,26 +62,18 @@
 			    	<div class="leftCol">
 			    		
 			    		<h3><a id="browsers"></a>Navigateurs conseill&eacute;s</h3>
-						<p>Firefox 2.0 (Linux, MacOSX, Windows), IE7 (Windows)</p>
+						<p>Firefox 3.0 (Linux, MacOSX, Windows), IE7 (Windows)</p>
 						
 						<h3><a id="live"></a>Cours en direct</h3>
 						<h5>Lieux et salles</h5>
 						<p>Disponible uniquement &agrave; partir des salles et amphith&eacute;atres automatis&eacute;s et sur 
 						la volont&eacute; de l'enseignant, le direct est disponible sur le site de façon hi&eacute;rarchis&eacute;e 
 						par b&acirc;timent puis par salle.<br>
-						Cliquer sur une salle allum&eacute;e (Malette3 sur l'image) permet d'&eacute;couter et de suivre le cours en direct.</p>
+						Cliquer sur une salle allum&eacute;e (Test Live sur l'image) permet d'&eacute;couter et de suivre le cours en direct.</p>
 						<a class="link" href="../files/img/help/Live.png">Screenshot</a>
 						<h5>Diffusion et &eacute;coute du Live</h5>
-						<p>Les diapositives sont diffus&eacute;es simultan&eacute;ment avec le flux audio.<br>
-						Pour &eacute;couter le flux audio, vous avez besoin d'avoir un plugin permettant leur lecture.</p>
-						<p><span class="underline">Exemples de plugins :</span><br>
-						Mplayerplug-in sous Linux<br>
-						Windows Media Player sous Windows<br>
-						Quicktime pour MacOSX avec l'ajout du logiciel Flip4Mac</p>
-						<p><span class="underline">NB :</span> Firefox dispose d'une extension 'MediaPlayer Connectivity' 
-						qui permet de se substituer aux plugins web des players et d'utiliser n'importe quel logiciel audio 
-						install&eacute; sur la machine pour lire le flux.</p>
-						<p>Le live video n&eacute;cessite la pr&eacute;sence de RealMediaPlayer.</p>
+						<p>Les diapositives sont diffus&eacute;es simultan&eacute;ment avec le flux audio et/ou vid&eacute;o.<br>
+						Pour lire le flux audio et/ou vid&eacute;o, vous avez besoin d'installer flash player sur votre machine.</p>
 						<a class="link" href="../files/img/help/Live_audio.png">Screenshot</a>
 						
 						<h3><a id="podcasting"></a>Podcasting et flux RSS</h3>
@@ -89,8 +81,8 @@
 						m&eacute;dias disponibles ou via l'abonnement à un flux RSS.</p>
 						<a class="link" href="../files/img/help/Podcast.png">Screenshot</a>
 						<h5>Abonnement &agrave; un flux RSS</h5>
-						<p>Cliquer sur l'ic&ocirc;ne orange dans la barre d'adresse de Firefox permet de lister les 
-						diff&eacute;rents flux disponibles.</p>
+						<p>Cliquer sur l'ic&ocirc;ne orange dans la barre d'adresse de Firefox permet de s'abonner à l'ensemble du site Univ-r_Av. 
+						Cliquer sur le lien "abonnement" de l'accueil pour lister les diff&eacute;rents flux disponibles.</p>
 						<a class="link" href="../files/img/help/Rss.png">Screenshot</a>
 						<p>En s&eacute;lectionnant un flux dans cette liste, Firefox affiche une page permettant d'avoir le listing 
 						de tous les cours.<br>
@@ -114,36 +106,45 @@
 			    	<div class="rightCol">
 			    				    	
 			    		<h3><a id="configuration"></a>Configuration minimale</h3>
-			    		<p>Realplayer 10 (Linux, MacOSX, Windows)<br>
-						Un plugin pour la lecture des flux audio (Live)</p>
+			    		<p>Realplayer 10 ou Flash Player (Linux, MacOSX, Windows)</p>
 						
 						<h3><a id="recorded"></a>Cours en différé</h3>
 						<h5>Filtrage de l'Affichage</h5>
 						<p>On dispose d'une fonction de recherche (Launch Search) avec des options de filtrage pour l'affichage des cours.</p>
 						<h5>Listings des Cours</h5>
 						<p>Les cours sont disponibles selon diff&eacute;rents modes.</p>	
-						<p><b>Clic sur l'ic&ocirc;ne à gauche ou sur l'ic&ocirc;ne sous l'intitul&eacute; 'realplayer' :</b><br>
+						<p><b>Clic sur l'ic&ocirc;ne à gauche ou sur l'ic&ocirc;ne sous l'intitul&eacute; 'flash' :</b><br>
+						Mode en ligne. N&eacute;cessite la pr&eacute;sence de Flash Player sur votre machine. 
+						C'est le mode recommand&eacute; pour la visualisation des cours.</p>
+						<p><b>Clic sur l'ic&ocirc;ne sous l'intitul&eacute; 'realplayer' :</b><br>
 						Mode en ligne. N&eacute;cessite la pr&eacute;sence du plugin RealPlayer sur votre machine. 
-						C'est le mode recommand&eacute; pour la visualisation des cours.</p>		
+						</p>		
+						<a class="link" href="../files/img/help/Differe.png">Screenshot</a>			
+						<h5>Diffusion et &eacute;coute du diff&eacute;r&eacute; (Mode recommandé)</h5>
+						<p> En flash, le cours est lu dans le lecteur flash qui se charge de diffuser les diapositives et 
+						l'enregistrement audio/vid&eacute;o du cours. Il est possible de d&eacute;placer le curseur pour se positionner 
+						&agrave; un endroit particulier du cours. </p>
+						<a class="link" href="../files/img/help/Diff_layout_flash.png">Screenshot</a>
+						<p>Le fichier Smil est lu dans le lecteur Reaplayer qui se charge de diffuser les diapositives et 
+						l'enregistrement audio du cours. Il est également possible de d&eacute;placer le curseur pour se positionner 
+						&agrave; un endroit particulier du cours.</p>
+						<a class="link" href="../files/img/help/Diff_layout_smil.png">Screenshot</a>
+						<p>Les diapositives miniatures sont cliquables et permettent de positionner automatiquement le lecteur &agrave; l'endroit de diffusion de la diapo.<br>
+						Les diapositives sont cliquables et ouvrent un popup contenant la diapositive dans son format 
+						d'origine pour une meilleure lecture. Cela met cependant la lecture du Smil en pause.<br>
+						On y trouve les informations concernant le cours, un acc&egrave;s direct aux 
+						t&eacute;l&eacute;chargement des diff&eacute;rents m&eacute;dias le composant.</p>	
+						<p><span class="underline">NB :</span> Dans le cas d'un cours vid&eacute;o smil, la vid&eacute;o est 
+						diffus&eacute;e dans la partie droite. Cette vid&eacute;o est cliquable pour &ecirc;tre diffus&eacute;e dans son format d'origine. La lecture du smil est mise en pause.</p>
 						<p><b>Clic sur les ic&ocirc;nes sous les intitul&eacute;s 'smil', 'ogg', 'mp3', 'zip', ou 'pdf':</b><br>
 						Ces modes permettent d'avoir un acc&egrave;s direct aux fichiers des m&eacute;dias. 
 						Dans le cas du choix du m&eacute;dia Smil, Vous pouvez utiliser n'importe quel logiciel capable de supporter Smil 
 						(MediaPlayerClassic, AmbulantPlayer, RealPlayer, Quicktime,....)</p>
-						<a class="link" href="../files/img/help/Differe.png">Screenshot</a>			
-						<h5>Diffusion et &eacute;coute du diff&eacute;r&eacute; (Mode recommandé)</h5>
-						<p>Le fichier Smil est lu dans le lecteur Reaplayer qui se charge de diffuser les diapositives et 
-						l'enregistrement audio du cours. Il est possible de d&eacute;placer le curseur pour se positionner 
-						&agrave; un endroit particulier du cours.<br>
-						Les points correspondant &agrave; des diapositives sont cliquables et permettent de positionner automatiquement le lecteur &agrave; l'endroit de diffusion de la diapo.<br>
-						Les diapositives du Smil sont cliquables et ouvrent un popup contenant la diapositive dans son format 
-						d'origine pour une meilleure lecture. Cela met cependant la lecture du Smil en pause.<br>
-						Sur la partie droite, on trouve les informations concernant le cours, un acc&egrave;s direct aux 
-						t&eacute;l&eacute;chargement des diff&eacute;rents m&eacute;dias le composant.</p>	
-						<p><span class="underline">NB :</span> Dans le cas d'un cours vid&eacute;o, la vid&eacute;o est 
-						diffus&eacute;e dans la partie droite. Cette vid&eacute;o est cliquable pour &ecirc;tre diffus&eacute;e dans son format d'origine. La lecture du smil est mise en pause.</p>
-						<a class="link" href="../files/img/help/Diff_layout.png">Screenshot</a>
-	
+						
+					
 						<h3><a id="downloads"></a>T&eacute;l&eacute;chargement des logiciels et plugins</h3>
+						<h5>Adobe Flash Player</h5>
+						<p><a href="http://get.adobe.com/fr/flashplayer/">Flash_allplatforms</a></p>
 						<h5>Realplayer</h5>
 						<p><b>Linux</b> :<br>
 						Utilisez votre gestionnaire de paquets.<br>
