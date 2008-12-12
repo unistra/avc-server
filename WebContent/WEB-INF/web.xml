@@ -56,6 +56,11 @@
 			<url-pattern>/avc/admin_editunivr</url-pattern>
 			<url-pattern>/avc/admin_deleteunivr</url-pattern>
 			<url-pattern>/avc/admin_validateunivr</url-pattern>
+			<url-pattern>/avc/admin_users</url-pattern>
+			<url-pattern>/avc/admin_edituser</url-pattern>
+			<url-pattern>/avc/admin_validateuser</url-pattern>
+			<url-pattern>/avc/admin_deleteuser</url-pattern>
+			<url-pattern>/avc/admin_adduser</url-pattern>			
 			<url-pattern>/avc/admin_teachers</url-pattern>
 			<url-pattern>/avc/admin_stats</url-pattern>
 			<http-method>GET</http-method>
@@ -118,5 +123,14 @@
 		<filter-name>CAS filter</filter-name> 
 		<url-pattern>/avc/mycourses</url-pattern>
 	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CAS filter</filter-name> 
+		<url-pattern>/avc/editmycourse</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CAS filter</filter-name> 
+		<url-pattern>/avc/validatemycourse</url-pattern>
+	</filter-mapping>
+	
 	
 </web-app>
