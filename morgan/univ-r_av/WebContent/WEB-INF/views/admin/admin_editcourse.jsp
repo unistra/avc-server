@@ -107,6 +107,10 @@
 				    		<td>High Quality</td>
 				    		<td><input type="checkbox" name="highquality" ${course.highquality == true ? 'checked' : ''} ></td>
 			    		</tr>
+			    		<tr class="odd">
+				    		<td>UserId</td>
+				    		<td><input type="hidden" name="userid" value="${course.userid}">${course.userid}</td>
+			    		</tr>
 			    	</table>
 			    	<br>
 			    	<input type="submit" value="Validate">

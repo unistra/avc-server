@@ -471,6 +471,13 @@ public interface IService {
 	public User getUser(String login);
 	
 	/**
+	 * Get user by id 
+	 * @param id
+	 * @return the user
+	 */
+	public User getUser(int id);
+	
+	/**
 	 * Gets the id of the next user which will be uploaded
 	 * @return the id of the user
 	 */
@@ -481,6 +488,18 @@ public interface IService {
 	 * @param u User
 	 */
 	public void addUser(User u);
+	
+	/**
+	 * Modify a user
+	 * @param u User
+	 */
+	public void modifyUser(User u);
+	
+	/**
+	 * Deletes an user by providing its id
+	 * @param userid the id of the user
+	 */
+	public void deleteUser(int userid);
 	
 	/**
 	 * Gets a list of courses by providing its user
@@ -495,4 +514,10 @@ public interface IService {
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(User u);
+	
+	/**
+	 * Gets the list of all the users
+	 * @return the list of users
+	 */
+	public List<User> getAllUsers();
 }

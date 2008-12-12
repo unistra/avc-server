@@ -482,6 +482,33 @@ public class Application extends HttpServlet {
 		}
 		else if( page.equals("/admin_validateunivr"))
 			validateCourse(request, response, "./admin_univr");
+		else if( page.equals("/admin_users")) {
+			request.setAttribute("viewurl", "./admin_users");
+			List<User> users = service.getAllUsers();
+			request.setAttribute("users", users );
+			request.setAttribute("number", users.size());
+			request.setAttribute("editurl", "./admin_edituser");
+			request.setAttribute("deleteurl", "./admin_deleteuser");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_users.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_edituser")) {
+			request.setAttribute("action","edit"); 
+			request.setAttribute("user", service.getUser(Integer.parseInt(request.getParameter("id"))));
+			request.setAttribute("posturl", "./admin_validateuser");
+			request.setAttribute("gobackurl", "./admin_users");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_edituser.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_validateuser"))
+			validateUser(request, response);
+		else if( page.equals("/admin_deleteuser")) {
+			int userid = Integer.parseInt(request.getParameter("id"));
+			service.deleteUser(userid);
+			response.sendRedirect(response.encodeRedirectURL("./admin_users"));
+		}
+		else if( page.equals("/admin_adduser")) {
+			request.setAttribute("action","add"); 
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_edituser.jsp").forward(request, response);
+		}
 		else if( page.equals("/admin_teachers")) {
 			request.setAttribute("viewurl", "./admin_teachers");
 			List<Teacher> teachers = service.getAllTeachers();
@@ -910,7 +937,7 @@ public class Application extends HttpServlet {
 		firstname = service.cleanString(request.getParameter("firstname"));
 		formation = service.cleanString(request.getParameter("ue"));
 		genre = request.getParameter("genre");
-		login = request.getParameter("login")!=null ? request.getParameter("login") : "anonymous";
+		login = request.getParameter("login")!=null && request.getParameter("login")!="" ? request.getParameter("login") : "anonymous";
 		email = request.getParameter("email")!=null ? request.getParameter("email") : "";
 		
 		/* Verifies that all essential parameters are sent, cancels the upload if not */
@@ -1587,6 +1614,36 @@ public class Application extends HttpServlet {
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 		}
 	}
+	
+	private void validateUser(HttpServletRequest request, HttpServletResponse response) 
+	throws ServletException, IOException {
+		
+	
+	if( ! (request.getParameter("login").equals(""))) {
+		
+	
+		int userid =  ! request.getParameter("userid").equals("") ? Integer.parseInt(request.getParameter("userid")) : 0;
+		
+		User u = new User(
+			userid,
+			request.getParameter("login"),
+			request.getParameter("email")
+		);
+		
+		System.out.println("Action: " + request.getParameter("action"));
+		
+		if(request.getParameter("action").equals("edit"))
+			service.modifyUser(u);
+		else
+			service.addUser(u);
+		response.sendRedirect(response.encodeRedirectURL("./admin_users?userid=" + request.getParameter("userid")));
+	}
+	else {
+		request.setAttribute("messagetype", "error");
+		request.setAttribute("message", "Login field must be completed");
+		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+	}
+}
 	
 	private void changeStyle(HttpServletRequest request, HttpServletResponse response) 
 		throws ServletException, IOException {

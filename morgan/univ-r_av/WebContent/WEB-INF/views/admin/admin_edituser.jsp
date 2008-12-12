@@ -1,7 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
@@ -25,7 +24,6 @@
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 
-	<script type="text/javascript" src="../files/js/confirmation.js"></script>
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
 
@@ -37,39 +35,34 @@
 	    	<div class="banner">
 	    		<c:import url="../include/banner.jsp" />
 	    	</div>
-	    	
 	    	<div class="links">
 		    	<c:import url="./links.jsp" />
 	    	</div>
-	    		    	
-	    	<display:table id="courses" name="courses" requestURI="${viewurl}" class="displaytag">
-	    		<display:column property="courseid" title="N°" sortable="true"/>
-	    		<display:column property="date" sortable="true" />
-				<display:column property="type" sortable="true" />
-				<display:column property="title" sortable="true" />
-				<display:column property="formation" sortable="true" />
-				<display:column property="name" sortable="true" />
-				<display:column property="firstname" />
-				<display:column property="ipaddress" sortable="true" />
-				<display:column property="durationString" title="Duration" sortable="true" />
-				<display:column title="visible" sortable="true">
-					<input type="checkbox" disabled="disabled" ${courses.visible == true ? 'checked' : '' } />
-				</display:column>
-				<display:column property="consultations" title="views" sortable="true" />
-				<display:column title="high quality" sortable="true">
-					<input type="checkbox" disabled="disabled" ${courses.highquality == true ? 'checked' : '' } />
-				</display:column>
-				<display:column property="userid" title="user id" sortable="true" />
-				<display:column>
-					<a href="<c:url value="${editurl}?id=${courses.courseid}" />">Edit</a>
-				</display:column>
-				<display:column>
-					<a href="javascript:confirmation('Delete the course ?','${deleteurl}?id=${courses.courseid}')">Delete</a>
-				</display:column>
-	    	</display:table>
-	  	    		    		
-	    	<br>
-	    	<p id="nbr">${number} courses</p>
+	    	
+	    	<div class="editform">
+		    	<form method="POST" action="<c:url value="./admin_validateuser" />">
+			    	<table>
+			    		<tr class="odd">
+				    		<td>UserId</td>
+				    		<td><input type="hidden" name="userid" value="${user.userid}">${user.userid}</td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>Login</td>
+				    		<td><input type="text" name="login" value="${user.login}" class="field"></td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>Email</td>
+				    		<td><input type="text" name="email" value="${user.email}" class="field"></td>
+			    		</tr>
+			    		
+			    	</table>
+			    	<br>
+			    	<input type="hidden" name="action" value="${action}">
+			    	<input type="submit" value="Validate">
+			    	<br><br>
+			    	<a href="<c:url value="./admin_users?userid=${userid}" />">Go back</a>
+		    	</form>
+		    </div>
 	    </div>
 	    	
 	    <div class="footer">

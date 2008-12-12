@@ -1,5 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 
@@ -33,43 +34,35 @@
   
   <body>
     <div class="main">
+	   
 	    <div class="contents">
-	    	<div class="banner">
+	    
+	     	<div class="banner">
 	    		<c:import url="../include/banner.jsp" />
 	    	</div>
 	    	
 	    	<div class="links">
 		    	<c:import url="./links.jsp" />
 	    	</div>
-	    		    	
-	    	<display:table id="courses" name="courses" requestURI="${viewurl}" class="displaytag">
-	    		<display:column property="courseid" title="N°" sortable="true"/>
-	    		<display:column property="date" sortable="true" />
-				<display:column property="type" sortable="true" />
-				<display:column property="title" sortable="true" />
-				<display:column property="formation" sortable="true" />
-				<display:column property="name" sortable="true" />
-				<display:column property="firstname" />
-				<display:column property="ipaddress" sortable="true" />
-				<display:column property="durationString" title="Duration" sortable="true" />
-				<display:column title="visible" sortable="true">
-					<input type="checkbox" disabled="disabled" ${courses.visible == true ? 'checked' : '' } />
-				</display:column>
-				<display:column property="consultations" title="views" sortable="true" />
-				<display:column title="high quality" sortable="true">
-					<input type="checkbox" disabled="disabled" ${courses.highquality == true ? 'checked' : '' } />
-				</display:column>
-				<display:column property="userid" title="user id" sortable="true" />
-				<display:column>
-					<a href="<c:url value="${editurl}?id=${courses.courseid}" />">Edit</a>
+	    	
+	    	<display:table id="users" name="users" requestURI="${viewurl}" class="displaytag">
+	    		<display:column property="userid" title="N°" sortable="true"/>
+	    		<display:column property="login" title="Login" sortable="true"/>
+	    		<display:column property="email" title="E-mail" sortable="true"/>
+	    		<display:column>
+					<a href="<c:url value="${editurl}?id=${users.userid}" />">Edit</a>
 				</display:column>
 				<display:column>
-					<a href="javascript:confirmation('Delete the course ?','${deleteurl}?id=${courses.courseid}')">Delete</a>
+					<a href="javascript:confirmation('Delete the user ?','${deleteurl}?id=${users.userid}')">Delete</a>
 				</display:column>
 	    	</display:table>
-	  	    		    		
+	    	
 	    	<br>
-	    	<p id="nbr">${number} courses</p>
+	    	<div class="add">
+	    		<a href="<c:url value="./admin_adduser"/>">Add</a>	
+	    	</div>
+	    	<br>
+	    	<p id="nbr">${number} users</p>
 	    </div>
 	    	
 	    <div class="footer">
