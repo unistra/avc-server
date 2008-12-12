@@ -3,7 +3,6 @@ package org.ulpmm.univrav.service;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
-
 import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
@@ -11,6 +10,7 @@ import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
+import org.ulpmm.univrav.entities.User;
 
 public interface IService {
 	
@@ -462,4 +462,37 @@ public interface IService {
 	 * @return the cleaned string
 	 */
 	public String cleanString(String string);
+	
+	/**
+	 * Get user by login (login is UNIQUE)
+	 * @param login
+	 * @return the user
+	 */
+	public User getUser(String login);
+	
+	/**
+	 * Gets the id of the next user which will be uploaded
+	 * @return the id of the user
+	 */
+	public int getNextUserId();
+	
+	/**
+	 * Adds a new user
+	 * @param u User
+	 */
+	public void addUser(User u);
+	
+	/**
+	 * Gets a list of courses by providing its user
+	 * @param user the user of the course
+	 * @return the list of course
+	 */
+	public List<Course> getCourses(User u);
+	
+	/**
+	 * Gets the total number of courses
+	 * @param user
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(User u);
 }

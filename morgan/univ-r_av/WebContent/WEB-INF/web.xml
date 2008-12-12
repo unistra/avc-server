@@ -67,22 +67,7 @@
 		</auth-constraint>
 	</security-constraint>
 	
-	<security-constraint>
-		<display-name>Univ-R AV access restriction</display-name>
-		<!-- List of the protected pages -->
-		<web-resource-collection>
-			<web-resource-name>Protected mediaupload</web-resource-name>
-			<url-pattern>/avc/upload</url-pattern>
-			<url-pattern>/avc/mediaupload</url-pattern>
-			<http-method>GET</http-method>
-			<http-method>POST</http-method>
-		</web-resource-collection>
-		<!-- roles of the authorized users -->
-		<auth-constraint>
-			<role-name>mediaupload</role-name>
-			<role-name>ulpmm</role-name>
-		</auth-constraint>
-	</security-constraint>
+	
 	
 	<!-- authentication type -->
 	<login-config>
@@ -112,17 +97,26 @@
 		</init-param> 
 		<init-param>                     
 			<param-name>edu.yale.its.tp.cas.client.filter.serverName</param-name>                     
-			<param-value>univ-rav.u-strasbg.fr</param-value>
+			<!--<param-value>univ-rav.u-strasbg.fr</param-value>-->
+			<param-value>localhost</param-value>
 		</init-param>
 	</filter>
-	<!--<filter-mapping>
-		<filter-name>CAS filter</filter-name> 
+	
+	<filter-mapping>
+	<filter-name>CAS filter</filter-name> 
 		<url-pattern>/avc/upload</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>CAS filter</filter-name> 
 		<url-pattern>/avc/mediaupload</url-pattern>
-	</filter-mapping>  -->
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CAS filter</filter-name> 
+		<url-pattern>/avc/myspace</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CAS filter</filter-name> 
+		<url-pattern>/avc/mycourses</url-pattern>
+	</filter-mapping>
 	
-			
 </web-app>

@@ -15,6 +15,7 @@ import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
+import org.ulpmm.univrav.entities.User;
 
 public class ServiceImpl implements IService {
 
@@ -754,4 +755,46 @@ public class ServiceImpl implements IService {
 		return res;
 	}
 	
+	/**
+	 * Get user by login (login is UNIQUE)
+	 * @param login
+	 * @return the user
+	 */
+	public User getUser(String login) {
+		return db.getUser(login);
+	}
+	
+	/**
+	 * Gets the id of the next user which will be uploaded
+	 * @return the id of the user
+	 */
+	public synchronized int getNextUserId() {
+		return db.getNextUserId();
+	}
+	
+	/**
+	 * Adds a new user
+	 * @param u User
+	 */
+	public synchronized void addUser(User u) {
+		db.addUser(u);
+	}
+	
+	/**
+	 * Gets a list of courses by providing its user
+	 * @param user the user of the course
+	 * @return the list of course
+	 */
+	public List<Course> getCourses(User u) {
+		return db.getCourses(u);
+	}
+	
+	/**
+	 * Gets the total number of courses
+	 * @param user
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(User u) {
+		return db.getCourseNumber(u);
+	}
 }

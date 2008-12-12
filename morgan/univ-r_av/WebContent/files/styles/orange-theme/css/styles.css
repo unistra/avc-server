@@ -80,6 +80,14 @@ img#gradient {
 	background-image: url(../img/ulp-logo.png);
 }
 
+/* Div containing the "Myspace" link */
+.myspace {
+	position: absolute;
+	font-size: 12px;
+	margin-left:880px; /* 870 */
+	margin-top: 55px;
+}
+
 /* Div containing the "Styles" link */
 .styles {
 	position: absolute;
@@ -112,7 +120,7 @@ img#gradient {
 	margin-top: 155px;
 }
 
-.styles a, .languages a, .download a, .help a {
+.myspace a, .styles a, .languages a, .download a, .help a {
 	color: white;
 }
 

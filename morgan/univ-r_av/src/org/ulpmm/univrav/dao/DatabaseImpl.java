@@ -20,6 +20,7 @@ import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
+import org.ulpmm.univrav.entities.User;
 
 public class DatabaseImpl implements IDatabase {
 	
@@ -35,7 +36,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addCourse(Course c) {
 		Connection cnt = pa.getConnection();
-		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -94,6 +95,8 @@ public class DatabaseImpl implements IDatabase {
 				pstmt.setNull(15, Types.VARCHAR);
 			
 			pstmt.setBoolean(16, c.isHighquality());
+			
+			pstmt.setInt(17, c.getUserid());
 				
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("The course " + c + " has not been added to the database");
@@ -159,7 +162,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality")
+					rs.getBoolean("highquality"),
+					rs.getInt("userid")
 				));
 			}
 			rs.close();
@@ -199,7 +203,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality")
+					rs.getBoolean("highquality"),
+					rs.getInt("userid")
 				));
 			}
 			rs.close();
@@ -239,7 +244,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality")
+					rs.getBoolean("highquality"),
+					rs.getInt("userid")
 				));
 			}
 			rs.close();
@@ -289,7 +295,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality")
+					rs.getBoolean("highquality"),
+					rs.getInt("userid")
 				));
 			}
 			rs.close();
@@ -343,7 +350,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality")
+					rs.getBoolean("highquality"),
+					rs.getInt("userid")
 				));
 			}
 			rs.close();
@@ -440,7 +448,8 @@ public class DatabaseImpl implements IDatabase {
 							rs.getInt("consultations"),
 							rs.getString("timing"),
 							rs.getString("mediafolder"),
-							rs.getBoolean("highquality")
+							rs.getBoolean("highquality"),
+							rs.getInt("userid")
 					));
 				}
 				rs.close();
@@ -495,7 +504,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getInt("consultations"),
 						rs.getString("timing"),
 						rs.getString("mediafolder"),
-						rs.getBoolean("highquality")
+						rs.getBoolean("highquality"),
+						rs.getInt("userid")
 				));
 			}
 			rs.close();
@@ -545,7 +555,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getInt("consultations"),
 						rs.getString("timing"),
 						rs.getString("mediafolder"),
-						rs.getBoolean("highquality")
+						rs.getBoolean("highquality"),
+						rs.getInt("userid")
 				));
 			}
 			rs.close();
@@ -590,7 +601,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality")
+					rs.getBoolean("highquality"),
+					rs.getInt("userid")
 				);
 			}
 			else
@@ -636,7 +648,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality")
+					rs.getBoolean("highquality"),
+					rs.getInt("userid")
 				);
 			}
 			else
@@ -820,7 +833,7 @@ public class DatabaseImpl implements IDatabase {
 		/* Creation of the SQL query string */
 		String sql = "UPDATE course SET date = ? , type = ? , title = ? , description = ? , ";
 		sql += "formation = ? , name = ? , firstname = ? , ipaddress = ? , duration = ? , ";
-		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, mediafolder = ?, highquality = ? ";
+		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, mediafolder = ?, highquality = ?, userid = ? ";
 		sql += "WHERE courseid = ?";
 		
 		try {
@@ -1002,7 +1015,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality")
+					rs.getBoolean("highquality"),
+					rs.getInt("userid")
 				));
 			}
 			rs.close();
@@ -1740,4 +1754,151 @@ public class DatabaseImpl implements IDatabase {
 		}
 	}
 	
+	/**
+	 * Get user by login (login is UNIQUE)
+	 * @param login
+	 * @return the user
+	 */
+	public User getUser(String login) {
+		User u = null;
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * FROM \"user\" WHERE login = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setString(1, login);
+			ResultSet rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				u = new User(
+					rs.getInt("userid"),
+					rs.getString("login"),
+					rs.getString("email")
+				);
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the user " + login);
+			sqle.printStackTrace();
+		}
+		
+		return u;
+	}
+	
+	/**
+	 * Gets the id of the next user which will be uploaded
+	 * @return the id of the user
+	 */
+	public int getNextUserId() {
+		int id = 0 ;
+		
+		ResultSet rs = pa.query("SELECT nextval('user_userid_seq')");
+		try {
+			if( rs.next() ) 
+				id = rs.getInt("nextval");
+			else {
+				System.out.println("The next user Id hasn't been retrieved");
+				throw new DaoException("The next user Id hasn't been retrieved");
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the next user Id");
+			sqle.printStackTrace();
+		}
+		
+		return id;
+	}
+	
+	/**
+	 * Adds a new user
+	 * @param u User
+	 */
+	public void addUser(User u) {
+		Connection cnt = pa.getConnection();
+		String sql = "INSERT INTO \"user\" values(?,?,?)";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, u.getUserid());
+			pstmt.setString(2, u.getLogin());
+			pstmt.setString(3, u.getEmail());
+			
+			if( pstmt.executeUpdate() == 0) {
+				System.out.println("The User " + u + " has not been added to the database");
+				throw new DaoException("The User " + u + " has not been added to the database");
+			}
+		}
+		catch(SQLException sqle){
+			System.out.println("Error while adding the new Univr course " + u);
+			sqle.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Gets a list of course by providing its user
+	 * @param user the user of the course
+	 * @return the list of course
+	 */
+	public List<Course> getCourses(User u) {
+		
+		List<Course> l = new ArrayList<Course>();
+		
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * FROM course WHERE userid = ?";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, u.getUserid());
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()) {
+				l.add( new Course(
+					rs.getInt("courseid"),
+					rs.getTimestamp("date"),
+					rs.getString("type"),
+					rs.getString("title"),
+					rs.getString("description"),
+					rs.getString("formation"),
+					rs.getString("name"),
+					rs.getString("firstname"),
+					rs.getString("ipaddress"),
+					rs.getInt("duration"),
+					rs.getString("genre"),
+					rs.getBoolean("visible"),
+					rs.getInt("consultations"),
+					rs.getString("timing"),
+					rs.getString("mediafolder"),
+					rs.getBoolean("highquality"),
+					rs.getInt("userid")
+				));
+			}
+		}	
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the course with user " + u.getUserid());
+			sqle.printStackTrace();
+		}
+		
+		return l;
+	}
+	
+	/**
+	 * Gets the total number of courses
+	 * @param user
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(User u) {
+		int number = 0;
+		String sql = "SELECT COUNT(*) FROM course WHERE userid="+u.getUserid();
+		
+		try {
+			ResultSet rs = pa.query(sql);
+			
+			if(rs.next()) 
+				number = rs.getInt("count");
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the course number");
+			sqle.printStackTrace();
+		}
+
+		return number;
+	}
 }
