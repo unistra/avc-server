@@ -49,7 +49,7 @@
 	    
 	    	<div class="welcome">
 	    		<p><fmt:message key="Bienvenue"/> ${user.login}</p>
-	    		<p>Votre adresse email est: ${user.email}</p>
+	    		<p><fmt:message key="Votre e-mail"/> ${user.email}</p>
 	    		<a href="<c:url value="./mycourses" />" title="<fmt:message key="Mes cours"/>" ><fmt:message key="Mes cours"/></a></br>
 	    		<a href="<c:url value="./upload" />" title="<fmt:message key="uploadPage"/>" ><fmt:message key="uploadPage"/></a>
 	    	<div>

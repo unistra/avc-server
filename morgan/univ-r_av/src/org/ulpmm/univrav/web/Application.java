@@ -333,6 +333,10 @@ public class Application extends HttpServlet {
 			displayCourses(request, response);
 		else if (page.equals("/mycourses"))
 			displayMyCourses(request, response);
+		else if (page.equals("/editmycourse"))
+			displayEditMyCourses(request, response);
+		else if( page.equals("/validatemycourse"))
+			validateMyCourse(request, response, "./mycourses");
 		else if( page.equals("/upload"))
 			uploadAccess(request, response);
 		else if( page.equals("/add") || page.equals("/UploadClient"))
@@ -850,6 +854,61 @@ public class Application extends HttpServlet {
 			/* Displays the view */
 			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/mycourses.jsp").forward(request, response);
 
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "You don't have access to this page");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+	}
+	
+	private void validateMyCourse(HttpServletRequest request, HttpServletResponse response, String redirectUrl) 
+	throws ServletException, IOException {	
+		
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
+
+		//On vérifie que l'user CAS est présent dans notre base de données
+		User user = service.getUser(casUser);
+		
+		// On récupère le cours
+		Course c = service.getCourse(Integer.parseInt(request.getParameter("courseid")));
+		
+		// On vérifie que l'user est présent et qu'il s'agit bien de l'un de ses cours
+		if(user!=null && c.getUserid()==user.getUserid()) {
+			
+			validateCourse(request,response,redirectUrl);
+			
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "You don't have access to this page");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+	}
+	
+	private void displayEditMyCourses(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+		
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
+
+		//On vérifie que l'user CAS est présent dans notre base de données
+		User user = service.getUser(casUser);
+		
+		// On récupère le cours
+		Course c = service.getCourse(Integer.parseInt(request.getParameter("id")));
+		
+		// On vérifie que l'user est présent et qu'il s'agit bien de l'un de ses cours
+		if(user!=null && c.getUserid()==user.getUserid()) {
+			
+			request.setAttribute("course", c);
+			request.setAttribute("posturl", "./validatemycourse");
+			request.setAttribute("gobackurl", "./mycourses");
+			
+			
+			/* Displays the view */
+			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/editmycourse.jsp").forward(request, response);
+
+			
 		}
 		else {
 			request.setAttribute("messagetype", "error");
