@@ -41,6 +41,7 @@ import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
+import org.ulpmm.univrav.entities.User;
 import org.ulpmm.univrav.service.ServiceImpl;
 
 
@@ -318,6 +319,8 @@ public class Application extends HttpServlet {
 		
 		if( page.equals("/home"))
 			displayHomePage(request, response);
+		else if (page.equals("/myspace"))
+			displayMyspace(request,response);
 		else if( page.equals("/live"))
 			displayLivePage(request, response);
 		else if( page.equals("/recorded"))
@@ -328,6 +331,8 @@ public class Application extends HttpServlet {
 			displayRssPage(request, response);
 		else if (page.equals("/courses"))
 			displayCourses(request, response);
+		else if (page.equals("/mycourses"))
+			displayMyCourses(request, response);
 		else if( page.equals("/upload"))
 			uploadAccess(request, response);
 		else if( page.equals("/add") || page.equals("/UploadClient"))
@@ -532,6 +537,28 @@ public class Application extends HttpServlet {
 		getServletContext().getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
 	}
 	
+	private void displayMyspace(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+		
+		//On vérifie que l'user CAS est présent dans notre base de données
+		User user = service.getUser(casUser);
+		
+		if(user!=null) {
+			
+			request.setAttribute("user", user);
+			
+			/* Displays the view */ 
+			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace.jsp").forward(request, response);
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "You don't have access to this page");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+	}
+	
 	private void displayLivePage(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {  
 		/* initializes the model */
@@ -546,7 +573,7 @@ public class Application extends HttpServlet {
 	
 	private void displayRecordedPage(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
-		
+				
 		int start = 0;
 		int pageNumber;
 		
@@ -761,6 +788,49 @@ public class Application extends HttpServlet {
 		}
 	}
 	
+	private void displayMyCourses(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+		
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
+
+		//On vérifie que l'user CAS est présent dans notre base de données
+		User user = service.getUser(casUser);
+
+		if(user!=null) {
+		//	int start = 0;
+			int pageNumber;
+			
+			/* initializes the model */
+			if( request.getParameter("page") != null) {
+				pageNumber = Integer.parseInt( request.getParameter("page"));
+				//start = recordedCourseNumber * (pageNumber - 1) ;
+			}
+			else
+				pageNumber = 1;
+			
+			request.setAttribute("page", pageNumber);
+			request.setAttribute("teachers", service.getTeachers());
+			request.setAttribute("formations", service.getFormations());
+			request.setAttribute("courses", service.getCourses(user));
+			request.setAttribute("items", service.getCourseNumber(user));
+			request.setAttribute("number", recordedCourseNumber);
+			request.setAttribute("resultPage", "mycourses");
+			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
+			
+			/* Saves the page for the style selection thickbox return */
+			session.setAttribute("previousPage", "/mycourses?page=" + pageNumber);
+			
+			/* Displays the view */
+			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/mycourses.jsp").forward(request, response);
+
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "You don't have access to this page");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+	}
+	
 	
 	/**
 	 *  Checks the access to the upload page
@@ -801,37 +871,29 @@ public class Application extends HttpServlet {
 
 	//	String message = "";
 		String forwardUrl = "/WEB-INF/views/uploadpage.jsp";
-		//TODO Establishment, to do
-//		String estab = request.getParameter("estab");
-/*		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
 
-		// If the user is authenticated 
-		if( casUser != null) {
-			HashMap<String, String> map = service.getUserInfos(casUser,estab); // retrieves the info from the user
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
 
-			// Determines wether the user is a student or a teacher
-			String idrole = map != null ? map.get("idrole") : "2";
-
-			if( idrole.equals("1")) { // teacher -> forward to the upload page
-				request.setAttribute("name", map.get("nom"));
-				request.setAttribute("firstname", map.get("prenom"));
-			}
-			else { // student or other -> forward to an error page
-				message = "Error: You don't have access to this page";
-				request.setAttribute("messagetype", "error");
-				request.setAttribute("message", message);
-				forwardUrl = "/WEB-INF/views/message.jsp";
-			}
+		//On vérifie que l'user CAS est présent dans notre base de données
+		User user = service.getUser(casUser);
+		
+		if(user!=null) {
 
 			getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
-		}*/
-		getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
-	}
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "You don't have access to this page");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+			}
 	
 	private void addCourse(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 		
-		String id, title, description, mediapath, media, timing, name, firstname, formation, genre;
+		//TODO parametre login et email en plus
+		
+		String id, title, description, mediapath, media, timing, name, firstname, formation, genre, login, email;
 		String message = "";
 		String messageType = "information";
 		
@@ -848,9 +910,11 @@ public class Application extends HttpServlet {
 		firstname = service.cleanString(request.getParameter("firstname"));
 		formation = service.cleanString(request.getParameter("ue"));
 		genre = request.getParameter("genre");
+		login = request.getParameter("login")!=null ? request.getParameter("login") : "anonymous";
+		email = request.getParameter("email")!=null ? request.getParameter("email") : "";
 		
 		/* Verifies that all essential parameters are sent, cancels the upload if not */
-		if(id != null && description != null && mediapath != null && title != null && name != null && formation != null) {
+		if(id != null && description != null && mediapath != null && title != null && name != null && formation != null && login !=null && email !=null) {
 			
 			if( timing == null )
 				timing = "n-1";
@@ -875,11 +939,22 @@ public class Application extends HttpServlet {
 			message += "Media : " + media + "<br/>";
 			
 			Course c;
+			User user; // user audiovideocours
 			
 			try {
 			
+				// On essaye de récupérer l'utilisateur dans notre base
+				user = service.getUser(login);
+				
+				// S'il n y est pas, on le crée
+				if(user==null) {
+					user = new User(service.getNextUserId(),login,email);
+					service.addUser(user);
+				}
+				
 				// Standard course
 				if( id.equals("") || id.equals("(id:no)") || id.equals("None") ) {
+										
 					c = new Course(
 							service.getNextCoursId(),
 							new Timestamp(new Date().getTime()),
@@ -896,7 +971,8 @@ public class Application extends HttpServlet {
 							0,
 							timing,
 							null, // The media folder can't be set yet
-							false
+							false,
+							user.getUserid()
 					);
 					service.addCourse(c, media, getServletContext().getRealPath("/rss"), 
 							rssName, rssTitle, rssDescription, serverUrl, 
@@ -909,6 +985,7 @@ public class Application extends HttpServlet {
 					c.setDate(new Timestamp(new Date().getTime()));
 					c.setVisible(false);
 					c.setTiming(timing);
+					c.setUserid(user.getUserid());
 					service.completeUnivrCourse(c, u, media, getServletContext().getRealPath("/rss"), 
 							rssName, rssTitle, rssDescription, serverUrl, 
 							rssImageUrl, recordedInterfaceUrl, language);
@@ -1094,25 +1171,16 @@ public class Application extends HttpServlet {
    		Date d = new Date();
    		boolean continuer=true;
    	
-   		//TODO Establishment, to do
-		//String estab = request.getParameter("estab");
-		
-   		//String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
+   		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
    		
    		/* If the user is authenticated */
-		//if( casUser != null) {
-		//	HashMap<String, String> map = service.getUserInfos(casUser,estab); // retrieves the info from the user
-			
-			/* Determines wether the user is a student or a teacher */
-		//	String idrole = map.get("idrole");
-		//	name = map.get("nom");
-		//	firstname = map.get("prenom");
+		if( casUser != null) {
 		
+			// On essaye de récupérer l'utilisateur dans notre base
+			User user = service.getUser(casUser);
 			
-		//	if( idrole.equals("1")) { // teacher -> forward to the upload page
-								
-				/* Tests if the request is a good media upload request */
-		   		
+			if(user!=null) {
+				
 				
 				if( ServletFileUpload.isMultipartContent(new ServletRequestContext(request)) ) {
 					
@@ -1190,7 +1258,8 @@ public class Application extends HttpServlet {
 											0,
 											timing,
 											null, // The media folder can't be set yet
-											hq
+											hq,
+											user.getUserid()
 									);
 							    	
 							    								    										
@@ -1219,12 +1288,16 @@ public class Application extends HttpServlet {
 					message = "Error: Incorrect file upload request";
 				}
 				
-/*			}
-			else { // student or other -> forward to an error page
+			}
+			else { 
 				messageType = "error";
 				message = "Error: You don't have access to this page";
 			}
-		}*/
+		}
+		else { 
+			messageType = "error";
+			message = "Error: You don't have access to this page";
+		}
 		
 		/* Displays the result of the upload process */
 		request.setAttribute("messagetype", messageType);
@@ -1446,7 +1519,8 @@ public class Application extends HttpServlet {
 			Integer.parseInt(request.getParameter("consultations")),
 			! request.getParameter("timing").equals("") ? request.getParameter("timing") : null,
 			! request.getParameter("mediaFolder").equals("") ? request.getParameter("mediaFolder") : null,
-			request.getParameter("highquality") != null ? true : false
+			request.getParameter("highquality") != null ? true : false,
+			Integer.parseInt(request.getParameter("userid"))		
 		);
 		service.modifyCourse(c);
 		
@@ -1625,7 +1699,8 @@ public class Application extends HttpServlet {
 									0,
 									null, // The timing can't be set yet
 									null, // The media folder can't be set yet
-									false
+									false,
+									0
 							);
 							
 							Univr u = new Univr(courseId, user, group,estab);

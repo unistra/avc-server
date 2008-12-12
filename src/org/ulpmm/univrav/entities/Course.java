@@ -21,9 +21,11 @@ public class Course {
 	private String timing;
 	private String mediaFolder;
 	private boolean highquality;
+	private int userid;
 
 	
 
+	
 	/**
 	 * Default constructor
 	 */
@@ -47,8 +49,9 @@ public class Course {
 	 * @param visible
 	 * @param consultations
 	 * @param timing
+	 * @param userid
 	 */
-	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, boolean highquality) {
+	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, boolean highquality, int userid) {
 		this.courseid = courseid;
 		this.date = date;
 		this.type = type;
@@ -65,6 +68,7 @@ public class Course {
 		this.timing = timing;
 		this.mediaFolder = mediaFolder;
 		this.highquality=highquality;
+		this.userid=userid;
 	}
 	
 	
@@ -289,6 +293,55 @@ public class Course {
 	public void setHighquality(boolean highquality) {
 		this.highquality = highquality;
 	}
+	
+	/**
+	 * 
+	 * @return user id
+	 */
+	public int getUserid() {
+		return userid;
+	}
+
+	public void setCourseid(int courseid) {
+		this.courseid = courseid;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setFormation(String formation) {
+		this.formation = formation;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+
+	public void setIpaddress(String ipaddress) {
+		this.ipaddress = ipaddress;
+	}
+
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+
+	public void setConsultations(int consultations) {
+		this.consultations = consultations;
+	}
+
+	public void setUserid(int userid) {
+		this.userid = userid;
+	}
+
 	
 	
 }

@@ -26,6 +26,9 @@
 	<c:param name="width" value="370"/>
 	<c:param name="height" value="220"/>
 </c:url>
+<div class="myspace">
+	<a href="<c:url value="./myspace" />" title="<fmt:message key="myspace"/>"><fmt:message key="myspace"/></a>
+</div>
 <div class="styles">
 	<a href="<c:out value="${thick_styles}" />" title="<fmt:message key="S&eacute;l&eacute;ction du th&egrave;me"/>" class="thickbox"><fmt:message key="style"/></a>
 </div>
