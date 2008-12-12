@@ -44,6 +44,8 @@ import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
 import org.ulpmm.univrav.service.ServiceImpl;
 
+import edu.yale.its.tp.cas.client.filter.CASFilter;
+
 
 public class Application extends HttpServlet {
 
@@ -321,6 +323,8 @@ public class Application extends HttpServlet {
 			displayHomePage(request, response);
 		else if (page.equals("/myspace"))
 			displayMyspace(request,response);
+		else if(page.equals("/logout")) 
+			logout(request,response);
 		else if( page.equals("/live"))
 			displayLivePage(request, response);
 		else if( page.equals("/recorded"))
@@ -588,6 +592,25 @@ public class Application extends HttpServlet {
 			request.setAttribute("message", "You don't have access to this page");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
 		}
+	}
+	
+	private void logout(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+						
+		if(casUser!=null) {
+			
+			// TODO A FAIRE
+			
+		//	CASFilter casfilter=(CASFilter)session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter);
+		//	casfilter.destroy();
+			
+			request.setAttribute("messagetype", "info");
+			request.setAttribute("message", "You have been logout");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+		
 	}
 	
 	private void displayLivePage(HttpServletRequest request, HttpServletResponse response)
@@ -926,7 +949,7 @@ public class Application extends HttpServlet {
 		
 		String message = "";
 		String forwardUrl = "/WEB-INF/views/uploadpage.jsp";
-		//TODO Establishment, to do
+		
 		String estab = request.getParameter("estab");
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
 		
@@ -951,7 +974,7 @@ public class Application extends HttpServlet {
 			getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
 		}
 	}*/
-	//TODO A FAIRE
+	
 	private void uploadAccess(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 
@@ -1114,7 +1137,7 @@ public class Application extends HttpServlet {
    		Date d = new Date();
    		boolean continuer=true;
    	
-   		//TODO Establishment, to do
+   		
 		String estab = request.getParameter("estab");
 		
    		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
@@ -1497,7 +1520,7 @@ public class Application extends HttpServlet {
 					/* displays the .jsp view */
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
 				}
-				// TODO test HQ (high Quality
+				// High Quality
 				else if( type.equals("hq")) {
 					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".mp4");
 					request.setAttribute("course", c);					
@@ -1875,7 +1898,7 @@ public class Application extends HttpServlet {
 		String id = request.getParameter("id");
 		String uid = request.getParameter("uid");
 		String uuid = request.getParameter("uuid");
-		//TODO Etablishment, to do
+		
 		String estab = request.getParameter("estab")!=null ? request.getParameter("estab") : "";
 		
 		/* Verifies that all parameters were sent */

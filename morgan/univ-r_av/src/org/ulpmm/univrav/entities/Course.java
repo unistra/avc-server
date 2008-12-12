@@ -204,26 +204,9 @@ public class Course {
 	}
 	
 	/**
-	 * TODO Méthode à modifier lors du changement des noms de fichiers sur le serveur
+	 * 
 	 * @ return the name used by the media files of this course
 	 */
-	/*public String getMediasFileName() {
-		String mediasFileName="";
-		
-		if( title != null && ! title.equals("") ) {
-			for(int i=0 ; i< title.length() ; i++) {
-				char car = title.charAt(i);
-				if( ! ((car >= 'a' && car <='z') | (car >= 'A' && car <='Z') | (car >= '0' && car <='9')))
-					car = '_';
-				
-				mediasFileName += car;
-			}
-		}
-		else
-			mediasFileName = "course_" + courseid;
-		
-		return mediasFileName;
-	}*/
 	public String getMediasFileName() {
 		String mediasFileName=String.valueOf(courseid);
 		return mediasFileName;

@@ -105,8 +105,13 @@
 			<!--<param-value>univ-rav.u-strasbg.fr</param-value>-->
 			<param-value>localhost</param-value>
 		</init-param>
+		<init-param>
+           <param-name>edu.yale.its.tp.cas.client.filter.logout</param-name>
+           <param-value>https://cas-ent.u-strasbg.fr:8443/cas/logout</param-value>
+       </init-param>
 	</filter>
 	
+		
 	<filter-mapping>
 	<filter-name>CAS filter</filter-name> 
 		<url-pattern>/avc/upload</url-pattern>
