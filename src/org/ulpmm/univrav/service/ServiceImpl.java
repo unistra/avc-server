@@ -765,6 +765,15 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
+	 * Get user by id 
+	 * @param id
+	 * @return the user
+	 */
+	public User getUser(int id) {
+		return db.getUser(id);
+	}
+	
+	/**
 	 * Gets the id of the next user which will be uploaded
 	 * @return the id of the user
 	 */
@@ -778,6 +787,22 @@ public class ServiceImpl implements IService {
 	 */
 	public synchronized void addUser(User u) {
 		db.addUser(u);
+	}
+	
+	/**
+	 * Modify a user
+	 * @param u User
+	 */
+	public synchronized void modifyUser(User u) {
+		db.modifyUser(u);
+	}
+	
+	/**
+	 * Deletes an user by providing its id
+	 * @param userid the id of the user
+	 */
+	public synchronized void deleteUser(int userid) {
+		db.deleteUser(userid);
 	}
 	
 	/**
@@ -796,5 +821,13 @@ public class ServiceImpl implements IService {
 	 */
 	public int getCourseNumber(User u) {
 		return db.getCourseNumber(u);
+	}
+	
+	/**
+	 * Gets the list of all the users
+	 * @return the list of users
+	 */
+	public List<User> getAllUsers() {
+		return db.getAllUsers();
 	}
 }

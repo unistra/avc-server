@@ -7,6 +7,8 @@
 &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
 <a href="<c:url value="./admin_buildings" />">Buildings &amp; Amphis</a>
 &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
+<a href="<c:url value="./admin_users" />">Users</a>
+&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
 <a href="<c:url value="./admin_teachers" />">Authors</a>
 &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
 <a href="<c:url value="./admin_stats" />">Statistics</a>

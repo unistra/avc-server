@@ -895,7 +895,9 @@ public class DatabaseImpl implements IDatabase {
 			
 			pstmt.setBoolean(15, c.isHighquality());
 			
-			pstmt.setInt(16, c.getCourseid());
+			pstmt.setInt(16, c.getUserid());
+			
+			pstmt.setInt(17, c.getCourseid());
 			
 			if( pstmt.executeUpdate() == 0 ) {
 				System.out.println("The course " + c + " has not been modified");
@@ -1784,6 +1786,35 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
+	 * Get user by id 
+	 * @param id
+	 * @return the user
+	 */
+	public User getUser(int id) {
+		User u = null;
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * FROM \"user\" WHERE userid = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, id);
+			ResultSet rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				u = new User(
+					rs.getInt("userid"),
+					rs.getString("login"),
+					rs.getString("email")
+				);
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the user " + id);
+			sqle.printStackTrace();
+		}
+		
+		return u;
+	}
+	
+	/**
 	 * Gets the id of the next user which will be uploaded
 	 * @return the id of the user
 	 */
@@ -1813,13 +1844,12 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addUser(User u) {
 		Connection cnt = pa.getConnection();
-		String sql = "INSERT INTO \"user\" values(?,?,?)";
+		String sql = "INSERT INTO \"user\"(\"login\",email) values(?,?)";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, u.getUserid());
-			pstmt.setString(2, u.getLogin());
-			pstmt.setString(3, u.getEmail());
+			pstmt.setString(1, u.getLogin());
+			pstmt.setString(2, u.getEmail());
 			
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("The User " + u + " has not been added to the database");
@@ -1827,7 +1857,61 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch(SQLException sqle){
-			System.out.println("Error while adding the new Univr course " + u);
+			System.out.println("Error while adding the new user " + u);
+			sqle.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Modify a user
+	 * @param u User
+	 */
+	public void modifyUser(User u) {
+		Connection cnt = pa.getConnection();
+		
+		/* Creation of the SQL query string */
+		String sql = "UPDATE \"user\" SET userid = ?, login = ? , email = ? ";
+		sql += "WHERE userid = ?";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			
+			/* Applies the parameters to the query */
+			pstmt.setInt(1, u.getUserid());
+			pstmt.setString(2, u.getLogin());
+			pstmt.setString(3, u.getEmail());
+			pstmt.setInt(4, u.getUserid());
+						
+			if( pstmt.executeUpdate() == 0 ) {
+				System.out.println("The user " + u + " has not been modified");
+				throw new DaoException("The user " + u + " has not been modified");
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while modifying the user " + u);
+			sqle.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * Deletes an user by providing its id
+	 * @param userid the id of the user
+	 */
+	public void deleteUser(int userid) {
+		
+		Connection cnt = pa.getConnection();
+		String sql = "DELETE FROM \"user\" WHERE userid = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, userid);
+			if( pstmt.executeUpdate() == 0) {
+				System.out.println("the user " + userid + " has not been deleted");
+				throw new DaoException("the user " + userid + " has not been deleted");
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while deleting the user " + userid);
 			sqle.printStackTrace();
 		}
 	}
@@ -1900,5 +1984,37 @@ public class DatabaseImpl implements IDatabase {
 		}
 
 		return number;
+	}
+	
+	/**
+	 * Gets the list of all the users
+	 * @return the list of users
+	 */
+	public List<User> getAllUsers() {
+		
+		List<User> l = new ArrayList<User>();
+		
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * FROM \"user\"";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()) {
+				l.add( new User(
+					rs.getInt("userid"),
+					rs.getString("login"),
+					rs.getString("email")
+					
+				));
+			}
+		}	
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the list of users");
+			sqle.printStackTrace();
+		}
+		
+		return l;
 	}
 }
