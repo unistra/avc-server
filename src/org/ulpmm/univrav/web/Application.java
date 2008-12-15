@@ -44,8 +44,6 @@ import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
 import org.ulpmm.univrav.service.ServiceImpl;
 
-import edu.yale.its.tp.cas.client.filter.CASFilter;
-
 
 public class Application extends HttpServlet {
 
@@ -599,16 +597,9 @@ public class Application extends HttpServlet {
 
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 						
-		if(casUser!=null) {
-			
-			// TODO A FAIRE
-			
-		//	CASFilter casfilter=(CASFilter)session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter);
-		//	casfilter.destroy();
-			
-			request.setAttribute("messagetype", "info");
-			request.setAttribute("message", "You have been logout");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		if(casUser!=null) {					
+			session.removeAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
+			response.sendRedirect("https://cas-ent.u-strasbg.fr:8443/cas/logout");
 		}
 		
 	}
