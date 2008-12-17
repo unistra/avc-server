@@ -109,9 +109,9 @@
 			    		</tr>
 			    	</table>
 			    	<br>
-			    	<input type="submit" value="Validate">
+			    	<input type="submit" value="<fmt:message key="Valider"/> ">
 			    	<br><br>
-			    	<a href="<c:url value="${gobackurl}" />">Go back</a>
+			    	<a href="<c:url value="${gobackurl}" />"><fmt:message key="Retour"/></a>
 		    	</form>
 	    	</div>
 	    </div>
