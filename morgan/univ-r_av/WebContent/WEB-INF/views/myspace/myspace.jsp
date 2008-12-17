@@ -69,9 +69,7 @@
 				</div>
 	 
 	    		<a href="<c:url value="./upload" />" title="<fmt:message key="uploadPage"/>" ><fmt:message key="uploadPage"/></a><br>
-	    		</br>
-	    		<a href="<c:url value="./logout" />" title="<fmt:message key="Logout"/>" ><fmt:message key="Logout"/></a>
-	
+	    	
 	    	<div>
 	    	
     	</div>
