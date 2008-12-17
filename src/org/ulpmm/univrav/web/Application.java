@@ -333,12 +333,10 @@ public class Application extends HttpServlet {
 			displayRssPage(request, response);
 		else if (page.equals("/courses"))
 			displayCourses(request, response);
-		else if (page.equals("/mycourses"))
-			displayMyCourses(request, response);
 		else if (page.equals("/editmycourse"))
 			displayEditMyCourses(request, response);
 		else if( page.equals("/validatemycourse"))
-			validateMyCourse(request, response, "./mycourses");
+			validateMyCourse(request, response, "./myspace");
 		else if( page.equals("/upload"))
 			uploadAccess(request, response);
 		else if( page.equals("/add") || page.equals("/UploadClient"))
@@ -581,6 +579,31 @@ public class Application extends HttpServlet {
 		if(user!=null) {
 			
 			request.setAttribute("user", user);
+			
+			
+//			int start = 0;
+			int pageNumber;
+			
+			/* initializes the model */
+			if( request.getParameter("page") != null) {
+				pageNumber = Integer.parseInt( request.getParameter("page"));
+				//start = recordedCourseNumber * (pageNumber - 1) ;
+			}
+			else
+				pageNumber = 1;
+			
+			request.setAttribute("page", pageNumber);
+			request.setAttribute("teachers", service.getTeachers());
+			request.setAttribute("formations", service.getFormations());
+			request.setAttribute("courses", service.getCourses(user));
+			request.setAttribute("items", service.getCourseNumber(user));
+			request.setAttribute("number", recordedCourseNumber);
+			request.setAttribute("resultPage", "myspace");
+			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
+			
+			/* Saves the page for the style selection thickbox return */
+			session.setAttribute("previousPage", "/myspace?page=" + pageNumber);
+			
 			
 			/* Displays the view */ 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace.jsp").forward(request, response);
@@ -833,49 +856,6 @@ public class Application extends HttpServlet {
 		}
 	}
 	
-	private void displayMyCourses(HttpServletRequest request, HttpServletResponse response)
-	throws ServletException, IOException {
-		
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
-
-		//On vérifie que l'user CAS est présent dans notre base de données
-		User user = service.getUser(casUser);
-
-		if(user!=null) {
-		//	int start = 0;
-			int pageNumber;
-			
-			/* initializes the model */
-			if( request.getParameter("page") != null) {
-				pageNumber = Integer.parseInt( request.getParameter("page"));
-				//start = recordedCourseNumber * (pageNumber - 1) ;
-			}
-			else
-				pageNumber = 1;
-			
-			request.setAttribute("page", pageNumber);
-			request.setAttribute("teachers", service.getTeachers());
-			request.setAttribute("formations", service.getFormations());
-			request.setAttribute("courses", service.getCourses(user));
-			request.setAttribute("items", service.getCourseNumber(user));
-			request.setAttribute("number", recordedCourseNumber);
-			request.setAttribute("resultPage", "mycourses");
-			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
-			
-			/* Saves the page for the style selection thickbox return */
-			session.setAttribute("previousPage", "/mycourses?page=" + pageNumber);
-			
-			/* Displays the view */
-			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/mycourses.jsp").forward(request, response);
-
-		}
-		else {
-			request.setAttribute("messagetype", "error");
-			request.setAttribute("message", "You don't have access to this page");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
-		}
-	}
-	
 	private void validateMyCourse(HttpServletRequest request, HttpServletResponse response, String redirectUrl) 
 	throws ServletException, IOException {	
 		
@@ -916,7 +896,7 @@ public class Application extends HttpServlet {
 			
 			request.setAttribute("course", c);
 			request.setAttribute("posturl", "./validatemycourse");
-			request.setAttribute("gobackurl", "./mycourses");
+			request.setAttribute("gobackurl", "./myspace");
 			
 			
 			/* Displays the view */
@@ -930,46 +910,10 @@ public class Application extends HttpServlet {
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
 		}
 	}
-	
-	
-	/**
-	 *  Checks the access to the upload page
-	 */
-	/*private void uploadAccess(HttpServletRequest request, HttpServletResponse response)
-		throws ServletException, IOException {
-		
-		String message = "";
-		String forwardUrl = "/WEB-INF/views/uploadpage.jsp";
-		
-		String estab = request.getParameter("estab");
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
-		
-		// If the user is authenticated 
-		if( casUser != null) {
-			HashMap<String, String> map = service.getUserInfos(casUser,estab); // retrieves the info from the user
 			
-			// Determines wether the user is a student or a teacher 
-			String idrole = map != null ? map.get("idrole") : "2";
-			
-			if( idrole.equals("1")) { // teacher -> forward to the upload page
-				request.setAttribute("name", map.get("nom"));
-				request.setAttribute("firstname", map.get("prenom"));
-			}
-			else { // student or other -> forward to an error page
-				message = "Error: You don't have access to this page";
-				request.setAttribute("messagetype", "error");
-				request.setAttribute("message", message);
-				forwardUrl = "/WEB-INF/views/message.jsp";
-			}
-			
-			getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
-		}
-	}*/
-	
 	private void uploadAccess(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 
-	//	String message = "";
 		String forwardUrl = "/WEB-INF/views/uploadpage.jsp";
 
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
@@ -1525,6 +1469,15 @@ public class Application extends HttpServlet {
 					/* Displays the view */
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_hq.jsp").forward(request, response);
 		
+				}
+				//TODO Full Flash
+				else if(type.equals("fullflash")) {
+					
+					request.setAttribute("idcours",c.getCourseid());
+					
+					/* Displays the view */
+					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_fullflash.jsp").forward(request, response);
+			
 				}
 				else {
 					String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;

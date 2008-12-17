@@ -50,7 +50,7 @@
 				<table cellspacing="0">
 					<tr class="tableheader">
 						<th colspan="5" id="courses"><fmt:message key="Les cours"/></th>
-						<th colspan="2"><fmt:message key="Visualisez"/></th>
+						<th colspan="3"><fmt:message key="Visualisez"/></th>
 					</tr>
 					<c:import url="include/courselist.jsp" />
 				</table>

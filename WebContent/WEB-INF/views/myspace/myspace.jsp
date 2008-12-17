@@ -1,5 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="pt" uri="/WEB-INF/pagination-taglib.tld" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
@@ -13,7 +14,9 @@
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/home.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/recorded.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/searchform.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/courselist.css">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/myspace.css">
 	
 	
@@ -50,8 +53,22 @@
 	    	<div class="welcome">
 	    		<p><fmt:message key="Bienvenue"/> ${user.login}</p>
 	    		<p><fmt:message key="Votre e-mail"/> ${user.email}</p>
-	    		</br>
-	    		<a href="<c:url value="./mycourses" />" title="<fmt:message key="Mes cours"/>" ><fmt:message key="Mes cours"/></a></br>
+	    			    		
+	    		<div class="course">
+				<table cellspacing="0">
+					<tr class="tableheader">
+						<th colspan="5" id="courses"><fmt:message key="Les cours"/></th>
+						<th colspan="3"><fmt:message key="Visualisez"/></th>
+						<th colspan="1"><fmt:message key="Editer"/></th>
+					</tr>
+					<c:import url="./mycourselist.jsp" />
+				</table>
+				
+	    		<div class="pagination">
+	    			<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" />
+				</div>
+	    		
+	    	<!--	<a href="<c:url value="./mycourses" />" title="<fmt:message key="Mes cours"/>" ><fmt:message key="Mes cours"/></a></br> -->
 	    		<a href="<c:url value="./upload" />" title="<fmt:message key="uploadPage"/>" ><fmt:message key="uploadPage"/></a><br>
 	    		</br>
 	    		<a href="<c:url value="./logout" />" title="<fmt:message key="Logout"/>" ><fmt:message key="Logout"/></a>

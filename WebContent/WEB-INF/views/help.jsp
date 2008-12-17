@@ -110,7 +110,9 @@
 						
 						<h3><a id="recorded"></a>Cours en différé</h3>
 						<h5>Filtrage de l'Affichage</h5>
-						<p>On dispose d'une fonction de recherche (Launch Search) avec des options de filtrage pour l'affichage des cours.</p>
+						<p>On dispose d'une fonction de recherche (Launch Search) avec des options de filtrage pour l'affichage des cours.<br>
+						Vous pouvez &eacute;galement acc&eacute;der directement aux cours d'un auteur et/ou d'une formation grâce à l'url:<br> 
+						http://univ-rav.u-strasbg.fr/avc/courses?author=...&formation=...</p>
 						<h5>Listings des Cours</h5>
 						<p>Les cours sont disponibles selon diff&eacute;rents modes.</p>	
 						<p><b>Clic sur l'ic&ocirc;ne à gauche ou sur l'ic&ocirc;ne sous l'intitul&eacute; 'flash' :</b><br>
