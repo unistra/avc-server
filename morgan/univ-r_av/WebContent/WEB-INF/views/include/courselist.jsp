@@ -121,6 +121,26 @@
 				</c:otherwise>
 			</c:choose>
 		</td>
+		<td class="tdalign">
+			<c:choose>
+				<c:when test="${course.genre == null}">
+					<c:url var="courseaccess" scope="page" value="./courseaccess">
+						<c:param name="id" value="${course.courseid}"/>
+						<c:param name="type" value="fullflash"/>
+					</c:url>
+					<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/fullflash_chip.png" alt="fullflash"></a>
+				</c:when>
+				<c:otherwise>
+					<c:url var="thick_codeform" scope="page" value="./thick_codeform">
+						<c:param name="id" value="${course.courseid}"/>
+						<c:param name="type" value="fullflash"/>
+						<c:param name="width" value="250"/>
+						<c:param name="height" value="120"/>
+					</c:url>
+					<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/fullflash_chip.png" alt="fullflash"></a>
+				</c:otherwise>
+			</c:choose>
+		</td>
 		
 	<!-- Defines the class of the next row of the table -->
 	<c:choose>
