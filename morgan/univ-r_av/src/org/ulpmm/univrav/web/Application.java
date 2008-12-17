@@ -309,8 +309,12 @@ public class Application extends HttpServlet {
 			/* Store them in the session */
 			session.setAttribute("style", style);
 			session.setAttribute("language", language);
+			
+			// Button disconnect
+			session.setAttribute("btnDeco", false);
 		}
-		
+			
+						
 		/* Retrieves the path info from the browser's URL */
 		String page = request.getPathInfo();
 		
@@ -604,6 +608,8 @@ public class Application extends HttpServlet {
 			/* Saves the page for the style selection thickbox return */
 			session.setAttribute("previousPage", "/myspace?page=" + pageNumber);
 			
+			// Button disconnect
+			session.setAttribute("btnDeco", true);
 			
 			/* Displays the view */ 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace.jsp").forward(request, response);
@@ -620,7 +626,9 @@ public class Application extends HttpServlet {
 
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 						
-		if(casUser!=null) {					
+		if(casUser!=null) {	
+			// Button disconnect
+			session.setAttribute("btnDeco", false);
 			session.removeAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
 			response.sendRedirect("https://cas-ent.u-strasbg.fr:8443/cas/logout");
 		}
@@ -870,6 +878,9 @@ public class Application extends HttpServlet {
 		// On vérifie que l'user est présent et qu'il s'agit bien de l'un de ses cours
 		if(user!=null && c.getUserid()==user.getUserid()) {
 			
+			// Button disconnect
+			session.setAttribute("btnDeco", true);
+			
 			validateCourse(request,response,redirectUrl);
 			
 		}
@@ -898,10 +909,13 @@ public class Application extends HttpServlet {
 			request.setAttribute("posturl", "./validatemycourse");
 			request.setAttribute("gobackurl", "./myspace");
 			
+			// Button disconnect
+			session.setAttribute("btnDeco", true);
+			
 			
 			/* Displays the view */
 			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/editmycourse.jsp").forward(request, response);
-
+			
 			
 		}
 		else {

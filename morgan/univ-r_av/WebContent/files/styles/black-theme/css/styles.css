@@ -77,6 +77,14 @@ body {
 	margin-top: 80px;
 }
 
+/* Div containing the "logout" link */
+.logout {
+	position: absolute;
+	font-size: 12px;
+	margin-left:870px; /* 870 */
+	margin-top: 5px;
+}
+
 /* Div containing the "Myspace" link */
 .myspace {
 	position: absolute;
@@ -111,6 +119,11 @@ body {
 
 .myspace a, .styles a, .languages a, .download a, .help a {
 	color: white;
+}
+
+.logout a {
+	color: white;	
+	font-weight: bold;
 }
 
 /*  Div containing the "Live" button */
