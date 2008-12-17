@@ -68,7 +68,7 @@
 	    			<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" />
 				</div>
 	 
-	    		<a href="<c:url value="./upload" />" title="<fmt:message key="uploadPage"/>" ><fmt:message key="uploadPage"/></a><br>
+	    		<a href="<c:url value="./upload" />" title="<fmt:message key="upload"/>" ><fmt:message key="upload"/></a><br>
 	    	
 	    	<div>
 	    	
