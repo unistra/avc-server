@@ -26,6 +26,13 @@
 	<c:param name="width" value="370"/>
 	<c:param name="height" value="220"/>
 </c:url>
+
+<c:if test="${btnDeco}">
+	<div class="logout">
+		<a href="<c:url value="./logout" />" title="<fmt:message key="Logout"/>"><fmt:message key="Logout"/></a>
+	</div>
+</c:if>
+
 <div class="myspace">
 	<a href="<c:url value="./myspace" />" title="<fmt:message key="myspace"/>"><fmt:message key="myspace"/></a>
 </div>
