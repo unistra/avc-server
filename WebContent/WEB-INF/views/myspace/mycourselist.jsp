@@ -146,7 +146,7 @@
 			<c:url var="edit" scope="page" value="./editmycourse">
 					<c:param name="id" value="${course.courseid}"/>
 			</c:url>
-			<a href="<c:out value="${edit}"/>">edit</a>
+			<a href="<c:out value="${edit}"/>"><fmt:message key="Editer"/> </a>
 	
 		</td>
 		
