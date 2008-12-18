@@ -830,4 +830,13 @@ public class ServiceImpl implements IService {
 	public List<User> getAllUsers() {
 		return db.getAllUsers();
 	}
+	
+	/**
+	 * Send an email to confirm the add of the new course
+	 * @param user
+	 * @param course
+	 */
+	public synchronized void sendMail(User u, Course c) {
+		fs.sendMail(u,c);
+	}
 }

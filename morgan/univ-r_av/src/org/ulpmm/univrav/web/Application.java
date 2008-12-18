@@ -1050,6 +1050,8 @@ public class Application extends HttpServlet {
 							rssImageUrl, recordedInterfaceUrl, language);
 				}
 				
+				service.sendMail(user,c);
+				
 				message = "File successfully sent !";
 			}
 			catch( DaoException de) {
