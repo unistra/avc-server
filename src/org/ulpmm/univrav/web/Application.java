@@ -937,6 +937,7 @@ public class Application extends HttpServlet {
 		
 		if(user!=null) {
 
+			request.setAttribute("gobackurl", "./myspace");
 			getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
 		}
 		else {
