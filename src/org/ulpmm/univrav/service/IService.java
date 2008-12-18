@@ -520,4 +520,11 @@ public interface IService {
 	 * @return the list of users
 	 */
 	public List<User> getAllUsers();
+	
+	/**
+	 * Send an email to confirm the add of the new course
+	 * @param user
+	 * @param course
+	 */
+	public void sendMail(User u,Course c);
 }

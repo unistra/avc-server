@@ -33,6 +33,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.User;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -1163,5 +1164,34 @@ public class FileSystemImpl implements IFileSystem {
 			System.out.println("Error while converting the file " + inputFileName + " to flv");
 			ie.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Send an email to confirm the add of the new course
+	 * @param user
+	 * @param course 
+	 */
+	public void sendMail(User u, Course c) {
+		
+		String message = "Your course about \"" + c.getTitle() +"\" is published on www.univ-rav.u-strasbg.fr" ;
+		String subject = "A new course on Univr AV";
+		
+		try {
+			Process p = r.exec("bash mail.sh "  + message + " " + subject + " " + u.getEmail(), null, scriptsFolder);
+			
+			if( p.waitFor() != 0 ) {
+				System.out.println("Error while send the mail for the course " + c.getCourseid() + " to " + u.getEmail());
+				throw new DaoException("Error while send the mail for the course " + c.getCourseid() + " to " + u.getEmail());
+			}
+		}
+		catch(IOException ioe) {
+			System.out.println("Error while send the mail for the course " + c.getCourseid() + " to " + u.getEmail());
+			ioe.printStackTrace();
+		}
+		catch(InterruptedException ie) {
+			System.out.println("Error while send the mail for the course " + c.getCourseid() + " to " + u.getEmail());
+			ie.printStackTrace();
+		}
+		
 	}
 }
