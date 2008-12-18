@@ -75,8 +75,13 @@
 					<td><input type="submit" name="valider" onclick="javascript:document.getElementById('process').style.visibility='visible'" value="<fmt:message key="sendFile"/>"> </td>
 					<td><img id="process" src="../files/img/squaresCircle.gif" /></td>
 				</tr>
+				<tr>
+					<td><a href="<c:url value="${gobackurl}" />"><fmt:message key="Retour"/></a></td>
+		    	</tr>
+				
 				</table>
 			</form>
+			   
 			
 			<br>
 			<p><fmt:message key="uploadmessage1"/></p>
