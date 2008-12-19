@@ -1173,11 +1173,18 @@ public class FileSystemImpl implements IFileSystem {
 	 */
 	public void sendMail(User u, Course c) {
 		
-		String message = "Your course about \"" + c.getTitle() +"\" is published on www.univ-rav.u-strasbg.fr" ;
-		String subject = "A new course on Univr AV";
+	//	String message = "Your_course_number_" + c.getCourseid() +"_is _published_on_www.univ-rav.u-strasbg.fr" ;
+	//  String subject = "A_new_course_on_Univr_AV";
+		
+		String message = "message" ;
+		String subject = "subject";
+	
 		
 		try {
 			Process p = r.exec("bash mail.sh "  + message + " " + subject + " " + u.getEmail(), null, scriptsFolder);
+			
+			
+			System.out.println("bash mail.sh "  + message + " " + subject + " " + u.getEmail());
 			
 			if( p.waitFor() != 0 ) {
 				System.out.println("Error while send the mail for the course " + c.getCourseid() + " to " + u.getEmail());
