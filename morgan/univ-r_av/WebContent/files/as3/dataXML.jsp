@@ -8,7 +8,6 @@
 	response.setDateHeader ("Expires", 0);
 	//#
 	String idCours = request.getParameter("idcours");
-	//String idCours = "194"; //194,208,213,228  2475  audio 2948
 %>
 
 <info>
