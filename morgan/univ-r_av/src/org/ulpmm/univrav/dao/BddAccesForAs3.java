@@ -4,44 +4,53 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Hashtable;
+
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 
 /**
  * Accès base de donnée AS3
  * @author morgan
  *
  */
-public class BddAccesForAs3
-{
-	  private Hashtable<String,String> bdd;
-	  private Connection conn;
-	  
+public class BddAccesForAs3 {
+	 
+	  private static PgsqlAccess pa;
+		  
 	  /**
 	   * Constructeur qui initialise la connection à la bdd
 	   */
 	  public BddAccesForAs3() {
 		 		  
 		  try {
-			  Class.forName("org.postgresql.Driver");
-			  String url = "jdbc:postgresql://audiovideocours.u-strasbg.fr:5432/univrav";
-			  conn = DriverManager.getConnection(url,"sqluser", "$ulpmmeric1");
-			  bdd=new Hashtable<String,String>();
+			  // Datasource retrieving 
+				
+				InitialContext cxt = new InitialContext();
+				if ( cxt == null ) {
+				   throw new Exception("No context found!");
+				}
+			  
+			  DataSource ds = (DataSource) cxt.lookup( "java:/comp/env/jdbc/postgres" );
+
+				if ( ds == null ) {
+				   throw new Exception("Data source not found!");
+				}
+			  
+			   pa = new PgsqlAccess(ds);
 		  }
 		  catch (ClassNotFoundException e) {
 			  e.printStackTrace();
-			  System.exit(1);
 		  }
 		  catch (SQLException e) {
 			  e.printStackTrace();
-			  System.exit(2);
-		  }
+		  } catch (Exception e) {
+			e.printStackTrace();
+		}
 	  }
-
 	 
 	  /**
 	   * Récupération des infos pour AS3
@@ -50,10 +59,12 @@ public class BddAccesForAs3
 	   * @return
 	   */
 	  public String getXml(String var, String id) {
+		  
+		  Hashtable<String,String> bdd=new Hashtable<String,String>();
 			  
-		  try 
-		  {
-			  Statement st = conn.createStatement();
+		  try {
+			 			  
+			  Statement st = pa.getConnection().createStatement();
 			  ResultSet rs = st.executeQuery("SELECT name, firstname, formation, title, description, date, type, duration, consultations, mediafolder FROM course WHERE courseid=" + id);
 			  rs.next();
 			  if(rs.getString("name")!=null) {
@@ -111,16 +122,19 @@ public class BddAccesForAs3
 		  
 		  try 
 		  {
-			  Statement st = conn.createStatement();
+			  
+			  String mediafolder=null;
+			  
+			  Statement st = pa.getConnection().createStatement();
 			  ResultSet rs = st.executeQuery("SELECT mediafolder FROM course WHERE courseid=" + id);
 			  rs.next();
 			  if(rs.getString("mediafolder")!=null) {
-				  bdd.put("mediafolder", rs.getString("mediafolder"));
+				  mediafolder = rs.getString("mediafolder");
 			  }
 			  rs.close();
 			  st.close();
 			  
-			  String adresseCoursSmil = "http://univ-rav.u-strasbg.fr/coursv2/" + (String)bdd.get("mediafolder") + "/timecode.csv";
+			  String adresseCoursSmil = "http://univ-rav.u-strasbg.fr/coursv2/" + mediafolder + "/timecode.csv";
 			  String tablo[] = new String[200];
 			
 			  // Définir l'URL pointant sur le fichier
