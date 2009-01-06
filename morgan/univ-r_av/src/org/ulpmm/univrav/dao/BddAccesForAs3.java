@@ -100,6 +100,7 @@ public class BddAccesForAs3 {
 			  }
 			  rs.close();
 			  st.close();
+			  pa.disconnect();
 		  }
 		  catch (SQLException se) {
 			  System.err.println(se.getMessage());
@@ -119,7 +120,6 @@ public class BddAccesForAs3 {
 		  String stringTimeCode = "";
 		  
 		  try {
-			  
 			  String mediafolder=null;
 			  
 			  Statement st = pa.getConnection().createStatement();
@@ -130,6 +130,7 @@ public class BddAccesForAs3 {
 			  }
 			  rs.close();
 			  st.close();
+			  pa.disconnect();
 			  
 			  String adresseCoursSmil = "http://univ-rav.u-strasbg.fr/coursv2/" + mediafolder + "/timecode.csv";
 			  String tablo[] = new String[200];
@@ -144,8 +145,7 @@ public class BddAccesForAs3 {
 			  // Lire le fichier jusqu'à la fin
 			  int i=1;
 			  String ligne = dis.readLine();
-			  while (ligne != null)
-			  {
+			  while (ligne != null) {
 				  tablo[i] = ligne;
 				  ligne = dis.readLine();
 				  i++;
@@ -163,7 +163,6 @@ public class BddAccesForAs3 {
 		  catch(Exception e) {
 			  System.err.println(e.getMessage());
 		  }
-		  
 		  return stringTimeCode;
 	  }
 }
