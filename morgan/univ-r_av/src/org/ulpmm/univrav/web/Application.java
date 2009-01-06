@@ -1487,14 +1487,14 @@ public class Application extends HttpServlet {
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_hq.jsp").forward(request, response);
 		
 				}
-				//TODO Full Flash
+				// Full Flash
 				else if(type.equals("fullflash")) {
 					
 					request.setAttribute("idcours",c.getCourseid());
 					
-					/* Displays the view */
+					// Displays the view 
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_fullflash.jsp").forward(request, response);
-			
+					
 				}
 				else {
 					String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;

@@ -99,7 +99,7 @@ if ( hasProductInstall && !hasRequestedVersion ) {
 			"allowScriptAccess","sameDomain",
 			"type", "application/x-shockwave-flash",
 			"pluginspage", "http://www.adobe.com/go/getflashplayer",
-			"FlashVars", "idcours=../files/as3/dataXML.jsp?idcours=${idcours}"
+			"FlashVars", "idcours=../files/as3/dataXML.jsp?idcours=${idcours}"		
 	);
   } else {  // flash is too old or we can't detect the plugin
     var alternateContent = 'Alternate HTML content should be placed here. '
