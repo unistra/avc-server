@@ -13,7 +13,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 /**
- * Accès base de donnée AS3
+ * Accès base de donnée pour visualisation AS3
  * @author morgan
  *
  */
@@ -28,19 +28,18 @@ public class BddAccesForAs3 {
 		 		  
 		  try {
 			  // Datasource retrieving 
-				
-				InitialContext cxt = new InitialContext();
-				if ( cxt == null ) {
-				   throw new Exception("No context found!");
-				}
+			  InitialContext cxt = new InitialContext();
+			  if ( cxt == null ) {
+				  throw new Exception("No context found!");
+			  }
 			  
 			  DataSource ds = (DataSource) cxt.lookup( "java:/comp/env/jdbc/postgres" );
 
-				if ( ds == null ) {
-				   throw new Exception("Data source not found!");
-				}
+			  if ( ds == null ) {
+				  throw new Exception("Data source not found!");
+			  }
 			  
-			   pa = new PgsqlAccess(ds);
+			  pa = new PgsqlAccess(ds);
 		  }
 		  catch (ClassNotFoundException e) {
 			  e.printStackTrace();
@@ -62,8 +61,7 @@ public class BddAccesForAs3 {
 		  
 		  Hashtable<String,String> bdd=new Hashtable<String,String>();
 			  
-		  try {
-			 			  
+		  try {		  
 			  Statement st = pa.getConnection().createStatement();
 			  ResultSet rs = st.executeQuery("SELECT name, firstname, formation, title, description, date, type, duration, consultations, mediafolder FROM course WHERE courseid=" + id);
 			  rs.next();
@@ -120,8 +118,7 @@ public class BddAccesForAs3 {
 		  
 		  String stringTimeCode = "";
 		  
-		  try 
-		  {
+		  try {
 			  
 			  String mediafolder=null;
 			  
