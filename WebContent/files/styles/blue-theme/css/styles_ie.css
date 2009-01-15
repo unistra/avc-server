@@ -9,7 +9,8 @@ body {
 .main {
 	height: 100%; /* IE understands "height" like "min-height" */
 	text-align: left; /* Enables to center "main" with IE */
-	width:expression(document.body.clientWidth <= 980? "980px": "90%"); /* min-width with IE */
+	/*width:expression(document.body.clientWidth <= 980? "980px": "90%"); /* min-width with IE */
+	width:expression(document.body.clientWidth <= 1024? "980px": "90%"); /* min-width with IE */
 }
 
 .contents {
@@ -18,7 +19,7 @@ body {
 }
 
 .banner {
-	text-align:left;
+	text-align:left;	
 }
 
 .liveImage {
@@ -52,11 +53,12 @@ body {
 
 /*** Live page ***/
 /* Div containing a line of 3 "building" div with equal height */
-.line {
-	width: 850px;
+/*.line {
+	width: 980px;
 	margin-left: 45px;
 	margin-right: 45px;
 }
+*/
 
 /** admin page **/
 .links {

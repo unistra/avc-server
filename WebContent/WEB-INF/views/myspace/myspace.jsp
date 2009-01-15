@@ -10,7 +10,7 @@
 <html>
   <head>
     
-    <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/></title>
+    <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/> - <fmt:message key="Cours enregistr&eacute;s"/></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
@@ -19,13 +19,12 @@
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/courselist.css">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/myspace.css">
 	
-	
 	<!--[if IE]>
    		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
 	<![endif]-->
 	<!--[if lte IE 6]>
 		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie6.css" media="screen" />
-		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/home_ie6.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/recorded_ie6.css" media="screen" />
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 	
@@ -36,29 +35,40 @@
 	<script type="text/javascript" src="../files/js/details.js"></script>
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
-	
-	<meta name="keywords" content="SMIL, cours audio, cours video, cours live, cours en direct, synchronisation de médias">
-	
+
   </head>
   
   <body>
-  
     <div class="main">
-      <div class="contents">
-	    
-	    	 <div class="banner">
+	    <div class="contents">
+	    	<div class="banner">
 	    		<c:import url="../include/banner.jsp" />
-	    	</div>
-	    
+	     	</div>
+	    	
 	    	<div class="welcome">
 	    		<p><fmt:message key="Bienvenue"/> ${user.login}</p>
 	    		<p><fmt:message key="Votre e-mail"/> ${user.email}</p>
-	    			    		
-	    		<div class="course">
+	    	</div>
+	    	
+	    	<br>
+	    		
+	    	<div class=btnMyspace>	
+	    		
+	    		<div class="btnUpload">
+	    		<a href="<c:url value="./upload" />" title="<fmt:message key="upload"/>" ><fmt:message key="upload"/></a>
+	    		</div>
+	    	
+	    		<div class="btnModifierEmail">
+	    		<a href="<c:url value="./modifyEmail" />" title="<fmt:message key="modifieremail"/>" ><fmt:message key="modifieremail"/></a>
+	    		</div>
+	    	
+	    	</div>
+	    	
+	    	<div class="course">
 				<table cellspacing="0">
 					<tr class="tableheader">
-						<th colspan="5" id="courses"><fmt:message key="Mes cours"/></th>
-						<th colspan="3"><fmt:message key="Visualisez"/></th>
+						<th colspan="5" id="courses"><fmt:message key="Les cours"/></th>
+						<th colspan="2"><fmt:message key="Visualisez"/></th>
 						<th colspan="1"><fmt:message key="Editer"/></th>
 					</tr>
 					<c:import url="./mycourselist.jsp" />
@@ -67,11 +77,7 @@
 	    		<div class="pagination">
 	    			<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" />
 				</div>
-	 
-	    		<a href="<c:url value="./upload" />" title="<fmt:message key="upload"/>" ><fmt:message key="upload"/></a><br>
-	    	
-	    	<div>
-	    	
+	    	</div>
     	</div>
 	    	
 	    <div class="footer">

@@ -1173,19 +1173,14 @@ public class FileSystemImpl implements IFileSystem {
 	 */
 	public void sendMail(User u, Course c) {
 		
-	//	String message = "Your_course_number_" + c.getCourseid() +"_is _published_on_www.univ-rav.u-strasbg.fr" ;
-	//  String subject = "A_new_course_on_Univr_AV";
-		
-		String message = "message" ;
-		String subject = "subject";
-	
+	  String message = "Dear Customer,\n\nYour course named \"" + c.getTitle() +"\" is published on http://univ-rav.u-strasbg.fr\n\nBest Regards,\n\nUniv-r Av Administrator" ;
+	  String subject = "Your new course on Univr-AV";
+	  
+	  String[] command_array = {"bash","mail.sh",message,subject,u.getEmail()};
 		
 		try {
-			Process p = r.exec("bash mail.sh "  + message + " " + subject + " " + u.getEmail(), null, scriptsFolder);
-			
-			
-			System.out.println("bash mail.sh "  + message + " " + subject + " " + u.getEmail());
-			
+			Process p = r.exec(command_array, null, scriptsFolder);
+						
 			if( p.waitFor() != 0 ) {
 				System.out.println("Error while send the mail for the course " + c.getCourseid() + " to " + u.getEmail());
 				throw new DaoException("Error while send the mail for the course " + c.getCourseid() + " to " + u.getEmail());

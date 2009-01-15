@@ -60,7 +60,7 @@ public class BddAccesForAs3 {
 	  public String getXml(String var, String id) {
 		  
 		  Hashtable<String,String> bdd=new Hashtable<String,String>();
-			  
+				
 		  try {		  
 			  Statement st = pa.getConnection().createStatement();
 			  ResultSet rs = st.executeQuery("SELECT name, firstname, formation, title, description, date, type, duration, consultations, mediafolder FROM course WHERE courseid=" + id);
@@ -106,6 +106,7 @@ public class BddAccesForAs3 {
 			  System.err.println(se.getMessage());
 		  }
 		  
+		  
 		  return bdd.get(var)!=null ? bdd.get(var) : "_";
 	  }
 	  
@@ -131,7 +132,7 @@ public class BddAccesForAs3 {
 			  rs.close();
 			  st.close();
 			  pa.disconnect();
-			  
+			  	  
 			  String adresseCoursSmil = "http://univ-rav.u-strasbg.fr/coursv2/" + mediafolder + "/timecode.csv";
 			  String tablo[] = new String[200];
 			
@@ -162,7 +163,7 @@ public class BddAccesForAs3 {
 		  }
 		  catch(Exception e) {
 			  System.err.println(e.getMessage());
-		  }
+		  }  
 		  return stringTimeCode;
 	  }
 }

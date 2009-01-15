@@ -25,7 +25,7 @@
 	</div>
 	<div class="criteria">
 		<label><fmt:message key="Auteur"/></label>
-		<select class="field" name="fullname" title="<fmt:message key="Enseignant"/>">
+		<select class="field" name="fullname" title="<fmt:message key="Auteur"/>">
 			<option value="*"><fmt:message key="Tous"/></option>
 			<c:forEach var="teacher" items="${teachers}">
 				<c:if test="${nameSelected == teacher}">
@@ -37,7 +37,7 @@
 		</select>
 		<br>
 		<label><fmt:message key="Formation"/></label>
-		<select class="field" name="formation">
+		<select class="field" name="formation" title="<fmt:message key="Formation"/>">
 			<option value="*"><fmt:message key="Tous"/></option>
 			<c:forEach var="formation" items="${formations}">
 				<c:if test="${formationSelected == formation}">

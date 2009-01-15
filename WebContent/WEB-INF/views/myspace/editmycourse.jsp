@@ -13,7 +13,7 @@
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/myspace.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/admin.css">
 	
 	<!--[if IE]>
    		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />

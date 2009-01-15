@@ -1,6 +1,6 @@
 User-agent: *
-Disallow: *.zip$
-Disallow: *.zip
+Disallow: /*.zip$
+Disallow: /*.zip
 Disallow: /*.mp3$
 Disallow: /*.mp3
 Disallow: /*.ogg$
