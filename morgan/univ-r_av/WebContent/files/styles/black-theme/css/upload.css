@@ -26,3 +26,12 @@ td {
 img#process { 
 	visibility: hidden;
 }
+
+.message {
+ 	text-align:left;
+ }
+ 
+ .txtLogin {
+ 	background-color:#d3d3d3;
+ 
+ }

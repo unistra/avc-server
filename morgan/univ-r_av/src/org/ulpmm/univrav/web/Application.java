@@ -576,18 +576,23 @@ public class Application extends HttpServlet {
 	throws ServletException, IOException {
 
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+
+		if(casUser!=null) {
 		
-		//On vérifie que l'user CAS est présent dans notre base de données
-		User user = service.getUser(casUser);
-		
-		if(user!=null) {
-			
+			//On vérifie que l'user CAS est présent dans notre base de données
+			User user = service.getUser(casUser);
+
+			// S'il n y est pas, on le crée
+			if(user==null) {
+				user = new User(service.getNextUserId(),casUser,"");
+				service.addUser(user);
+			}
+
 			request.setAttribute("user", user);
-			
-			
-//			int start = 0;
+
+			//			int start = 0;
 			int pageNumber;
-			
+
 			/* initializes the model */
 			if( request.getParameter("page") != null) {
 				pageNumber = Integer.parseInt( request.getParameter("page"));
@@ -595,7 +600,7 @@ public class Application extends HttpServlet {
 			}
 			else
 				pageNumber = 1;
-			
+
 			request.setAttribute("page", pageNumber);
 			request.setAttribute("teachers", service.getTeachers());
 			request.setAttribute("formations", service.getFormations());
@@ -604,13 +609,13 @@ public class Application extends HttpServlet {
 			request.setAttribute("number", recordedCourseNumber);
 			request.setAttribute("resultPage", "myspace");
 			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
-			
+
 			/* Saves the page for the style selection thickbox return */
 			session.setAttribute("previousPage", "/myspace?page=" + pageNumber);
-			
+
 			// Button disconnect
 			session.setAttribute("btnDeco", true);
-			
+
 			/* Displays the view */ 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace.jsp").forward(request, response);
 		}
@@ -619,6 +624,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("message", "You don't have access to this page");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
 		}
+
 	}
 	
 	private void logout(HttpServletRequest request, HttpServletResponse response)
@@ -932,10 +938,18 @@ public class Application extends HttpServlet {
 
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
 
-		//On vérifie que l'user CAS est présent dans notre base de données
-		User user = service.getUser(casUser);
+		if(casUser!=null) {
 		
-		if(user!=null) {
+			//On vérifie que l'user CAS est présent dans notre base de données
+			User user = service.getUser(casUser);
+			
+			// S'il n y est pas, on le crée
+			if(user==null) {
+				user = new User(service.getNextUserId(),casUser,"");
+				service.addUser(user);
+			}
+			
+			request.setAttribute("user", user);
 
 			request.setAttribute("gobackurl", "./myspace");
 			getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
@@ -1007,7 +1021,11 @@ public class Application extends HttpServlet {
 				
 				// S'il n y est pas, on le crée
 				if(user==null) {
-					user = new User(service.getNextUserId(),login,email);
+					if(login=="anonymous") 
+						user = new User(service.getNextUserId(),login,"");
+					else
+						user = new User(service.getNextUserId(),login,email);
+					
 					service.addUser(user);
 				}
 				
@@ -1050,8 +1068,19 @@ public class Application extends HttpServlet {
 							rssImageUrl, recordedInterfaceUrl, language);
 				}
 				
-				service.sendMail(user,c);
+				//IF THE LOGIN AND EMAIL ARE PRESENT, AND IF LOGIN IS ALREADY IN THE TABLE
+				//WE USE THE EMAIL OF THE TABLE (the user can change his mail on his space)
 				
+				// If the user is not anonymous and his email is present
+				if(user.getLogin()!="anonymous" && user.getEmail()!=null && user.getEmail()!="") {
+					service.sendMail(user,c);
+				}
+				//if the user is anonymous but the mail is present 
+				else if(user.getLogin()=="anonymous" && email!=null && email!="") {
+					user.setEmail(email);
+					service.sendMail(user,c);
+				}
+									
 				message = "File successfully sent !";
 			}
 			catch( DaoException de) {
@@ -1071,302 +1100,156 @@ public class Application extends HttpServlet {
 	}
 	
 	@SuppressWarnings("unchecked")
-	/**
-	 * Processes the upload of a media file to convert it to a course
-	 */
-	/*private void mediaUpload(HttpServletRequest request, HttpServletResponse response)
-		throws ServletException, IOException {
-		
-   		String title, description, name, firstname, date, formation, genre;
-   		String message = "";
-		String messageType = "information";
-   		
-   		Calendar cal = new GregorianCalendar();        	
-   	
-   		title = description = name = firstname = date = formation = genre = "";
-
-   		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-   		Date d = new Date();
-   		boolean continuer=true;
-   	
-   		
-		String estab = request.getParameter("estab");
-		
-   		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
-   		
-   		// If the user is authenticated 
-		if( casUser != null) {
-			HashMap<String, String> map = service.getUserInfos(casUser,estab); // retrieves the info from the user
-			
-			// Determines wether the user is a student or a teacher 
-			String idrole = map.get("idrole");
-			name = map.get("nom");
-			firstname = map.get("prenom");
-			
-			if( idrole.equals("1")) { // teacher -> forward to the upload page
-								
-				// Tests if the request is a good media upload request 
-		   		
-				
-				if( ServletFileUpload.isMultipartContent(new ServletRequestContext(request)) ) {
-					
-					try {
-						// Prepares to parse the request to get the different elements of the POST 
-						FileItemFactory factory = new DiskFileItemFactory();
-						ServletFileUpload upload = new ServletFileUpload(factory);
-						List<FileItem> items = upload.parseRequest(request);
-						
-						// Processes the different elements 
-						Iterator<FileItem> iter = items.iterator();
-						while (iter.hasNext() && continuer) {
-						    FileItem item = (FileItem) iter.next();
-				
-						    // If the element is a form field, retrieves the info 
-						    if (item.isFormField()) {
-						        
-						    	if(item.getFieldName().equals("title"))
-						        	title = item.getString("UTF8");
-						    	if(item.getFieldName().equals("description"))
-						        	description = item.getString("UTF8");
-						        else if(item.getFieldName().equals("date")){
-						        	date = item.getString("UTF8");
-						        	try {
-							        	d = sdf.parse(date);					        	
-						        	}
-						        	catch( ParseException pe) {
-						        		pe.printStackTrace();
-						        	}
-						        	finally {
-						        		cal.setTime(d);
-						        	}
-						        }
-						        else if(item.getFieldName().equals("formation"))
-						        	formation = item.getString("UTF8");
-						        else if(item.getFieldName().equals("genre")) {
-						        	genre = item.getString("UTF8");
-						        }
-						    	
-						    } // If the element is a file 
-						    else {
-						    	String fileName = item.getName();
-						    	String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()) : "";
-						    	
-						    	// Checks the extension of the item to have a supported file format 
-						    	if( extension.equals("mp3") || extension.equals("ogg") || extension.equals("avi") || extension.equals("divx") 
-						    			|| extension.equals("rm") || extension.equals("rv") || extension.equals("mp4") || extension.equals("mpg") 
-						    			|| extension.equals("mpeg") || extension.equals("mov") || extension.equals("wmv") || extension.equals("mkv") ) {
-						    	
-							    	String clientIP = request.getRemoteAddr();
-							    	String timing = "n-1";
-							    	
-							    	Course c = new Course(
-											service.getNextCoursId(),
-											new Timestamp(new Date().getTime()),
-											null, // The type can't be set yet
-											title.equals("") ? null : title,
-											description.equals("") ? null : description,
-											formation.equals("") ? null : formation,
-											(name == null || name.equals("")) ? null : name,
-											(firstname == null || firstname.equals("")) ? null : firstname,
-											clientIP,
-											0, // The duration can't be set yet
-											(genre == null || genre.equals("")) ? null : genre,
-											true,
-											0,
-											timing,
-											null // The media folder can't be set yet
-									);
-									
-							    	// Sends the creation of the course to the service layer 
-							    	service.mediaUpload(c, item, getServletContext().getRealPath("/rss"), 
-											rssName, rssTitle, rssDescription, serverUrl, 
-											rssImageUrl, recordedInterfaceUrl, language);
-									
-									message = "File successfully sent ! ";
-									message += "Don't panic if your video doesn't appear in the list right now. The conversion may be long (30 minutes for 1 hour video)";
-						    	}
-						    	else {
-						    		messageType = "error";
-									message = "Error: Not supported file format : " + extension;
-						    	}
-						    }
-						}
-					}
-					catch( FileUploadException fue) {
-						messageType = "error";
-						message = "Error : File upload error";
-					}
-				}
-				else {
-					messageType = "error";
-					message = "Error: Incorrect file upload request";
-				}
-				
-			}
-			else { // student or other -> forward to an error page
-				messageType = "error";
-				message = "Error: You don't have access to this page";
-			}
-		}
-		
-		// Displays the result of the upload process 
-		request.setAttribute("messagetype", messageType);
-		request.setAttribute("message", message);
-		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
-		
-	}*/
-	
 	private void mediaUpload(HttpServletRequest request, HttpServletResponse response)
-		throws ServletException, IOException {
-		
-   		String title, description, name, firstname, date, formation, genre;
-   		boolean hq=false;
-   		String message = "";
-		String messageType = "information";
-   		
-   		Calendar cal = new GregorianCalendar();        	
-   	
-   		title = description = name = firstname = date = formation = genre = "";
+	throws ServletException, IOException {
 
-   		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-   		Date d = new Date();
-   		boolean continuer=true;
-   	
-   		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
-   		
-   		/* If the user is authenticated */
+		String title, description, name, firstname, date, formation, genre;
+		boolean hq=false;
+		String message = "";
+		String messageType = "information";
+
+		Calendar cal = new GregorianCalendar();        	
+
+		title = description = name = firstname = date = formation = genre = "";
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Date d = new Date();
+		boolean continuer=true;
+
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
+
+		/* If the user is authenticated */
 		if( casUser != null) {
-		
+
 			// On essaye de récupérer l'utilisateur dans notre base
 			User user = service.getUser(casUser);
-			
-			if(user!=null) {
-				
-				
-				if( ServletFileUpload.isMultipartContent(new ServletRequestContext(request)) ) {
-					
-					try {
-						/* Prepares to parse the request to get the different elements of the POST */
-						FileItemFactory factory = new DiskFileItemFactory();
-						ServletFileUpload upload = new ServletFileUpload(factory);
-						List<FileItem> items = upload.parseRequest(request);
-						
-						/* Processes the different elements */
-						Iterator<FileItem> iter = items.iterator();
-						while (iter.hasNext() && continuer) {
-						    FileItem item = (FileItem) iter.next();
-				
-						    /* If the element is a form field, retrieves the info */
-						    if (item.isFormField()) {
-						        
-						    	if(item.getFieldName().equals("title"))
-						        	title = item.getString("UTF8");
-						    	if(item.getFieldName().equals("description"))
-						        	description = item.getString("UTF8");
-						        else if(item.getFieldName().equals("date")){
-						        	date = item.getString("UTF8");
-						        	try {
-							        	d = sdf.parse(date);					        	
-						        	}
-						        	catch( ParseException pe) {
-						        		pe.printStackTrace();
-						        	}
-						        	finally {
-						        		cal.setTime(d);
-						        	}
-						        }
-						        else if(item.getFieldName().equals("formation"))
-						        	formation = item.getString("UTF8");
-						        else if(item.getFieldName().equals("genre")) {
-						        	genre = item.getString("UTF8");
-						        }
-						        else if(item.getFieldName().equals("name")) {
-						        	name = item.getString("UTF8");
-						        }
-						        else if(item.getFieldName().equals("firstname")) {
-						        	firstname = item.getString("UTF8");
-						        }
-						        else if(item.getFieldName().equals("hd")) {
-						        	hq=true;
-						        }
-						    							    	
-						    } /* If the element is a file */
-						    else {
-						    	String fileName = item.getName();
-						    	String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()) : "";
-						    	
-						    	/* Checks the extension of the item to have a supported file format */
-						    	if( extension.equals("mp3") || extension.equals("ogg") || extension.equals("avi") || extension.equals("divx") 
-						    			|| extension.equals("rm") || extension.equals("rv") || extension.equals("mp4") || extension.equals("mpg") 
-						    			|| extension.equals("mpeg") || extension.equals("mov") || extension.equals("wmv") || extension.equals("mkv") || extension.equals("flv") ) {
-						    	
-							    	String clientIP = request.getRemoteAddr();
-							    	String timing = "n-1";
-							    	
-							    	Course c = new Course(
-											service.getNextCoursId(),
-											new Timestamp(new Date().getTime()),
-											null, // The type can't be set yet
-											title.equals("") ? null : title,
-											description.equals("") ? null : description,
-											formation.equals("") ? null : formation,
-											(name == null || name.equals("")) ? null : name,
-											(firstname == null || firstname.equals("")) ? null : firstname,
-											clientIP,
-											0, // The duration can't be set yet
-											(genre == null || genre.equals("")) ? null : genre,
-											true,
-											0,
-											timing,
-											null, // The media folder can't be set yet
-											hq,
-											user.getUserid()
-									);
-							    	
-							    								    										
-							    	/* Sends the creation of the course to the service layer */
-							    	service.mediaUpload(c, item, getServletContext().getRealPath("/rss"), 
-											rssName, rssTitle, rssDescription, serverUrl, 
-											rssImageUrl, recordedInterfaceUrl, language,hq);
-									
-									message = "File successfully sent ! ";
-									message += "Don't panic if your video doesn't appear in the list right now. The conversion may be long (30 minutes for 1 hour video)";
-						    	}
-						    	else {
-						    		messageType = "error";
-									message = "Error: Not supported file format : " + extension;
-						    	}
-						    }
+
+			// S'il n y est pas, on le crée
+			if(user==null) {
+				user = new User(service.getNextUserId(),casUser,"");
+				service.addUser(user);
+			}
+
+			if( ServletFileUpload.isMultipartContent(new ServletRequestContext(request)) ) {
+
+				try {
+					/* Prepares to parse the request to get the different elements of the POST */
+					FileItemFactory factory = new DiskFileItemFactory();
+					ServletFileUpload upload = new ServletFileUpload(factory);
+					List<FileItem> items = upload.parseRequest(request);
+
+					/* Processes the different elements */
+					Iterator<FileItem> iter = items.iterator();
+					while (iter.hasNext() && continuer) {
+						FileItem item = (FileItem) iter.next();
+
+						/* If the element is a form field, retrieves the info */
+						if (item.isFormField()) {
+
+							if(item.getFieldName().equals("title"))
+								title = item.getString("UTF8");
+							else if(item.getFieldName().equals("description"))
+								description = item.getString("UTF8");
+							else if(item.getFieldName().equals("date")){
+								date = item.getString("UTF8");
+								try {
+									d = sdf.parse(date);					        	
+								}
+								catch( ParseException pe) {
+									pe.printStackTrace();
+								}
+								finally {
+									cal.setTime(d);
+								}
+							}
+							else if(item.getFieldName().equals("formation"))
+								formation = item.getString("UTF8");
+							else if(item.getFieldName().equals("genre")) {
+								genre = item.getString("UTF8");
+							}
+							else if(item.getFieldName().equals("name")) {
+								name = item.getString("UTF8");
+							}
+							else if(item.getFieldName().equals("firstname")) {
+								firstname = item.getString("UTF8");
+							}
+							else if(item.getFieldName().equals("hd")) {
+								hq=true;
+							}
+
+						} /* If the element is a file */
+						else {
+							String fileName = item.getName();
+							String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()) : "";
+
+							/* Checks the extension of the item to have a supported file format */
+							if( extension.equals("mp3") || extension.equals("ogg") || extension.equals("avi") || extension.equals("divx") 
+									|| extension.equals("rm") || extension.equals("rv") || extension.equals("mp4") || extension.equals("mpg") 
+									|| extension.equals("mpeg") || extension.equals("mov") || extension.equals("wmv") || extension.equals("mkv") || extension.equals("flv") ) {
+
+								String clientIP = request.getRemoteAddr();
+								String timing = "n-1";
+
+								Course c = new Course(
+										service.getNextCoursId(),
+										new Timestamp(new Date().getTime()),
+										null, // The type can't be set yet
+										title.equals("") ? null : title,
+												description.equals("") ? null : description,
+														formation.equals("") ? null : formation,
+																(name == null || name.equals("")) ? null : name,
+																		(firstname == null || firstname.equals("")) ? null : firstname,
+																				clientIP,
+																				0, // The duration can't be set yet
+																				(genre == null || genre.equals("")) ? null : genre,
+																						true,
+																						0,
+																						timing,
+																						null, // The media folder can't be set yet
+																						hq,
+																						user.getUserid()
+								);
+
+
+								/* Sends the creation of the course to the service layer */
+								service.mediaUpload(c, item, getServletContext().getRealPath("/rss"), 
+										rssName, rssTitle, rssDescription, serverUrl, 
+										rssImageUrl, recordedInterfaceUrl, language,hq);
+
+								message = "File successfully sent ! ";
+								message += "Don't panic if your video doesn't appear in the list right now. The conversion may be long (30 minutes for 1 hour video)";
+							}
+							else {
+								messageType = "error";
+								message = "Error: Not supported file format : " + extension;
+							}
 						}
 					}
-					catch( FileUploadException fue) {
-						messageType = "error";
-						message = "Error : File upload error";
-					}
 				}
-				else {
+				catch( FileUploadException fue) {
 					messageType = "error";
-					message = "Error: Incorrect file upload request";
+					message = "Error : File upload error";
 				}
-				
 			}
-			else { 
+			else {
 				messageType = "error";
-				message = "Error: You don't have access to this page";
+				message = "Error: Incorrect file upload request";
 			}
+
+
 		}
 		else { 
 			messageType = "error";
 			message = "Error: You don't have access to this page";
 		}
-		
+
 		/* Displays the result of the upload process */
 		request.setAttribute("messagetype", messageType);
 		request.setAttribute("message", message);
 		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
-		
+
 	}
-	
+
 	private void liveState(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 		
@@ -1487,15 +1370,15 @@ public class Application extends HttpServlet {
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_hq.jsp").forward(request, response);
 		
 				}
-				// Full Flash
-				else if(type.equals("fullflash")) {
+				// TODO Full Flash
+				/*else if(type.equals("fullflash")) {
 					
 					request.setAttribute("idcours",c.getCourseid());
-					
+				
 					// Displays the view 
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_fullflash.jsp").forward(request, response);
 					
-				}
+				}*/
 				else {
 					String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
 					
@@ -1533,23 +1416,6 @@ public class Application extends HttpServlet {
 		
 		url = "rtmp://" + flashServerIp + "/live&id=" + ip.replace('.', '_');
 		request.setAttribute("type", a.getType());	
-		
-	/*	
-		if( a.getType().equals("audio")) {
-			url = "http://" + ip + ":" + audioLivePort;
-			request.setAttribute("type", a.getType());			
-		}
-		else if( a.getType().equals("video")) {
-			if( service.getLiveStreamType(ip, audioLivePort).equals("audio")) {
-				url = "http://" + ip + ":" + audioLivePort;
-				request.setAttribute("type", "audio");
-			}
-			else {
-				url = "rtmp://" + flashServerIp + "/live&id=" + ip.replace('.','_') ;
-				request.setAttribute("type", a.getType());
-			}
-		}	
-		*/
 		
 		request.setAttribute("amphi", amphi);
 		request.setAttribute("building", building);

@@ -121,6 +121,7 @@
 				</c:otherwise>
 			</c:choose>
 		</td>
+		<!--
 		<td class="tdalign">
 			<c:choose>
 				<c:when test="${course.genre == null}">
@@ -141,6 +142,7 @@
 				</c:otherwise>
 			</c:choose>
 		</td>
+		-->
 		
 		<td class="tdalign">
 			<c:url var="edit" scope="page" value="./editmycourse">

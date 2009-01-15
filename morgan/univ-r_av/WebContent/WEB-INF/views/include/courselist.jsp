@@ -121,6 +121,7 @@
 				</c:otherwise>
 			</c:choose>
 		</td>
+		<!--
 		<td class="tdalign">
 			<c:choose>
 				<c:when test="${course.genre == null}">
@@ -141,6 +142,7 @@
 				</c:otherwise>
 			</c:choose>
 		</td>
+		-->
 		
 	<!-- Defines the class of the next row of the table -->
 	<c:choose>
