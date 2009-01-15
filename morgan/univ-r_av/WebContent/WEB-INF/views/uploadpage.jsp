@@ -38,6 +38,10 @@
 	    	<form action="<c:url value="./mediaupload"/>" method="post" enctype="multipart/form-data">
 				<table>
 				<tr>
+					<td><fmt:message key="login"/> : </td>
+					<td><input type="text" value="${user.login}" readonly="readonly" class="txtLogin"> </td>
+				</tr>
+				<tr>
 					<td><fmt:message key="title"/> : </td>
 					<td><input type="text" name="title"> </td>
 				</tr>
@@ -47,12 +51,10 @@
 				 </tr>
 				<tr>
 					<td><fmt:message key="name"/> : </td>
-					<!--<td><input type="text" value="${name}" readonly="readonly"> </td>-->
 					<td><input type="text" name="name"> </td>
 				</tr>
 				<tr>
 					<td><fmt:message key="firstname"/> : </td>
-					<!--<td><input type="text" value="${firstname}" readonly="readonly"> </td>-->
 					<td><input type="text" name="firstname"> </td>
 				</tr>
 				<tr>
@@ -84,11 +86,11 @@
 			   
 			
 			<br>
-			<p><fmt:message key="uploadmessage1"/></p>
+			<p class="message"><fmt:message key="uploadmessage1"/></p>
 			<br>
-			<p><fmt:message key="uploadmessage2"/></p>
+			<p class="message"><fmt:message key="uploadmessage2"/></p>
 			<br>
-			<p><fmt:message key="uploadmessage3"/></p>
+			<p class="message"><fmt:message key="uploadmessage3"/></p>
 
     	</div>
 	    	
