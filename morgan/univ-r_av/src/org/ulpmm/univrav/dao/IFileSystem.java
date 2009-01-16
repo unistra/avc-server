@@ -8,7 +8,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.entities.Course;
-import org.ulpmm.univrav.entities.User;
 
 public interface IFileSystem {
 
@@ -100,10 +99,11 @@ public interface IFileSystem {
 	public String getDiskSpaceInfo();
 	
 	/**
-	 * Send an email to confirm the add of the new course
-	 * @param user
-	 * @param course 
+	 * Send an email to confirm the add of the new course 
+	 * @param subject
+	 * @param message
+	 * @param email
 	 */
-	public void sendMail(User u,Course c);
+	public void sendMail(String subject, String message, String email);
 	
 }

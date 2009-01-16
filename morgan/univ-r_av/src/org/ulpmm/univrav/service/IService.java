@@ -523,8 +523,9 @@ public interface IService {
 	
 	/**
 	 * Send an email to confirm the add of the new course
-	 * @param user
-	 * @param course
+	 * @param subject
+	 * @param message
+	 * @param email
 	 */
-	public void sendMail(User u,Course c);
+	public void sendMail(String subject, String message, String email);
 }

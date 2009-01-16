@@ -14,17 +14,14 @@
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/recorded.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/searchform.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/courselist.css">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/myspace.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/myemail.css">
 	
 	<!--[if IE]>
    		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
 	<![endif]-->
 	<!--[if lte IE 6]>
 		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie6.css" media="screen" />
-		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/recorded_ie6.css" media="screen" />
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 	
@@ -45,40 +42,32 @@
 	    		<c:import url="../include/banner.jsp" />
 	     	</div>
 	    	
-	    	<div class="welcome">
-	    		<p><fmt:message key="Bienvenue"/> ${user.login}</p>
-	    		<p><fmt:message key="Votre e-mail"/> ${user.email}</p>
-	    	</div>
 	    	
-	    	<br>
-	    		
-	    	<div class=btnMyspace>	
-	    		
-	    		<div class="btnUpload">
-	    		<a href="<c:url value="./upload" />" title="<fmt:message key="upload"/>" ><fmt:message key="upload"/></a>
-	    		</div>
-	    	
-	    		<div class="btnModifierEmail">
-	    		<a href="<c:url value="./myemail" />" title="<fmt:message key="modifieremail"/>" ><fmt:message key="modifieremail"/></a>
-	    		</div>
-	    	
-	    	</div>
-	    	
-	    	<div class="course">
-				<table cellspacing="0">
-					<tr class="tableheader">
-						<th colspan="5" id="courses"><fmt:message key="Les cours"/></th>
-						<th colspan="2"><fmt:message key="Visualisez"/></th>
-						<th colspan="1"><fmt:message key="Editer"/></th>
-					</tr>
-					<c:import url="./mycourselist.jsp" />
-				</table>
+	    	<form action="<c:url value="./modifyemail"/>" method="post">
+				<table>
+				<tr>
+					<td><fmt:message key="login"/> : </td>
+					<td><input type="text" name="login" value="${user.login}" readonly="readonly" class="txtLogin"> </td>
+				</tr>
+				<tr>
+					<td><fmt:message key="EmailActuel"/> : </td>
+					<td><input type="text" name="emailActuel" value="${user.email}" readonly="readonly" class="txtLogin"> </td>
+				</tr>
+				<tr>
+					<td><fmt:message key="NouveauEmail"/> : </td>
+					<td><input type="text" name="nouveauEmail"> </td>
+				</tr>
 				
-	    		<div class="pagination">
-	    			<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" />
-				</div>
-	    	</div>
-    	</div>
+				<tr>
+					<td><input type="submit" name="valider" onclick="javascript:document.getElementById('process').style.visibility='visible'" value="<fmt:message key="Valider"/>"> </td>
+				</tr>
+				<tr>
+					<td><a href="<c:url value="${gobackurl}" />"><fmt:message key="Retour"/></a></td>
+		    	</tr>
+				
+				</table>
+			</form>
+	    	
 	    	
 	    <div class="footer">
 	    	<c:import url="../include/footer.jsp" />
