@@ -833,10 +833,11 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Send an email to confirm the add of the new course
-	 * @param user
-	 * @param course
+	 * @param subject
+	 * @param message
+	 * @param email
 	 */
-	public synchronized void sendMail(User u, Course c) {
-		fs.sendMail(u,c);
+	public synchronized void sendMail(String subject, String message, String email) {
+		fs.sendMail(subject,message,email);
 	}
 }

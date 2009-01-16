@@ -33,7 +33,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.entities.Course;
-import org.ulpmm.univrav.entities.User;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -1168,30 +1167,28 @@ public class FileSystemImpl implements IFileSystem {
 	
 	/**
 	 * Send an email to confirm the add of the new course
-	 * @param user
-	 * @param course 
+	 * @param subject
+	 * @param message
+	 * @param email
 	 */
-	public void sendMail(User u, Course c) {
-		
-	  String message = "Dear Customer,\n\nYour course named \"" + c.getTitle() +"\" is published on http://univ-rav.u-strasbg.fr\n\nBest Regards,\n\nUniv-r Av Administrator" ;
-	  String subject = "Your new course on Univr-AV";
-	  
-	  String[] command_array = {"bash","mail.sh",message,subject,u.getEmail()};
+	public void sendMail(String subject, String message, String email) {
+		  
+	  String[] command_array = {"bash","mail.sh",message,subject, email};
 		
 		try {
 			Process p = r.exec(command_array, null, scriptsFolder);
 						
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while send the mail for the course " + c.getCourseid() + " to " + u.getEmail());
-				throw new DaoException("Error while send the mail for the course " + c.getCourseid() + " to " + u.getEmail());
+				System.out.println("Error while send the mail to " + email);
+				throw new DaoException("Error while send the mail to " + email);
 			}
 		}
 		catch(IOException ioe) {
-			System.out.println("Error while send the mail for the course " + c.getCourseid() + " to " + u.getEmail());
+			System.out.println("Error while send the mail to " + email);
 			ioe.printStackTrace();
 		}
 		catch(InterruptedException ie) {
-			System.out.println("Error while send the mail for the course " + c.getCourseid() + " to " + u.getEmail());
+			System.out.println("Error while send the mail to " + email);
 			ie.printStackTrace();
 		}
 		

@@ -115,6 +115,11 @@ public class Application extends HttpServlet {
 	// The client port for the Univ-R integration
 	private static int clientSocketPort;
 	
+	// Admin email for notification
+	private static String adminEmail1;
+	private static String adminEmail2;
+	private static String adminEmail3;
+	
 	/**
 	 * Initialization of the servlet. <br>
 	 *
@@ -189,7 +194,11 @@ public class Application extends HttpServlet {
 			// The client port for the Univ-R integration
 			clientSocketPort = Integer.parseInt(p.getProperty("clientSocketPort"));
 			
-			
+			// Admin email for notification
+			adminEmail1 = p.getProperty("adminEmail1");
+			adminEmail2 = p.getProperty("adminEmail2");
+			adminEmail3 = p.getProperty("adminEmail3");
+							
 			/* Datasource retrieving */
 			
 			InitialContext cxt = new InitialContext();
@@ -327,6 +336,10 @@ public class Application extends HttpServlet {
 			displayMyspace(request,response);
 		else if(page.equals("/logout")) 
 			logout(request,response);
+		else if(page.equals("/myemail"))
+			DisplayMyEmail(request,response);
+		else if(page.equals("/modifyemail"))
+			ModifyEmail(request,response);
 		else if( page.equals("/live"))
 			displayLivePage(request, response);
 		else if( page.equals("/recorded"))
@@ -638,6 +651,67 @@ public class Application extends HttpServlet {
 			session.removeAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
 			response.sendRedirect("https://cas-ent.u-strasbg.fr:8443/cas/logout");
 		}
+		
+	}
+	
+	private void DisplayMyEmail(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+						
+		if(casUser!=null) {	
+			
+			//On vérifie que l'user CAS est présent dans notre base de données
+			User user = service.getUser(casUser);
+			
+			// S'il n y est pas, on le crée
+			if(user==null) {
+				user = new User(service.getNextUserId(),casUser,"");
+				service.addUser(user);
+			}
+
+			request.setAttribute("user", user);
+			request.setAttribute("gobackurl", "./myspace");
+			
+			/* Displays the view */ 
+			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myemail.jsp").forward(request, response);
+	
+		
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "You don't have access to this page");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+		
+	}
+	
+	private void ModifyEmail(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+				
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+			
+		//On vérifie que l'user CAS est présent dans notre base de données
+		User user = service.getUser(casUser);
+		
+		// On vérifie que l'user est bien l'user qui veut modifier son mail
+		if(user.getLogin().compareTo(request.getParameter("login"))==0) {
+		
+			user.setEmail(! request.getParameter("nouveauEmail").equals("") ? request.getParameter("nouveauEmail") : request.getParameter("emailActuel"));
+			service.modifyUser(user);
+				
+			/* Displays the view */ 
+			request.setAttribute("messagetype", "info");
+			request.setAttribute("message", "Your e-mail has been modified");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "You don't have access to this page");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+		
 		
 	}
 	
@@ -1068,18 +1142,36 @@ public class Application extends HttpServlet {
 							rssImageUrl, recordedInterfaceUrl, language);
 				}
 				
+				//SENDING EMAILS
+				
+				//FOR THE USER
+								
+				String emailUserSubject = "Your new course on Univr-AV";
+				String emailUserMessage = "Dear Customer,\n\nYour course named \"" + c.getTitle() +"\" is published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash\n\nBest Regards,\n\nUniv-r Av Administrator" ;
+				
 				//IF THE LOGIN AND EMAIL ARE PRESENT, AND IF LOGIN IS ALREADY IN THE TABLE
 				//WE USE THE EMAIL OF THE TABLE (the user can change his mail on his space)
+						
+				System.out.println("USER: " + user.getLogin());
 				
 				// If the user is not anonymous and his email is present
-				if(user.getLogin()!="anonymous" && user.getEmail()!=null && user.getEmail()!="") {
-					service.sendMail(user,c);
+				if(!user.getLogin().equals("anonymous") && user.getEmail()!=null && !user.getEmail().equals("")) {
+					System.out.println("passe ici");
+					service.sendMail(emailUserSubject,emailUserMessage,user.getEmail());
 				}
 				//if the user is anonymous but the mail is present 
-				else if(user.getLogin()=="anonymous" && email!=null && email!="") {
-					user.setEmail(email);
-					service.sendMail(user,c);
+				else if(user.getLogin().equals("anonymous") && email!=null && !email.equals("")) {
+					System.out.println("passe la");
+					service.sendMail(emailUserSubject,emailUserMessage,email);
 				}
+				
+				//TODO FOR ADMINS
+				String emailAdminSubject = "a new course on Univr-AV";
+				String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" is published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash\n\nBest Regards,\n\nUniv-r Av Administrator" ;
+				service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
+				service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail2);
+				service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail3);
+				
 									
 				message = "File successfully sent !";
 			}
