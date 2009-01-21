@@ -21,7 +21,7 @@ public class Course {
 	private String timing;
 	private String mediaFolder;
 	private boolean highquality;
-	private int userid;
+	private Integer userid;
 
 	
 
@@ -51,7 +51,7 @@ public class Course {
 	 * @param timing
 	 * @param userid
 	 */
-	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, boolean highquality, int userid) {
+	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, boolean highquality, Integer userid) {
 		this.courseid = courseid;
 		this.date = date;
 		this.type = type;
@@ -281,7 +281,7 @@ public class Course {
 	 * 
 	 * @return user id
 	 */
-	public int getUserid() {
+	public Integer getUserid() {
 		return userid;
 	}
 
@@ -321,7 +321,7 @@ public class Course {
 		this.consultations = consultations;
 	}
 
-	public void setUserid(int userid) {
+	public void setUserid(Integer userid) {
 		this.userid = userid;
 	}
 

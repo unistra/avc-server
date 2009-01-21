@@ -42,32 +42,42 @@ body {
 /* Clickable zone to go back to the banner page */
 .bannerPageZone {
 	position: absolute;
-	width : 202px;
-	height: 86px;
-	margin-left: 45px;
+	width : 165px;
+	height: 70px;
+	margin-left: 45px; /* 25 */
 	margin-top: 12px;
 	background-image: url(../img/univr-av-logo.png);
 }
 
 /* Clickable zone, link to the ULPMM website */
-.ulpmmZone {
+.udsZone {
+	position: absolute;
+	width : 126px;
+	height: 58px;
+	margin-left:200px; /*155*/
+	margin-top: 105px;/*146*/
+	background-image: url(../img/uds-logo.png);
+}
+
+/* Clickable zone, link to the ULPMM website */
+/*.ulpmmZone {
 	position: absolute;
 	width : 100px;
 	height: 34px;
 	margin-left:155px;
 	margin-top: 146px;
 	background-image: url(../img/ulpmm-logo.png);
-}
+}*/
 
 /* Clickable zone, link to the ULP website */
-.ulpZone {
+/*.ulpZone {
 	position: absolute;
 	width : 52px;
 	height: 34px;
 	margin-left:255px;
 	margin-top: 146px;
 	background-image: url(../img/ulp-logo.png);
-}
+}*/
 
 /* Div containing the "Styles" link */
 .styles {

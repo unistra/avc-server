@@ -11,5 +11,5 @@
 		<c:param name="width" value="240"/>
 		<c:param name="height" value="100"/>
 	</c:url>
-  	<a href="mailto:christophe.debeire@ulpmm.u-strasbg.fr"><fmt:message key="Assistance"/></a> - <a href="mailto:eric.laemmer@ulpmm.u-strasbg.fr"><fmt:message key="Contact"/></a> - <a href="<c:out value="${thick_legal}" />" title="<fmt:message key="Informations l&eacute;gales"/>" class="thickbox"><fmt:message key="Informations l&eacute;gales"/></a>
+  	<a href="mailto:cdebeire@unistra.fr"><fmt:message key="Assistance"/></a> - <a href="mailto:elaemmer@unistra.fr"><fmt:message key="Contact"/></a> - <a href="<c:out value="${thick_legal}" />" title="<fmt:message key="Informations l&eacute;gales"/>" class="thickbox"><fmt:message key="Informations l&eacute;gales"/></a>
 </p>
