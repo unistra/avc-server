@@ -120,6 +120,9 @@ public class Application extends HttpServlet {
 	private static String adminEmail2;
 	private static String adminEmail3;
 	
+	//CAS Logout
+	private static String casLogoutUrl;
+	
 	/**
 	 * Initialization of the servlet. <br>
 	 *
@@ -198,6 +201,9 @@ public class Application extends HttpServlet {
 			adminEmail1 = p.getProperty("adminEmail1");
 			adminEmail2 = p.getProperty("adminEmail2");
 			adminEmail3 = p.getProperty("adminEmail3");
+			
+			//cas logout url
+			casLogoutUrl = p.getProperty("casLogoutUrl");
 							
 			/* Datasource retrieving */
 			
@@ -282,7 +288,10 @@ public class Application extends HttpServlet {
 		String language = null;
 		
 		/* If the session didn't exist and has just been created */
-		if( session.isNew()) {
+		if( session.isNew() || session.getAttribute("session")==null) {
+			
+			//Boolean to know if the session is validate
+			session.setAttribute("session", true);
 			
 			/* Checks if the style and language are stored in the cookies */
 			
@@ -320,10 +329,9 @@ public class Application extends HttpServlet {
 			session.setAttribute("language", language);
 			
 			// Button disconnect
-			session.setAttribute("btnDeco", false);
+			session.setAttribute("btnDeco", false);		
 		}
-			
-						
+								
 		/* Retrieves the path info from the browser's URL */
 		String page = request.getPathInfo();
 		
@@ -332,7 +340,7 @@ public class Application extends HttpServlet {
 		
 		if( page.equals("/home"))
 			displayHomePage(request, response);
-		else if (page.equals("/myspace"))
+		else if (page.equals("/myspace")) 
 			displayMyspace(request,response);
 		else if(page.equals("/logout")) 
 			logout(request,response);
@@ -522,7 +530,7 @@ public class Application extends HttpServlet {
 		else if( page.equals("/admin_validateuser"))
 			validateUser(request, response);
 		else if( page.equals("/admin_deleteuser")) {
-			int userid = Integer.parseInt(request.getParameter("id"));
+			Integer userid = request.getParameter("id")!=null ? Integer.parseInt(request.getParameter("id")) : null;
 			service.deleteUser(userid);
 			response.sendRedirect(response.encodeRedirectURL("./admin_users"));
 		}
@@ -587,7 +595,8 @@ public class Application extends HttpServlet {
 	
 	private void displayMyspace(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
-
+			
+		//TODO SI SESSION TERMINE, REDIRIGE SUR LE LOGOUT	
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 
 		if(casUser!=null) {
@@ -597,13 +606,12 @@ public class Application extends HttpServlet {
 
 			// S'il n y est pas, on le crée
 			if(user==null) {
-				user = new User(service.getNextUserId(),casUser,"");
-				service.addUser(user);
+				service.addUser(new User(0,casUser,""));
+				user = service.getUser(casUser);
 			}
 
 			request.setAttribute("user", user);
 
-			//			int start = 0;
 			int pageNumber;
 
 			/* initializes the model */
@@ -649,7 +657,7 @@ public class Application extends HttpServlet {
 			// Button disconnect
 			session.setAttribute("btnDeco", false);
 			session.removeAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
-			response.sendRedirect("https://cas-ent.u-strasbg.fr:8443/cas/logout");
+			response.sendRedirect(casLogoutUrl);
 		}
 		
 	}
@@ -666,12 +674,15 @@ public class Application extends HttpServlet {
 			
 			// S'il n y est pas, on le crée
 			if(user==null) {
-				user = new User(service.getNextUserId(),casUser,"");
-				service.addUser(user);
+				service.addUser(new User(0,casUser,""));
+				user = service.getUser(casUser);
 			}
 
 			request.setAttribute("user", user);
 			request.setAttribute("gobackurl", "./myspace");
+			
+			// Button disconnect
+			session.setAttribute("btnDeco", true);
 			
 			/* Displays the view */ 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myemail.jsp").forward(request, response);
@@ -1019,13 +1030,17 @@ public class Application extends HttpServlet {
 			
 			// S'il n y est pas, on le crée
 			if(user==null) {
-				user = new User(service.getNextUserId(),casUser,"");
-				service.addUser(user);
+				service.addUser(new User(0,casUser,""));
+				user = service.getUser(casUser);
 			}
 			
 			request.setAttribute("user", user);
 
 			request.setAttribute("gobackurl", "./myspace");
+			
+			// Button disconnect
+			session.setAttribute("btnDeco", true);
+			
 			getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
 		}
 		else {
@@ -1037,9 +1052,7 @@ public class Application extends HttpServlet {
 	
 	private void addCourse(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
-		
-		//TODO parametre login et email en plus
-		
+				
 		String id, title, description, mediapath, media, timing, name, firstname, formation, genre, login, email;
 		String message = "";
 		String messageType = "information";
@@ -1057,7 +1070,7 @@ public class Application extends HttpServlet {
 		firstname = service.cleanString(request.getParameter("firstname"));
 		formation = service.cleanString(request.getParameter("ue"));
 		genre = request.getParameter("genre");
-		login = request.getParameter("login")!=null && request.getParameter("login")!="" ? request.getParameter("login") : "anonymous";
+		login = request.getParameter("login")!=null ? request.getParameter("login") : "";
 		email = request.getParameter("email")!=null ? request.getParameter("email") : "";
 		
 		/* Verifies that all essential parameters are sent, cancels the upload if not */
@@ -1067,17 +1080,7 @@ public class Application extends HttpServlet {
 				timing = "n-1";
 			
 			String clientIP = request.getRemoteAddr();
-			
-			/* Displays the parameters retrieved */
-			/*message += "ID : " + id + "<br/>";
-			message += "Title : " + title + "<br/>";
-			message += "Description : " + description + "<br/>";
-			message += "Mediapath : " + mediapath + "<br/>";
-			message += "Teacher : " + name + " " + firstname + "<br>";
-			message += "UE : " + formation + "<br>";
-			message += "Genre : " + genre + "<br>";
-			message += "Timing : " + timing + "<br>";*/
-			
+						
 			/* Retrieves the filename from the media path */
 			media = mediapath.substring(mediapath.lastIndexOf("\\") + 1, mediapath.length());
 			if( media.length() == mediapath.length() )
@@ -1086,23 +1089,20 @@ public class Application extends HttpServlet {
 			message += "Media : " + media + "<br/>";
 			
 			Course c;
-			User user; // user audiovideocours
+			User user=null; // user audiovideocours
 			
 			try {
-			
-				// On essaye de récupérer l'utilisateur dans notre base
-				user = service.getUser(login);
 				
-				// S'il n y est pas, on le crée
-				if(user==null) {
-					if(login=="anonymous") 
-						user = new User(service.getNextUserId(),login,"");
-					else
-						user = new User(service.getNextUserId(),login,email);
-					
-					service.addUser(user);
+				if(!login.equals("")) {	
+					// getting the user
+					user = service.getUser(login);
+					// if not, create user
+					if(user==null) {
+						service.addUser(new User(0,login,email));
+						user=service.getUser(login);
+					}
 				}
-				
+			
 				// Standard course
 				if( id.equals("") || id.equals("(id:no)") || id.equals("None") ) {
 										
@@ -1123,8 +1123,9 @@ public class Application extends HttpServlet {
 							timing,
 							null, // The media folder can't be set yet
 							false,
-							user.getUserid()
+							user!=null ? user.getUserid() : null
 					);
+					
 					service.addCourse(c, media, getServletContext().getRealPath("/rss"), 
 							rssName, rssTitle, rssDescription, serverUrl, 
 							rssImageUrl, recordedInterfaceUrl, language);
@@ -1136,43 +1137,44 @@ public class Application extends HttpServlet {
 					c.setDate(new Timestamp(new Date().getTime()));
 					c.setVisible(false);
 					c.setTiming(timing);
-					c.setUserid(user.getUserid());
+					c.setUserid(user!=null ? user.getUserid() : null);
 					service.completeUnivrCourse(c, u, media, getServletContext().getRealPath("/rss"), 
 							rssName, rssTitle, rssDescription, serverUrl, 
 							rssImageUrl, recordedInterfaceUrl, language);
 				}
 				
-				//SENDING EMAILS
-				
-				//FOR THE USER
-								
+				// Sending email for the user
 				String emailUserSubject = "Your new course on Univr-AV";
-				String emailUserMessage = "Dear Customer,\n\nYour course named \"" + c.getTitle() +"\" is published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash\n\nBest Regards,\n\nUniv-r Av Administrator" ;
-				
+				String emailUserMessage = "Dear Customer,\n\nYour course named \"" + c.getTitle()
+				+"\" is published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
+				+ "\n\nBest Regards,\n\nUniv-r Av Administrator" 
+				+"\n\nPlease, don't answer to this mail, for any question contact us on "+adminEmail1;
+								
 				//IF THE LOGIN AND EMAIL ARE PRESENT, AND IF LOGIN IS ALREADY IN THE TABLE
 				//WE USE THE EMAIL OF THE TABLE (the user can change his mail on his space)
-						
-				System.out.println("USER: " + user.getLogin());
-				
+										
 				// If the user is not anonymous and his email is present
-				if(!user.getLogin().equals("anonymous") && user.getEmail()!=null && !user.getEmail().equals("")) {
-					System.out.println("passe ici");
+				if(user!=null && user.getEmail()!=null && !user.getEmail().equals("")) {
 					service.sendMail(emailUserSubject,emailUserMessage,user.getEmail());
 				}
 				//if the user is anonymous but the mail is present 
-				else if(user.getLogin().equals("anonymous") && email!=null && !email.equals("")) {
-					System.out.println("passe la");
+				else if(user==null && email!=null && !email.equals("")) {
 					service.sendMail(emailUserSubject,emailUserMessage,email);
 				}
 				
-				//TODO FOR ADMINS
-				String emailAdminSubject = "a new course on Univr-AV";
-				String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" is published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash\n\nBest Regards,\n\nUniv-r Av Administrator" ;
-				service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
-				service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail2);
-				service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail3);
+				// If course is present in the recorded page
+				if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
+					// Sending email for admins
+					String emailAdminSubject = "a new course on Univr-AV";
+					String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" is published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getGenre()!=null ? "\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nUniv-r Av Administrator" ;
+					if(!adminEmail1.equals(""))
+						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
+					if(!adminEmail2.equals(""))
+						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail2);
+					if(!adminEmail3.equals(""))
+						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail3);
+				}
 				
-									
 				message = "File successfully sent !";
 			}
 			catch( DaoException de) {
@@ -1213,13 +1215,13 @@ public class Application extends HttpServlet {
 		/* If the user is authenticated */
 		if( casUser != null) {
 
-			// On essaye de récupérer l'utilisateur dans notre base
+			// getting the user
 			User user = service.getUser(casUser);
 
-			// S'il n y est pas, on le crée
+			// if not, create user
 			if(user==null) {
-				user = new User(service.getNextUserId(),casUser,"");
-				service.addUser(user);
+				service.addUser(new User(0,casUser,""));
+				user = service.getUser(casUser);
 			}
 
 			if( ServletFileUpload.isMultipartContent(new ServletRequestContext(request)) ) {
@@ -1287,19 +1289,19 @@ public class Application extends HttpServlet {
 										new Timestamp(new Date().getTime()),
 										null, // The type can't be set yet
 										title.equals("") ? null : title,
-												description.equals("") ? null : description,
-														formation.equals("") ? null : formation,
-																(name == null || name.equals("")) ? null : name,
-																		(firstname == null || firstname.equals("")) ? null : firstname,
-																				clientIP,
-																				0, // The duration can't be set yet
-																				(genre == null || genre.equals("")) ? null : genre,
-																						true,
-																						0,
-																						timing,
-																						null, // The media folder can't be set yet
-																						hq,
-																						user.getUserid()
+										description.equals("") ? null : description,
+										formation.equals("") ? null : formation,
+										(name == null || name.equals("")) ? null : name,
+										(firstname == null || firstname.equals("")) ? null : firstname,
+										clientIP,
+										0, // The duration can't be set yet
+										(genre == null || genre.equals("")) ? null : genre,
+										true,
+										0,
+										timing,
+										null, // The media folder can't be set yet
+										hq,
+										user.getUserid()
 								);
 
 
@@ -1548,7 +1550,7 @@ public class Application extends HttpServlet {
 			! request.getParameter("timing").equals("") ? request.getParameter("timing") : null,
 			! request.getParameter("mediaFolder").equals("") ? request.getParameter("mediaFolder") : null,
 			request.getParameter("highquality") != null ? true : false,
-			Integer.parseInt(request.getParameter("userid"))		
+			! request.getParameter("userid").equals("0") ? Integer.parseInt(request.getParameter("userid")) : null		
 		);
 		service.modifyCourse(c);
 		
@@ -1631,8 +1633,7 @@ public class Application extends HttpServlet {
 			request.getParameter("email")
 		);
 		
-		System.out.println("Action: " + request.getParameter("action"));
-		
+				
 		if(request.getParameter("action").equals("edit"))
 			service.modifyUser(u);
 		else
@@ -1758,7 +1759,7 @@ public class Application extends HttpServlet {
 									null, // The timing can't be set yet
 									null, // The media folder can't be set yet
 									false,
-									0
+									null
 							);
 							
 							Univr u = new Univr(courseId, user, group,estab);

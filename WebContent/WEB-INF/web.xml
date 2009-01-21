@@ -102,8 +102,8 @@
 		</init-param> 
 		<init-param>                     
 			<param-name>edu.yale.its.tp.cas.client.filter.serverName</param-name>                     
-			<!--<param-value>univ-rav.u-strasbg.fr</param-value>-->
-			<param-value>localhost</param-value>
+			<param-value>univ-rav.u-strasbg.fr</param-value>
+			<!--<param-value>localhost</param-value>-->
 		</init-param>
 	</filter>
 			
@@ -131,6 +131,13 @@
 		<filter-name>CAS filter</filter-name> 
 		<url-pattern>/avc/validatemycourse</url-pattern>
 	</filter-mapping>
-	
+	<filter-mapping>
+		<filter-name>CAS filter</filter-name> 
+		<url-pattern>/avc/myemail</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CAS filter</filter-name> 
+		<url-pattern>/avc/modifyemail</url-pattern>
+	</filter-mapping>
 	
 </web-app>

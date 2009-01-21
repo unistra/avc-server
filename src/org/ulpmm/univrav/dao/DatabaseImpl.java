@@ -96,7 +96,10 @@ public class DatabaseImpl implements IDatabase {
 			
 			pstmt.setBoolean(16, c.isHighquality());
 			
-			pstmt.setInt(17, c.getUserid());
+			if(c.getUserid() !=null)
+				pstmt.setInt(17, c.getUserid());
+			else
+				pstmt.setNull(17, Types.INTEGER);
 				
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("The course " + c + " has not been added to the database");
@@ -895,7 +898,10 @@ public class DatabaseImpl implements IDatabase {
 			
 			pstmt.setBoolean(15, c.isHighquality());
 			
-			pstmt.setInt(16, c.getUserid());
+			if(c.getUserid() !=null)
+				pstmt.setInt(16, c.getUserid());
+			else
+				pstmt.setNull(16, Types.INTEGER);
 			
 			pstmt.setInt(17, c.getCourseid());
 			
@@ -1926,7 +1932,7 @@ public class DatabaseImpl implements IDatabase {
 		List<Course> l = new ArrayList<Course>();
 		
 		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM course WHERE userid = ?";
+		String sql = "SELECT * FROM course WHERE userid = ? ORDER BY date DESC";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
