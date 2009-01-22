@@ -52,35 +52,35 @@
 				    		<td><input type="hidden" name="type" value="${course.type}">${course.type}</td>
 			    		</tr>
 			    		<tr class="even">
-				    		<td>Title</td>
+				    		<td><fmt:message key="title"/></td>
 				    		<td><input type="text" name="title" value="${course.title}" class="field"></td>
 			    		</tr>
 			    		<tr class="odd">
-				    		<td>Description</td>
+				    		<td><fmt:message key="description"/></td>
 				    		<td><input type="text" name="description" value="${course.description}" class="field"></td>
 			    		</tr>
 			    		<tr class="even">
-				    		<td>Formation</td>
+				    		<td><fmt:message key="ue"/></td>
 				    		<td><input type="text" name="formation" value="${course.formation}" class="field"></td>
 			    		</tr>
 			    		<tr class="odd">
-				    		<td>Name</td>
+				    		<td><fmt:message key="name"/></td>
 				    		<td><input type="text" name="name" value="${course.name}" class="field"></td>
 			    		</tr>
 			    		<tr class="even">
-				    		<td>Firstname</td>
+				    		<td><fmt:message key="firstname"/></td>
 				    		<td><input type="text" name="firstname" value="${course.firstname}" class="field"></td>
 			    		</tr>
 			    		<tr class="odd">
-				    		<td>Ipaddress</td>
+				    		<td><fmt:message key="ipaddress"/></td>
 				    		<td><input type="text" name="ipaddress" value="${course.ipaddress}" class="field"></td>
 			    		</tr>
 			    		<tr class="even">
-				    		<td>Duration</td>
+				    		<td><fmt:message key="duration"/></td>
 				    		<td><input type="hidden" name="duration" value="${course.duration}">${course.durationString}</td>
 			    		</tr>
 			    		<tr class="odd">
-				    		<td>Password</td>
+				    		<td><fmt:message key="password"/></td>
 				    		<td><input type="text" name="genre" value="${course.genre}" class="field"></td>
 			    		</tr>
 			    		<tr class="even">
@@ -100,7 +100,7 @@
 				    		<td><input type="hidden" name="mediaFolder" value="${course.mediaFolder}">${course.mediaFolder}</td>
 			    		</tr>
 			    		<tr class="even">
-				    		<td>High Quality</td>
+				    		<td><fmt:message key="hd"/></td>
 				    		<td><input type="checkbox" name="highquality" ${course.highquality == true ? 'checked' : ''} ></td>
 			    		</tr>
 			    		<tr class="odd">
