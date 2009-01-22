@@ -4,4 +4,4 @@
 # Second argument: the subject
 # Third argument: the e-mail adress
 
-echo "$1"|mail -s "$2" $3
+echo "$1"|mail -s "$2" $3 -- sendmail-options -f noreply@univrav
