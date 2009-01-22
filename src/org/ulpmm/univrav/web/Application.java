@@ -1149,19 +1149,16 @@ public class Application extends HttpServlet {
 				+"\" is published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
 				+ "\n\nBest Regards,\n\nUniv-r Av Administrator" 
 				+"\n\nPlease, don't answer to this mail, for any question contact us on "+adminEmail1;
-								
-				//IF THE LOGIN AND EMAIL ARE PRESENT, AND IF LOGIN IS ALREADY IN THE TABLE
-				//WE USE THE EMAIL OF THE TABLE (the user can change his mail on his space)
-										
-				// If the user is not anonymous and his email is present
-				if(user!=null && user.getEmail()!=null && !user.getEmail().equals("")) {
-					service.sendMail(emailUserSubject,emailUserMessage,user.getEmail());
-				}
-				//if the user is anonymous but the mail is present 
-				else if(user==null && email!=null && !email.equals("")) {
+						
+				//if the email from av client is present, send an email
+				if(email!=null && !email.equals("")) {
 					service.sendMail(emailUserSubject,emailUserMessage,email);
 				}
-				
+				// If the user is not anonymous and his email is present and different of email
+				if(user!=null && user.getEmail()!=null && !user.getEmail().equals("") && !user.getEmail().equals(email)) {
+					service.sendMail(emailUserSubject,emailUserMessage,user.getEmail());
+				}
+								
 				// If course is present in the recorded page
 				if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 					// Sending email for admins
@@ -1309,6 +1306,32 @@ public class Application extends HttpServlet {
 								service.mediaUpload(c, item, getServletContext().getRealPath("/rss"), 
 										rssName, rssTitle, rssDescription, serverUrl, 
 										rssImageUrl, recordedInterfaceUrl, language,hq);
+								
+								// Sending email for the user
+								String emailUserSubject = "Your new file on Univr-AV";
+								String emailUserMessage = "Dear Customer,\n\nYour file named \"" + c.getTitle()
+								+"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
+								+"\nDon't panic if your video doesn't appear in the website right now. The conversion may be long (30 minutes for 1 hour video)"
+								+ "\n\nBest Regards,\n\nUniv-r Av Administrator" 
+								+"\n\nPlease, don't answer to this mail, for any question contact us on "+adminEmail1;
+										
+								// If the user is not anonymous and his email is present and different of email
+								if(user!=null && user.getEmail()!=null && !user.getEmail().equals("")) {
+									service.sendMail(emailUserSubject,emailUserMessage,user.getEmail());
+								}
+												
+								// If course is present in the recorded page
+								if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
+									// Sending email for admins
+									String emailAdminSubject = "a new file on Univr-AV";
+									String emailAdminMessage = "Dear Admin,\n\nA file named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getGenre()!=null ? "\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nUniv-r Av Administrator" ;
+									if(!adminEmail1.equals(""))
+										service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
+									if(!adminEmail2.equals(""))
+										service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail2);
+									if(!adminEmail3.equals(""))
+										service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail3);
+								}
 
 								message = "File successfully sent ! ";
 								message += "Don't panic if your video doesn't appear in the list right now. The conversion may be long (30 minutes for 1 hour video)";
