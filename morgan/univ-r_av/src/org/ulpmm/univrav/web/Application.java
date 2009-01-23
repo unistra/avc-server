@@ -596,7 +596,6 @@ public class Application extends HttpServlet {
 	private void displayMyspace(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 			
-		//TODO SI SESSION TERMINE, REDIRIGE SUR LE LOGOUT	
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 
 		if(casUser!=null) {
@@ -612,12 +611,13 @@ public class Application extends HttpServlet {
 
 			request.setAttribute("user", user);
 
+			int start = 0;
 			int pageNumber;
 
 			/* initializes the model */
 			if( request.getParameter("page") != null) {
 				pageNumber = Integer.parseInt( request.getParameter("page"));
-				//start = recordedCourseNumber * (pageNumber - 1) ;
+				start = recordedCourseNumber * (pageNumber - 1) ;
 			}
 			else
 				pageNumber = 1;
@@ -625,7 +625,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("page", pageNumber);
 			request.setAttribute("teachers", service.getTeachers());
 			request.setAttribute("formations", service.getFormations());
-			request.setAttribute("courses", service.getCourses(user));
+			request.setAttribute("courses", service.getCourses(user,recordedCourseNumber,start));
 			request.setAttribute("items", service.getCourseNumber(user));
 			request.setAttribute("number", recordedCourseNumber);
 			request.setAttribute("resultPage", "myspace");

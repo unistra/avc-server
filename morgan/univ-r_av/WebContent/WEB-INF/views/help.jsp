@@ -50,6 +50,7 @@
 							<li><a href="#live">Cours en direct</a></li>
 							<li><a href="#recorded">Cours en différé</a></li>
 							<li><a href="#podcasting">Podcasting et flux RSS</a></li>
+							<li><a href="#myspace">Mon espace</a></li>
 							<li><a href="#downloads">Téléchargements</a></li>
 						</ul>
 					</div>
@@ -100,7 +101,17 @@
 						<p><span class="underline">NB :</span> Les lecteurs audio permettent de g&eacute;rer sa liste de cours et 
 						de les &eacute;couter directement apr&egrave;s obtention du m&eacute;dia. Attention, seul le fichier mp3 
 						est cependant disponible via les logiciels audio.</p>
-						<br>
+												
+						<h3><a id="myspace"></a>Mon espace</h3>
+						<p>Pour acc&eacute;der &agrave; votre espace personnel, cliquez sur "Mon espace" et entrez votre login et mot de passe ENT.</p>
+			    		<p>Vous aurez alors la possibilit&eacute; :<br>
+			    		- d'enregistrer ou de modifier votre e-mail pour recevoir les notifications de r&eacute;ception de vos cours (bouton "modifier mon e-mail")<br>
+			    		- de visualiser vos cours qui sont ratach&eacute;s &agrave; votre login ENT (voir la liste)<br>
+			    		- d'&eacute;diter vos cours afin de modifier le titre, la description, la visibilité, etc... (bouton "editer")<br>
+			    		- de d&eacute;poser directement un fichier audio ou vid&eacute;o (bouton "d&eacute;poser un fichier")</p>
+			    		<p>Enfin, pour quitter votre espace, il vous suffit d'appuyer sur le bouton "D&eacute;connexion".</p>
+			    		<a class="link" href="../files/img/help/myspace.png">Screenshot</a>
+			    		
 			    	</div>
 			    	
 			    	<div class="rightCol">

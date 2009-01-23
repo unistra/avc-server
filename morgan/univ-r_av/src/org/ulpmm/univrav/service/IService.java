@@ -504,9 +504,11 @@ public interface IService {
 	/**
 	 * Gets a list of courses by providing its user
 	 * @param user the user of the course
+	 * @param number
+	 * @param start
 	 * @return the list of course
 	 */
-	public List<Course> getCourses(User u);
+	public List<Course> getCourses(User u, int number,int start);
 	
 	/**
 	 * Gets the total number of courses
