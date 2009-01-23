@@ -1925,14 +1925,16 @@ public class DatabaseImpl implements IDatabase {
 	/**
 	 * Gets a list of course by providing its user
 	 * @param user the user of the course
+	 * @param number
+	 * @param start
 	 * @return the list of course
 	 */
-	public List<Course> getCourses(User u) {
+	public List<Course> getCourses(User u, int number, int start) {
 		
 		List<Course> l = new ArrayList<Course>();
 		
 		Connection cnt = pa.getConnection();
-		String sql = "SELECT * FROM course WHERE userid = ? ORDER BY date DESC";
+		String sql = "SELECT * FROM course WHERE userid = ? ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start;
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
