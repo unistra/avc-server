@@ -60,24 +60,24 @@
 	    		<a href="<c:url value="${oldStatsUrl}" />">Audiovideocours access stats</a>
 	    		<br>
 	    		<br>
-	    		<a href="<c:url value="${oldStatsUrl}xml.html#Requested pages" />">stats XML</a>
-	    		&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}mp3.html#Requested pages" />">stats MP3</a>
-	    		&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}pdf.html#Requested pages" />">stats PDF</a>
-	    		&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}flv.html#Requested pages" />">stats FLV</a>
-	    		&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}ogg.html#Requested pages" />">stats OGG</a>
-	    		&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}rm.html#Requested pages" />">stats RM</a>
-	    		&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}smil.html#Requested pages" />">stats SMIL</a>
-	    		&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}zip.html#Requested pages" />">stats ZIP</a>
-	    		&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}mp4.html#Requested pages" />">stats MP4</a>
-	    		&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}xml.html#Requested pages" />">XML stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}mp3.html#Requested pages" />">MP3 stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}pdf.html#Requested pages" />">PDF stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}flv.html#Requested pages" />">FLV stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}ogg.html#Requested pages" />">OGG stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}rm.html#Requested pages" />">RM stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}smil.html#Requested pages" />">SMIL stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}zip.html#Requested pages" />">ZIP stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}mp4.html#Requested pages" />">MP4 stats</a>
+	    		&nbsp;&nbsp;&nbsp;
 	    		
 	    	</div>
 	    	
