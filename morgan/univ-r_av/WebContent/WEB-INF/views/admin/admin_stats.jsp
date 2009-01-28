@@ -58,7 +58,27 @@
 	    		<a href="<c:url value="${statsUrl}" />">Univ-R AV access stats</a>
 	    		&nbsp;&nbsp;&nbsp;
 	    		<a href="<c:url value="${oldStatsUrl}" />">Audiovideocours access stats</a>
-	    	
+	    		<br>
+	    		<br>
+	    		<a href="<c:url value="${oldStatsUrl}xml.html#Requested pages" />">stats XML</a>
+	    		&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}mp3.html#Requested pages" />">stats MP3</a>
+	    		&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}pdf.html#Requested pages" />">stats PDF</a>
+	    		&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}flv.html#Requested pages" />">stats FLV</a>
+	    		&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}ogg.html#Requested pages" />">stats OGG</a>
+	    		&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}rm.html#Requested pages" />">stats RM</a>
+	    		&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}smil.html#Requested pages" />">stats SMIL</a>
+	    		&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}zip.html#Requested pages" />">stats ZIP</a>
+	    		&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}mp4.html#Requested pages" />">stats MP4</a>
+	    		&nbsp;
+	    		
 	    	</div>
 	    	
 	    </div>

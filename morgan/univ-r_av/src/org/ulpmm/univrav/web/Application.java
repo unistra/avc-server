@@ -600,10 +600,10 @@ public class Application extends HttpServlet {
 
 		if(casUser!=null) {
 		
-			//On vérifie que l'user CAS est présent dans notre base de données
+			// Try to get the user 
 			User user = service.getUser(casUser);
 
-			// S'il n y est pas, on le crée
+			// Else, create user
 			if(user==null) {
 				service.addUser(new User(0,casUser,""));
 				user = service.getUser(casUser);
@@ -669,10 +669,10 @@ public class Application extends HttpServlet {
 						
 		if(casUser!=null) {	
 			
-			//On vérifie que l'user CAS est présent dans notre base de données
+			// Try to get the user
 			User user = service.getUser(casUser);
 			
-			// S'il n y est pas, on le crée
+			// Else, create user
 			if(user==null) {
 				service.addUser(new User(0,casUser,""));
 				user = service.getUser(casUser);
@@ -702,10 +702,10 @@ public class Application extends HttpServlet {
 				
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 			
-		//On vérifie que l'user CAS est présent dans notre base de données
+		// Try to get the user
 		User user = service.getUser(casUser);
 		
-		// On vérifie que l'user est bien l'user qui veut modifier son mail
+		// Check the user login
 		if(user.getLogin().compareTo(request.getParameter("login"))==0) {
 		
 			user.setEmail(! request.getParameter("nouveauEmail").equals("") ? request.getParameter("nouveauEmail") : request.getParameter("emailActuel"));
@@ -960,13 +960,13 @@ public class Application extends HttpServlet {
 		
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
 
-		//On vérifie que l'user CAS est présent dans notre base de données
+		// Try to get the user
 		User user = service.getUser(casUser);
 		
-		// On récupère le cours
+		// Get the course
 		Course c = service.getCourse(Integer.parseInt(request.getParameter("courseid")));
 		
-		// On vérifie que l'user est présent et qu'il s'agit bien de l'un de ses cours
+		// Check the user id
 		if(user!=null && c.getUserid()==user.getUserid()) {
 			
 			// Button disconnect
@@ -987,13 +987,13 @@ public class Application extends HttpServlet {
 		
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
 
-		//On vérifie que l'user CAS est présent dans notre base de données
+		// Try to get the user
 		User user = service.getUser(casUser);
 		
-		// On récupère le cours
+		// Get the course
 		Course c = service.getCourse(Integer.parseInt(request.getParameter("id")));
 		
-		// On vérifie que l'user est présent et qu'il s'agit bien de l'un de ses cours
+		// Check user id
 		if(user!=null && c.getUserid()==user.getUserid()) {
 			
 			request.setAttribute("course", c);
@@ -1025,10 +1025,10 @@ public class Application extends HttpServlet {
 
 		if(casUser!=null) {
 		
-			//On vérifie que l'user CAS est présent dans notre base de données
+			// Try to get the user
 			User user = service.getUser(casUser);
 			
-			// S'il n y est pas, on le crée
+			// Create user
 			if(user==null) {
 				service.addUser(new User(0,casUser,""));
 				user = service.getUser(casUser);
