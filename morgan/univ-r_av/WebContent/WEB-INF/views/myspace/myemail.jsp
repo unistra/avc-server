@@ -67,7 +67,7 @@
 				
 				</table>
 			</form>
-	    	
+	    </div>	
 	    	
 	    <div class="footer">
 	    	<c:import url="../include/footer.jsp" />
