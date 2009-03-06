@@ -20,6 +20,7 @@
 	
 	<!--[if IE]>
    		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
+		<style type="text/css">.row1,.row2{ behavior: url('../files/js/IEHoverFixes.htc');}</style>
 	<![endif]-->
 	<!--[if lte IE 6]>
 		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie6.css" media="screen" />
@@ -34,7 +35,8 @@
 	<script type="text/javascript" src="../files/js/details.js"></script>
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
-
+	<script type="text/javascript" src="../files/js/tags.js"></script>
+	
   </head>
   
   <body>
@@ -44,19 +46,28 @@
 	    		<c:import url="include/banner.jsp" />
 	     	</div>
 	    	<div class="search">
-	    		<c:import url="include/searchform.jsp" />
-	    	</div>
+	    		<div class="searchform">
+	    			<c:import url="include/searchform.jsp" />
+	    		</div>
+	    		<div class="tagsform">
+	    			<c:import url="include/tagsform.jsp" />
+	    		</div>
+	    	</div>	
 	    	<div class="course">
+				
+				<div class=displayTags>
+					<c:forEach var="tag" items="${listTags}" varStatus="status"><a class="pTag"><c:out value="${tag}"/></a><c:if test="${status.index!=listTagsSize-1}"><a class="closeDualTag" href="javascript:closeTag('${tag}')"/><img class="imgTag "src="../files/styles/${sessionScope.style}/img/transp.png"></a></c:if><c:if test="${status.index==listTagsSize-1}"><a class="closeTag" href="javascript:closeTag('${tag}')"/><img class="imgTag "src="../files/styles/${sessionScope.style}/img/transp.png"></a></c:if></c:forEach>
+				</div>
+					
 				<table cellspacing="0">
 					<tr class="tableheader">
 						<th colspan="5" id="courses"><fmt:message key="Les cours"/></th>
-						<th colspan="2"><fmt:message key="Visualisez"/></th>
 					</tr>
 					<c:import url="include/courselist.jsp" />
 				</table>
 				
 	    		<div class="pagination">
-	    			<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" />
+	    			<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" tags="${tags}" />
 				</div>
 	    	</div>
     	</div>

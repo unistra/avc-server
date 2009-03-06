@@ -105,11 +105,16 @@
 			    		</tr>
 			    		<tr class="even">
 				    		<td>High Quality</td>
-				    		<td><input type="checkbox" name="highquality" ${course.highquality == true ? 'checked' : ''} ></td>
+				    	<!--<td><input type="checkbox" name="highquality" ${course.highquality == true ? 'checked' : ''}></td>-->
+			    			<td><input type="hidden" name="highquality" value="${course.highquality}">${course.highquality}</td>
 			    		</tr>
 			    		<tr class="odd">
 				    		<td>UserId</td>
 				    		<td><input type="hidden" name="userid" value="${course.userid}">${course.userid}</td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>Tags</td>
+				    		<td><input type="text" name="tags" value="${tags}" class="field"></td>
 			    		</tr>
 			    	</table>
 			    	<br>

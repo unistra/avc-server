@@ -20,6 +20,7 @@ public class PaginationTag extends TagSupport {
 	private int numberPerPage;
 	private int currentPage;
 	private String resultPageName;
+	private String tags;
 	
 	// The name of the bundle to search the corresponding language properties files
 	private static final String BUNDLE_NAME = "org.ulpmm.univrav.language.messages";
@@ -72,17 +73,15 @@ public class PaginationTag extends TagSupport {
 			
 			
 			/* Link to the first page */
-		//	out.println("<a href=\"" + resultPageName + sessionId + "?page=1" + "\">&lt;&lt;</a>&nbsp;");
-			out.println("<a href=\"" + resultPageName + sessionId + "?page=1" + "\">" + bundle.getString("Premier") + "<img src=\"../files/img/previous_noshadow.png\"></a>&nbsp;");
+			out.println("<a href=\"" + resultPageName + sessionId + "?page=1" + (resultPageName.equals("tags")? "&tags="+tags :"") + "\">" + bundle.getString("Premier") + "<img src=\"../files/img/previous_noshadow.png\"></a>&nbsp;");
 			
 			
 			/* Links with page numbers to the pages */
 			for( int i=begin ; i<= end ; i++)
-				out.println((i != currentPage ? "<a href=\"" + resultPageName + sessionId + "?page=" + i + "\">" : "<b>") + i + (i != currentPage ? "</a>" : "</b>") +"&nbsp;");
+				out.println((i != currentPage ? "<a href=\"" + resultPageName + sessionId + "?page=" + i + (resultPageName.equals("tags")? "&tags="+tags :"") + "\">" : "<b>") + i + (i != currentPage ? "</a>" : "</b>") +"&nbsp;");
 			
 			/* Link to the last page */
-			//out.println("<a href=\"" + resultPageName + sessionId + "?page=" + pagesNumber + "\">&gt;&gt;</a>&nbsp;");
-			out.println("<a href=\"" + resultPageName + sessionId + "?page=" + pagesNumber + "\"><img src=\"../files/img/next_noshadow.png\">"+ bundle.getString("Dernier")+"</a>&nbsp;");
+			out.println("<a href=\"" + resultPageName + sessionId + "?page=" + pagesNumber + (resultPageName.equals("tags")? "&tags="+tags :"") + "\"><img src=\"../files/img/next_noshadow.png\">"+ bundle.getString("Dernier")+"</a>&nbsp;");
 			
 		}
 		catch(IOException ioe){
@@ -147,5 +146,15 @@ public class PaginationTag extends TagSupport {
 	public void setResultPageName(String resultPageName) {
 		this.resultPageName = resultPageName;
 	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+	
+	
 
 }

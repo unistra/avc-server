@@ -60,7 +60,7 @@
 			    	<input type="hidden" name="action" value="${action}">
 			    	<input type="submit" value="Validate">
 			    	<br><br>
-			    	<a href="<c:url value="./admin_users?userid=${userid}" />">Go back</a>
+			    	<a href="<c:url value="./admin_users" />">Go back</a>
 		    	</form>
 		    </div>
 	    </div>

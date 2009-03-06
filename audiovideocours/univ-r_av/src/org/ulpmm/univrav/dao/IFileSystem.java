@@ -90,7 +90,7 @@ public interface IFileSystem {
 	 * @param message the message to send
 	 * @return the answer of the client
 	 */
-	public String sendMessageToClient(String message, String ip, int port);
+	public String sendMessageToClient(String message, String ip, int port, int timeout);
 	
 	/**
 	 * Retrieves information about used and free disk space on the server

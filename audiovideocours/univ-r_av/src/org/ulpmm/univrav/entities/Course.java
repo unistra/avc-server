@@ -323,8 +323,5 @@ public class Course {
 
 	public void setUserid(Integer userid) {
 		this.userid = userid;
-	}
-
-	
-	
+	}	
 }

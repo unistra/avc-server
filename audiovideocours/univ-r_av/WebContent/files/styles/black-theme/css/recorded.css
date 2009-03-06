@@ -36,3 +36,31 @@
 	color: #FFFFFF;
 	font-size: 12px;
 }
+
+.pTag {
+	background-image: url(../img/T_Middle.png);
+	color:white;
+	font-weight:bold;
+}
+
+.closeDualTag {
+	background-image: url(../img/T_Border_round.png);
+	background-repeat:no-repeat;
+}
+
+.closeTag {	
+	background-image: url(../img/T_Border_round_R.png);
+	background-repeat:no-repeat;
+}
+
+.displayTags {
+	margin-left:3%;
+	text-align:left;
+	font-size: 12px;
+	margin-bottom:5px;
+}
+
+.imgTag {
+	vertical-align:middle;
+	margin-bottom:1.5px; /* for compatibility IE - Firefox */
+}

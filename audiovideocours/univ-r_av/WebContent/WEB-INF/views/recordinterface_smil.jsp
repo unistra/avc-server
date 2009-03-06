@@ -31,6 +31,8 @@
 		var slidesurl = "${slidesurl}";
 		var timing = ${timing};
 	</script>
+	
+	<META NAME=”robots” CONTENT=”nofollow”>
 
   </head>
   

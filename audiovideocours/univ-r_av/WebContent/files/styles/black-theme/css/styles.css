@@ -42,11 +42,11 @@ body {
 /* Clickable zone to go back to the banner page */
 .bannerPageZone {
 	position: absolute;
-	width : 165px;
-	height: 70px;
+	width : 250px;
+	height: 58px;
 	margin-left: 45px; /* 25 */
 	margin-top: 12px;
-	background-image: url(../img/univr-av-logo.png);
+	background-image: url(../img/audiovideocours-logo.png);
 }
 
 /* Clickable zone, link to the ULPMM website */

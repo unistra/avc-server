@@ -1,6 +1,8 @@
 package org.ulpmm.univrav.service;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,7 +14,9 @@ import org.ulpmm.univrav.dao.IUnivrDao;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Tag;
 import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
@@ -311,9 +315,13 @@ public class ServiceImpl implements IService {
 	public void deleteTests(String testKeyWord) {
 		List<String> mediaFolders = db.getTestsMediaFolders(testKeyWord);
 		System.out.println(mediaFolders);
+		for( String mediaFolder : mediaFolders) {
+			db.deleteTag(db.getCourseByMediafolder(mediaFolder).getCourseid());
+		}
 		db.deleteTests(testKeyWord);
-		for( String mediaFolder : mediaFolders)
+		for( String mediaFolder : mediaFolders) {
 			fs.deleteCourse(mediaFolder);
+		}
 	}
 	
 	/**
@@ -345,9 +353,9 @@ public class ServiceImpl implements IService {
 	 * Gets the list of all the teachers who have at least one course with no access code
 	 * @return the list of teachers
 	 */
-	public List<String> getTeachersWithRss() {
+	/*public List<String> getTeachersWithRss() {
 		return db.getTeachersWithRss();
-	}
+	}*/
 	
 	/**
 	 * Gets the list of all the teachers
@@ -543,23 +551,26 @@ public class ServiceImpl implements IService {
 	 */
 	public void generateRss( String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language) {
-		// For all courses
-		List<Course> courses = db.getAllUnlockedCourses();
+		// For all courses TODO
+		//List<Course> courses = db.getAllUnlockedCourses();
+		List<Course> courses = db.getAllCourses();
 		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		
 		// For the teachers
-		List<String> teachers = db.getTeachersWithRss();
+	//	List<String> teachers = db.getTeachersWithRss();
+		List<String> teachers = db.getTeachers();
 		for( String teacher : teachers) {
-			courses = db.getUnlockedCourses(teacher);
+			//courses = db.getUnlockedCourses(teacher);
+			courses = db.getCoursesByAuthor(teacher);
 			rssPath = rssFolderPath + "/" + cleanFileName(teacher) + ".xml";
 			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		}
 				
 		// For the formation
-		List<String> formations = db.getFormationsWithRss();
+		List<String> formations = db.getFormations();
 		for( String formation : formations) {
-			courses = db.getUnlockedCoursesByFormation(formation);
+			courses = db.getCoursesByFormation(formation);
 			rssPath = rssFolderPath + "/" + cleanFileName(formation) + ".xml";
 			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		}
@@ -582,21 +593,22 @@ public class ServiceImpl implements IService {
 	public void generateRss( Course c, String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language) {
 		// For all courses
-		List<Course> courses = db.getAllUnlockedCourses();
+		//List<Course> courses = db.getAllUnlockedCourses();
+		List<Course> courses = db.getAllCourses();
 		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		
 		// For the teacher
 		if( ! (c.getName() == null && c.getFirstname() == null)) {
 			String teacher = db.getTeacherFullName(c.getName(), c.getFirstname());
-			courses = db.getUnlockedCourses(teacher);
+			courses = db.getCoursesByAuthor(teacher);
 			rssPath = rssFolderPath + "/" + cleanFileName(teacher) + ".xml";
 			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		}
 		
 		//For the formation
 		if(c.getFormation()!=null) {
-			courses = db.getUnlockedCoursesByFormation(c.getFormation());
+			courses = db.getCoursesByFormation(c.getFormation());
 			rssPath = rssFolderPath + "/" + cleanFileName(c.getFormation()) + ".xml";
 			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 	
@@ -614,7 +626,8 @@ public class ServiceImpl implements IService {
 		LinkedHashMap<String, String> rss = new LinkedHashMap<String, String>();
 		rss.put(rssTitle, "../rss/" + rssName + ".xml");
 		
-		List<String> teachers = db.getTeachersWithRss();
+		//List<String> teachers = db.getTeachersWithRss();
+		List<String> teachers = db.getTeachers();
 		for( String teacher : teachers) {
 			rss.put(
 				teacher,
@@ -622,7 +635,7 @@ public class ServiceImpl implements IService {
 			);
 		}
 		
-		List<String> formations = db.getFormationsWithRss();
+		List<String> formations = db.getFormations();
 		for( String formation : formations) {
 			rss.put(
 				formation,
@@ -638,8 +651,8 @@ public class ServiceImpl implements IService {
 	 * @param message the message to send
 	 * @return the answer of the client
 	 */
-	public String sendMessageToClient(String message, String ip, int port) {
-		return fs.sendMessageToClient(message, ip, port);
+	public String sendMessageToClient(String message, String ip, int port,int timeout) {
+		return fs.sendMessageToClient(message, ip, port,timeout);
 	}
 	
 	/**
@@ -841,5 +854,158 @@ public class ServiceImpl implements IService {
 	 */
 	public synchronized void sendMail(String subject, String message, String email) {
 		fs.sendMail(subject,message,email);
+	}
+	
+	/**
+	 * Add a new tag
+	 * @param t Tag
+	 */
+	public void addTag(Tag t) {
+		db.addTag(t);
+	}
+	
+	/**
+	 * Deletes tags by providing its courseid
+	 * @param courseid the id of the course
+	 */
+	public void deleteTag(int courseid) {
+		db.deleteTag(courseid);
+	}
+	
+	/**
+	 * Gets a list of all tags of a course
+	 * @param c Course
+	 * @return the list of tags
+	 */
+	public List<Tag> getTagsByCourse(Course c) {
+		return db.getTagsByCourse(c);
+	}
+	
+	/**
+	 * Gets a list of all tags
+	 * @return the list of tags
+	 */
+	public List<String> getAllTags() {
+		return db.getAllTags();
+	}
+	
+	/**
+	 * Gets a list of most popular tags
+	 * @return the list of most popular tags
+	 */
+	public List<String> getMostPopularTags() {
+		return db.getMostPopularTags();
+	}
+	
+	/**
+	 * Gets a restricted list of courses
+	 * @param tag
+	 * @param number the number of courses to return
+	 * @param start the start number of the courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getCoursesByTags(List<String> tag, int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
+		return db.getCoursesByTags(tag, number, start, testKeyWord1, testKeyWord2, testKeyWord3);
+	}
+	
+	/**
+	 * Gets the number of courses corresponding to the given criteria
+	 * @param params the criteria of the searched courses
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(List<String> tags,String testKeyWord1, String testKeyWord2, String testKeyWord3) {
+		return db.getCourseNumber(tags, testKeyWord1, testKeyWord2, testKeyWord3);
+	}
+	
+	/**
+	 * Gets a restricted list of courses
+	 * @param mediafolder
+	 * @return course
+	 */
+	public Course getCourseByMediafolder(String mediafolder) {
+		return db.getCourseByMediafolder(mediafolder);
+	}
+	
+	/**
+	 * Get the list of ahref for the tag cloud
+	 * @param listTag
+	 * @return list of ahref
+	 */
+	public List<String> getTagCloud(List<String> listTag) {
+				
+		List<String> nouvelleList = new ArrayList<String>();
+		
+		for(int i=0;i<listTag.size();i++) {
+			nouvelleList.add("<a href=\"javascript:LienMostPopularTags('"+listTag.get(i)+"');\" id=\"tag"+(i+1)+"\">"+(listTag.get(i).length()<20 ? listTag.get(i) : listTag.get(i).substring(0, 20)+"...")+"</a>&nbsp;&nbsp;");
+		}
+		Collections.sort(nouvelleList);
+		
+		return nouvelleList;
+	}
+	
+	/**
+	 * Gets a list of the n selection courses
+	 * @param n the number of courses to return
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getNSelectionCourses(int n, String testKeyWord1, String testKeyWord2) {
+		return db.getNSelectionCourses(n, testKeyWord1, testKeyWord2);
+	}
+
+	/**
+	 * Gets a list of the n selection courses
+	 * @param n the number of courses to return
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getNFormationCourses(int n, String testKeyWord1, String testKeyWord2) {
+		return db.getNFormationCourses(n, testKeyWord1, testKeyWord2);
+	}
+	
+	/**
+	 * Gets the list of all the selection
+	 * @return the list of users
+	 */
+	public List<Selection> getAllSelections() {
+		return db.getAllSelections();
+	}
+	
+	/**
+	 * Get selection by position 
+	 * @param position
+	 * @return the selection
+	 */
+	public Selection getSelection(int position) {
+		return db.getSelection(position);
+	}
+	
+	/**
+	 * Adds a new selection
+	 * @param s Selection
+	 */
+	public void addSelection(Selection s) {
+		db.addSelection(s);
+	}
+	
+	/**
+	 * Modify a selection
+	 * @param s Selection
+	 */
+	public void modifySelection(Selection s) {
+		db.modifySelection(s);
+	}
+	
+	/**
+	 * Deletes a selection by providing its id
+	 * @param position the position of the selection
+	 */
+	public void deleteSelection(int position) {
+		db.deleteSelection(position);
 	}
 }

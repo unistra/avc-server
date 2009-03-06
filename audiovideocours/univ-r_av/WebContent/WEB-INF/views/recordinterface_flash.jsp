@@ -35,7 +35,7 @@
 	</script>
 	
 	<meta name="keywords" content="${course.name},${course.title},${course.formation}">
-	
+	<META NAME=”robots” CONTENT=”nofollow”>
 
   </head>
   
@@ -86,6 +86,8 @@
 						<b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br>
 						<b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br>
 						<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
+						<b>Tags : </b>  <c:forEach var="tags" items="${tags}"><a href="./tags?tags=${tags.tag}"><c:out value="${tags.tag} "/></a></c:forEach> <br>
+						
 					</p>	      
 										
 					<div class="permalien">						

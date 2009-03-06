@@ -75,6 +75,10 @@
 				    		<td>Google Map</td>
 				    		<td><input type="text" name="gmapurl" value="${amphi.gmapurl}" class="field"></td>
 			    		</tr>
+			    		<tr class="even">
+				    		<td>Version</td>
+				    		<td><input type="hidden" name="version" value="${amphi.version}">${amphi.version}</td>
+			    		</tr>
 			    	</table>
 			    	<br>
 			    	<input type="hidden" name="oldAmphiip" value="${amphi.ipAddress}">

@@ -18,6 +18,10 @@
 	background-image: url(../img/search.gif);
 }
 
+.tagImage {
+	background-image: url(../img/tags.gif);
+}
+
 .liveImage {
 	background-image: url(../img/live.gif);
 }
@@ -28,4 +32,8 @@
 
 .rssImage {
 	background-image: url(../img/rss.gif);
+}
+
+.course {
+	margin-left:1.5%;
 }

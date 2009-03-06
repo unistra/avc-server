@@ -21,6 +21,7 @@
 	
 	<!--[if IE]>
    		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
+		<style type="text/css">.row1,.row2{ behavior: url('../files/js/IEHoverFixes.htc');}</style>
 	<![endif]-->
 	<!--[if lte IE 6]>
 		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie6.css" media="screen" />
@@ -68,7 +69,6 @@
 				<table cellspacing="0">
 					<tr class="tableheader">
 						<th colspan="5" id="courses"><fmt:message key="Mes cours"/></th>
-						<th colspan="2"><fmt:message key="Visualisez"/></th>
 						<th colspan="1"><fmt:message key="Editer"/></th>
 					</tr>
 					<c:import url="./mycourselist.jsp" />

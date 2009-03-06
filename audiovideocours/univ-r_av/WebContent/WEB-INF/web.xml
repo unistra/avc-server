@@ -63,6 +63,12 @@
 			<url-pattern>/avc/admin_adduser</url-pattern>			
 			<url-pattern>/avc/admin_teachers</url-pattern>
 			<url-pattern>/avc/admin_stats</url-pattern>
+			<url-pattern>/avc/versionclient</url-pattern>
+			<url-pattern>/avc/admin_selections</url-pattern>
+			<url-pattern>/avc/admin_editselection</url-pattern>
+			<url-pattern>/avc/admin_validateselection</url-pattern>
+			<url-pattern>/avc/admin_deleteselection</url-pattern>
+			<url-pattern>/avc/admin_addselection</url-pattern>
 			<http-method>GET</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>

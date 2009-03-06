@@ -51,9 +51,15 @@
 				<display:column property="name" title="Name" sortable="true" />
 				<display:column property="type" sortable="true" />
 				<display:column property="ipAddress" sortable="true" />
+				<display:column property="version" sortable="true" />
 				<display:column property="number" title="Courses" sortable="true" />
-				<display:column title="status">
-					<input type="checkbox" disabled="disabled" ${amphi.status == true ? 'checked' : '' } />
+				<display:column title="status live">
+					<input type="checkbox" disabled="disabled" ${amphis.status == true ? 'checked' : '' } />
+					<a href="<c:url value="./livestate?recordingPlace=${amphis.ipAddress}&status=begin" />">On</a> /
+					<a href="<c:url value="./livestate?recordingPlace=${amphis.ipAddress}&status=end" />">Off</a>
+				</display:column>
+				<display:column title="client">
+					<a href="<c:url value="./versionclient?ip=${amphis.ipAddress}"/>">version</a>
 				</display:column>
 				<display:column>
 					<a href="<c:url value="./admin_editamphi?id=${amphis.amphiid}&buildingId=${buildingId}" />">Edit</a>

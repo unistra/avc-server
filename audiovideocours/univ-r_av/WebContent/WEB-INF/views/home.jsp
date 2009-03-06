@@ -16,9 +16,11 @@
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/home.css">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/searchform.css">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/courselist.css">
+	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/jScrollPane.css">
 	
 	<!--[if IE]>
    		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
+		<style type="text/css">.row1,.row2{ behavior: url('../files/js/IEHoverFixes.htc');}</style>
 	<![endif]-->
 	<!--[if lte IE 6]>
 		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie6.css" media="screen" />
@@ -33,8 +35,9 @@
 	<script type="text/javascript" src="../files/js/details.js"></script>
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
-	
-	<meta name="keywords" content="SMIL, cours audio, cours video, cours live, cours en direct, synchronisation de médias">
+	<script type='text/javascript' src="../files/js/flexcroll.js"></script>
+		
+	<meta name="keywords" content="SMIL, cours audio, cours video, cours live, cours en direct, synchronisation de médias, audiocours, videocours">
 	
   </head>
   
@@ -43,16 +46,24 @@
     <div class="main">
       <div class="contents">
 	    
-	    	 <div class="banner">
+	    	<div class="banner">
 	    		<c:import url="include/banner.jsp" />
 	    	</div>
 	    
 	    	<div class="search">
-	    		<c:import url="include/searchform.jsp" />
-	    	</div>
+	    		<div class="searchform">
+	    			<c:import url="include/searchform.jsp" />
+	    		</div>
+	    		<div class="tagsform">
+	    			<c:import url="include/tagsform.jsp" />
+	    		</div>
+	    	</div>	
 	    	
 	    	<div class="message">
 	    		<!-- <p>Type an information message here</p> -->
+	    		<!--[if lte IE 6]>
+	    			<p>You cannot access the whole functionalities of the website with IE6. Please use an other browser.</p>
+	    		<![endif]-->
 	    	</div>
 	    	
 			<div class="links">
@@ -70,17 +81,45 @@
 		    	</div>
 	    	</div>
 	    	
-	    	<div class="course">
-	    		<table cellspacing="0">
+	    	<div class="divCourses">
+	    		
+	    	
+	    		<div class="flexcroll">
+	    		<table cellspacing="0" class="tableHome">
 					<tr class="tableheader">
-						<th colspan="5" id="courses"><fmt:message key="Les derniers cours"/></th>
-						<th colspan="2"><fmt:message key="Visualisez"/></th>
-						<!-- <th colspan="5"><fmt:message key="T&eacute;l&eacute;chargez"/></th> -->
+						<th colspan="3" id="courses"><fmt:message key="Les derniers cours"/></th>
 					</tr>
-					<c:import url="include/courselist.jsp" />
+					<c:import url="include/homecourselist.jsp">
+						<c:param name="courses" value="lastcourses"/>
+					</c:import>	
 				</table>
+				</div>
+				
+				<div class="flexcroll">
+	    		<table cellspacing="0" class="tableHome">
+					<tr class="tableheader">
+						<th colspan="2" id="courses"><fmt:message key="selection"/></th>
+					</tr>
+					<c:import url="include/homecourselist.jsp">
+						<c:param name="courses" value="selectioncourses"/>
+					</c:import>	
+				</table>
+	    		</div>
+				
+				<div class="flexcroll">	
+				<table cellspacing="0" class="tableHome">
+					<tr class="tableheader">
+						<th colspan="3" id="courses"><fmt:message key="collection"/>: <b class="titleColl">${collectionname}</b></th>
+					</tr>
+					<c:import url="include/homecourselist.jsp">
+						<c:param name="courses" value="collectioncourses"/>
+					</c:import>	
+				</table>
+	    		</div>
 	    	</div>
+	    	    	
     	</div>
+    	
 	    	
 	    <div class="footer">
 	    	<c:import url="include/footer.jsp" />

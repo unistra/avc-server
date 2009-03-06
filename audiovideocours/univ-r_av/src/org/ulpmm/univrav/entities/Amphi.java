@@ -17,6 +17,7 @@ public class Amphi implements Comparable<Amphi>{
 	private boolean status;
 	private String gmapurl;
 	private int number; // number of courses for this amphi
+	private String version;
 	
 	public Amphi(){
 	}
@@ -30,7 +31,7 @@ public class Amphi implements Comparable<Amphi>{
 	 * @param gmapurl
 	 */
 	public Amphi(int amphiid, int buildingid, String name, String type, String ipAddress,
-			boolean status, String gmapurl) {
+			boolean status, String gmapurl,String version) {
 		super();
 		this.amphiid = amphiid;
 		this.buildingid = buildingid;
@@ -39,6 +40,7 @@ public class Amphi implements Comparable<Amphi>{
 		this.ipAddress = ipAddress;
 		this.status = status;
 		this.gmapurl = gmapurl;
+		this.version = version;
 	}
 	
 	/**
@@ -118,4 +120,14 @@ public class Amphi implements Comparable<Amphi>{
 	public int compareTo(Amphi o) {
 		return this.name.compareTo(o.name);
 	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+	
+	
 }

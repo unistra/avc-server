@@ -47,10 +47,12 @@
 				    		<td>Date</td>
 				    		<td><input type="hidden" name="date" value="${course.date.time}">${course.date}</td>
 			    		</tr>
-			    		<tr class="odd">
+			    		
+			    		<!--<tr class="odd">
 				    		<td>Type</td>
 				    		<td><input type="hidden" name="type" value="${course.type}">${course.type}</td>
-			    		</tr>
+			    		</tr>-->
+			    		<input type="hidden" name="type" value="${course.type}">
 			    		<tr class="even">
 				    		<td><fmt:message key="title"/></td>
 				    		<td><input type="text" name="title" value="${course.title}" class="field"></td>
@@ -71,14 +73,18 @@
 				    		<td><fmt:message key="firstname"/></td>
 				    		<td><input type="text" name="firstname" value="${course.firstname}" class="field"></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<!--<tr class="odd">
 				    		<td><fmt:message key="ipaddress"/></td>
-				    		<td><input type="text" name="ipaddress" value="${course.ipaddress}" class="field"></td>
-			    		</tr>
-			    		<tr class="even">
+				    		<td><input type="hidden" name="ipaddress" value="${course.ipaddress}">${course.ipaddress}</td>
+			    		</tr>-->
+			    		<input type="hidden" name="ipaddress" value="${course.ipaddress}">
+			    		
+			    		<!--<tr class="even">
 				    		<td><fmt:message key="duration"/></td>
 				    		<td><input type="hidden" name="duration" value="${course.duration}">${course.durationString}</td>
-			    		</tr>
+			    		</tr>-->
+			    		<input type="hidden" name="duration" value="${course.duration}">
+			    		
 			    		<tr class="odd">
 				    		<td><fmt:message key="password"/></td>
 				    		<td><input type="text" name="genre" value="${course.genre}" class="field"></td>
@@ -87,26 +93,40 @@
 				    		<td>Visible</td>
 				    		<td><input type="checkbox" name="visible" ${course.visible == true ? 'checked' : ''} ></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<!--<tr class="odd">
 				    		<td>Consultations</td>
 				    		<td><input type="hidden" name="consultations" value="${course.consultations}">${course.consultations}</td>
-			    		</tr>
-			    		<tr class="even">
+			    		</tr>-->
+			    		<input type="hidden" name="consultations" value="${course.consultations}">
+			    		
+			    		<!--<tr class="even">
 				    		<td>Timing</td>
 				    		<td><input type="hidden" name="timing" value="${course.timing}">${course.timing}</td>
-			    		</tr>
-			    		<tr class="odd">
+			    		</tr>-->
+			    		<input type="hidden" name="timing" value="${course.timing}">
+			    		<!--<tr class="odd">
 				    		<td>MediaFolder</td>
 				    		<td><input type="hidden" name="mediaFolder" value="${course.mediaFolder}">${course.mediaFolder}</td>
-			    		</tr>
-			    		<tr class="even">
+			    		</tr>-->
+			    		<input type="hidden" name="mediaFolder" value="${course.mediaFolder}">
+			    		
+			    		<!--<tr class="even">
 				    		<td><fmt:message key="hd"/></td>
-				    		<td><input type="checkbox" name="highquality" ${course.highquality == true ? 'checked' : ''} ></td>
-			    		</tr>
-			    		<tr class="odd">
+							<td><input type="hidden" name="highquality" value="${course.highquality}">${course.highquality}</td>
+			    		</tr>-->
+			    		<input type="hidden" name="highquality" value="${course.highquality}">
+			    					    		
+			    		<!--<tr class="odd">
 				    		<td>UserId</td>
 				    		<td><input type="hidden" name="userid" value="${course.userid}">${course.userid}</td>
+			    		</tr>-->
+			    		<input type="hidden" name="userid" value="${course.userid}">
+			    		
+			    		<tr class="odd">
+				    		<td>Tags</td>
+				    		<td><input type="text" name="tags" value="${tags}" class="field"></td>
 			    		</tr>
+			    		
 			    	</table>
 			    	<br>
 			    	<input type="submit" value="<fmt:message key="Valider"/> ">
