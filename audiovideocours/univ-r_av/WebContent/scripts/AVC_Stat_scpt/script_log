@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#gunzip *.gz
+fgrep /var/log/apache2/access-univ-rav.log -e .xml >> /root/AVC_Stat_scpt/xml.log
+fgrep /var/log/apache2/access-univ-rav.log -e .mp3 >> /root/AVC_Stat_scpt/mp3.log
+fgrep /var/log/apache2/access-univ-rav.log -e .ogg >> /root/AVC_Stat_scpt/ogg.log
+fgrep /var/log/apache2/access-univ-rav.log -e .pdf >> /root/AVC_Stat_scpt/pdf.log
+fgrep /var/log/apache2/access-univ-rav.log -e .smil >> /root/AVC_Stat_scpt/smil.log
+fgrep /var/log/apache2/access-univ-rav.log -e .zip >> /root/AVC_Stat_scpt/zip.log
+fgrep /var/log/apache2/access-univ-rav.log -e .flv >> /root/AVC_Stat_scpt/flv.log
+fgrep /var/log/apache2/access-univ-rav.log -e .rm >> /root/AVC_Stat_scpt/rm.log
+fgrep /var/log/apache2/access-univ-rav.log -e .mp4 >> /root/AVC_Stat_scpt/mp4.log
+
+visitors -B -p 2000 /root/AVC_Stat_scpt/xml.log > /root/AVC_Stat_scpt/xml.html
+visitors -B -p 2000 /root/AVC_Stat_scpt/mp3.log > /root/AVC_Stat_scpt/mp3.html
+visitors -B -p 2000 /root/AVC_Stat_scpt/ogg.log > /root/AVC_Stat_scpt/ogg.html
+visitors -B -p 2000 /root/AVC_Stat_scpt/pdf.log > /root/AVC_Stat_scpt/pdf.html
+visitors -B -p 2000 /root/AVC_Stat_scpt/smil.log > /root/AVC_Stat_scpt/smil.html
+visitors -B -p 2000 /root/AVC_Stat_scpt/zip.log > /root/AVC_Stat_scpt/zip.html
+visitors -p 2000 /root/AVC_Stat_scpt/flv.log > /root/AVC_Stat_scpt/flv.html
+visitors -p 2000 /root/AVC_Stat_scpt/rm.log > /root/AVC_Stat_scpt/rm.html
+visitors -p 2000 /root/AVC_Stat_scpt/mp4.log > /root/AVC_Stat_scpt/mp4.html
+
+mv /root/AVC_Stat_scpt/*.html /var/www/webalizer/avc/
