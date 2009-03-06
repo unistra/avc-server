@@ -48,7 +48,7 @@
 	   		<div  class="aboUnivr">
 	     		<c:forEach var="rssfile" varStatus="status2" items="${rssfiles}" begin="0" end="0">
 	     		<p> 
-	     		Abonnement à l'ensemble du site Univ-R AV : <a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/styles/${sessionScope.style}/img/rss_abo.png" alt="rss_icon"></a> </td>
+	     		<fmt:message key="AbonnementAudiovidecours"/> <a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/styles/${sessionScope.style}/img/rss_abo.png" alt="rss_icon"></a> </td>
 				</p>
 				</c:forEach>
 			</div>
@@ -57,7 +57,7 @@
 	     	
 	     	<div class="line">
 	     		<div class="rss">
-	     			<p class="rssName">Abonnement Enseignant</p>
+	     			<p class="rssName"><fmt:message key="Abonnement"/> <fmt:message key="Auteur"/></p>
 	     			<table>
 	     				<tr class="tableheader">
 				    		<th><fmt:message key="NomRss"/></th>
@@ -86,7 +86,7 @@
 	     		</div>
 	     		
 	     		<div class="rss">
-	     			<p class="rssName">Abonnement Formation</p>
+	     			<p class="rssName"><fmt:message key="Abonnement"/> <fmt:message key="Formation"/></p>
 	     			<table>
 	     				<tr class="tableheader">
 				    		<th><fmt:message key="Formation"/></th>

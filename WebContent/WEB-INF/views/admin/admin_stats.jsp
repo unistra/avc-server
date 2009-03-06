@@ -57,7 +57,9 @@
 	    		
 	    		<a href="<c:url value="${statsUrl}" />">Univ-R AV access stats</a>
 	    		&nbsp;&nbsp;&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}" />">Audiovideocours access stats</a>
+	    		<a href="<c:url value="${statsUrl}adminfms/fms_adminConsole.htm" />">FMS stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="./versionclient?ip=all"/>">Clients version stats</a>
 	    		<br>
 	    		<br>
 	    		<a href="<c:url value="${oldStatsUrl}xml.html#Requested pages" />">XML stats</a>
@@ -78,7 +80,7 @@
 	    		&nbsp;&nbsp;&nbsp;
 	    		<a href="<c:url value="${oldStatsUrl}mp4.html#Requested pages" />">MP4 stats</a>
 	    		&nbsp;&nbsp;&nbsp;
-	    		
+	    			    			
 	    	</div>
 	    	
 	    </div>

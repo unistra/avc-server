@@ -73,6 +73,19 @@ p#info {
 	font-size: 12px;
 }
 
+p#textHqPlayer {
+	font-size: 18px;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;	
+}
+
+p#hqPlayer {
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;	
+}
+
 .telecharger {
 	margin-left:15px;
 }

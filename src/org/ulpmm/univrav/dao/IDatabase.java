@@ -6,7 +6,9 @@ import java.util.List;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Tag;
 import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
@@ -80,14 +82,16 @@ public interface IDatabase {
 	 * @param teacher the teacher
 	 * @return the list of courses
 	 */
-	public List<Course> getUnlockedCourses(String teacher);
+	//public List<Course> getUnlockedCourses(String teacher);
+	
+	public List<Course> getCoursesByAuthor(String author);
 	
 	/**
 	 * Gets the list of courses without access code for a teacher
 	 * @param formation the formation
 	 * @return the list of courses
 	 */
-	public List<Course> getUnlockedCoursesByFormation(String formation);
+	public List<Course> getCoursesByFormation(String formation);
 	
 	/**
 	 * Gets a course by providing its id
@@ -217,7 +221,7 @@ public interface IDatabase {
 	 * Gets the list of all the teachers who have at least one course with no access code
 	 * @return the list of teachers
 	 */
-	public List<String> getTeachersWithRss();
+	//public List<String> getTeachersWithRss();
 	
 	/**
 	 * Gets the list of all the formations
@@ -229,7 +233,7 @@ public interface IDatabase {
 	 * Gets the list of all the formations who have at least one course with no access code
 	 * @return the list of formations
 	 */
-	public List<String> getFormationsWithRss();
+	//public List<String> getFormationsWithRss();
 	
 	/**
 	 * Increments the number of consultations for a course
@@ -395,4 +399,111 @@ public interface IDatabase {
 	 * @return the list of users
 	 */
 	public List<User> getAllUsers();
+	
+	/**
+	 * Add a new tag
+	 * @param t Tag
+	 */
+	public void addTag(Tag t);
+	
+	/**
+	 * Deletes tags by providing its courseid
+	 * @param courseid the id of the course
+	 */
+	public void deleteTag(int courseid);
+	
+	/**
+	 * Gets a list of all tags of a course
+	 * @param c Course
+	 * @return the list of tags
+	 */
+	public List<Tag> getTagsByCourse(Course c);
+	
+	/**
+	 * Gets a list of all tags
+	 * @return the list of tags
+	 */
+	public List<String> getAllTags();
+	
+	/**
+	 * Gets a list of most popular tags
+	 * @return the list of most popular tags
+	 */
+	public List<String> getMostPopularTags();
+	
+	/**
+	 * Gets a restricted list of courses
+	 * @param tag
+	 * @param number the number of courses to return
+	 * @param start the start number of the courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getCoursesByTags(List<String> tag, int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3);
+
+	/**
+	 * Gets the number of courses corresponding to the given criteria
+	 * @param params the criteria of the searched courses
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(List<String> tag,String testKeyWord1, String testKeyWord2, String testKeyWord3);
+	
+	/**
+	 * Gets a restricted list of courses
+	 * @param mediafolder
+	 * @return course
+	 */
+	public Course getCourseByMediafolder(String mediafolder);
+	
+	/**
+	 * Gets a list of the n selection courses
+	 * @param n the number of courses to return
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getNSelectionCourses(int n, String testKeyWord1, String testKeyWord2);
+
+	/**
+	 * Gets a list of the n selection courses
+	 * @param n the number of courses to return
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getNFormationCourses(int n, String testKeyWord1, String testKeyWord2);
+	
+	/**
+	 * Gets the list of all the selection
+	 * @return the list of users
+	 */
+	public List<Selection> getAllSelections();
+	
+	/**
+	 * Get selection by position 
+	 * @param position
+	 * @return the selection
+	 */
+	public Selection getSelection(int position);
+	
+	/**
+	 * Adds a new selection
+	 * @param s Selection
+	 */
+	public void addSelection(Selection s);
+	
+	/**
+	 * Modify a selection
+	 * @param s Selection
+	 */
+	public void modifySelection(Selection s);
+	
+	/**
+	 * Deletes a selection by providing its id
+	 * @param position the position of the selection
+	 */
+	public void deleteSelection(int position);
+
 }

@@ -82,7 +82,7 @@
 						m&eacute;dias disponibles ou via l'abonnement à un flux RSS.</p>
 						<a class="link" href="../files/img/help/Podcast.png">Screenshot</a>
 						<h5>Abonnement &agrave; un flux RSS</h5>
-						<p>Cliquer sur l'ic&ocirc;ne orange dans la barre d'adresse de Firefox permet de s'abonner à l'ensemble du site Univ-r_Av. 
+						<p>Cliquer sur l'ic&ocirc;ne orange dans la barre d'adresse de Firefox permet de s'abonner à l'ensemble du site Audiovid&eacute;cours. 
 						Cliquer sur le lien "abonnement" de l'accueil pour lister les diff&eacute;rents flux disponibles.</p>
 						<a class="link" href="../files/img/help/Rss.png">Screenshot</a>
 						<p>En s&eacute;lectionnant un flux dans cette liste, Firefox affiche une page permettant d'avoir le listing 
@@ -123,7 +123,7 @@
 						<h5>Filtrage de l'Affichage</h5>
 						<p>On dispose d'une fonction de recherche (Launch Search) avec des options de filtrage pour l'affichage des cours.<br>
 						Vous pouvez &eacute;galement acc&eacute;der directement aux cours d'un auteur et/ou d'une formation grâce à l'url:<br> 
-						http://univ-rav.u-strasbg.fr/avc/courses?author=...&formation=...</p>
+						http://audiovideocours.u-strasbg.fr/avc/courses?author=...&formation=...</p>
 						<h5>Listings des Cours</h5>
 						<p>Les cours sont disponibles selon diff&eacute;rents modes.</p>	
 						<p><b>Clic sur l'ic&ocirc;ne à gauche ou sur l'ic&ocirc;ne sous l'intitul&eacute; 'flash' :</b><br>

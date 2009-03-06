@@ -18,6 +18,10 @@
 	background-image: url(../img/search.gif);
 }
 
+.tagImage {
+	background-image: url(../img/tags.gif);
+}
+
 .liveImage {
 	background-image: url(../img/live.gif);
 }

@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 
 import javax.naming.InitialContext;
 import javax.servlet.ServletException;
@@ -38,7 +40,9 @@ import org.ulpmm.univrav.dao.UnivrDaoImpl;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Tag;
 import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
@@ -99,7 +103,9 @@ public class Application extends HttpServlet {
 	private static String language;
 	
 	// The numbers of courses to display at the same time
-	private static int homeCourseNumber;
+	private static int lastCourseNumber;
+	private static int selectionCourseNumber;
+	private static int collectionCourseNumber;
 	private static int recordedCourseNumber;
 	
 	// The default style
@@ -181,8 +187,11 @@ public class Application extends HttpServlet {
 			language = p.getProperty("language");
 			
 			// The numbers of courses to display at the same time
-			homeCourseNumber = Integer.parseInt(p.getProperty("homeCourseNumber"));
+			lastCourseNumber = Integer.parseInt(p.getProperty("lastCourseNumber"));
 			recordedCourseNumber = Integer.parseInt(p.getProperty("recordedCourseNumber"));
+			selectionCourseNumber = Integer.parseInt(p.getProperty("selectionCourseNumber"));
+			collectionCourseNumber = Integer.parseInt(p.getProperty("collectionCourseNumber"));
+			
 			
 			// The keyword to identify the tests to delete (genre is equal to this keyword)
 			testKeyWord1 = p.getProperty("testKeyWord1");
@@ -354,6 +363,8 @@ public class Application extends HttpServlet {
 			displayRecordedPage(request, response);
 		else if( page.equals("/search"))
 			displaySearchResults(request, response);
+		else if( page.equals("/tags"))
+			displayTagsCourses(request, response);
 		else if( page.equals("/rss")) 
 			displayRssPage(request, response);
 		else if (page.equals("/courses"))
@@ -427,13 +438,11 @@ public class Application extends HttpServlet {
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_courses.jsp").forward(request, response);
 		}
 		else if( page.equals("/admin_editcourse")) {
-			request.setAttribute("course", service.getCourse(Integer.parseInt(request.getParameter("id"))));
-			request.setAttribute("posturl", "./admin_validatecourse");
-			request.setAttribute("gobackurl", "./admin_courses");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editcourse.jsp").forward(request, response);
+			DisplayAdminEditCourse(request,response);
 		}
 		else if( page.equals("/admin_deletecourse")) {
 			int courseid = Integer.parseInt(request.getParameter("id"));
+			service.deleteTag(courseid);
 			service.deleteCourse(courseid, service.getCourse(courseid).getMediaFolder());
 			/* Regeneration of the RSS files */
 			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
@@ -495,6 +504,8 @@ public class Application extends HttpServlet {
 			request.setAttribute("deleteurl", "./admin_deleteunivr");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_courses.jsp").forward(request, response);
 		}
+		else if( page.equals("/versionclient"))
+			versionclient(request, response);
 		else if( page.equals("/admin_editunivr")) {
 			request.setAttribute("course", service.getCourse(Integer.parseInt(request.getParameter("id"))));
 			request.setAttribute("posturl", "./admin_validateunivr");
@@ -503,8 +514,9 @@ public class Application extends HttpServlet {
 		}
 		else if( page.equals("/admin_deleteunivr")) {
 			int courseid = Integer.parseInt(request.getParameter("id"));
-			service.deleteCourse(courseid, service.getCourse(courseid).getMediaFolder());
 			service.deleteUnivr(courseid);
+			service.deleteTag(courseid);
+			service.deleteCourse(courseid, service.getCourse(courseid).getMediaFolder());
 			/* Regeneration of the RSS files */
 			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 			response.sendRedirect(response.encodeRedirectURL("./admin_univr"));
@@ -537,6 +549,33 @@ public class Application extends HttpServlet {
 		else if( page.equals("/admin_adduser")) {
 			request.setAttribute("action","add"); 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_edituser.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_selections")) {
+			request.setAttribute("viewurl", "./admin_selections");
+			List<Selection> selections = service.getAllSelections();
+			request.setAttribute("selections", selections );
+			request.setAttribute("number", selections.size());
+			request.setAttribute("editurl", "./admin_editselection");
+			request.setAttribute("deleteurl", "./admin_deleteselection");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_selections.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_editselection")) {
+			request.setAttribute("action","edit"); 
+			request.setAttribute("selection", service.getSelection(Integer.parseInt(request.getParameter("id"))));
+			request.setAttribute("posturl", "./admin_validateselection");
+			request.setAttribute("gobackurl", "./admin_selections");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editselection.jsp").forward(request, response);
+		}
+		else if( page.equals("/admin_validateselection"))
+			validateSelection(request, response);
+		else if( page.equals("/admin_deleteselection")) {
+			Integer selectionid = request.getParameter("id")!=null ? Integer.parseInt(request.getParameter("id")) : null;
+			service.deleteSelection(selectionid);
+			response.sendRedirect(response.encodeRedirectURL("./admin_selections"));
+		}
+		else if( page.equals("/admin_addselection")) {
+			request.setAttribute("action","add"); 
+			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editselection.jsp").forward(request, response);
 		}
 		else if( page.equals("/admin_teachers")) {
 			request.setAttribute("viewurl", "./admin_teachers");
@@ -581,9 +620,14 @@ public class Application extends HttpServlet {
 		/* initializes the model */
 		request.setAttribute("teachers", service.getTeachers());
 		request.setAttribute("formations", service.getFormations());
-		request.setAttribute("courses", service.getNLastCourses(homeCourseNumber, testKeyWord2, testKeyWord3));
+		request.setAttribute("lastcourses", service.getNLastCourses(lastCourseNumber, testKeyWord2, testKeyWord3));
+		request.setAttribute("selectioncourses", service.getNSelectionCourses(selectionCourseNumber, testKeyWord2, testKeyWord3));
+		request.setAttribute("collectioncourses", service.getNFormationCourses(collectionCourseNumber, testKeyWord2, testKeyWord3));
+		request.setAttribute("collectionname", service.getSelection(1).getFormationcollection());
 		request.setAttribute("rssFileName", rssName + ".xml");
-		
+		request.setAttribute("allTags", service.getAllTags());
+		request.setAttribute("mostPopularTags", service.getTagCloud(service.getMostPopularTags()));
+			
 		request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
 		
 		/* Saves the page for the style selection thickbox return */
@@ -759,6 +803,8 @@ public class Application extends HttpServlet {
 		request.setAttribute("items", service.getCourseNumber(testKeyWord1, testKeyWord2, testKeyWord3));
 		request.setAttribute("number", recordedCourseNumber);
 		request.setAttribute("resultPage", "recorded");
+		request.setAttribute("allTags", service.getAllTags());
+		request.setAttribute("mostPopularTags", service.getTagCloud(service.getMostPopularTags()));
 		
 		request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
 		
@@ -773,7 +819,7 @@ public class Application extends HttpServlet {
 	throws ServletException, IOException {  
 		
 		//Number of Teachers with RSS, for the list in the jsp page
-		request.setAttribute("nbrTeachersRss",service.getTeachersWithRss().size());
+		request.setAttribute("nbrTeachersRss",service.getTeachers().size());
 		// Rss Files
 		request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
 				
@@ -802,6 +848,8 @@ public class Application extends HttpServlet {
 		request.setAttribute("items", service.getTestNumber(testKeyWord1, testKeyWord2, testKeyWord3));
 		request.setAttribute("number", recordedCourseNumber);
 		request.setAttribute("resultPage", "test");
+		request.setAttribute("allTags", service.getAllTags());
+		request.setAttribute("mostPopularTags", service.getTagCloud(service.getMostPopularTags()));
 		
 		request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
 		
@@ -885,6 +933,8 @@ public class Application extends HttpServlet {
 			request.setAttribute("items", service.getCourseNumber(params,testKeyWord1, testKeyWord2, testKeyWord3));
 			request.setAttribute("number", recordedCourseNumber);
 			request.setAttribute("resultPage", "search");
+			request.setAttribute("allTags", service.getAllTags());
+			request.setAttribute("mostPopularTags", service.getTagCloud(service.getMostPopularTags()));
 			
 			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
 			
@@ -943,9 +993,62 @@ public class Application extends HttpServlet {
 			request.setAttribute("number", recordedCourseNumber);
 			request.setAttribute("resultPage", "search");
 			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssNamePar));
+			request.setAttribute("allTags", service.getAllTags());
+			request.setAttribute("mostPopularTags", service.getTagCloud(service.getMostPopularTags()));
 			
 			/* Saves the page for the style selection thickbox return */
 			session.setAttribute("previousPage", "/search?page=" + pageNumber);
+			
+			/* Displays the view */
+			getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
+		}
+		else { // if the session is not valid anymore
+			response.sendRedirect("./recorded");
+		}
+	}
+	
+	private void displayTagsCourses(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+					
+		if( request.getParameter("tags") != null)  {
+						
+			int pageNumber = request.getParameter("page")!=null ? Integer.parseInt( request.getParameter("page")):1;
+			int start = recordedCourseNumber * (pageNumber - 1) ;
+				
+			String tags = new String(request.getParameter("tags").getBytes("8859_1"),"UTF8");
+					
+			List<String> listTags = new ArrayList<String>();
+			StringTokenizer st = new StringTokenizer(tags);
+			while(st.hasMoreTokens()) {
+				String tag = st.nextToken();
+				//TODO if(!listTags.contains(tag))
+					listTags.add(tag);
+			}
+												
+			String rssNamePar=rssName;
+			
+			request.setAttribute("audio", "checked");
+			request.setAttribute("video", "checked");
+													
+			request.setAttribute("page", pageNumber);
+			request.setAttribute("teachers", service.getTeachers());
+			request.setAttribute("formations", service.getFormations());	
+			request.setAttribute("courses", service.getCoursesByTags(listTags, recordedCourseNumber, start, testKeyWord1, testKeyWord2, testKeyWord3));
+			request.setAttribute("items", service.getCourseNumber(listTags,testKeyWord1, testKeyWord2, testKeyWord3));
+			request.setAttribute("number", recordedCourseNumber);
+			request.setAttribute("resultPage", "tags"); 
+			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssNamePar));
+			request.setAttribute("allTags", service.getAllTags());
+			request.setAttribute("mostPopularTags", service.getTagCloud(service.getMostPopularTags()));
+			
+			request.setAttribute("listTags",listTags);
+			request.setAttribute("listTagsSize",listTags.size());
+			request.setAttribute("tags",tags);
+			
+			/* Saves the page for the style selection thickbox return */
+			session.setAttribute("previousPage", "/tags?tags="+request.getParameter("tags")+"&page=" + pageNumber);
+			
+			listTags=null; //set list null for memory
 			
 			/* Displays the view */
 			getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
@@ -996,6 +1099,17 @@ public class Application extends HttpServlet {
 		// Check user id
 		if(user!=null && c.getUserid()==user.getUserid()) {
 			
+			// Getting tags of the course
+			String tags="";
+			List<Tag> listTags = service.getTagsByCourse(c);
+			for(int i=0;i<listTags.size();i++) {
+				if(i==0)
+					tags=listTags.get(i).getTag();
+				else
+					tags=tags + " " + listTags.get(i).getTag();
+			}
+						
+			request.setAttribute("tags", tags);
 			request.setAttribute("course", c);
 			request.setAttribute("posturl", "./validatemycourse");
 			request.setAttribute("gobackurl", "./myspace");
@@ -1163,7 +1277,7 @@ public class Application extends HttpServlet {
 				if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 					// Sending email for admins
 					String emailAdminSubject = "a new course on Univr-AV";
-					String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" is published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getGenre()!=null ? "\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nUniv-r Av Administrator" ;
+					String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" is published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nUniv-r Av Administrator" ;
 					if(!adminEmail1.equals(""))
 						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
 					if(!adminEmail2.equals(""))
@@ -1324,7 +1438,7 @@ public class Application extends HttpServlet {
 								if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 									// Sending email for admins
 									String emailAdminSubject = "a new file on Univr-AV";
-									String emailAdminMessage = "Dear Admin,\n\nA file named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getGenre()!=null ? "\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nUniv-r Av Administrator" ;
+									String emailAdminMessage = "Dear Admin,\n\nA file named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nUniv-r Av Administrator" ;
 									if(!adminEmail1.equals(""))
 										service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
 									if(!adminEmail2.equals(""))
@@ -1468,6 +1582,7 @@ public class Application extends HttpServlet {
 						request.setAttribute("timing", 0);
 					
 					request.setAttribute("serverUrl",serverUrl);
+					request.setAttribute("tags", service.getTagsByCourse(c));
 					
 					/* displays the .jsp view */
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
@@ -1496,7 +1611,7 @@ public class Application extends HttpServlet {
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_fullflash.jsp").forward(request, response);
 					
 				}*/
-				else {
+				else if(type.equals("smil") ||type.equals("mp3") || type.equals("ogg") || type.equals("zip") || type.equals("pdf")) {
 					String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
 					
 					/* Initializes the headers */
@@ -1572,10 +1687,28 @@ public class Application extends HttpServlet {
 			Integer.parseInt(request.getParameter("consultations")),
 			! request.getParameter("timing").equals("") ? request.getParameter("timing") : null,
 			! request.getParameter("mediaFolder").equals("") ? request.getParameter("mediaFolder") : null,
-			request.getParameter("highquality") != null ? true : false,
+			//request.getParameter("highquality") != null ? true : false,
+			Boolean.parseBoolean(request.getParameter("highquality")),
 			! request.getParameter("userid").equals("0") ? Integer.parseInt(request.getParameter("userid")) : null		
 		);
 		service.modifyCourse(c);
+		
+		// Delete TAGS
+		service.deleteTag(Integer.parseInt(request.getParameter("courseid")));
+		
+		// ADD TAGS		
+		List<String> listTmp=new ArrayList<String>();
+		StringTokenizer st = new StringTokenizer(request.getParameter("tags"));
+		while (st.hasMoreTokens()) {
+			String token = st.nextToken();
+			if(!listTmp.contains(token)) {
+				service.addTag(new Tag(0, //is not used
+					token, // the tag
+					Integer.parseInt(request.getParameter("courseid"))) // the course
+				);
+				listTmp.add(token);
+			}
+		}
 		
 		/* Generation of the RSS files */
 		if( c.getGenre() == null)
@@ -1623,7 +1756,8 @@ public class Application extends HttpServlet {
 				request.getParameter("type"),
 				request.getParameter("ipaddress"),
 				Boolean.parseBoolean(request.getParameter("status")),
-				request.getParameter("gmapurl").equals("") ? null : request.getParameter("gmapurl")
+				request.getParameter("gmapurl").equals("") ? null : request.getParameter("gmapurl"),
+				request.getParameter("version")
 			);
 			
 			String oldAmphiip = request.getParameter("oldAmphiip");
@@ -1643,32 +1777,29 @@ public class Application extends HttpServlet {
 	
 	private void validateUser(HttpServletRequest request, HttpServletResponse response) 
 	throws ServletException, IOException {
+			
+		if( ! (request.getParameter("login").equals(""))) {
+			
+			int userid =  ! request.getParameter("userid").equals("") ? Integer.parseInt(request.getParameter("userid")) : 0;
 		
-	
-	if( ! (request.getParameter("login").equals(""))) {
-		
-	
-		int userid =  ! request.getParameter("userid").equals("") ? Integer.parseInt(request.getParameter("userid")) : 0;
-		
-		User u = new User(
-			userid,
-			request.getParameter("login"),
-			request.getParameter("email")
-		);
-		
-				
-		if(request.getParameter("action").equals("edit"))
-			service.modifyUser(u);
-		else
-			service.addUser(u);
-		response.sendRedirect(response.encodeRedirectURL("./admin_users?userid=" + request.getParameter("userid")));
+			User u = new User(
+					userid,
+					request.getParameter("login"),
+					request.getParameter("email")
+			);
+						
+			if(request.getParameter("action").equals("edit"))
+				service.modifyUser(u);
+			else
+				service.addUser(u);
+			response.sendRedirect(response.encodeRedirectURL("./admin_users"));
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Login field must be completed");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+		}
 	}
-	else {
-		request.setAttribute("messagetype", "error");
-		request.setAttribute("message", "Login field must be completed");
-		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
-	}
-}
 	
 	private void changeStyle(HttpServletRequest request, HttpServletResponse response) 
 		throws ServletException, IOException {
@@ -1759,7 +1890,7 @@ public class Application extends HttpServlet {
 						String formation = service.getGroupName(Integer.parseInt(groupCode),estab);
 						
 						String msg = "(id:" + courseId + ")";
-						String clientResponse = service.sendMessageToClient(msg, ip, clientSocketPort);
+						String clientResponse = service.sendMessageToClient(msg, ip, clientSocketPort,3000);
 						
 						
 						/* If the client is not already recording */
@@ -1915,4 +2046,128 @@ public class Application extends HttpServlet {
 		getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
 	}
 	
+	private void DisplayAdminEditCourse(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+		
+		// Get the course
+		Course c = service.getCourse(Integer.parseInt(request.getParameter("id")));
+		
+		// Getting tags of the course
+		String tags="";
+		List<Tag> listTags = service.getTagsByCourse(c);
+		for(int i=0;i<listTags.size();i++) {
+			if(i==0)
+				tags=listTags.get(i).getTag();
+			else
+				tags=tags + " " + listTags.get(i).getTag();
+		}
+					
+		request.setAttribute("tags", tags);
+		request.setAttribute("course", c);
+		request.setAttribute("posturl", "./admin_validatecourse");
+		request.setAttribute("gobackurl", "./admin_courses");
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editcourse.jsp").forward(request, response);
+		
+	
+	}
+	
+	
+	private void versionclient(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+		
+		if( request.getParameter("ip") != null) {
+						
+			if(request.getParameter("ip").equals("all")) {
+				
+				List<String> lstRes = new ArrayList<String>();
+				
+				List<Building> lstBuild=service.getBuildings();				
+				for(int i=0;i<lstBuild.size();i++) {
+					Building building = lstBuild.get(i);
+					List<Amphi> lstAmphi= building.getAmphis();
+					for(int j=0;j<lstAmphi.size();j++) {
+						Amphi amp = lstAmphi.get(j);
+						
+						String message=building.getName() + ": " + amp.getName() + ": "; 
+						String clientResponse=service.sendMessageToClient("VERSION", amp.getIpAddress(), clientSocketPort,500);
+							
+						// No Response from the client (timeout exception)
+						if(clientResponse=="") {
+							message=message+"no response from the client";
+						}
+						// Too old version
+						else if(clientResponse==null) {
+							message=message+"v 1.08 or less";
+							amp.setVersion("v 1.08 or less");
+							service.modifyAmphi(amp, amp.getIpAddress());
+						}
+						else {
+							message=message+clientResponse;
+							amp.setVersion(clientResponse);
+							service.modifyAmphi(amp, amp.getIpAddress());
+						}
+												
+						lstRes.add(message+"</br>");
+					}
+					lstRes.add("</br>");
+				}
+						
+				request.setAttribute("versions", lstRes);
+				
+				/* Displays the view */ 
+				getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_clientsversion.jsp").forward(request, response);				
+			}
+			else {
+				String clientResponse = service.sendMessageToClient("VERSION", request.getParameter("ip"), clientSocketPort,3000);
+				String message="Version: ";
+				
+				// No Response from the client (timeout exception)
+				if(clientResponse=="") {
+					message=message+"no response from the client";
+				}
+				// Too old version
+				else if(clientResponse==null) {
+					message=message+"v 1.08 or less";
+					Amphi a = service.getAmphi(request.getParameter("ip"));
+					a.setVersion("v 1.08 or less");
+					service.modifyAmphi(a, request.getParameter("ip"));
+				}
+				else {
+					message=message+clientResponse;
+					Amphi a = service.getAmphi(request.getParameter("ip"));
+					a.setVersion(clientResponse);
+					service.modifyAmphi(a, request.getParameter("ip"));
+				}
+
+				request.setAttribute("messagetype", "info");
+				request.setAttribute("message", message);
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+			}
+		}
+		else {
+			String message = "Error: wrong parameters";
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", message);
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+		}
+	}
+	
+	
+	private void validateSelection(HttpServletRequest request, HttpServletResponse response) 
+	throws ServletException, IOException {
+						
+		int position =  ! request.getParameter("position").equals("") ? Integer.parseInt(request.getParameter("position")) : 0;
+		
+			Selection s = new Selection(
+					position,
+					!request.getParameter("idcourseselection").equals("") ? Integer.parseInt(request.getParameter("idcourseselection")) : 0,
+					request.getParameter("formationcollection")
+			);
+						
+			if(request.getParameter("action").equals("edit"))
+				service.modifySelection(s);
+			else
+				service.addSelection(s);
+			response.sendRedirect(response.encodeRedirectURL("./admin_selections"));	
+	}
 }

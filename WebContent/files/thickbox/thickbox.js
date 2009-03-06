@@ -16,6 +16,11 @@ $(document).ready(function(){
 	imgLoader.src = tb_pathToImage;
 });
 
+
+function dotb(title, url) {
+	$(document).ready(function(){ tb_show(title, url, null); });
+}
+
 //add thickbox to href & area elements that have a class of .thickbox
 function tb_init(domChunk){
 	$(domChunk).click(function(){

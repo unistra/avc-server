@@ -1,4 +1,9 @@
 User-agent: *
+Crawl-delay: 10
+Disallow: /coursv2/
+Disallow: /cours
+Disallow: /thick
+Disallow: /recorded;jsessionid=
 Disallow: /*.zip$
 Disallow: /*.zip
 Disallow: /*.mp3$
@@ -19,4 +24,5 @@ Disallow: /*.mov$
 Disallow: /*.mov
 Disallow: /*.mpg$
 Disallow: /*.mpg
-Disallow: /coursv2/
+Request-rate: 1/5
+Sitemap: http://audiovideocours.u-strasbg.fr/sitemap.xml

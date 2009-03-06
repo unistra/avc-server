@@ -89,3 +89,7 @@ pre#pre {
 	margin-right:25%;
 	text-align:left;
 }
+
+.littleField {
+	width: 20px;
+}

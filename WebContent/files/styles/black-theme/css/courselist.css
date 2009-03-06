@@ -1,11 +1,18 @@
 /* Courses list table */
 table {
-	width: 95%;
+	width: 94%;
 	text-align: left;
 	border-spacing: 0px;
 	color: #FFFFFF;
 	margin:auto;
 }
+
+.tableHome {
+	width: 100%; /*32*/
+	text-align: left;
+	color: #FFFFFF;	
+}
+
 
 th, td {
 	padding-top: 4px;
@@ -50,4 +57,12 @@ td {
 
 a#lienCol {
 	color:white;
+}
+
+tr:hover,tr.hover { 
+	background: #808080;
+ }
+  
+.titleColl {
+	font-size: 11px;
 }

@@ -17,7 +17,9 @@ import javax.sql.DataSource;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Tag;
 import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
@@ -100,7 +102,7 @@ public class DatabaseImpl implements IDatabase {
 				pstmt.setInt(17, c.getUserid());
 			else
 				pstmt.setNull(17, Types.INTEGER);
-				
+			
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("The course " + c + " has not been added to the database");
 				throw new DaoException("The course " + c + " has not been added to the database");
@@ -109,6 +111,7 @@ public class DatabaseImpl implements IDatabase {
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new Course " + c);
 			sqle.printStackTrace();
+			throw new DaoException("Error while adding the new Course " + c);
 		}
 	}
 	
@@ -135,6 +138,7 @@ public class DatabaseImpl implements IDatabase {
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new Univr course " + u);
 			sqle.printStackTrace();
+			throw new DaoException("Error while adding the new Univr course " + u);
 		}
 	}
 	
@@ -174,6 +178,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the courses list");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the courses list");
 		}
 		
 		return l;
@@ -215,6 +220,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the courses list");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the courses list");
 		}
 		
 		return l;
@@ -256,6 +262,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the courses list");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the courses list");
 		}
 
 		return l;
@@ -307,6 +314,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the courses list");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the courses list");
 		}
 		
 		return l;
@@ -362,6 +370,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the courses list");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the courses list");
 		}
 		
 		return l;
@@ -403,7 +412,7 @@ public class DatabaseImpl implements IDatabase {
 				if( param.equals("fullname") )
 					sql += "AND (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = ? ";
 				else if( param.equals("keyword") )
-					sql += "AND (INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?) OR INITCAP(name) LIKE INITCAP(?) OR INITCAP(firstname) LIKE INITCAP(?)) ";
+					sql += "AND (INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?) OR INITCAP(name) LIKE INITCAP(?) OR INITCAP(firstname) LIKE INITCAP(?) OR INITCAP(formation) LIKE INITCAP(?) OR courseid IN (select courseid from tag where INITCAP(tag) LIKE INITCAP(?))) ";
 				else
 					sql += "AND " + param + " = ? ";
 			}
@@ -418,6 +427,10 @@ public class DatabaseImpl implements IDatabase {
 				while( it.hasNext()) {
 					String param = it.next();
 					if( param.equals("keyword") ) {
+						pstmt.setString(i, "%" + params.get(param) + "%");
+						i++;
+						pstmt.setString(i, "%" + params.get(param) + "%");
+						i++;
 						pstmt.setString(i, "%" + params.get(param) + "%");
 						i++;
 						pstmt.setString(i, "%" + params.get(param) + "%");
@@ -460,6 +473,7 @@ public class DatabaseImpl implements IDatabase {
 			catch( SQLException sqle) {
 				System.out.println("Error while retrieving the courses list");
 				sqle.printStackTrace();
+				throw new DaoException("Error while retrieving the courses list");
 			}
 			
 		}
@@ -469,23 +483,25 @@ public class DatabaseImpl implements IDatabase {
 		return l;
 	}
 	
+
+	
 	/**
-	 * Gets the list of courses without access code for a teacher
-	 * @param teacher the teacher
+	 * Gets the list of courses for an author
+	 * @param author the author
 	 * @return the list of courses
 	 */
-	public List<Course> getUnlockedCourses(String teacher) {
+	public List<Course> getCoursesByAuthor(String author) {
 		
 		List<Course> l = new ArrayList<Course>();
 		Connection cnt = pa.getConnection();
 		String sql = "SELECT * FROM course WHERE " +
 				"(COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = INITCAP(?) " +
-				"AND genre IS NULL AND visible = true ORDER BY date DESC";
+				"AND visible = true ORDER BY date DESC";
 			
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			
-			pstmt.setString(1, teacher);
+			pstmt.setString(1, author);
 			
 			ResultSet rs = pstmt.executeQuery();
 			
@@ -514,24 +530,25 @@ public class DatabaseImpl implements IDatabase {
 			rs.close();
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the courses list for the teacher " + teacher);
+			System.out.println("Error while retrieving the courses list for the author " + author);
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the courses list for the author " + author);
 		}
 		
 		return l;
 	}
 	
 	/**
-	 * Gets the list of courses without access code for a formation
+	 * Gets the list of courses for a formation
 	 * @param formation the formation
 	 * @return the list of courses
 	 */
-	public List<Course> getUnlockedCoursesByFormation(String formation) {
+	public List<Course> getCoursesByFormation(String formation) {
 		
 		List<Course> l = new ArrayList<Course>();
 		Connection cnt = pa.getConnection();
 		String sql = "SELECT * FROM course WHERE " +
-				"formation=?" + "AND genre IS NULL AND visible = true ORDER BY date DESC";
+				"formation=?" + "AND visible = true ORDER BY date DESC";
 					
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -567,6 +584,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the courses list for the formation " + formation);
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the courses list for the formation " + formation);
 		}
 		
 		return l;
@@ -614,6 +632,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the course " + courseId);
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the course " + courseId);
 		}
 		
 		return c;
@@ -661,6 +680,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the course " + courseId);
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the course " + courseId);
 		}
 		
 		return c;
@@ -691,6 +711,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the course number");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the course number");
 		}
 
 		return number;
@@ -714,6 +735,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the course number");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the course number");
 		}
 
 		return number;
@@ -748,7 +770,7 @@ public class DatabaseImpl implements IDatabase {
 				if( param.equals("fullname") )
 					sql += "(COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = ? ";
 				else if( param.equals("keyword") )
-					sql += "(INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?) OR INITCAP(name) LIKE INITCAP(?) OR INITCAP(firstname) LIKE INITCAP(?)) ";
+					sql += "(INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?) OR INITCAP(name) LIKE INITCAP(?) OR INITCAP(firstname) LIKE INITCAP(?)OR INITCAP(formation) LIKE INITCAP(?) OR courseid IN (select courseid from tag where INITCAP(tag) LIKE INITCAP(?))) ";
 				else
 					sql += param + " = ? ";
 			}
@@ -763,6 +785,10 @@ public class DatabaseImpl implements IDatabase {
 				while( it.hasNext()) {
 					String param = it.next();
 					if( param.equals("keyword") ) {
+						pstmt.setString(i, "%" + params.get(param) + "%");
+						i++;
+						pstmt.setString(i, "%" + params.get(param) + "%");
+						i++;
 						pstmt.setString(i, "%" + params.get(param) + "%");
 						i++;
 						pstmt.setString(i, "%" + params.get(param) + "%");
@@ -785,6 +811,7 @@ public class DatabaseImpl implements IDatabase {
 			catch( SQLException sqle) {
 				System.out.println("Error while retrieving the buildings list");
 				sqle.printStackTrace();
+				throw new DaoException("Error while retrieving the buildings list");
 			}
 		}
 		else
@@ -821,6 +848,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the Univr course " + courseId);
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the Univr course " + courseId);
 		}
 		
 		return u;
@@ -902,7 +930,7 @@ public class DatabaseImpl implements IDatabase {
 				pstmt.setInt(16, c.getUserid());
 			else
 				pstmt.setNull(16, Types.INTEGER);
-			
+						
 			pstmt.setInt(17, c.getCourseid());
 			
 			if( pstmt.executeUpdate() == 0 ) {
@@ -913,6 +941,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while modifying the course " + c);
 			sqle.printStackTrace();
+			throw new DaoException("Error while modifying the course " + c);
 		}
 		
 	}
@@ -935,6 +964,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the course " + courseId);
 			sqle.printStackTrace();
+			throw new DaoException("Error while deleting the course " + courseId);
 		}
 	}
 	
@@ -956,6 +986,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the course " + courseId);
 			sqle.printStackTrace();
+			throw new DaoException("Error while deleting the course " + courseId);
 		}
 	}
 	
@@ -977,6 +1008,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the media folders list");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the media folders list");
 		}
 		
 		return l;
@@ -1032,6 +1064,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the courses list");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the courses list");
 		}
 		
 		return l;
@@ -1062,6 +1095,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the course number");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the course number");
 		}
 
 		return number;
@@ -1084,6 +1118,7 @@ public class DatabaseImpl implements IDatabase {
 			catch( SQLException sqle) {
 				System.out.println("Error while deleting the tests");
 				sqle.printStackTrace();
+				throw new DaoException("Error while deleting the tests");
 			}
 		}
 	}
@@ -1109,6 +1144,7 @@ public class DatabaseImpl implements IDatabase {
 			catch( SQLException sqle) {
 				System.out.println("Error while hiding the tests");
 				sqle.printStackTrace();
+				throw new DaoException("Error while hiding the tests");
 			}
 		}
 	}
@@ -1132,6 +1168,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the next course Id");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the next course Id");
 		}
 		
 		return id;
@@ -1144,7 +1181,7 @@ public class DatabaseImpl implements IDatabase {
 	public List<String> getTeachers() {
 		List<String> l = new ArrayList<String>();
 		
-		ResultSet rs = pa.query("SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE visible = true AND NOT (name IS NULL AND firstname IS NULL)");
+		ResultSet rs = pa.query("SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE visible = true AND title IS NOT NULL AND NOT (name IS NULL AND firstname IS NULL)");
 		try {
 			while( rs.next() ) {
 				l.add(rs.getString("fullname"));
@@ -1153,6 +1190,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the teachers list");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the teachers list");
 		}
 		
 		return l;
@@ -1181,6 +1219,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the teachers list");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the teachers list");
 		}
 		
 		return l;
@@ -1220,33 +1259,12 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the teacher full name");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the teacher full name");
 		}
 		
 		return fullname;
 	}
-	
-	/**
-	 * Gets the list of all the teachers who have at least one course with no access code
-	 * @return the list of teachers
-	 */
-	public List<String> getTeachersWithRss() {
-		List<String> l = new ArrayList<String>();
 		
-		ResultSet rs = pa.query("SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE genre IS NULL AND title IS NOT NULL AND visible = true AND NOT (name IS NULL AND firstname IS NULL)");
-	
-		try {
-			while( rs.next() ) {
-				l.add(rs.getString("fullname"));
-			}
-		}
-		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the teachers list");
-			sqle.printStackTrace();
-		}
-		
-		return l;
-	}
-	
 	/**
 	 * Gets the list of all the formations
 	 * @return the list of formations
@@ -1263,33 +1281,13 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the formations list");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the formations list");
 		}
 		
 		return l;
 	}
 	
-	/**
-	 * Gets the list of all the formations who have at least one course with no access code
-	 * @return the list of formations
-	 */
-	public List<String> getFormationsWithRss() {
-		List<String> l = new ArrayList<String>();
-
-		ResultSet rs = pa.query("SELECT DISTINCT formation from course WHERE genre IS NULL AND visible = true AND formation IS NOT NULL");
 		
-		try {
-			while( rs.next() ) {
-				l.add(rs.getString("formation"));
-			}
-		}
-		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the formations list");
-			sqle.printStackTrace();
-		}
-		
-		return l;
-	}
-	
 	/**
 	 * Increments the number of consultations for a course
 	 * @param c the course
@@ -1312,6 +1310,7 @@ public class DatabaseImpl implements IDatabase {
 		catch(SQLException sqle){
 			System.out.println("Error while incrementing the consultations");
 			sqle.printStackTrace();
+			throw new DaoException("Error while incrementing the consultations");
 		}
 	}
 	
@@ -1335,6 +1334,7 @@ public class DatabaseImpl implements IDatabase {
 		catch(SQLException sqle){
 			System.out.println("Error while adding the Slide");
 			sqle.printStackTrace();
+			throw new DaoException("Error while adding the Slide");
 		}
 	}
 	
@@ -1364,6 +1364,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the slides list");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the slides list");
 		}
 
 		return l;
@@ -1390,6 +1391,7 @@ public class DatabaseImpl implements IDatabase {
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new Building " + b);
 			sqle.printStackTrace();
+			throw new DaoException("Error while adding the new Building " + b);
 		}
 	}
 	
@@ -1419,6 +1421,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the buildings list");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the buildings list");
 		}
 		
 		return l;
@@ -1451,6 +1454,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the building " + buildingId);
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the building " + buildingId);
 		}
 		
 		return b;
@@ -1477,6 +1481,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the building of amphi " + amphiIp);
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the building of amphi " + amphiIp);
 		}
 		
 		return name;
@@ -1509,6 +1514,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while modifying the building " + b);
 			sqle.printStackTrace();
+			throw new DaoException("Error while modifying the building " + b);
 		}
 		
 	}
@@ -1531,6 +1537,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the course " + buildingId);
 			sqle.printStackTrace();
+			throw new DaoException("Error while deleting the course " + buildingId);
 		}
 	}
 	
@@ -1540,7 +1547,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addAmphi(Amphi a) {
 		Connection cnt = pa.getConnection();
-		String sql = "INSERT INTO amphi(buildingid, name, type, ipaddress, status, gmapurl) values(?,?,?,?,?,?)";
+		String sql = "INSERT INTO amphi(buildingid, name, type, ipaddress, status, gmapurl, version) values(?,?,?,?,?,?,?)";
 
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -1554,6 +1561,8 @@ public class DatabaseImpl implements IDatabase {
 			else
 				pstmt.setNull(6, Types.VARCHAR);
 			
+			pstmt.setString(7, a.getVersion());
+			
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("The amphi " + a + " has not been added to the database");
 				throw new DaoException("The amphi " + a + " has not been added to the database");
@@ -1562,6 +1571,7 @@ public class DatabaseImpl implements IDatabase {
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new amphi " + a);
 			sqle.printStackTrace();
+			throw new DaoException("Error while adding the new amphi " + a);
 		}
 	}
 	
@@ -1575,7 +1585,7 @@ public class DatabaseImpl implements IDatabase {
 		String sql = "SELECT amphi.*, count(course.ipaddress) FROM amphi LEFT OUTER JOIN course " +
 				"ON amphi.ipaddress = course.ipaddress " +
 				"WHERE amphi.buildingid = ? " +
-				"GROUP BY amphi.amphiid, amphi.buildingid, amphi.name, amphi.type, amphi.ipaddress, amphi.status, amphi.gmapurl " +
+				"GROUP BY amphi.amphiid, amphi.buildingid, amphi.name, amphi.type, amphi.ipaddress, amphi.status, amphi.gmapurl, amphi.version " +
 				"ORDER BY amphi.amphiid";
 		
 		try {
@@ -1591,7 +1601,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("type"),
 					rs.getString("ipaddress"),
 					rs.getBoolean("status"),
-					rs.getString("gmapurl")
+					rs.getString("gmapurl"),
+					rs.getString("version")
 				);
 				a.setNumber(rs.getInt("count"));
 				l.add(a);
@@ -1601,6 +1612,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the amphis list");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the amphis list");
 		}
 		
 		return l;
@@ -1627,7 +1639,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("type"),
 					rs.getString("ipaddress"),
 					rs.getBoolean("status"),
-					rs.getString("gmapurl")
+					rs.getString("gmapurl"),
+					rs.getString("version")
 				);
 			}
 		}
@@ -1660,13 +1673,15 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("type"),
 					rs.getString("ipaddress"),
 					rs.getBoolean("status"),
-					rs.getString("gmapurl")
+					rs.getString("gmapurl"),
+					rs.getString("version")
 				);
 			}
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the amphi " + ip);
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the amphi " + ip);
 		}
 		
 		return a;
@@ -1682,7 +1697,7 @@ public class DatabaseImpl implements IDatabase {
 		
 		/* Creation of the SQL query string */
 		String sql = "UPDATE amphi SET buildingid = ?, name = ? , type = ?, ";
-		sql += "ipaddress = ?, status = ?, gmapurl = ? WHERE amphiid = ?";
+		sql += "ipaddress = ?, status = ?, gmapurl = ?, version = ? WHERE amphiid = ?";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
@@ -1697,7 +1712,9 @@ public class DatabaseImpl implements IDatabase {
 				pstmt.setString(6, a.getGmapurl());
 			else
 				pstmt.setNull(6, Types.VARCHAR);
-			pstmt.setInt(7, a.getAmphiid());
+			
+			pstmt.setString(7, a.getVersion());
+			pstmt.setInt(8, a.getAmphiid());
 			
 			if( pstmt.executeUpdate() == 0 ) {
 				System.out.println("The amphi " + a + " has not been modified");
@@ -1714,6 +1731,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while modifying the amphi " + a);
 			sqle.printStackTrace();
+			throw new DaoException("Error while modifying the amphi " + a);
 		}
 	}
 
@@ -1735,6 +1753,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the amphi " + amphiId);
 			sqle.printStackTrace();
+			throw new DaoException("Error while deleting the amphi " + amphiId);
 		}
 	}
 	
@@ -1759,6 +1778,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while updating the status of the amphi " + ip);
 			sqle.printStackTrace();
+			throw new DaoException("Error while updating the status of the amphi " + ip);
 		}
 	}
 	
@@ -1786,6 +1806,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the user " + login);
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the user " + login);
 		}
 		
 		return u;
@@ -1815,6 +1836,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the user " + id);
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the user " + id);
 		}
 		
 		return u;
@@ -1839,6 +1861,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the next user Id");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the next user Id");
 		}
 		
 		return id;
@@ -1865,6 +1888,7 @@ public class DatabaseImpl implements IDatabase {
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new user " + u);
 			sqle.printStackTrace();
+			throw new DaoException("Error while adding the new user " + u);
 		}
 	}
 	
@@ -1896,6 +1920,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while modifying the user " + u);
 			sqle.printStackTrace();
+			throw new DaoException("Error while modifying the user " + u);
 		}
 		
 	}
@@ -1919,6 +1944,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the user " + userid);
 			sqle.printStackTrace();
+			throw new DaoException("Error while deleting the user " + userid);
 		}
 	}
 	
@@ -1965,6 +1991,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the course with user " + u.getUserid());
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the course with user " + u.getUserid());
 		}
 		
 		return l;
@@ -1989,6 +2016,7 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the course number");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the course number");
 		}
 
 		return number;
@@ -2021,8 +2049,534 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the list of users");
 			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the list of users");
 		}
 		
 		return l;
 	}
+	
+	
+	/**
+	 * Add a new tag
+	 * @param t Tag
+	 */
+	public void addTag(Tag t) {
+		Connection cnt = pa.getConnection();
+		String sql = "INSERT INTO tag(tag,courseid) values(?,?)";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setString(1, t.getTag());
+			pstmt.setInt(2, t.getCourseid());
+			
+			if( pstmt.executeUpdate() == 0) {
+				System.out.println("The tag " + t + " has not been added to the database");
+				throw new DaoException("The tag " + t + " has not been added to the database");
+			}
+		}
+		catch(SQLException sqle){
+			System.out.println("Error while adding the new tag " + t);
+			sqle.printStackTrace();
+			throw new DaoException("Error while adding the new tag " + t);
+		}
+	}
+	
+	/**
+	 * Deletes tags by providing its courseid
+	 * @param courseid the id of the course
+	 */
+	public void deleteTag(int courseid) {
+		
+		Connection cnt = pa.getConnection();
+		String sql = "DELETE FROM tag WHERE courseid = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, courseid);
+			pstmt.executeUpdate();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while deleting tags of course " + courseid);
+			sqle.printStackTrace();
+			throw new DaoException("Error while deleting tags of course " + courseid);
+		}
+	}
+	
+	
+	/**
+	 * Gets a list of all tags of a course
+	 * @param c Course
+	 * @return the list of tags
+	 */
+	public List<Tag> getTagsByCourse(Course c) {
+		
+		ResultSet rs = pa.query("SELECT * From tag WHERE courseid="+c.getCourseid()+ "ORDER BY tag");
+		List<Tag> l = new ArrayList<Tag>();
+		try {
+			while(rs.next()) {
+				l.add(new Tag(
+					rs.getInt("tagid"),
+					rs.getString("tag"),
+					rs.getInt("courseid")
+				));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the tags list");
+			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the tags list");
+		}
+		
+		return l;
+	}
+	
+	
+	/**
+	 * Gets a list of all tags
+	 * @return the list of tags
+	 */
+	public List<String> getAllTags() {
+		
+		ResultSet rs = pa.query("SELECT distinct(tag) From tag ORDER BY tag");
+		List<String> l = new ArrayList<String>();
+		try {
+			while(rs.next()) {
+				l.add(rs.getString("tag"));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the tags list");
+			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the tags list");
+		}
+		
+		return l;
+	}
+	
+	/**
+	 * Gets a list of most popular tags
+	 * @return the list of most popular tags
+	 */
+	public List<String> getMostPopularTags() {
+		
+		ResultSet rs = pa.query("select tag, count(*) from tag group by tag order by 2 desc,tag limit 20");
+		List<String> l = new ArrayList<String>();
+		try {
+			while(rs.next()) {
+				l.add(rs.getString("tag"));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the tags list");
+			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the tags list");
+		}
+		
+		return l;
+	}
+	
+	
+	/**
+	 * Gets a restricted list of courses
+	 * @param tag
+	 * @param number the number of courses to return
+	 * @param start the start number of the courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getCoursesByTags(List<String> tags, int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
+			
+		String sql = "SELECT * From course WHERE visible = true " +
+			"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
+			"AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+		
+			if( testKeyWord3 != null && ! testKeyWord3.equals(""))
+				sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord3 + "%' ";
+						
+			for(int i=0;i<tags.size();i++) 
+				sql += "and courseid in (select courseid from tag where tag='" + tags.get(i) + "') "; 
+							
+		sql += "ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start;
+		
+		ResultSet rs = pa.query(sql);
+		
+		List<Course> l = new ArrayList<Course>();
+		try {
+			while(rs.next()) {
+				l.add(new Course(
+					rs.getInt("courseid"),
+					rs.getTimestamp("date"),
+					rs.getString("type"),
+					rs.getString("title"),
+					rs.getString("description"),
+					rs.getString("formation"),
+					rs.getString("name"),
+					rs.getString("firstname"),
+					rs.getString("ipaddress"),
+					rs.getInt("duration"),
+					rs.getString("genre"),
+					rs.getBoolean("visible"),
+					rs.getInt("consultations"),
+					rs.getString("timing"),
+					rs.getString("mediafolder"),
+					rs.getBoolean("highquality"),
+					rs.getInt("userid")
+				));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the courses list");
+			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the courses list");
+		}
+		
+		return l;
+	}
+	
+	
+	/**
+	 * Gets the number of courses corresponding to the given criteria
+	 * @param params the criteria of the searched courses
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(List<String> tags, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
+		int number = 0;
+		
+		if( tags!=null) {
+			Connection cnt = pa.getConnection();
+												
+			String sql = "SELECT count(*) From course WHERE visible = true " +
+			"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
+			"AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+			
+			for(int i=0;i<tags.size();i++) 
+				sql += "and courseid in (select courseid from tag where tag='" + tags.get(i) + "') "; 
+			
+			if( testKeyWord3 != null && ! testKeyWord3.equals(""))
+				sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord3 + "%' ";
+			
+			try {
+				PreparedStatement pstmt = cnt.prepareStatement(sql);
+				
+				ResultSet rs = pstmt.executeQuery();
+				
+				if(rs.next()) 
+					number = rs.getInt("count");
+				rs.close();
+			}
+			catch( SQLException sqle) {
+				System.out.println("Error while retrieving the course number");
+				sqle.printStackTrace();
+				throw new DaoException("Error while retrieving the course number");
+			}
+		}
+		else
+			number = getCourseNumber(testKeyWord1, testKeyWord2, testKeyWord3);
+		
+		return number;
+	}
+	
+	
+	/**
+	 * Gets a restricted list of courses
+	 * @param mediafolder
+	 * @return course
+	 */
+	public Course getCourseByMediafolder(String mediafolder) {
+								
+		Course c = null;
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * From course WHERE mediafolder= '" + mediafolder + "'";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				c = new Course(
+					rs.getInt("courseid"),
+					rs.getTimestamp("date"),
+					rs.getString("type"),
+					rs.getString("title"),
+					rs.getString("description"),
+					rs.getString("formation"),
+					rs.getString("name"),
+					rs.getString("firstname"),
+					rs.getString("ipaddress"),
+					rs.getInt("duration"),
+					rs.getString("genre"),
+					rs.getBoolean("visible"),
+					rs.getInt("consultations"),
+					rs.getString("timing"),
+					rs.getString("mediafolder"),
+					rs.getBoolean("highquality"),
+					rs.getInt("userid")
+				);
+			}
+			else
+				throw new DaoException("Course " + mediafolder + " not found");
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the course " + mediafolder);
+			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the course " + mediafolder);
+		}
+		
+		return c;
+	}
+	
+	/**
+	 * Gets a list of the n selection courses
+	 * @param n the number of courses to return
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getNSelectionCourses(int n, String testKeyWord1, String testKeyWord2) {
+		
+		String sql = "SELECT * From course,selection WHERE courseid=idcourseselection AND genre IS NULL AND visible = true " +
+			"AND INITCAP(title) NOT LIKE '" + testKeyWord1 + "%' ";
+		
+		if( testKeyWord2 != null && ! testKeyWord2.equals(""))
+			sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+		
+		sql += "ORDER BY position ASC, date DESC, courseid DESC LIMIT " + n;
+				
+		ResultSet rs = pa.query(sql);
+		List<Course> l = new ArrayList<Course>();
+		try {
+			while(rs.next()) {
+				l.add(new Course(
+					rs.getInt("courseid"),
+					rs.getTimestamp("date"),
+					rs.getString("type"),
+					rs.getString("title"),
+					rs.getString("description"),
+					rs.getString("formation"),
+					rs.getString("name"),
+					rs.getString("firstname"),
+					rs.getString("ipaddress"),
+					rs.getInt("duration"),
+					rs.getString("genre"),
+					rs.getBoolean("visible"),
+					rs.getInt("consultations"),
+					rs.getString("timing"),
+					rs.getString("mediafolder"),
+					rs.getBoolean("highquality"),
+					rs.getInt("userid")
+				));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the courses list");
+			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the courses list");
+		}
+		
+		return l;
+	}
+	
+	/**
+	 * Gets a list of the n collection courses
+	 * @param n the number of courses to return
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getNFormationCourses(int n, String testKeyWord1, String testKeyWord2) {
+		
+		String sql = "SELECT * From course WHERE genre IS NULL AND visible = true " +
+			"AND INITCAP(title) NOT LIKE '" + testKeyWord1 + "%' AND formation=(select formationcollection from selection s where position=1) ";
+		
+		if( testKeyWord2 != null && ! testKeyWord2.equals(""))
+			sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+		
+		sql += "ORDER BY date DESC, courseid DESC LIMIT " + n;
+		
+		ResultSet rs = pa.query(sql);
+		List<Course> l = new ArrayList<Course>();
+		try {
+			while(rs.next()) {
+				l.add(new Course(
+					rs.getInt("courseid"),
+					rs.getTimestamp("date"),
+					rs.getString("type"),
+					rs.getString("title"),
+					rs.getString("description"),
+					rs.getString("formation"),
+					rs.getString("name"),
+					rs.getString("firstname"),
+					rs.getString("ipaddress"),
+					rs.getInt("duration"),
+					rs.getString("genre"),
+					rs.getBoolean("visible"),
+					rs.getInt("consultations"),
+					rs.getString("timing"),
+					rs.getString("mediafolder"),
+					rs.getBoolean("highquality"),
+					rs.getInt("userid")
+				));
+			}
+			rs.close();
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the courses list");
+			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the courses list");
+		}
+		
+		return l;
+	}
+	
+	/**
+	 * Gets the list of all the selection
+	 * @return the list of users
+	 */
+	public List<Selection> getAllSelections() {
+		
+		List<Selection> l = new ArrayList<Selection>();
+		
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * FROM selection order by position";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()) {
+				l.add( new Selection(
+					rs.getInt("position"),
+					rs.getInt("idcourseselection"),
+					rs.getString("formationcollection")
+					
+				));
+			}
+		}	
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the list of selections");
+			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the list of selections");
+		}
+		
+		return l;
+	}
+	
+	/**
+	 * Get selection by position 
+	 * @param position
+	 * @return the selection
+	 */
+	public Selection getSelection(int position) {
+		Selection s = null;
+		Connection cnt = pa.getConnection();
+		String sql = "SELECT * FROM selection WHERE position = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, position);
+			ResultSet rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				s = new Selection(
+					rs.getInt("position"),
+					rs.getInt("idcourseselection"),
+					rs.getString("formationcollection")
+				);
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the selection " + position);
+			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the selection " + position);
+		}
+		
+		return s;
+	}
+	
+	
+	
+	/**
+	 * Adds a new selection
+	 * @param s Selection
+	 */
+	public void addSelection(Selection s) {
+		Connection cnt = pa.getConnection();
+		String sql = "INSERT INTO selection(idcourseselection,formationcollection) values(?,?)";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, s.getIdcourseselection());
+			pstmt.setString(2, s.getFormationcollection());
+			
+			if( pstmt.executeUpdate() == 0) {
+				System.out.println("The Selection " + s + " has not been added to the database");
+				throw new DaoException("The Selection " + s + " has not been added to the database");
+			}
+		}
+		catch(SQLException sqle){
+			System.out.println("Error while adding the new selection " + s);
+			sqle.printStackTrace();
+			throw new DaoException("Error while adding the new selection " + s);
+		}
+	}
+	
+	/**
+	 * Modify a selection
+	 * @param s Selection
+	 */
+	public void modifySelection(Selection s) {
+		Connection cnt = pa.getConnection();
+		
+		/* Creation of the SQL query string */
+		String sql = "UPDATE selection SET position = ?, idcourseselection = ? , formationcollection = ? ";
+		sql += "WHERE position = ?";
+		
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			
+			/* Applies the parameters to the query */
+			pstmt.setInt(1, s.getPosition());
+			pstmt.setInt(2, s.getIdcourseselection());
+			pstmt.setString(3, s.getFormationcollection());
+			pstmt.setInt(4, s.getPosition());
+						
+			if( pstmt.executeUpdate() == 0 ) {
+				System.out.println("The selection " + s + " has not been modified");
+				throw new DaoException("The selection " + s + " has not been modified");
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while modifying the selection " + s);
+			sqle.printStackTrace();
+			throw new DaoException("Error while modifying the selection " + s);
+		}
+		
+	}
+	
+	/**
+	 * Deletes a selection by providing its id
+	 * @param position the position of the selection
+	 */
+	public void deleteSelection(int position) {
+		
+		Connection cnt = pa.getConnection();
+		String sql = "DELETE FROM selection WHERE position = ?";
+		try {
+			PreparedStatement pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, position);
+			if( pstmt.executeUpdate() == 0) {
+				System.out.println("the selection " + position + " has not been deleted");
+				throw new DaoException("the selection " + position + " has not been deleted");
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while deleting the selection " + position);
+			sqle.printStackTrace();
+			throw new DaoException("Error while deleting the selection " + position);
+		}
+	}
+	
 }

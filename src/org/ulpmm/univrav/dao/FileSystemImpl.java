@@ -10,7 +10,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -325,15 +327,19 @@ public class FileSystemImpl implements IFileSystem {
 	 * @param message the message to send
 	 * @return the answer of the client
 	 */
-	public String sendMessageToClient(String message, String ip, int port) {
+	public String sendMessageToClient(String message, String ip, int port, int timeout) {
 		
 		String answer = "";
 		
 		try {
 			/* Sends the message to the client */
-			Socket client = new Socket(ip, port);
+		//	Socket client = new Socket(ip, port);
+			SocketAddress sockaddr = new InetSocketAddress(ip, port);
+			Socket client = new Socket();
+			client.connect(sockaddr, timeout);
+				
 			PrintWriter output = new PrintWriter(client.getOutputStream());
-			output.println(message);
+			output.print(message);
 			output.flush();
 			/* Reception of the answer */
 			BufferedReader entree = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -456,7 +462,7 @@ public class FileSystemImpl implements IFileSystem {
 			        item.appendChild(coursCategory);
 			        
 			        Element coursLink = document.createElement("link");
-			        coursLink.setTextContent(recordedInterfaceUrl + "?id=" + course.getCourseid() + "&type=real");
+			        coursLink.setTextContent(recordedInterfaceUrl + "?id=" + course.getCourseid() + "&type=flash");
 			        item.appendChild(coursLink);
 			        
 			        Element coursPubDate = document.createElement("pubDate");
@@ -465,29 +471,31 @@ public class FileSystemImpl implements IFileSystem {
 			        
 			        String courseMediaUrl = coursesUrl + course.getMediaFolder() + "/" + course.getMediasFileName();
 			        
-			        Element coursEnclosure = document.createElement("enclosure");
-			        coursEnclosure.setAttribute("url",courseMediaUrl + ".mp3");
-			        coursEnclosure.setAttribute("type","audio/mpeg");
-			        coursEnclosure.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".mp3")));
-			        item.appendChild(coursEnclosure);
+			        if(course.getGenre()==null) {
+			        	Element coursEnclosure = document.createElement("enclosure");
+			        	coursEnclosure.setAttribute("url",courseMediaUrl + ".mp3");
+			        	coursEnclosure.setAttribute("type","audio/mpeg");
+			        	coursEnclosure.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".mp3")));
+			        	item.appendChild(coursEnclosure);
 			        
-			        Element coursEnclosure2 = document.createElement("enclosure");
-			        coursEnclosure2.setAttribute("url",courseMediaUrl + ".ogg");
-			        coursEnclosure2.setAttribute("type","application/ogg");
-			        coursEnclosure2.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".ogg")));
-			        item.appendChild(coursEnclosure2);
+			        	Element coursEnclosure2 = document.createElement("enclosure");
+			        	coursEnclosure2.setAttribute("url",courseMediaUrl + ".ogg");
+			        	coursEnclosure2.setAttribute("type","application/ogg");
+			        	coursEnclosure2.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".ogg")));
+			        	item.appendChild(coursEnclosure2);
 			        
-			        Element coursEnclosure3 = document.createElement("enclosure");
-			        coursEnclosure3.setAttribute("url",courseMediaUrl + ".pdf");
-			        coursEnclosure3.setAttribute("type","application/pdf");
-			        coursEnclosure3.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".pdf")));
-			        item.appendChild(coursEnclosure3);
+			        	Element coursEnclosure3 = document.createElement("enclosure");
+			        	coursEnclosure3.setAttribute("url",courseMediaUrl + ".pdf");
+			        	coursEnclosure3.setAttribute("type","application/pdf");
+			        	coursEnclosure3.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".pdf")));
+			        	item.appendChild(coursEnclosure3);
 			        
-			        Element coursEnclosure4 = document.createElement("enclosure");
-			        coursEnclosure4.setAttribute("url",courseMediaUrl + ".zip");
-			        coursEnclosure4.setAttribute("type","application/zip");
-			        coursEnclosure4.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".zip")));
-			        item.appendChild(coursEnclosure4);
+			        	Element coursEnclosure4 = document.createElement("enclosure");
+			        	coursEnclosure4.setAttribute("url",courseMediaUrl + ".zip");
+			        	coursEnclosure4.setAttribute("type","application/zip");
+			        	coursEnclosure4.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".zip")));
+			        	item.appendChild(coursEnclosure4);
+			        }
 				}
 			}
 		        
