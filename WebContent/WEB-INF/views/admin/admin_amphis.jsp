@@ -49,7 +49,6 @@
 	    		<display:column property="amphiid" sortable="true"/>
 	    		<display:column property="buildingid" />
 				<display:column property="name" title="Name" sortable="true" />
-				<display:column property="type" sortable="true" />
 				<display:column property="ipAddress" sortable="true" />
 				<display:column property="version" sortable="true" />
 				<display:column property="number" title="Courses" sortable="true" />

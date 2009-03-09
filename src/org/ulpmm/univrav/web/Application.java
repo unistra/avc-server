@@ -623,7 +623,7 @@ public class Application extends HttpServlet {
 		request.setAttribute("lastcourses", service.getNLastCourses(lastCourseNumber, testKeyWord2, testKeyWord3));
 		request.setAttribute("selectioncourses", service.getNSelectionCourses(selectionCourseNumber, testKeyWord2, testKeyWord3));
 		request.setAttribute("collectioncourses", service.getNFormationCourses(collectionCourseNumber, testKeyWord2, testKeyWord3));
-		request.setAttribute("collectionname", service.getSelection(1).getFormationcollection());
+		request.setAttribute("collectionname", service.getSelection(1)!=null ? service.getSelection(1).getFormationcollection() : "");
 		request.setAttribute("rssFileName", rssName + ".xml");
 		request.setAttribute("allTags", service.getAllTags());
 		request.setAttribute("mostPopularTags", service.getTagCloud(service.getMostPopularTags()));
@@ -1046,7 +1046,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("tags",tags);
 			
 			/* Saves the page for the style selection thickbox return */
-			session.setAttribute("previousPage", "/tags?tags="+request.getParameter("tags")+"&page=" + pageNumber);
+			session.setAttribute("previousPage", "/tags?tags="+tags+"&page=" + pageNumber);
 			
 			listTags=null; //set list null for memory
 			
@@ -1647,7 +1647,7 @@ public class Application extends HttpServlet {
 		String url = "";
 		
 		url = "rtmp://" + flashServerIp + "/live&id=" + ip.replace('.', '_');
-		request.setAttribute("type", a.getType());	
+		request.setAttribute("type", "video");	
 		
 		request.setAttribute("amphi", amphi);
 		request.setAttribute("building", building);
@@ -1753,7 +1753,6 @@ public class Application extends HttpServlet {
 				amphiId,
 				Integer.parseInt(request.getParameter("buildingid")),
 				request.getParameter("name"),
-				request.getParameter("type"),
 				request.getParameter("ipaddress"),
 				Boolean.parseBoolean(request.getParameter("status")),
 				request.getParameter("gmapurl").equals("") ? null : request.getParameter("gmapurl"),

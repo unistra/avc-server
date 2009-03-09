@@ -59,16 +59,27 @@
 					<c:forEach var="tag" items="${listTags}" varStatus="status"><a class="pTag"><c:out value="${tag}"/></a><c:if test="${status.index!=listTagsSize-1}"><a class="closeDualTag" href="javascript:closeTag('${tag}')"/><img class="imgTag "src="../files/styles/${sessionScope.style}/img/transp.png"></a></c:if><c:if test="${status.index==listTagsSize-1}"><a class="closeTag" href="javascript:closeTag('${tag}')"/><img class="imgTag "src="../files/styles/${sessionScope.style}/img/transp.png"></a></c:if></c:forEach>
 				</div>
 					
-				<table cellspacing="0">
-					<tr class="tableheader">
-						<th colspan="5" id="courses"><fmt:message key="Les cours"/></th>
-					</tr>
-					<c:import url="include/courselist.jsp" />
-				</table>
-				
-	    		<div class="pagination">
-	    			<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" tags="${tags}" />
-				</div>
+				<c:choose>
+					<c:when test="${!empty courses}">	
+						<table cellspacing="0">
+							<tr class="tableheader">
+								<th colspan="5" id="courses"><fmt:message key="Les cours"/></th>
+							</tr>
+							<c:import url="include/courselist.jsp" />
+						</table>
+								
+	    				<div class="pagination">
+	    					<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" tags="${tags}" />
+						</div>
+					</c:when>
+					<c:otherwise>
+						<div class="divCenter">
+							<br>
+							<p><fmt:message key="nocourses"/></p>
+						</div>
+					</c:otherwise>
+				</c:choose>
+								
 	    	</div>
     	</div>
 	    	

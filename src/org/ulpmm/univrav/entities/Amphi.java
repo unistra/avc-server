@@ -12,7 +12,6 @@ public class Amphi implements Comparable<Amphi>{
 	private int amphiid;
 	private int buildingid;
 	private String name;
-	private String type;
 	private String ipAddress;
 	private boolean status;
 	private String gmapurl;
@@ -25,18 +24,16 @@ public class Amphi implements Comparable<Amphi>{
 	/**
 	 * @param buildingid
 	 * @param name
-	 * @param type
 	 * @param ipAddress
 	 * @param status
 	 * @param gmapurl
 	 */
-	public Amphi(int amphiid, int buildingid, String name, String type, String ipAddress,
+	public Amphi(int amphiid, int buildingid, String name, String ipAddress,
 			boolean status, String gmapurl,String version) {
 		super();
 		this.amphiid = amphiid;
 		this.buildingid = buildingid;
 		this.name = name;
-		this.type = type;
 		this.ipAddress = ipAddress;
 		this.status = status;
 		this.gmapurl = gmapurl;
@@ -64,13 +61,7 @@ public class Amphi implements Comparable<Amphi>{
 		return name;
 	}
 
-	/**
-	 * @return the type
-	 */
-	public String getType() {
-		return type;
-	}
-
+	
 	/**
 	 * @return the ipAddress
 	 */

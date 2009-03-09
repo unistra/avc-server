@@ -65,6 +65,8 @@
 	    	
 	    	</div>
 	    	
+	    	<c:choose>
+			<c:when test="${!empty courses}">	
 	    	<div class="course">
 				<table cellspacing="0">
 					<tr class="tableheader">
@@ -77,6 +79,14 @@
 	    		<div class="pagination">
 	    			<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" />
 				</div>
+				</c:when>
+					<c:otherwise>
+						<div class="divCenter">
+							<br>
+							<p><fmt:message key="nocourses"/></p>
+						</div>
+					</c:otherwise>
+				</c:choose>
 	    	</div>
     	</div>
 	    	

@@ -60,21 +60,7 @@
 					
 				</c:when>
 				<c:when test="${type == 'video'}">
-				
-					<!-- <object id="video" classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="320" height="240">
-						<param name="src" value="${url}">
-						<param name="controls" value="ImageWindow">
-						<param name="console" value="console">
-						<param name="autostart" value="true">
-						<embed type="audio/x-pn-realaudio-plugin" name="video" src="${url}" width="320" height="240" align="left" controls="ImageWindow" console="console" autostart="true">
-					</object>
-						<br />
-					<object classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="320" height="40">
-						<param name="controls" value="ControlPanel">
-						<param name="console" value="console">
-						<embed type="audio/x-pn-realaudio-plugin" width="320" height="40" align="left" controls="ControlPanel" console="console">
-					</object> -->
-					
+									
 					<p id="flash">This text will be replaced</p>
 		            <script type="text/javascript">
 			            var so = new SWFObject('../files/jwflvplayer/mediaplayer.swf','flashvideo','320','260','8');
