@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Started on 2009-03-06 11:00:40 CET
+-- Started on 2009-03-09 17:45:59 CET
 
 SET client_encoding = 'LATIN9';
 SET standard_conforming_strings = off;
@@ -17,7 +17,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 1203 (class 1259 OID 16560)
+-- TOC entry 1202 (class 1259 OID 16560)
 -- Dependencies: 5
 -- Name: amphi; Type: TABLE; Schema: public; Owner: sqluser; Tablespace: 
 --
@@ -26,7 +26,6 @@ CREATE TABLE amphi (
     amphiid integer NOT NULL,
     buildingid integer NOT NULL,
     name character varying NOT NULL,
-    type character varying NOT NULL,
     ipaddress character varying NOT NULL,
     status boolean NOT NULL,
     gmapurl character varying,
@@ -37,8 +36,8 @@ CREATE TABLE amphi (
 ALTER TABLE public.amphi OWNER TO sqluser;
 
 --
--- TOC entry 1202 (class 1259 OID 16558)
--- Dependencies: 5 1203
+-- TOC entry 1201 (class 1259 OID 16558)
+-- Dependencies: 5 1202
 -- Name: amphi_amphiid_seq; Type: SEQUENCE; Schema: public; Owner: sqluser
 --
 
@@ -52,8 +51,8 @@ CREATE SEQUENCE amphi_amphiid_seq
 ALTER TABLE public.amphi_amphiid_seq OWNER TO sqluser;
 
 --
--- TOC entry 1580 (class 0 OID 0)
--- Dependencies: 1202
+-- TOC entry 1578 (class 0 OID 0)
+-- Dependencies: 1201
 -- Name: amphi_amphiid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sqluser
 --
 
@@ -61,7 +60,7 @@ ALTER SEQUENCE amphi_amphiid_seq OWNED BY amphi.amphiid;
 
 
 --
--- TOC entry 1205 (class 1259 OID 16568)
+-- TOC entry 1204 (class 1259 OID 16568)
 -- Dependencies: 5
 -- Name: building; Type: TABLE; Schema: public; Owner: sqluser; Tablespace: 
 --
@@ -76,8 +75,8 @@ CREATE TABLE building (
 ALTER TABLE public.building OWNER TO sqluser;
 
 --
--- TOC entry 1204 (class 1259 OID 16566)
--- Dependencies: 5 1205
+-- TOC entry 1203 (class 1259 OID 16566)
+-- Dependencies: 5 1204
 -- Name: building_buildingid_seq; Type: SEQUENCE; Schema: public; Owner: sqluser
 --
 
@@ -91,8 +90,8 @@ CREATE SEQUENCE building_buildingid_seq
 ALTER TABLE public.building_buildingid_seq OWNER TO sqluser;
 
 --
--- TOC entry 1583 (class 0 OID 0)
--- Dependencies: 1204
+-- TOC entry 1581 (class 0 OID 0)
+-- Dependencies: 1203
 -- Name: building_buildingid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sqluser
 --
 
@@ -100,8 +99,8 @@ ALTER SEQUENCE building_buildingid_seq OWNED BY building.buildingid;
 
 
 --
--- TOC entry 1207 (class 1259 OID 16576)
--- Dependencies: 1542 1543 1544 5
+-- TOC entry 1206 (class 1259 OID 16576)
+-- Dependencies: 1540 1541 1542 5
 -- Name: course; Type: TABLE; Schema: public; Owner: sqluser; Tablespace: 
 --
 
@@ -129,8 +128,8 @@ CREATE TABLE course (
 ALTER TABLE public.course OWNER TO sqluser;
 
 --
--- TOC entry 1206 (class 1259 OID 16574)
--- Dependencies: 5 1207
+-- TOC entry 1205 (class 1259 OID 16574)
+-- Dependencies: 5 1206
 -- Name: course_courseid_seq; Type: SEQUENCE; Schema: public; Owner: sqluser
 --
 
@@ -144,8 +143,8 @@ CREATE SEQUENCE course_courseid_seq
 ALTER TABLE public.course_courseid_seq OWNER TO sqluser;
 
 --
--- TOC entry 1586 (class 0 OID 0)
--- Dependencies: 1206
+-- TOC entry 1584 (class 0 OID 0)
+-- Dependencies: 1205
 -- Name: course_courseid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sqluser
 --
 
@@ -153,7 +152,7 @@ ALTER SEQUENCE course_courseid_seq OWNED BY course.courseid;
 
 
 --
--- TOC entry 1214 (class 1259 OID 16675)
+-- TOC entry 1212 (class 1259 OID 16675)
 -- Dependencies: 5
 -- Name: selection_selectionid_seq; Type: SEQUENCE; Schema: public; Owner: sqluser
 --
@@ -168,8 +167,8 @@ CREATE SEQUENCE selection_selectionid_seq
 ALTER TABLE public.selection_selectionid_seq OWNER TO sqluser;
 
 --
--- TOC entry 1217 (class 1259 OID 16692)
--- Dependencies: 1548 5
+-- TOC entry 1215 (class 1259 OID 16692)
+-- Dependencies: 1546 5
 -- Name: selection; Type: TABLE; Schema: public; Owner: sqluser; Tablespace: 
 --
 
@@ -183,7 +182,7 @@ CREATE TABLE selection (
 ALTER TABLE public.selection OWNER TO sqluser;
 
 --
--- TOC entry 1209 (class 1259 OID 16587)
+-- TOC entry 1208 (class 1259 OID 16587)
 -- Dependencies: 5
 -- Name: slide; Type: TABLE; Schema: public; Owner: sqluser; Tablespace: 
 --
@@ -198,8 +197,8 @@ CREATE TABLE slide (
 ALTER TABLE public.slide OWNER TO sqluser;
 
 --
--- TOC entry 1208 (class 1259 OID 16585)
--- Dependencies: 5 1209
+-- TOC entry 1207 (class 1259 OID 16585)
+-- Dependencies: 5 1208
 -- Name: slide_slideid_seq; Type: SEQUENCE; Schema: public; Owner: sqluser
 --
 
@@ -213,8 +212,8 @@ CREATE SEQUENCE slide_slideid_seq
 ALTER TABLE public.slide_slideid_seq OWNER TO sqluser;
 
 --
--- TOC entry 1591 (class 0 OID 0)
--- Dependencies: 1208
+-- TOC entry 1589 (class 0 OID 0)
+-- Dependencies: 1207
 -- Name: slide_slideid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sqluser
 --
 
@@ -222,7 +221,7 @@ ALTER SEQUENCE slide_slideid_seq OWNED BY slide.slideid;
 
 
 --
--- TOC entry 1216 (class 1259 OID 16679)
+-- TOC entry 1214 (class 1259 OID 16679)
 -- Dependencies: 5
 -- Name: tag; Type: TABLE; Schema: public; Owner: sqluser; Tablespace: 
 --
@@ -237,24 +236,8 @@ CREATE TABLE tag (
 ALTER TABLE public.tag OWNER TO sqluser;
 
 --
--- TOC entry 1213 (class 1259 OID 16673)
--- Dependencies: 5
--- Name: tag_tagid_seq; Type: SEQUENCE; Schema: public; Owner: sqluser
---
-
-CREATE SEQUENCE tag_tagid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.tag_tagid_seq OWNER TO sqluser;
-
---
--- TOC entry 1215 (class 1259 OID 16677)
--- Dependencies: 5 1216
+-- TOC entry 1213 (class 1259 OID 16677)
+-- Dependencies: 5 1214
 -- Name: tag_tagid_seq1; Type: SEQUENCE; Schema: public; Owner: sqluser
 --
 
@@ -268,8 +251,8 @@ CREATE SEQUENCE tag_tagid_seq1
 ALTER TABLE public.tag_tagid_seq1 OWNER TO sqluser;
 
 --
--- TOC entry 1595 (class 0 OID 0)
--- Dependencies: 1215
+-- TOC entry 1592 (class 0 OID 0)
+-- Dependencies: 1213
 -- Name: tag_tagid_seq1; Type: SEQUENCE OWNED BY; Schema: public; Owner: sqluser
 --
 
@@ -277,7 +260,7 @@ ALTER SEQUENCE tag_tagid_seq1 OWNED BY tag.tagid;
 
 
 --
--- TOC entry 1210 (class 1259 OID 16590)
+-- TOC entry 1209 (class 1259 OID 16590)
 -- Dependencies: 5
 -- Name: univr; Type: TABLE; Schema: public; Owner: sqluser; Tablespace: 
 --
@@ -293,7 +276,7 @@ CREATE TABLE univr (
 ALTER TABLE public.univr OWNER TO sqluser;
 
 --
--- TOC entry 1212 (class 1259 OID 16656)
+-- TOC entry 1211 (class 1259 OID 16656)
 -- Dependencies: 5
 -- Name: user; Type: TABLE; Schema: public; Owner: sqluser; Tablespace: 
 --
@@ -308,8 +291,8 @@ CREATE TABLE "user" (
 ALTER TABLE public."user" OWNER TO sqluser;
 
 --
--- TOC entry 1211 (class 1259 OID 16654)
--- Dependencies: 5 1212
+-- TOC entry 1210 (class 1259 OID 16654)
+-- Dependencies: 5 1211
 -- Name: user_userid_seq; Type: SEQUENCE; Schema: public; Owner: sqluser
 --
 
@@ -323,8 +306,8 @@ CREATE SEQUENCE user_userid_seq
 ALTER TABLE public.user_userid_seq OWNER TO sqluser;
 
 --
--- TOC entry 1598 (class 0 OID 0)
--- Dependencies: 1211
+-- TOC entry 1595 (class 0 OID 0)
+-- Dependencies: 1210
 -- Name: user_userid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sqluser
 --
 
@@ -332,8 +315,8 @@ ALTER SEQUENCE user_userid_seq OWNED BY "user".userid;
 
 
 --
--- TOC entry 1539 (class 2604 OID 16562)
--- Dependencies: 1203 1202 1203
+-- TOC entry 1537 (class 2604 OID 16562)
+-- Dependencies: 1202 1201 1202
 -- Name: amphiid; Type: DEFAULT; Schema: public; Owner: sqluser
 --
 
@@ -341,8 +324,8 @@ ALTER TABLE amphi ALTER COLUMN amphiid SET DEFAULT nextval('amphi_amphiid_seq'::
 
 
 --
--- TOC entry 1540 (class 2604 OID 16570)
--- Dependencies: 1205 1204 1205
+-- TOC entry 1538 (class 2604 OID 16570)
+-- Dependencies: 1204 1203 1204
 -- Name: buildingid; Type: DEFAULT; Schema: public; Owner: sqluser
 --
 
@@ -350,8 +333,8 @@ ALTER TABLE building ALTER COLUMN buildingid SET DEFAULT nextval('building_build
 
 
 --
--- TOC entry 1541 (class 2604 OID 16578)
--- Dependencies: 1207 1206 1207
+-- TOC entry 1539 (class 2604 OID 16578)
+-- Dependencies: 1206 1205 1206
 -- Name: courseid; Type: DEFAULT; Schema: public; Owner: sqluser
 --
 
@@ -359,8 +342,8 @@ ALTER TABLE course ALTER COLUMN courseid SET DEFAULT nextval('course_courseid_se
 
 
 --
--- TOC entry 1545 (class 2604 OID 16589)
--- Dependencies: 1209 1208 1209
+-- TOC entry 1543 (class 2604 OID 16589)
+-- Dependencies: 1208 1207 1208
 -- Name: slideid; Type: DEFAULT; Schema: public; Owner: sqluser
 --
 
@@ -368,8 +351,8 @@ ALTER TABLE slide ALTER COLUMN slideid SET DEFAULT nextval('slide_slideid_seq'::
 
 
 --
--- TOC entry 1547 (class 2604 OID 16681)
--- Dependencies: 1216 1215 1216
+-- TOC entry 1545 (class 2604 OID 16681)
+-- Dependencies: 1214 1213 1214
 -- Name: tagid; Type: DEFAULT; Schema: public; Owner: sqluser
 --
 
@@ -377,8 +360,8 @@ ALTER TABLE tag ALTER COLUMN tagid SET DEFAULT nextval('tag_tagid_seq1'::regclas
 
 
 --
--- TOC entry 1546 (class 2604 OID 16658)
--- Dependencies: 1212 1211 1212
+-- TOC entry 1544 (class 2604 OID 16658)
+-- Dependencies: 1211 1210 1211
 -- Name: userid; Type: DEFAULT; Schema: public; Owner: sqluser
 --
 
@@ -386,8 +369,8 @@ ALTER TABLE "user" ALTER COLUMN userid SET DEFAULT nextval('user_userid_seq'::re
 
 
 --
--- TOC entry 1550 (class 2606 OID 16672)
--- Dependencies: 1203 1203
+-- TOC entry 1548 (class 2606 OID 16672)
+-- Dependencies: 1202 1202
 -- Name: amphi_ipaddress_key; Type: CONSTRAINT; Schema: public; Owner: sqluser; Tablespace: 
 --
 
@@ -396,8 +379,8 @@ ALTER TABLE ONLY amphi
 
 
 --
--- TOC entry 1552 (class 2606 OID 16593)
--- Dependencies: 1203 1203
+-- TOC entry 1550 (class 2606 OID 16593)
+-- Dependencies: 1202 1202
 -- Name: amphi_pkey; Type: CONSTRAINT; Schema: public; Owner: sqluser; Tablespace: 
 --
 
@@ -406,8 +389,8 @@ ALTER TABLE ONLY amphi
 
 
 --
--- TOC entry 1554 (class 2606 OID 16595)
--- Dependencies: 1205 1205
+-- TOC entry 1552 (class 2606 OID 16595)
+-- Dependencies: 1204 1204
 -- Name: building_pkey; Type: CONSTRAINT; Schema: public; Owner: sqluser; Tablespace: 
 --
 
@@ -416,8 +399,8 @@ ALTER TABLE ONLY building
 
 
 --
--- TOC entry 1556 (class 2606 OID 16597)
--- Dependencies: 1207 1207
+-- TOC entry 1554 (class 2606 OID 16597)
+-- Dependencies: 1206 1206
 -- Name: course_pkey; Type: CONSTRAINT; Schema: public; Owner: sqluser; Tablespace: 
 --
 
@@ -426,8 +409,8 @@ ALTER TABLE ONLY course
 
 
 --
--- TOC entry 1568 (class 2606 OID 16699)
--- Dependencies: 1217 1217
+-- TOC entry 1566 (class 2606 OID 16699)
+-- Dependencies: 1215 1215
 -- Name: selection_pkey; Type: CONSTRAINT; Schema: public; Owner: sqluser; Tablespace: 
 --
 
@@ -436,8 +419,8 @@ ALTER TABLE ONLY selection
 
 
 --
--- TOC entry 1558 (class 2606 OID 16599)
--- Dependencies: 1209 1209
+-- TOC entry 1556 (class 2606 OID 16599)
+-- Dependencies: 1208 1208
 -- Name: slide_pkey; Type: CONSTRAINT; Schema: public; Owner: sqluser; Tablespace: 
 --
 
@@ -446,8 +429,8 @@ ALTER TABLE ONLY slide
 
 
 --
--- TOC entry 1566 (class 2606 OID 16686)
--- Dependencies: 1216 1216
+-- TOC entry 1564 (class 2606 OID 16686)
+-- Dependencies: 1214 1214
 -- Name: tag_pkey; Type: CONSTRAINT; Schema: public; Owner: sqluser; Tablespace: 
 --
 
@@ -456,8 +439,8 @@ ALTER TABLE ONLY tag
 
 
 --
--- TOC entry 1560 (class 2606 OID 16601)
--- Dependencies: 1210 1210
+-- TOC entry 1558 (class 2606 OID 16601)
+-- Dependencies: 1209 1209
 -- Name: univr_pkey; Type: CONSTRAINT; Schema: public; Owner: sqluser; Tablespace: 
 --
 
@@ -466,8 +449,8 @@ ALTER TABLE ONLY univr
 
 
 --
--- TOC entry 1562 (class 2606 OID 16665)
--- Dependencies: 1212 1212
+-- TOC entry 1560 (class 2606 OID 16665)
+-- Dependencies: 1211 1211
 -- Name: user_login_key; Type: CONSTRAINT; Schema: public; Owner: sqluser; Tablespace: 
 --
 
@@ -476,8 +459,8 @@ ALTER TABLE ONLY "user"
 
 
 --
--- TOC entry 1564 (class 2606 OID 16663)
--- Dependencies: 1212 1212
+-- TOC entry 1562 (class 2606 OID 16663)
+-- Dependencies: 1211 1211
 -- Name: user_pkey; Type: CONSTRAINT; Schema: public; Owner: sqluser; Tablespace: 
 --
 
@@ -486,8 +469,8 @@ ALTER TABLE ONLY "user"
 
 
 --
--- TOC entry 1569 (class 2606 OID 16641)
--- Dependencies: 1203 1205 1553
+-- TOC entry 1567 (class 2606 OID 16641)
+-- Dependencies: 1202 1204 1551
 -- Name: amphi_buildingid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sqluser
 --
 
@@ -496,8 +479,8 @@ ALTER TABLE ONLY amphi
 
 
 --
--- TOC entry 1570 (class 2606 OID 16666)
--- Dependencies: 1207 1212 1563
+-- TOC entry 1568 (class 2606 OID 16666)
+-- Dependencies: 1206 1211 1561
 -- Name: course_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sqluser
 --
 
@@ -506,8 +489,8 @@ ALTER TABLE ONLY course
 
 
 --
--- TOC entry 1571 (class 2606 OID 16607)
--- Dependencies: 1209 1207 1555
+-- TOC entry 1569 (class 2606 OID 16607)
+-- Dependencies: 1208 1206 1553
 -- Name: slide_courseid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sqluser
 --
 
@@ -516,8 +499,8 @@ ALTER TABLE ONLY slide
 
 
 --
--- TOC entry 1573 (class 2606 OID 16687)
--- Dependencies: 1216 1207 1555
+-- TOC entry 1571 (class 2606 OID 16687)
+-- Dependencies: 1214 1206 1553
 -- Name: tag_courseid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sqluser
 --
 
@@ -526,8 +509,8 @@ ALTER TABLE ONLY tag
 
 
 --
--- TOC entry 1572 (class 2606 OID 16646)
--- Dependencies: 1210 1207 1555
+-- TOC entry 1570 (class 2606 OID 16646)
+-- Dependencies: 1209 1206 1553
 -- Name: univr_courseid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sqluser
 --
 
@@ -536,7 +519,7 @@ ALTER TABLE ONLY univr
 
 
 --
--- TOC entry 1578 (class 0 OID 0)
+-- TOC entry 1576 (class 0 OID 0)
 -- Dependencies: 5
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
 --
@@ -548,8 +531,8 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
--- TOC entry 1579 (class 0 OID 0)
--- Dependencies: 1203
+-- TOC entry 1577 (class 0 OID 0)
+-- Dependencies: 1202
 -- Name: amphi; Type: ACL; Schema: public; Owner: sqluser
 --
 
@@ -561,8 +544,8 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE amphi TO PUBLIC;
 
 
 --
--- TOC entry 1581 (class 0 OID 0)
--- Dependencies: 1202
+-- TOC entry 1579 (class 0 OID 0)
+-- Dependencies: 1201
 -- Name: amphi_amphiid_seq; Type: ACL; Schema: public; Owner: sqluser
 --
 
@@ -574,8 +557,8 @@ GRANT SELECT,UPDATE ON SEQUENCE amphi_amphiid_seq TO PUBLIC;
 
 
 --
--- TOC entry 1582 (class 0 OID 0)
--- Dependencies: 1205
+-- TOC entry 1580 (class 0 OID 0)
+-- Dependencies: 1204
 -- Name: building; Type: ACL; Schema: public; Owner: sqluser
 --
 
@@ -587,8 +570,8 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE building TO PUBLIC;
 
 
 --
--- TOC entry 1584 (class 0 OID 0)
--- Dependencies: 1204
+-- TOC entry 1582 (class 0 OID 0)
+-- Dependencies: 1203
 -- Name: building_buildingid_seq; Type: ACL; Schema: public; Owner: sqluser
 --
 
@@ -600,8 +583,8 @@ GRANT SELECT,UPDATE ON SEQUENCE building_buildingid_seq TO PUBLIC;
 
 
 --
--- TOC entry 1585 (class 0 OID 0)
--- Dependencies: 1207
+-- TOC entry 1583 (class 0 OID 0)
+-- Dependencies: 1206
 -- Name: course; Type: ACL; Schema: public; Owner: sqluser
 --
 
@@ -613,8 +596,8 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE course TO PUBLIC;
 
 
 --
--- TOC entry 1587 (class 0 OID 0)
--- Dependencies: 1206
+-- TOC entry 1585 (class 0 OID 0)
+-- Dependencies: 1205
 -- Name: course_courseid_seq; Type: ACL; Schema: public; Owner: sqluser
 --
 
@@ -626,8 +609,8 @@ GRANT SELECT,UPDATE ON SEQUENCE course_courseid_seq TO PUBLIC;
 
 
 --
--- TOC entry 1588 (class 0 OID 0)
--- Dependencies: 1214
+-- TOC entry 1586 (class 0 OID 0)
+-- Dependencies: 1212
 -- Name: selection_selectionid_seq; Type: ACL; Schema: public; Owner: sqluser
 --
 
@@ -639,8 +622,8 @@ GRANT SELECT,UPDATE ON SEQUENCE selection_selectionid_seq TO PUBLIC;
 
 
 --
--- TOC entry 1589 (class 0 OID 0)
--- Dependencies: 1217
+-- TOC entry 1587 (class 0 OID 0)
+-- Dependencies: 1215
 -- Name: selection; Type: ACL; Schema: public; Owner: sqluser
 --
 
@@ -652,8 +635,8 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE selection TO PUBLIC;
 
 
 --
--- TOC entry 1590 (class 0 OID 0)
--- Dependencies: 1209
+-- TOC entry 1588 (class 0 OID 0)
+-- Dependencies: 1208
 -- Name: slide; Type: ACL; Schema: public; Owner: sqluser
 --
 
@@ -665,8 +648,8 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE slide TO PUBLIC;
 
 
 --
--- TOC entry 1592 (class 0 OID 0)
--- Dependencies: 1208
+-- TOC entry 1590 (class 0 OID 0)
+-- Dependencies: 1207
 -- Name: slide_slideid_seq; Type: ACL; Schema: public; Owner: sqluser
 --
 
@@ -678,8 +661,8 @@ GRANT SELECT,UPDATE ON SEQUENCE slide_slideid_seq TO PUBLIC;
 
 
 --
--- TOC entry 1593 (class 0 OID 0)
--- Dependencies: 1216
+-- TOC entry 1591 (class 0 OID 0)
+-- Dependencies: 1214
 -- Name: tag; Type: ACL; Schema: public; Owner: sqluser
 --
 
@@ -691,21 +674,8 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE tag TO PUBLIC;
 
 
 --
--- TOC entry 1594 (class 0 OID 0)
--- Dependencies: 1213
--- Name: tag_tagid_seq; Type: ACL; Schema: public; Owner: sqluser
---
-
-REVOKE ALL ON SEQUENCE tag_tagid_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE tag_tagid_seq FROM sqluser;
-GRANT SELECT,UPDATE ON SEQUENCE tag_tagid_seq TO sqluser;
-GRANT SELECT,UPDATE ON SEQUENCE tag_tagid_seq TO postgres;
-GRANT SELECT,UPDATE ON SEQUENCE tag_tagid_seq TO PUBLIC;
-
-
---
--- TOC entry 1596 (class 0 OID 0)
--- Dependencies: 1210
+-- TOC entry 1593 (class 0 OID 0)
+-- Dependencies: 1209
 -- Name: univr; Type: ACL; Schema: public; Owner: sqluser
 --
 
@@ -717,8 +687,8 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE univr TO PUBLIC;
 
 
 --
--- TOC entry 1597 (class 0 OID 0)
--- Dependencies: 1212
+-- TOC entry 1594 (class 0 OID 0)
+-- Dependencies: 1211
 -- Name: user; Type: ACL; Schema: public; Owner: sqluser
 --
 
@@ -729,7 +699,7 @@ GRANT ALL ON TABLE "user" TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "user" TO PUBLIC;
 
 
--- Completed on 2009-03-06 11:00:41 CET
+-- Completed on 2009-03-09 17:45:59 CET
 
 --
 -- PostgreSQL database dump complete
