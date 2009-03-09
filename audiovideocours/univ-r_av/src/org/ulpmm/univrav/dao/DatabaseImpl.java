@@ -1547,21 +1547,20 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addAmphi(Amphi a) {
 		Connection cnt = pa.getConnection();
-		String sql = "INSERT INTO amphi(buildingid, name, type, ipaddress, status, gmapurl, version) values(?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO amphi(buildingid, name, ipaddress, status, gmapurl, version) values(?,?,?,?,?,?,?)";
 
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, a.getBuildingid());
 			pstmt.setString(2, a.getName());
-			pstmt.setString(3, a.getType());
-			pstmt.setString(4, a.getIpAddress());
-			pstmt.setBoolean(5, false);
+			pstmt.setString(3, a.getIpAddress());
+			pstmt.setBoolean(4, false);
 			if( a.getGmapurl() != null)
-				pstmt.setString(6, a.getGmapurl());
+				pstmt.setString(5, a.getGmapurl());
 			else
-				pstmt.setNull(6, Types.VARCHAR);
+				pstmt.setNull(5, Types.VARCHAR);
 			
-			pstmt.setString(7, a.getVersion());
+			pstmt.setString(6, a.getVersion());
 			
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("The amphi " + a + " has not been added to the database");
@@ -1585,7 +1584,7 @@ public class DatabaseImpl implements IDatabase {
 		String sql = "SELECT amphi.*, count(course.ipaddress) FROM amphi LEFT OUTER JOIN course " +
 				"ON amphi.ipaddress = course.ipaddress " +
 				"WHERE amphi.buildingid = ? " +
-				"GROUP BY amphi.amphiid, amphi.buildingid, amphi.name, amphi.type, amphi.ipaddress, amphi.status, amphi.gmapurl, amphi.version " +
+				"GROUP BY amphi.amphiid, amphi.buildingid, amphi.name, amphi.ipaddress, amphi.status, amphi.gmapurl, amphi.version " +
 				"ORDER BY amphi.amphiid";
 		
 		try {
@@ -1598,7 +1597,6 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("amphiid"),
 					rs.getInt("buildingid"),
 					rs.getString("name"),
-					rs.getString("type"),
 					rs.getString("ipaddress"),
 					rs.getBoolean("status"),
 					rs.getString("gmapurl"),
@@ -1636,7 +1634,6 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("amphiid"),
 					rs.getInt("buildingid"),
 					rs.getString("name"),
-					rs.getString("type"),
 					rs.getString("ipaddress"),
 					rs.getBoolean("status"),
 					rs.getString("gmapurl"),
@@ -1670,7 +1667,6 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("amphiid"),
 					rs.getInt("buildingid"),
 					rs.getString("name"),
-					rs.getString("type"),
 					rs.getString("ipaddress"),
 					rs.getBoolean("status"),
 					rs.getString("gmapurl"),
@@ -1696,7 +1692,7 @@ public class DatabaseImpl implements IDatabase {
 		Connection cnt = pa.getConnection();
 		
 		/* Creation of the SQL query string */
-		String sql = "UPDATE amphi SET buildingid = ?, name = ? , type = ?, ";
+		String sql = "UPDATE amphi SET buildingid = ?, name = ?, ";
 		sql += "ipaddress = ?, status = ?, gmapurl = ?, version = ? WHERE amphiid = ?";
 		
 		try {
@@ -1705,16 +1701,15 @@ public class DatabaseImpl implements IDatabase {
 			/* Applies the parameters to the query */
 			pstmt.setInt(1, a.getBuildingid());
 			pstmt.setString(2, a.getName());
-			pstmt.setString(3, a.getType());
-			pstmt.setString(4, a.getIpAddress());
-			pstmt.setBoolean(5, a.isStatus());
+			pstmt.setString(3, a.getIpAddress());
+			pstmt.setBoolean(4, a.isStatus());
 			if( a.getGmapurl() != null)
-				pstmt.setString(6, a.getGmapurl());
+				pstmt.setString(5, a.getGmapurl());
 			else
-				pstmt.setNull(6, Types.VARCHAR);
+				pstmt.setNull(5, Types.VARCHAR);
 			
-			pstmt.setString(7, a.getVersion());
-			pstmt.setInt(8, a.getAmphiid());
+			pstmt.setString(6, a.getVersion());
+			pstmt.setInt(7, a.getAmphiid());
 			
 			if( pstmt.executeUpdate() == 0 ) {
 				System.out.println("The amphi " + a + " has not been modified");
