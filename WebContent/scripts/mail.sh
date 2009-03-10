@@ -4,4 +4,4 @@
 # Second argument: the subject
 # Third argument: the e-mail adress
 
-echo "$1"|mail -s "$2" $3 -- -f noreply@univrav
+echo "$1"|mail -s "$2" -a "From: no-reply@unistra.fr" $3
