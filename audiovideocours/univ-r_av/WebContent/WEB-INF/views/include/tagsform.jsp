@@ -15,33 +15,16 @@
 
 	<label><fmt:message key="popularTags"/></label>
 	<br/>
-	<!--
-	<form name="formMostPopularTags">
-	<select size="4" class="field" name="selectMostPopularTags" onChange="LienMostPopularTags()">
-			<c:forEach var="mostPopularTags" items="${mostPopularTags}">
-				<c:if test="${nameSelected == mostPopularTags}">
-					<c:set var="selected" value="selected" />
-				</c:if>
-				<option value="${mostPopularTags}" ${selected}>${mostPopularTags}</option>
-				<c:remove var="selected"/>
-			</c:forEach>
-	</select>
-	</form>
-	-->
-	
 	
 	<div id="tagcloud">
 		<c:forEach var="mostPopularTags" items="${mostPopularTags}" varStatus="status">
-		<!--		<a href="javascript:LienMostPopularTags('${mostPopularTags}');" id="tag${status.count}">${mostPopularTags}</a>&nbsp;&nbsp;
-		-->
 		${mostPopularTags}
 		</c:forEach>
 	</div>
 
-	<br/>
 	
-	<label><fmt:message key="allTags"/></label>
 	<form name="formAllTags">
+	<label><fmt:message key="allTags"/></label>
 	<select class ="field" name="selectAllTags" onChange="LienAllTags()">
 	<option value=" "> </option>
 	<c:forEach var="allTags" items="${allTags}">
@@ -49,6 +32,20 @@
 					<c:set var="selected" value="selected" />
 				</c:if>
 				<option value="${allTags}" ${selected}>${allTags}</option>
+				<c:remove var="selected"/>
+			</c:forEach>
+	</select>
+	</form>
+	
+	<form name="formCumulTags">
+	<label><fmt:message key="cumulTags"/></label>
+	<select class ="field" name="selectCumulTags" onChange="LienCumulTags()">
+	<option value=" "> </option>
+	<c:forEach var="allTags" items="${allTags}">
+				<c:if test="${nameSelected == allTags}">
+					<c:set var="selected" value="selected" />
+				</c:if>
+				<option value="${allTags}" ${selected}>+ ${allTags}</option>
 				<c:remove var="selected"/>
 			</c:forEach>
 	</select>

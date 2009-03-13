@@ -106,7 +106,7 @@ background: #99CBCB url(../img/basebarcaps_verticalbarbody.png) -15px 0px repeat
 }
 
 .vscrollerbar{
-padding: 10px;
+padding: 15px;
 z-index: 2;
 }
 .vscrollerbarbeg {
