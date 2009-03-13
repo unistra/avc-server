@@ -103,6 +103,8 @@
 	width: 250px;
 	height:65px;
 	text-align: right;
+	margin-left: 50px;
+	margin-bottom: 5px;
 }
 #tagcloud a {
 	text-decoration:none;

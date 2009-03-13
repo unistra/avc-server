@@ -2,57 +2,35 @@
 function LienAllTags() {
 	i = document.formAllTags.selectAllTags.selectedIndex;
 	var uriCourant = document.location.pathname;
+	
+	if (i == 0) return;
+	
+	//first access
+	url = "tags?tags="+encodeURI(document.formAllTags.selectAllTags.options[i].value);
+			
+	parent.location.href = url;
+}
+
+
+//Search with tag from "all tags"
+function LienCumulTags() {
+	i = document.formCumulTags.selectCumulTags.selectedIndex;
+	var uriCourant = document.location.pathname;
 	var nomPage = uriCourant.substring(uriCourant.lastIndexOf('/')+1, uriCourant.length);
 
 	if (i == 0) return;
 	
 	//first access
 	if(nomPage!="tags") {
-		url = "tags?tags="+encodeURI(document.formAllTags.selectAllTags.options[i].value);
+		url = "tags?tags="+encodeURI(document.formCumulTags.selectCumulTags.options[i].value);
 	}
 	//add tags
 	else {
-		url = "tags?tags="+getUrl("tags") + "+"+encodeURI(document.formAllTags.selectAllTags.options[i].value);
+		url = "tags?tags="+getUrl("tags") + "+"+encodeURI(document.formCumulTags.selectCumulTags.options[i].value);
 	}
 		
 	parent.location.href = url;
 }
-
-//Search with tag from "most popular tags"
-/*function LienMostPopularTags() {
-	i = document.formMostPopularTags.selectMostPopularTags.selectedIndex;
-	var uriCourant = document.location.pathname;
-	var nomPage = uriCourant.substring(uriCourant.lastIndexOf('/')+1, uriCourant.length);
-		
-	//first access
-	if(nomPage!="tags") {
-		url = "tags?tags="+encodeURI(document.formMostPopularTags.selectMostPopularTags.options[i].value);
-	}
-	//add tags
-	else {
-		url = "tags?tags="+getUrl("tags") + "+"+encodeURI(document.formMostPopularTags.selectMostPopularTags.options[i].value);
-	}
-			
-	parent.location.href = url;
-}*/
-
-//Search with tag from "most popular tags" cloud
-function LienMostPopularTags(tag) {
-	var uriCourant = document.location.pathname;
-	var nomPage = uriCourant.substring(uriCourant.lastIndexOf('/')+1, uriCourant.length);
-		
-	//first access
-	if(nomPage!="tags") {
-		url = "tags?tags="+encodeURI(tag);
-	}
-	//add tags
-	else {
-		url = "tags?tags="+getUrl("tags") + "+"+encodeURI(tag);
-	}
-			
-	parent.location.href = url;
-}
-
 
 
 // To delete a tag from the URL
@@ -74,8 +52,6 @@ function closeTag(tag) {
 		
 	parent.location.href = url;
 }
-
-
 
 
 

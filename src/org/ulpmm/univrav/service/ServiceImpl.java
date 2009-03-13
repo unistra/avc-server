@@ -939,7 +939,8 @@ public class ServiceImpl implements IService {
 		List<String> nouvelleList = new ArrayList<String>();
 		
 		for(int i=0;i<listTag.size();i++) {
-			nouvelleList.add("<a href=\"javascript:LienMostPopularTags('"+listTag.get(i)+"');\" id=\"tag"+(i+1)+"\">"+(listTag.get(i).length()<20 ? listTag.get(i) : listTag.get(i).substring(0, 20)+"...")+"</a>&nbsp;&nbsp;");
+			//nouvelleList.add("<a href=\"javascript:LienMostPopularTags('"+listTag.get(i)+"');\" id=\"tag"+(i+1)+"\">"+(listTag.get(i).length()<20 ? listTag.get(i) : listTag.get(i).substring(0, 20)+"...")+"</a>&nbsp;&nbsp;");
+			nouvelleList.add("<a href=\"./tags?tags="+listTag.get(i)+"\" id=\"tag"+(i+1)+"\">"+(listTag.get(i).length()<20 ? listTag.get(i) : listTag.get(i).substring(0, 20)+"...")+"</a>&nbsp;&nbsp;");
 		}
 		Collections.sort(nouvelleList);
 		

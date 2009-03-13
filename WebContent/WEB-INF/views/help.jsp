@@ -45,13 +45,14 @@
 		    		
 		    		<div class="helpLinks">
 						<ul>
-							<li><a href="#browsers">Navigateurs conseillés</a></li>
+							<li><a href="#browsers">Navigateurs conseill&eacute;s</a></li>
 							<li><a href="#configuration">Configuration minimale</a></li>
+							<li><a href="#accueil">Accueil</a></li>
+							<li><a href="#recorded">Cours enregistr&eacute;s</a></li>
 							<li><a href="#live">Cours en direct</a></li>
-							<li><a href="#recorded">Cours en différé</a></li>
 							<li><a href="#podcasting">Podcasting et flux RSS</a></li>
 							<li><a href="#myspace">Mon espace</a></li>
-							<li><a href="#downloads">Téléchargements</a></li>
+							<li><a href="#downloads">T&eacute;l&eacute;chargements</a></li>
 						</ul>
 					</div>
 					
@@ -65,6 +66,22 @@
 			    		<h3><a id="browsers"></a>Navigateurs conseill&eacute;s</h3>
 						<p>Firefox 3.0 (Linux, MacOSX, Windows), IE7 (Windows)</p>
 						
+						<h3><a id="accueil"></a>Accueil</h3>
+						<h5>Pr&eacute;sentation</h5>
+						<p>La page d'accueil donne un aper&ccedil;u du site et permet d'acc&eacute;der &agrave; l'ensemble des fonctionnalit&eacute;s. On y trouve les derni&egrave;res publications, 
+						une s&eacute;lection de publications que l'on a souhait&eacute; mettre en avant, ainsi qu'une collection de publications int&eacute;ressantes.</p>
+						<a class="link" href="../files/img/help/home.png">Screenshot</a>
+						<h5>Changer de style</h5>
+						<p>Pour changer le style du site, vous pouvez cliquer sur le lien « Style ». Une fen&ecirc;tre appara&icirc;tra et vous proposera les diff&eacute;rents styles disponibles.</p>
+						<a class="link" href="../files/img/help/boxstyle.png">Screenshot</a>
+						<h5>Changer de langue</h5>
+						<p>Pour changer la langue du site, vous pouvez cliquer sur le lien « Langue ». Une fen&ecirc;tre appara&icirc;tra et vous proposera les diff&eacute;rentes langues disponibles (francais et anglais).</p>
+						<a class="link" href="../files/img/help/boxlangue.png">Screenshot</a>
+						<h5>T&eacute;l&eacute;chargements</h5>
+						<p>Pour t&eacute;l&eacute;charger le client ou les sources du site, vous pouvez cliquer sur le lien « T&eacute;l&eacute;chargements ». Une fen&ecirc;tre appara&icirc;tra et vous proposera les diff&eacute;rents t&eacute;l&eacute;chargements disponibles.</p>
+						<a class="link" href="../files/img/help/boxdl.png">Screenshot</a>
+										
+						
 						<h3><a id="live"></a>Cours en direct</h3>
 						<h5>Lieux et salles</h5>
 						<p>Disponible uniquement &agrave; partir des salles et amphith&eacute;atres automatis&eacute;s et sur 
@@ -75,14 +92,89 @@
 						<h5>Diffusion et &eacute;coute du Live</h5>
 						<p>Les diapositives sont diffus&eacute;es simultan&eacute;ment avec le flux audio et/ou vid&eacute;o.<br>
 						Pour lire le flux audio et/ou vid&eacute;o, vous avez besoin d'installer flash player sur votre machine.</p>
+						<p>Les diapositives sont cliquables et ouvrent un popup contenant la diapositive dans son format d'origine pour une meilleure lecture.</p>
 						<a class="link" href="../files/img/help/Live_audio.png">Screenshot</a>
+														
+						<p><span class="underline">NB :</span> Les lecteurs audio permettent de g&eacute;rer sa liste de cours et 
+						de les &eacute;couter directement apr&egrave;s obtention du m&eacute;dia. Attention, seul le fichier mp3 
+						est cependant disponible via les logiciels audio.</p>
+												
+						<h3><a id="myspace"></a>Mon espace</h3>
+						<h5>Pr&eacute;sentation</h5>
+						<p>Pour acc&eacute;der &agrave; votre espace personnel, cliquez sur "Mon espace" et entrez votre login et mot de passe ENT.</p>
+			    		<p>Vous aurez alors la possibilit&eacute; :<br>
+			    		- d'enregistrer ou de modifier votre e-mail pour recevoir les notifications de r&eacute;ception de vos cours (bouton "modifier mon e-mail")<br>
+			    		- de visualiser vos cours qui sont ratach&eacute;s &agrave; votre login ENT (voir la liste)<br>
+			    		- d'&eacute;diter vos cours afin de modifier le titre, la description, la visibilit&eacute;, etc... (lien "Editer")<br>
+			    		- de d&eacute;poser directement un fichier audio ou vid&eacute;o (bouton "d&eacute;poser un fichier")</p>
+			    		<p>Enfin, pour quitter votre espace, il vous suffit d'appuyer sur "D&eacute;connexion".</p>
+			    		<a class="link" href="../files/img/help/myspace.png">Screenshot</a>
+			    		<h5>Editer un cours</h5>
+			    		<p>Pour &eacute;diter un cours, il vous suffit de cliquer sur « Editer », d'effectuer vos modifications dans le formulaire, et de valider.<br>
+			    		Vous avez ainsi la possibilit&eacute; de modifier le titre du cours, sa description, la discipline concern&eacute;e, le nom et le pr&eacute;nom de l'auteur, le code d'acc&egrave;s, la visibilit&eacute; et les tags.</p>
+			    		<a class="link" href="../files/img/help/editcourse.png">Screenshot</a>
+			    		<h5>D&eacute;poser un fichier</h5>
+			    		<p>Pour d&eacute;poser un fichier, il vous suffit de cliquer sur le bouton « D&eacute;poser un fichier », de remplir le formulaire et de valider.</p>
+			    		<p>Les formats vid&eacute;o suivants sont pris en charge: Avi, Mov, Mp4, Rm, Rv, Mkv,Divx, Mpg, Wmv, Flv.<br>
+			    		Les formats audio suivants sont pris en charge: Mp3, Ogg.</p>
+			    		<p>L'upload d&eacute;pend de la taille de votre fichier et de votre vitesse d'envoi. Cela peut &ecirc;tre assez long. Soyez patient, ne fermez pas la page "envoi en cours" avant d'avoir re&ccedil;u le message de succ&egrave;s ou d'&eacute;chec.</p>
+			    		<p>L'option Haute-D&eacute;finition vous permet d'uploader une vid&eacute;o haute-d&eacute;finition. Attention, cette option augmente consid&eacute;rablement le temps de traitement de votre vid&eacute;o. En effet, le traitement d'une vid&eacute;o en mode Haute-D&eacute;finition dure 3 heures pour 1 heure de film.</p>
+			    		<a class="link" href="../files/img/help/upload.png">Screenshot</a>
+			    	
+			    	</div>
+			    	
+			    	<div class="rightCol">
+			    				    	
+			    		<h3><a id="configuration"></a>Configuration minimale</h3>
+			    		<p>Flash Player (Linux, MacOSX, Windows)</p>
 						
-						<h3><a id="podcasting"></a>Podcasting et flux RSS</h3>
-						<p>Tous les cours sont disponibles au t&eacute;l&eacute;chargement via le site, en cliquant sur l'un des 
-						m&eacute;dias disponibles ou via l'abonnement à un flux RSS.</p>
-						<a class="link" href="../files/img/help/Podcast.png">Screenshot</a>
+						<h3><a id="recorded"></a>Cours enregistr&eacute;s</h3>
+						<h5>Recherche</h5>
+						<p>On dispose d'une fonction de recherche (Launch Search) avec des options de filtrage pour l'affichage des cours.<br>
+						Vous pouvez &eacute;galement acc&eacute;der directement aux cours d'un auteur et/ou d'une formation gr&acirc;ce &agrave; l'url:<br> 
+						http://audiovideocours.u-strasbg.fr/avc/courses?author=...&formation=...</p>
+						<a class="link" href="../files/img/help/Search.png">Screenshot</a>
+						<h5>Tags</h5>
+						<p>Certains cours sont associ&eacute;s &agrave; des mots cl&eacute;s que l'on appelle « tag ». Vous pouvez ainsi afficher l'ensemble des cours correspondant &agrave; un ou plusieurs tags en les s&eacute;lectionnant.<br>
+						Vous pouvez &eacute;galement acc&eacute;der directement aux cours d'un ou plusieurs tags gr&acirc;ce &agrave; l'url: http://audiovideocours.u-strasbg.fr/avc/tags?tags=Alsace+Alg&eacute;rie+...</p>
+						<a class="link" href="../files/img/help/Tags.png">Screenshot</a>
+						<h5>Listings des Cours</h5>
+						<p>Les cours sont disponibles en mode flash en cliquant sur l'onglet « Enregistr&eacute; ».</p>	
+						<p><b>Clic sur l'ic&ocirc;ne &agrave; gauche ou sur l'ic&ocirc;ne sous l'intitul&eacute; 'flash' :</b><br>
+						Mode en ligne. N&eacute;cessite la pr&eacute;sence de Flash Player sur votre machine. 
+						C'est le mode recommand&eacute; pour la visualisation des cours.</p>		
+						<a class="link" href="../files/img/help/Differe.png">Screenshot</a>			
+						<h5>Diffusion et &eacute;coute du diff&eacute;r&eacute;</h5>
+						<p> En flash, le cours est lu dans le lecteur flash qui se charge de diffuser les diapositives et 
+						l'enregistrement audio/vid&eacute;o du cours. Il est possible de d&eacute;placer le curseur pour se positionner 
+						&agrave; un endroit particulier du cours. </p>
+						<a class="link" href="../files/img/help/Diff_layout_flash.png">Screenshot</a>
+						<p>Les miniatures sont cliquables et permettent de positionner automatiquement le lecteur &agrave; l'endroit de diffusion de la diapositive.<br>
+						Les diapositives sont cliquables et ouvrent un popup contenant la diapositive dans son format 
+						d'origine pour une meilleure lecture. Celles-ci s'adaptent &eacute;galement &agrave; la taille de la fen&ecirc;tre de votre navigateur.<br>
+						Les tags associ&eacute;s au cours sont &eacute;galement cliquables et permettent d'afficher l'ensemble des cours correspondant au tag s&eacute;lectionn&eacute;.<br>
+						On y trouve les informations concernant le cours, un acc&egrave;s direct aux 
+						t&eacute;l&eacute;chargement des diff&eacute;rents m&eacute;dias le composant, et un permalien.</p>	
+						<p><b>Clic sur les ic&ocirc;nes sous les intitul&eacute;s 'smil', 'ogg', 'mp3', 'zip', ou 'pdf':</b><br>
+						Ces modes permettent d'avoir un acc&egrave;s direct aux fichiers des m&eacute;dias. 
+						Dans le cas du choix du m&eacute;dia Smil, Vous pouvez utiliser n'importe quel logiciel capable de supporter Smil tel que RealPlayer.</p>
+						<p>Le fichier Smil est lu dans le lecteur Reaplayer qui se charge de diffuser les diapositives et 
+						l'enregistrement audio du cours. Il est &eacute;galement possible de d&eacute;placer le curseur pour se positionner 
+						&agrave; un endroit particulier du cours.</p>
+						<a class="link" href="../files/img/help/Diff_layout_smil.png">Screenshot</a>
+						<p>Les miniatures sont cliquables et permettent de positionner automatiquement le lecteur &agrave; l'endroit de diffusion de la diapo.<br>
+						Les diapositives sont cliquables et ouvrent un popup contenant la diapositive dans son format 
+						d'origine pour une meilleure lecture. Cela met cependant la lecture du Smil en pause.<br>
+						On y trouve les informations concernant le cours, un acc&egrave;s direct aux 
+						t&eacute;l&eacute;chargement des diff&eacute;rents m&eacute;dias le composant.</p>	
+						<p><span class="underline">NB :</span> Dans le cas d'un cours vid&eacute;o smil, la vid&eacute;o est 
+						diffus&eacute;e dans la partie droite. Cette vid&eacute;o est cliquable pour &ecirc;tre diffus&eacute;e dans son format d'origine. La lecture du smil est mise en pause.</p>
+					
+					    <h3><a id="podcasting"></a>Podcasting et flux RSS</h3>
 						<h5>Abonnement &agrave; un flux RSS</h5>
-						<p>Cliquer sur l'ic&ocirc;ne orange dans la barre d'adresse de Firefox permet de s'abonner à l'ensemble du site Audiovid&eacute;cours. 
+						<p>Tous les cours sont disponibles au t&eacute;l&eacute;chargement via le site, en cliquant sur l'un des 
+						m&eacute;dias disponibles ou via l'abonnement &agrave; un flux RSS.</p>						
+						<p>Cliquer sur l'ic&ocirc;ne orange dans la barre d'adresse de Firefox permet de s'abonner &agrave; l'ensemble du site Audiovid&eacute;cours. 
 						Cliquer sur le lien "abonnement" de l'accueil pour lister les diff&eacute;rents flux disponibles.</p>
 						<a class="link" href="../files/img/help/Rss.png">Screenshot</a>
 						<p>En s&eacute;lectionnant un flux dans cette liste, Firefox affiche une page permettant d'avoir le listing 
@@ -97,63 +189,7 @@
 						<a class="link" href="../files/img/help/Rss_opera.png">Screenshot</a>
 						<a class="link" href="../files/img/help/Rss_podcast_amarok.png">Screenshot</a>
 						<a class="link" href="../files/img/help/Rss_itunes.png">Screenshot</a>
-						
-						<p><span class="underline">NB :</span> Les lecteurs audio permettent de g&eacute;rer sa liste de cours et 
-						de les &eacute;couter directement apr&egrave;s obtention du m&eacute;dia. Attention, seul le fichier mp3 
-						est cependant disponible via les logiciels audio.</p>
-												
-						<h3><a id="myspace"></a>Mon espace</h3>
-						<p>Pour acc&eacute;der &agrave; votre espace personnel, cliquez sur "Mon espace" et entrez votre login et mot de passe ENT.</p>
-			    		<p>Vous aurez alors la possibilit&eacute; :<br>
-			    		- d'enregistrer ou de modifier votre e-mail pour recevoir les notifications de r&eacute;ception de vos cours (bouton "modifier mon e-mail")<br>
-			    		- de visualiser vos cours qui sont ratach&eacute;s &agrave; votre login ENT (voir la liste)<br>
-			    		- d'&eacute;diter vos cours afin de modifier le titre, la description, la visibilité, etc... (bouton "editer")<br>
-			    		- de d&eacute;poser directement un fichier audio ou vid&eacute;o (bouton "d&eacute;poser un fichier")</p>
-			    		<p>Enfin, pour quitter votre espace, il vous suffit d'appuyer sur le bouton "D&eacute;connexion".</p>
-			    		<a class="link" href="../files/img/help/myspace.png">Screenshot</a>
-			    		
-			    	</div>
-			    	
-			    	<div class="rightCol">
-			    				    	
-			    		<h3><a id="configuration"></a>Configuration minimale</h3>
-			    		<p>Realplayer 10 ou Flash Player (Linux, MacOSX, Windows)</p>
-						
-						<h3><a id="recorded"></a>Cours en différé</h3>
-						<h5>Filtrage de l'Affichage</h5>
-						<p>On dispose d'une fonction de recherche (Launch Search) avec des options de filtrage pour l'affichage des cours.<br>
-						Vous pouvez &eacute;galement acc&eacute;der directement aux cours d'un auteur et/ou d'une formation grâce à l'url:<br> 
-						http://audiovideocours.u-strasbg.fr/avc/courses?author=...&formation=...</p>
-						<h5>Listings des Cours</h5>
-						<p>Les cours sont disponibles selon diff&eacute;rents modes.</p>	
-						<p><b>Clic sur l'ic&ocirc;ne à gauche ou sur l'ic&ocirc;ne sous l'intitul&eacute; 'flash' :</b><br>
-						Mode en ligne. N&eacute;cessite la pr&eacute;sence de Flash Player sur votre machine. 
-						C'est le mode recommand&eacute; pour la visualisation des cours.</p>
-						<p><b>Clic sur l'ic&ocirc;ne sous l'intitul&eacute; 'realplayer' :</b><br>
-						Mode en ligne. N&eacute;cessite la pr&eacute;sence du plugin RealPlayer sur votre machine. 
-						</p>		
-						<a class="link" href="../files/img/help/Differe.png">Screenshot</a>			
-						<h5>Diffusion et &eacute;coute du diff&eacute;r&eacute; (Mode recommandé)</h5>
-						<p> En flash, le cours est lu dans le lecteur flash qui se charge de diffuser les diapositives et 
-						l'enregistrement audio/vid&eacute;o du cours. Il est possible de d&eacute;placer le curseur pour se positionner 
-						&agrave; un endroit particulier du cours. </p>
-						<a class="link" href="../files/img/help/Diff_layout_flash.png">Screenshot</a>
-						<p>Le fichier Smil est lu dans le lecteur Reaplayer qui se charge de diffuser les diapositives et 
-						l'enregistrement audio du cours. Il est également possible de d&eacute;placer le curseur pour se positionner 
-						&agrave; un endroit particulier du cours.</p>
-						<a class="link" href="../files/img/help/Diff_layout_smil.png">Screenshot</a>
-						<p>Les diapositives miniatures sont cliquables et permettent de positionner automatiquement le lecteur &agrave; l'endroit de diffusion de la diapo.<br>
-						Les diapositives sont cliquables et ouvrent un popup contenant la diapositive dans son format 
-						d'origine pour une meilleure lecture. Cela met cependant la lecture du Smil en pause.<br>
-						On y trouve les informations concernant le cours, un acc&egrave;s direct aux 
-						t&eacute;l&eacute;chargement des diff&eacute;rents m&eacute;dias le composant.</p>	
-						<p><span class="underline">NB :</span> Dans le cas d'un cours vid&eacute;o smil, la vid&eacute;o est 
-						diffus&eacute;e dans la partie droite. Cette vid&eacute;o est cliquable pour &ecirc;tre diffus&eacute;e dans son format d'origine. La lecture du smil est mise en pause.</p>
-						<p><b>Clic sur les ic&ocirc;nes sous les intitul&eacute;s 'smil', 'ogg', 'mp3', 'zip', ou 'pdf':</b><br>
-						Ces modes permettent d'avoir un acc&egrave;s direct aux fichiers des m&eacute;dias. 
-						Dans le cas du choix du m&eacute;dia Smil, Vous pouvez utiliser n'importe quel logiciel capable de supporter Smil 
-						(MediaPlayerClassic, AmbulantPlayer, RealPlayer, Quicktime,....)</p>
-						
+				
 					
 						<h3><a id="downloads"></a>T&eacute;l&eacute;chargement des logiciels et plugins</h3>
 						<h5>Adobe Flash Player</h5>
@@ -167,18 +203,6 @@
 						<p><b>Windows :</b><br>
 						<a href="http://france.real.com/freeplayer_r1p.html">RealPlayer_Windows</a><br>
 						<a href="http://www.free-codecs.com/download/Real_Alternative.htm">RealAlternative</a></p>
-						<h5>QuickTime</h5>
-						<p><b>MacOSX :</b><br>
-						<a href="http://www.apple.com/fr/quicktime/download/">Quicktime</a></p>
-						<p><b>Windows :</b><br>
-						<a href="http://www.apple.com/fr/quicktime/download/">Quicktime</a><br>
-						<a href="http://www.free-codecs.com/download/QuickTime_Alternative.htm">QuicktimeAlternative</a></p>
-						<h5>MediaPlayerConnectivity</h5>
-						<p><a href="https://addons.mozilla.org/fr/firefox/addon/446">Extension Firefox, Seamonkey (Tout OS)</a></p>
-						<h5>Autres</h5>   
-						<p><a href="http://www.flip4mac.com/wmv_download.htm">Flip4Mac -MacOSX</a><br>
-						<a href="http://www.clubic.com/telecharger-fiche11019-media-player-classic.html">MediaPlayerClassic - Windows</a><br>
-						<a href="https://helixcommunity.org/frs/?group_id=154">HelixPlayer- Linux</a></p>
 			    	</div>
 		    	</div>
 		    	
