@@ -13,16 +13,17 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 /**
- * Accès base de donnée pour visualisation AS3
+ * Database access for AS3 (Full flash)
  * @author morgan
  *
  */
 public class BddAccesForAs3 {
 	 
+	  /** The pgsql access for the database connection */
 	  private static PgsqlAccess pa;
 		  
 	  /**
-	   * Constructeur qui initialise la connection à la bdd
+	   * Constructor for database connection
 	   */
 	  public BddAccesForAs3() {
 		 		  
@@ -52,10 +53,10 @@ public class BddAccesForAs3 {
 	  }
 	 
 	  /**
-	   * Récupération des infos pour AS3
+	   * Get informations for AS3
 	   * @param var Name of the parametre
 	   * @param id Course Id
-	   * @return
+	   * @return a information String
 	   */
 	  public String getXml(String var, String id) {
 		  
@@ -111,10 +112,10 @@ public class BddAccesForAs3 {
 	  }
 	  
 	  /**
-	   * Récupération TimeCode pour AS3
+	   * Get TimeCode for AS3
 	   * @param var
 	   * @param id
-	   * @return
+	   * @return Timecode String
 	   */
 	  public String getTimeCode(String var, String id) {  
 		  

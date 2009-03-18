@@ -3,53 +3,91 @@ package org.ulpmm.univrav.entities;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
+/**
+ * Class for the Course entity
+ * 
+ * @author morgan
+ *
+ */
 public class Course {
 
+	/** the course's id */
 	private int courseid;
-	private Timestamp date;
-	private String type;
-	private String title;
-	private String description;
-	private String formation;
-	private String name;
-	private String firstname;
-	private String ipaddress;
-	private int duration;
-	private String genre;
-	private boolean visible;
-	private int consultations;
-	private String timing;
-	private String mediaFolder;
-	private boolean highquality;
-	private Integer userid;
-
 	
+	/** the course's date */
+	private Timestamp date;
+	
+	/** the course's type (audio or video) */
+	private String type;
+	
+	/** the course's title */
+	private String title;
+	
+	/** the course's description */
+	private String description;
+	
+	/** the course's formation (discipline) */
+	private String formation;
+	
+	/** the name of the author */
+	private String name;
+	
+	/** the firstname of the author */
+	private String firstname;
+	
+	/** the ip address of the amphi */
+	private String ipaddress;
+	
+	/** the course's duration */
+	private int duration;
+	
+	/** the course's genre (access code) */
+	private String genre;
+	
+	/** the course's visibility */
+	private boolean visible;
+	
+	/** number of consultations */
+	private int consultations;
+	
+	/** the course's timing */
+	private String timing;
+	
+	/** Folder which contains all media of the course */
+	private String mediaFolder;
+	
+	/** the high quality indicator */
+	private boolean highquality;
+	
+	/** the user id */
+	private Integer userid;
 
 	
 	/**
 	 * Default constructor
 	 */
-	public Course() {
-	}
+	public Course() {}
 
 	/**
 	 * constructor : creates a course by providing all the information
 	 * 
-	 * @param courseid
-	 * @param date
-	 * @param type
-	 * @param title
-	 * @param description
-	 * @param formation
-	 * @param name
-	 * @param firstname
-	 * @param ipaddress
-	 * @param duration
-	 * @param genre
-	 * @param visible
-	 * @param consultations
-	 * @param timing
-	 * @param userid
+	 * @param courseid the course's id
+	 * @param date the course's date
+	 * @param type the course's type (audio or video)
+	 * @param title the course's title
+	 * @param description the course's description
+	 * @param formation the course's formation (discipline)
+	 * @param name the name of the author
+	 * @param firstname the firstname of the author
+	 * @param ipaddress the ip address of the amphi
+	 * @param duration the course's duration
+	 * @param genre the course's genre (access code)
+	 * @param visible the course's visibility
+	 * @param consultations number of consultations
+	 * @param timing the course's timing
+	 * @param mediaFolder Folder which contains all media of the course
+	 * @param highquality the course's high quality indicator
+	 * @param userid the high quality indicator
 	 */
 	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, boolean highquality, Integer userid) {
 		this.courseid = courseid;
@@ -74,7 +112,8 @@ public class Course {
 	
 
 	/**
-	 * Returns a string representation of the object
+	 * Gets a string representation of the object
+	 * @return a string representation of the object
 	 */
 	public String toString() {
 		return "[" + courseid + "," + getDateString() + "," + type + "," + title + ","
@@ -84,13 +123,15 @@ public class Course {
 	}
 	
 	/**
-	 * @return the consultations
+	 * Gets number of consultations
+	 * @return number of consultations
 	 */
 	public int getConsultations() {
 		return consultations;
 	}
 
 	/**
+	 * Gets the course's id
 	 * @return the courseid
 	 */
 	public int getCourseid() {
@@ -98,6 +139,7 @@ public class Course {
 	}
 
 	/**
+	 * Gets the course's date
 	 * @return the date
 	 */
 	public Timestamp getDate() {
@@ -105,6 +147,7 @@ public class Course {
 	}
 	
 	/**
+	 * Gets a date string
 	 * @return the date in the convenient String format
 	 */
 	public String getDateString() {
@@ -113,6 +156,7 @@ public class Course {
 	}
 
 	/**
+	 * Gets the course's description
 	 * @return the description
 	 */
 	public String getDescription() {
@@ -120,6 +164,7 @@ public class Course {
 	}
 
 	/**
+	 * Gets the course's duration
 	 * @return the duration
 	 */
 	public int getDuration() {
@@ -127,6 +172,7 @@ public class Course {
 	}
 	
 	/**
+	 * Gets the course's duration in a string
 	 * @return the duration in a String
 	 */
 	public String getDurationString() {
@@ -141,6 +187,7 @@ public class Course {
 	}
 	
 	/**
+	 * Gets the formation
 	 * @return the formation
 	 */
 	public String getFormation() {
@@ -148,6 +195,7 @@ public class Course {
 	}
 
 	/**
+	 * Gets the firstname of the author
 	 * @return the firstname
 	 */
 	public String getFirstname() {
@@ -155,6 +203,7 @@ public class Course {
 	}
 
 	/**
+	 * Gets the course genre
 	 * @return the genre
 	 */
 	public String getGenre() {
@@ -162,6 +211,7 @@ public class Course {
 	}
 
 	/**
+	 * Gets the ip address
 	 * @return the ipaddress
 	 */
 	public String getIpaddress() {
@@ -169,6 +219,7 @@ public class Course {
 	}
 
 	/**
+	 * Gets the name of the author
 	 * @return the name
 	 */
 	public String getName() {
@@ -176,6 +227,7 @@ public class Course {
 	}
 
 	/**
+	 * Gets the course's timing
 	 * @return the timing
 	 */
 	public String getTiming() {
@@ -183,6 +235,7 @@ public class Course {
 	}
 
 	/**
+	 * Gets the course's title
 	 * @return the title
 	 */
 	public String getTitle() {
@@ -190,6 +243,7 @@ public class Course {
 	}
 
 	/**
+	 * Gets the course's type
 	 * @return the type
 	 */
 	public String getType() {
@@ -197,6 +251,7 @@ public class Course {
 	}
 
 	/**
+	 * Gets the visibility of the course
 	 * @return the visible
 	 */
 	public boolean isVisible() {
@@ -204,8 +259,8 @@ public class Course {
 	}
 	
 	/**
-	 * 
-	 * @ return the name used by the media files of this course
+	 * Gets the name used by the media files of this course
+	 * @return the name used by the media files of this course
 	 */
 	public String getMediasFileName() {
 		String mediasFileName=String.valueOf(courseid);
@@ -213,6 +268,7 @@ public class Course {
 	}
 	
 	/**
+	 * Gets the media folder
 	 * @return the mediaFolder
 	 */
 	public String getMediaFolder() {
@@ -220,6 +276,7 @@ public class Course {
 	}
 
 	/**
+	 * Sets the course's type
 	 * @param type the type to set
 	 */
 	public void setType(String type) {
@@ -227,6 +284,7 @@ public class Course {
 	}
 
 	/**
+	 * Sets the course's duration
 	 * @param duration the duration to set
 	 */
 	public void setDuration(int duration) {
@@ -234,6 +292,7 @@ public class Course {
 	}
 
 	/**
+	 * Sets the mediafolder
 	 * @param mediaFolder the mediaFolder to set
 	 */
 	public void setMediaFolder(String mediaFolder) {
@@ -241,6 +300,7 @@ public class Course {
 	}
 
 	/**
+	 * Sets the date
 	 * @param date the date to set
 	 */
 	public void setDate(Timestamp date) {
@@ -248,6 +308,7 @@ public class Course {
 	}
 
 	/**
+	 * Sets the visibility
 	 * @param visible the visible to set
 	 */
 	public void setVisible(boolean visible) {
@@ -255,6 +316,7 @@ public class Course {
 	}
 	
 	/**
+	 * Sets the course's timing
 	 * @param timing the timing to set
 	 */
 	public void setTiming(String timing) {
@@ -262,65 +324,105 @@ public class Course {
 	}
 
 	/**
-	 * 
-	 * @return high quality indice
+	 * Gets the high quality indicator
+	 * @return high quality indicator
 	 */
 	public boolean isHighquality() {
 		return highquality;
 	}
 
 	/**
-	 * 
-	 * @param highquality
+	 * Sets the high quality indicator
+	 * @param highquality high quality indicator
 	 */
 	public void setHighquality(boolean highquality) {
 		this.highquality = highquality;
 	}
 	
 	/**
-	 * 
-	 * @return user id
+	 * Gets the user's id
+	 * @return userid the user's id
 	 */
 	public Integer getUserid() {
 		return userid;
 	}
 
+	/**
+	 * Sets the course's id
+	 * @param courseid the course's id
+	 */
 	public void setCourseid(int courseid) {
 		this.courseid = courseid;
 	}
 
+	/**
+	 * Sets the course's title
+	 * @param title the course's title
+	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
+	/**
+	 * Sets the course's description
+	 * @param description the course's description
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
+	
+	/**
+	 * Sets the course's formation
+	 * @param formation the course's formation
+	 */
 	public void setFormation(String formation) {
 		this.formation = formation;
 	}
 
+	/**
+	 * Sets the name of the author
+	 * @param name author's name
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * Sets the firstname of the author
+	 * @param firstname author's firstname
+	 */
 	public void setFirstname(String firstname) {
 		this.firstname = firstname;
 	}
 
+	/**
+	 * Sets the ip address
+	 * @param ipaddress the ip address of the amphi
+	 */
 	public void setIpaddress(String ipaddress) {
 		this.ipaddress = ipaddress;
 	}
 
+	/**
+	 * Sets the course's genre
+	 * @param genre the course's genre
+	 */
 	public void setGenre(String genre) {
 		this.genre = genre;
 	}
 
+	/**
+	 * Sets number of consultations
+	 * @param consultations number of consultations
+	 */
 	public void setConsultations(int consultations) {
 		this.consultations = consultations;
 	}
 
+	/**
+	 * Sets user's id 
+	 * @param userid the user's id
+	 */
 	public void setUserid(Integer userid) {
 		this.userid = userid;
 	}	

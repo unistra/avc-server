@@ -7,38 +7,70 @@ import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
 
+/**
+ * This thread is used to add a course
+ * 
+ * @author morgan
+ *
+ */
 public class CourseAddition extends Thread {
 	
+	/** Database interface */
 	private IDatabase db;
+	
+	/** FileSystem interface */
 	private IFileSystem fs;
+	
+	/** The course */
 	private Course c;
+	
+	/** the media's name */
 	private String courseArchive;
+	
+	/** Service interface */
 	private IService service;
+	
+	/** The rss name */
 	private String rssName;
+	
+	/** the rss folder path */
 	private String rssFolderPath;
+	
+	/** the rss title */
 	private String rssTitle;
+	
+	/** the rss description */
 	private String rssDescription;
+	
+	/** the url of the server */
 	private String serverUrl;
+	
+	/** the url of the rss image */
 	private String rssImageUrl;
+	
+	/** the url of the recorded interface */
 	private String recordedInterfaceUrl;
+	
+	/** the language */
 	private String language;
 	
 
 	/**
+	 * CourseAddition's constructor
 	 * 
-	 * @param db
-	 * @param fs
-	 * @param c
-	 * @param courseArchive
-	 * @param service
-	 * @param rssFolderPath
-	 * @param rssName
-	 * @param rssTitle
-	 * @param rssDescription
-	 * @param serverUrl
-	 * @param rssImageUrl
-	 * @param recordedInterfaceUrl
-	 * @param language
+	 * @param db Database interface
+	 * @param fs FileSystem interface
+	 * @param c The course
+	 * @param courseArchive the media's name
+	 * @param service Service interface
+	 * @param rssFolderPath the rss folder path
+	 * @param rssName The rss name
+	 * @param rssTitle the rss title
+	 * @param rssDescription the rss description
+	 * @param serverUrl the url of the server
+	 * @param rssImageUrl the url of the rss image
+	 * @param recordedInterfaceUrl the url of the recorded interface
+	 * @param language the language
 	 */
 	public CourseAddition(IDatabase db, IFileSystem fs, Course c, String courseArchive, 
 			IService service, String rssFolderPath, String rssName, String rssTitle, 

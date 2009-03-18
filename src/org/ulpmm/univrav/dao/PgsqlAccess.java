@@ -13,16 +13,23 @@ import javax.sql.DataSource;
  */
 public class PgsqlAccess {
 	
+	/** the connection object */
 	private Connection cnt;
+	
+	/** the datasource object */
 	private DataSource ds;
 	
+	/**
+	 * Constructor to initialize datasource
+	 * 
+	 * @param ds the datasource object
+	 */
 	public PgsqlAccess(DataSource ds) {
 		this.ds = ds;
 	}
 	
 	/**
-	 *  Initialisation of the connection 
-	 *  
+	 *  Initialization of the connection 
 	 */
 	public void connect() {
 		try {

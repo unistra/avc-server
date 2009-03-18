@@ -1,32 +1,52 @@
-/**
- * 
- */
 package org.ulpmm.univrav.entities;
 
 /**
- * @author laurent
+ * Class for the Amphi entity
+ * 
+ * @author morgan
  *
  */
 public class Amphi implements Comparable<Amphi>{
 	
+	/** the amphi's id */
 	private int amphiid;
+	
+	/** the building's id */
 	private int buildingid;
+	
+	/** the name of the amphi */
 	private String name;
+	
+	/** the id adress of the amphi */
 	private String ipAddress;
+	
+	/** the live status */
 	private boolean status;
+	
+	/** the url of google map */
 	private String gmapurl;
-	private int number; // number of courses for this amphi
+	
+	/** the number of courses for this amphi */
+	private int number;
+	
+	/** the client version installed */
 	private String version;
 	
-	public Amphi(){
-	}
+	/**
+	 * Default contructor
+	 */
+	public Amphi(){}
 	
 	/**
-	 * @param buildingid
-	 * @param name
-	 * @param ipAddress
-	 * @param status
-	 * @param gmapurl
+	 * Amphi's constructor
+	 * 
+	 * @param amphiid the amphi's id
+	 * @param buildingid the building's id
+	 * @param name the name of the amphi
+	 * @param ipAddress the id adress of the amphi
+	 * @param status the live status
+	 * @param gmapurl the url of google map
+	 * @param version the client version installed
 	 */
 	public Amphi(int amphiid, int buildingid, String name, String ipAddress,
 			boolean status, String gmapurl,String version) {
@@ -41,6 +61,7 @@ public class Amphi implements Comparable<Amphi>{
 	}
 	
 	/**
+	 * Gets the amphi's id
 	 * @return the amphiid
 	 */
 	public int getAmphiid() {
@@ -48,6 +69,7 @@ public class Amphi implements Comparable<Amphi>{
 	}
 
 	/**
+	 * Gets the building's id
 	 * @return the buildingid
 	 */
 	public int getBuildingid() {
@@ -55,6 +77,7 @@ public class Amphi implements Comparable<Amphi>{
 	}
 
 	/**
+	 * Gets the name of the amphi
 	 * @return the name
 	 */
 	public String getName() {
@@ -63,6 +86,7 @@ public class Amphi implements Comparable<Amphi>{
 
 	
 	/**
+	 * Gets the ip address
 	 * @return the ipAddress
 	 */
 	public String getIpAddress() {
@@ -70,6 +94,7 @@ public class Amphi implements Comparable<Amphi>{
 	}
 
 	/**
+	 * Gets the live status
 	 * @return the status
 	 */
 	public boolean isStatus() {
@@ -77,6 +102,7 @@ public class Amphi implements Comparable<Amphi>{
 	}
 	
 	/**
+	 * Gets the google map url
 	 * @return the gmapurl
 	 */
 	public String getGmapurl() {
@@ -84,13 +110,15 @@ public class Amphi implements Comparable<Amphi>{
 	}
 	
 	/**
-	 * returns a String representation of this object
+	 * Gets a string representation of this object
+	 * @return a string
 	 */
 	public String toString() {
 		return this.name;
 	}
 
 	/**
+	 * Gets number of courses
 	 * @return the number
 	 */
 	public int getNumber() {
@@ -98,6 +126,7 @@ public class Amphi implements Comparable<Amphi>{
 	}
 
 	/**
+	 * Sets the number
 	 * @param number the number to set
 	 */
 	public void setNumber(int number) {
@@ -106,16 +135,24 @@ public class Amphi implements Comparable<Amphi>{
 
 	/**
 	 * To sort amphi by name
-	 * @param amphi 
+	 * @param o the amphi
 	 */
 	public int compareTo(Amphi o) {
 		return this.name.compareTo(o.name);
 	}
 
+	/**
+	 * Gets the client version of the amphi
+	 * @return the client version
+	 */
 	public String getVersion() {
 		return version;
 	}
 
+	/**
+	 * Sets the client version
+	 * @param version the client version
+	 */
 	public void setVersion(String version) {
 		this.version = version;
 	}

@@ -24,10 +24,21 @@ import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
 
+/**
+ * Database implementation methods
+ * 
+ * @author morgan
+ *
+ */
 public class DatabaseImpl implements IDatabase {
 	
+	/** The pgsql access for the database connection */
 	private static PgsqlAccess pa;
 	
+	/**
+	 * Constructor for database connection
+	 * @param ds the datasources
+	 */
 	public DatabaseImpl(DataSource ds) {
 		pa = new PgsqlAccess(ds);
 	}
@@ -143,7 +154,7 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
-	 * Gets a list of all the courses (non-Univr)
+	 * Gets a list of all the courses (no-Univr)
 	 * @return the list of courses
 	 */
 	public List<Course> getAllCourses() {
@@ -688,7 +699,9 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Gets the total number of courses without test keywords
-	 * @param testkeywords
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(String testKeyWord1, String testKeyWord2, String testKeyWord3) {
@@ -744,6 +757,9 @@ public class DatabaseImpl implements IDatabase {
 	/**
 	 * Gets the number of courses corresponding to the given criteria
 	 * @param params the criteria of the searched courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(HashMap<String, String> params,String testKeyWord1, String testKeyWord2, String testKeyWord3) {
@@ -992,8 +1008,8 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Gets the list of the media folders of the test courses
-	 * @return the list of media folders
 	 * @param testKeyWord the key word which identifies a test
+	 * @return the list of media folders
 	 */
 	public List<String> getTestsMediaFolders(String testKeyWord) {
 		
@@ -1072,7 +1088,9 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Gets the total number of tests with test keywords
-	 * @param testkeywords
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getTestNumber(String testKeyWord1, String testKeyWord2, String testKeyWord3) {
@@ -1576,6 +1594,7 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Gets a list of all the amphis
+	 * @param buildingId the id of the building
 	 * @return the list of amphis
 	 */
 	public List<Amphi> getAmphis(int buildingId) {
@@ -1617,8 +1636,8 @@ public class DatabaseImpl implements IDatabase {
 	}
 
 	/**
-	 * Gets an amphi by providing its IP address
-	 * @param ip the IP address of the amphi
+	 * Gets an amphi by providing its id
+	 * @param amphiId the id of the amphi
 	 * @return the amphi
 	 */
 	public Amphi getAmphi(int amphiId) {
@@ -1778,8 +1797,8 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
-	 * Get user by login (login is UNIQUE)
-	 * @param login
+	 * Gets user by login (login is UNIQUE)
+	 * @param login the login of the user
 	 * @return the user
 	 */
 	public User getUser(String login) {
@@ -1809,7 +1828,7 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Get user by id 
-	 * @param id
+	 * @param id the id of the user
 	 * @return the user
 	 */
 	public User getUser(int id) {
@@ -1944,10 +1963,10 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
-	 * Gets a list of course by providing its user
-	 * @param user the user of the course
-	 * @param number
-	 * @param start
+	 * Gets a list of courses by providing its user
+	 * @param u the user of the course
+	 * @param number the number of courses
+	 * @param start the start number of courses
 	 * @return the list of course
 	 */
 	public List<Course> getCourses(User u, int number, int start) {
@@ -1994,7 +2013,7 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Gets the total number of courses
-	 * @param user
+	 * @param u the user
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(User u) {
@@ -2053,7 +2072,7 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Add a new tag
-	 * @param t Tag
+	 * @param t the tag
 	 */
 	public void addTag(Tag t) {
 		Connection cnt = pa.getConnection();
@@ -2175,7 +2194,7 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Gets a restricted list of courses
-	 * @param tag
+	 * @param tags the tags
 	 * @param number the number of courses to return
 	 * @param start the start number of the courses
 	 * @param testKeyWord1 the first key word which identifies a test
@@ -2236,7 +2255,10 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Gets the number of courses corresponding to the given criteria
-	 * @param params the criteria of the searched courses
+	 * @param tags the tags
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(List<String> tags, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
@@ -2279,8 +2301,8 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Gets a restricted list of courses
-	 * @param mediafolder
-	 * @return course
+	 * @param mediafolder the folder of the media
+	 * @return the course
 	 */
 	public Course getCourseByMediafolder(String mediafolder) {
 								
@@ -2463,7 +2485,7 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Get selection by position 
-	 * @param position
+	 * @param position the position of the selection
 	 * @return the selection
 	 */
 	public Selection getSelection(int position) {
@@ -2495,7 +2517,7 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Adds a new selection
-	 * @param s Selection
+	 * @param s the selection
 	 */
 	public void addSelection(Selection s) {
 		Connection cnt = pa.getConnection();
@@ -2520,7 +2542,7 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Modify a selection
-	 * @param s Selection
+	 * @param s the selection
 	 */
 	public void modifySelection(Selection s) {
 		Connection cnt = pa.getConnection();

@@ -16,18 +16,35 @@ import org.ulpmm.univrav.entities.Course;
  */
 public class LocalVideoSmil1 implements ISmil {
 
+	/** the course */
 	private Course c;
+	
+	/** the absolute media folder of the course in the file system */
 	private String absoluteMediaFolder;
+	
+	/** the media file name of the course in the file system */
 	private String mediaFileName;
+	
+	/** the media extension name of the course in the file system */
 	private String mediaFileExtension;
+	
+	/** Copyright comment */
 	private String comment;
+	
+	/** the list of timecodes */
 	private ArrayList<String> timecodes;
 	
 	/**
+	 * LocalVideoSmil1's constructor
+	 * 
 	 * @param c the course
 	 * @param absoluteMediaFolder the absolute media folder of the course in the file system
 	 * @param mediaFolder the media folder name of the course in the file system
 	 * @param mediaFileName the name of all the media files
+	 * @param mediaFileExtension the media extension name of the course in the file system
+	 * @param coursesUrl the url of courses
+	 * @param comment copyright comment
+	 * @param timecodes the list of timecodes
 	 */
 	public LocalVideoSmil1(Course c, String absoluteMediaFolder, String mediaFolder, String mediaFileName, 
 			String mediaFileExtension, String coursesUrl, String comment, ArrayList<String> timecodes) {

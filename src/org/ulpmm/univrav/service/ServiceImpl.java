@@ -21,48 +21,65 @@ import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
 
+/**
+ * Service implementation methods.
+ * 
+ * @author morgan
+ *
+ */
 public class ServiceImpl implements IService {
 
+	/** Database interface */
 	private IDatabase db;
+	
+	/** File system interface */
 	private IFileSystem fs;
+	
+	/** UnivrDao interface */
 	private IUnivrDao ud;
 	
 	/**
-	 * @return the db
+	 * Gets the database interface
+	 * @return the database interface
 	 */
 	public IDatabase getDb() {
 		return db;
 	}
 
 	/**
-	 * @param db the db to set
+	 * Sets the database interface
+	 * @param db the database interface
 	 */
 	public void setDb(IDatabase db) {
 		this.db = db;
 	}
 	
 	/**
-	 * @return the fs
+	 * Gets the filesystem interface
+	 * @return the filesystem interface
 	 */
 	public IFileSystem getFs() {
 		return fs;
 	}
 
 	/**
-	 * @param fs the fs to set
+	 * Sets the the filesystem interface
+	 * @param fs the filesystem interface
 	 */
 	public void setFs(IFileSystem fs) {
 		this.fs = fs;
 	}
 
 	/**
-	 * @return the ud
+	 * Gets the univr dao interface
+	 * @return the univr dao interface
 	 */
 	public IUnivrDao getUd() {
 		return ud;
 	}
 
 	/**
+	 * Sets the univr dao interface
 	 * @param ud the ud to set
 	 */
 	public void setUd(IUnivrDao ud) {
@@ -233,7 +250,9 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Gets the total number of courses without test keywords
-	 * @param testkeywords
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(String testKeyWord1, String testKeyWord2, String testKeyWord3) {
@@ -243,6 +262,9 @@ public class ServiceImpl implements IService {
 	/**
 	 * Gets the number of courses corresponding to the given criteria
 	 * @param params the criteria of the searched courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(HashMap<String, String> params,String testKeyWord1, String testKeyWord2, String testKeyWord3) {
@@ -283,8 +305,7 @@ public class ServiceImpl implements IService {
 	public synchronized void deleteUnivr(int courseId) {
 		db.deleteUnivr(courseId);
 	}
-	
-	
+		
 	
 	/**
 	 * Gets a restricted list of test courses
@@ -301,7 +322,9 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Gets the total number of tests with test keywords
-	 * @param testkeywords
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getTestNumber(String testKeyWord1, String testKeyWord2, String testKeyWord3) {
@@ -349,14 +372,7 @@ public class ServiceImpl implements IService {
 		return db.getTeachers();
 	}
 	
-	/**
-	 * Gets the list of all the teachers who have at least one course with no access code
-	 * @return the list of teachers
-	 */
-	/*public List<String> getTeachersWithRss() {
-		return db.getTeachersWithRss();
-	}*/
-	
+		
 	/**
 	 * Gets the list of all the teachers
 	 * @return the list of teachers
@@ -451,6 +467,7 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Gets a list of all the amphis
+	 * @param buildingId the id of the building
 	 * @return the list of amphis
 	 */
 	public List<Amphi> getAmphis(int buildingId) {
@@ -458,8 +475,8 @@ public class ServiceImpl implements IService {
 	}
 
 	/**
-	 * Gets an amphi by providing its IP address
-	 * @param ip the IP address of the amphi
+	 * Gets an amphi by providing its amphiId
+	 * @param amphiId the ids of the amphi
 	 * @return the amphi
 	 */
 	public Amphi getAmphi(int amphiId) {
@@ -501,16 +518,7 @@ public class ServiceImpl implements IService {
 		db.deleteAmphi(amphiId);
 	}
 	
-	/**
-	 * Checks wether a video amphi is diffusing an audio stream or a video stream
-	 * @param amphiIp the Ip address of the video amphi
-	 * @param audioLivePort the port used by the audio live
-	 * @return the stream type diffused by the amphi
-	 */
-	public String getLiveStreamType(String amphiIp, int audioLivePort) {
-		return fs.getLiveStreamType(amphiIp, audioLivePort);
-	}
-	
+		
 	/**
 	 * Retrieves a list of the website's available themes
 	 * @param stylesFolder the folder in which the themes are stored
@@ -551,17 +559,14 @@ public class ServiceImpl implements IService {
 	 */
 	public void generateRss( String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language) {
-		// For all courses TODO
-		//List<Course> courses = db.getAllUnlockedCourses();
+		// For all courses 
 		List<Course> courses = db.getAllCourses();
 		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		
 		// For the teachers
-	//	List<String> teachers = db.getTeachersWithRss();
 		List<String> teachers = db.getTeachers();
 		for( String teacher : teachers) {
-			//courses = db.getUnlockedCourses(teacher);
 			courses = db.getCoursesByAuthor(teacher);
 			rssPath = rssFolderPath + "/" + cleanFileName(teacher) + ".xml";
 			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
@@ -580,7 +585,7 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Creates the RSS files for all the courses and the teacher of the course in parameter
-	 * @param course c the course which has been modified or added
+	 * @param c the course which has been modified or added
 	 * @param rssFolderPath the path of the folder to store the RSS files
 	 * @param rssName the filename of the general RSS file
 	 * @param rssTitle the title of the RSS files
@@ -593,7 +598,6 @@ public class ServiceImpl implements IService {
 	public void generateRss( Course c, String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language) {
 		// For all courses
-		//List<Course> courses = db.getAllUnlockedCourses();
 		List<Course> courses = db.getAllCourses();
 		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
@@ -626,7 +630,6 @@ public class ServiceImpl implements IService {
 		LinkedHashMap<String, String> rss = new LinkedHashMap<String, String>();
 		rss.put(rssTitle, "../rss/" + rssName + ".xml");
 		
-		//List<String> teachers = db.getTeachersWithRss();
 		List<String> teachers = db.getTeachers();
 		for( String teacher : teachers) {
 			rss.put(
@@ -649,6 +652,9 @@ public class ServiceImpl implements IService {
 	/**
 	 * Sends a message over a socket to the Univ-R AV client
 	 * @param message the message to send
+	 * @param ip the ip to contact the client
+	 * @param port the port to contact the client
+	 * @param timeout the timeout to contact the client
 	 * @return the answer of the client
 	 */
 	public String sendMessageToClient(String message, String ip, int port,int timeout) {
@@ -667,6 +673,7 @@ public class ServiceImpl implements IService {
 	 * Verifies if a user is logged on Univ-R
 	 * @param uid the uid of the user
 	 * @param uuid Univ-R session identifier
+	 * @param estab the establishment
 	 * @return true if the user is logged on Univ-R
 	 */
 	public boolean isUserAuth(int uid, String uuid, String estab) {
@@ -676,6 +683,7 @@ public class ServiceImpl implements IService {
 	/**
 	 * Gets information about an user
 	 * @param uid the uid of the user
+	 * @param estab the establishment
 	 * @return the information about the user
 	 */
 	public HashMap<String, String> getUserInfos(int uid, String estab) {
@@ -685,6 +693,7 @@ public class ServiceImpl implements IService {
 	/**
 	 * Gets information about an user
 	 * @param login the login of the user
+	 * @param estab the establishment
 	 * @return the information about the user
 	 */
 	public HashMap<String, String> getUserInfos(String login,String estab) {
@@ -694,6 +703,7 @@ public class ServiceImpl implements IService {
 	/**
 	 * Gets the group name of a group
 	 * @param groupCode the code of the group
+	 * @param estab the establishment
 	 * @return the group name
 	 */
 	public String getGroupName(int groupCode,String estab) {
@@ -704,6 +714,7 @@ public class ServiceImpl implements IService {
 	 * Publishes a course on Univ-R
 	 * @param courseId the id of the course to publish
 	 * @param groupCode the code of the group which will have access to the course
+	 * @param estab the establishment
 	 */
 	public void publishCourse(int courseId, int groupCode,String estab) {
 		ud.publishCourse(courseId, groupCode,estab);
@@ -713,6 +724,7 @@ public class ServiceImpl implements IService {
 	 * Checks if a user has access to a course
 	 * @param uid the uid of the user
 	 * @param courseId the course
+	 * @param estab the establishment
 	 * @return true if the user has access to the course
 	 */
 	public boolean hasAccessToCourse(int uid, int courseId,String estab) {
@@ -769,8 +781,8 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
-	 * Get user by login (login is UNIQUE)
-	 * @param login
+	 * Gets user by login (login is UNIQUE)
+	 * @param login the login of the user
 	 * @return the user
 	 */
 	public User getUser(String login) {
@@ -779,7 +791,7 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Get user by id 
-	 * @param id
+	 * @param id the id of the user
 	 * @return the user
 	 */
 	public User getUser(int id) {
@@ -820,9 +832,9 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Gets a list of courses by providing its user
-	 * @param user the user of the course
-	 * @param number
-	 * @param start
+	 * @param u the user of the course
+	 * @param number the number of courses
+	 * @param start the start number of courses
 	 * @return the list of course
 	 */
 	public List<Course> getCourses(User u,int number,int start) {
@@ -831,7 +843,7 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Gets the total number of courses
-	 * @param user
+	 * @param u
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(User u) {
@@ -847,10 +859,10 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
-	 * Send an email to confirm the add of the new course
-	 * @param subject
-	 * @param message
-	 * @param email
+	 * Send an email to confirm the add of the new course 
+	 * @param subject the subject of the mail
+	 * @param message the message of the mail
+	 * @param email the email address
 	 */
 	public synchronized void sendMail(String subject, String message, String email) {
 		fs.sendMail(subject,message,email);
@@ -858,7 +870,7 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Add a new tag
-	 * @param t Tag
+	 * @param t the tag
 	 */
 	public void addTag(Tag t) {
 		db.addTag(t);
@@ -913,7 +925,10 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Gets the number of courses corresponding to the given criteria
-	 * @param params the criteria of the searched courses
+	 * @param tags the tags
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(List<String> tags,String testKeyWord1, String testKeyWord2, String testKeyWord3) {
@@ -922,8 +937,8 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Gets a restricted list of courses
-	 * @param mediafolder
-	 * @return course
+	 * @param mediafolder the folder of the media
+	 * @return the course
 	 */
 	public Course getCourseByMediafolder(String mediafolder) {
 		return db.getCourseByMediafolder(mediafolder);
@@ -931,7 +946,7 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Get the list of ahref for the tag cloud
-	 * @param listTag
+	 * @param listTag the list of tag
 	 * @return list of ahref
 	 */
 	public List<String> getTagCloud(List<String> listTag) {
@@ -939,7 +954,6 @@ public class ServiceImpl implements IService {
 		List<String> nouvelleList = new ArrayList<String>();
 		
 		for(int i=0;i<listTag.size();i++) {
-			//nouvelleList.add("<a href=\"javascript:LienMostPopularTags('"+listTag.get(i)+"');\" id=\"tag"+(i+1)+"\">"+(listTag.get(i).length()<20 ? listTag.get(i) : listTag.get(i).substring(0, 20)+"...")+"</a>&nbsp;&nbsp;");
 			nouvelleList.add("<a href=\"./tags?tags="+listTag.get(i)+"\" id=\"tag"+(i+1)+"\">"+(listTag.get(i).length()<20 ? listTag.get(i) : listTag.get(i).substring(0, 20)+"...")+"</a>&nbsp;&nbsp;");
 		}
 		Collections.sort(nouvelleList);
@@ -979,7 +993,7 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Get selection by position 
-	 * @param position
+	 * @param position the position of the selection
 	 * @return the selection
 	 */
 	public Selection getSelection(int position) {
