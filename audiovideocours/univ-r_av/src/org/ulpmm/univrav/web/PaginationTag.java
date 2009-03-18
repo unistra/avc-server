@@ -15,18 +15,30 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public class PaginationTag extends TagSupport {
 
+	/** Serial version */
 	private static final long serialVersionUID = -2966587645073072851L;
+	
+	/** number of items */
 	private int itemsNumber;
+	
+	/** Number per page */
 	private int numberPerPage;
+	
+	/** the current page */
 	private int currentPage;
+	
+	/** Name of the result page */
 	private String resultPageName;
+	
+	/** tags */
 	private String tags;
 	
-	// The name of the bundle to search the corresponding language properties files
+	/** The name of the bundle to search the corresponding language properties files */
 	private static final String BUNDLE_NAME = "org.ulpmm.univrav.language.messages";
 
 	/**
 	 * Displays the pagination bar
+	 * @throws JspException
 	 */
 	public int doStartTag() throws JspException {
 		
@@ -92,6 +104,7 @@ public class PaginationTag extends TagSupport {
 	}
 
 	/**
+	 * Gets items number
 	 * @return the total number of items of the list
 	 */
 	public int getItemsNumber() {
@@ -99,6 +112,7 @@ public class PaginationTag extends TagSupport {
 	}
 
 	/**
+	 * Sets items number
 	 * @param itemsNumber total number of items of the list to set
 	 */
 	public void setItemsNumber(int itemsNumber) {
@@ -106,6 +120,7 @@ public class PaginationTag extends TagSupport {
 	}
 
 	/**
+	 * Gets number per page
 	 * @return the items number to display per page
 	 */
 	public int getNumberPerPage() {
@@ -113,6 +128,7 @@ public class PaginationTag extends TagSupport {
 	}
 
 	/**
+	 * Sets number per page
 	 * @param numberPerPage the items number to display per page to set
 	 */
 	public void setNumberPerPage(int numberPerPage) {
@@ -120,6 +136,7 @@ public class PaginationTag extends TagSupport {
 	}
 
 	/**
+	 * Gets current page
 	 * @return the current page number
 	 */
 	public int getCurrentPage() {
@@ -127,6 +144,7 @@ public class PaginationTag extends TagSupport {
 	}
 
 	/**
+	 * Sets current page
 	 * @param currentPage the current page number to set
 	 */
 	public void setCurrentPage(int currentPage) {
@@ -134,6 +152,7 @@ public class PaginationTag extends TagSupport {
 	}
 
 	/**
+	 * Gets result page name
 	 * @return the resultPageName
 	 */
 	public String getResultPageName() {
@@ -141,16 +160,25 @@ public class PaginationTag extends TagSupport {
 	}
 
 	/**
+	 * Sets result page name
 	 * @param resultPageName the resultPageName to set
 	 */
 	public void setResultPageName(String resultPageName) {
 		this.resultPageName = resultPageName;
 	}
 
+	/**
+	 * Gets tags
+	 * @return tags
+	 */
 	public String getTags() {
 		return tags;
 	}
 
+	/**
+	 * Sets tags
+	 * @param tags tags string
+	 */
 	public void setTags(String tags) {
 		this.tags = tags;
 	}

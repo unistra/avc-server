@@ -13,6 +13,12 @@ import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
 
+/**
+ * Interface for database implementation methods
+ * 
+ * @author morgan
+ *
+ */
 public interface IDatabase {
 	
 	/**
@@ -28,7 +34,7 @@ public interface IDatabase {
 	public void addUnivr(Univr u);
 	
 	/**
-	 * Gets a list of all the courses (non-Univr)
+	 * Gets a list of all the courses (no-Univr)
 	 * @return the list of courses
 	 */
 	public List<Course> getAllCourses();
@@ -78,12 +84,10 @@ public interface IDatabase {
 	public List<Course> getCourses(HashMap<String, String> params, int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3);
 	
 	/**
-	 * Gets the list of courses without access code for a teacher
-	 * @param teacher the teacher
+	 * Gets the list of courses for an author
+	 * @param author the author
 	 * @return the list of courses
 	 */
-	//public List<Course> getUnlockedCourses(String teacher);
-	
 	public List<Course> getCoursesByAuthor(String author);
 	
 	/**
@@ -116,7 +120,9 @@ public interface IDatabase {
 	
 	/**
 	 * Gets the total number of courses without test keywords
-	 * @param testkeywords
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(String testKeyWord1, String testKeyWord2, String testKeyWord3);
@@ -124,6 +130,9 @@ public interface IDatabase {
 	/**
 	 * Gets the number of courses corresponding to the given criteria
 	 * @param params the criteria of the searched courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(HashMap<String, String> params,String testKeyWord1, String testKeyWord2, String testKeyWord3);
@@ -155,8 +164,8 @@ public interface IDatabase {
 	
 	/**
 	 * Gets the list of the media folders of the test courses
-	 * @return the list of media folders
 	 * @param testKeyWord the key word which identifies a test
+	 * @return the list of media folders
 	 */
 	public List<String> getTestsMediaFolders(String testKeyWord);
 	
@@ -173,7 +182,9 @@ public interface IDatabase {
 	
 	/**
 	 * Gets the total number of tests with test keywords
-	 * @param testkeywords
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getTestNumber(String testKeyWord1, String testKeyWord2, String testKeyWord3);
@@ -217,24 +228,14 @@ public interface IDatabase {
 	 */
 	public String getTeacherFullName(String name, String firstname);
 	
-	/**
-	 * Gets the list of all the teachers who have at least one course with no access code
-	 * @return the list of teachers
-	 */
-	//public List<String> getTeachersWithRss();
-	
+		
 	/**
 	 * Gets the list of all the formations
 	 * @return the list of formations
 	 */
 	public List<String> getFormations();
 	
-	/**
-	 * Gets the list of all the formations who have at least one course with no access code
-	 * @return the list of formations
-	 */
-	//public List<String> getFormationsWithRss();
-	
+		
 	/**
 	 * Increments the number of consultations for a course
 	 * @param c the course
@@ -302,13 +303,14 @@ public interface IDatabase {
 	
 	/**
 	 * Gets a list of all the amphis
+	 * @param buildingId the id of the building
 	 * @return the list of amphis
 	 */
 	public List<Amphi> getAmphis(int buildingId);
 	
 	/**
-	 * Gets an amphi by providing its IP address
-	 * @param ip the IP address of the amphi
+	 * Gets an amphi by providing its id
+	 * @param amphiId the id of the amphi
 	 * @return the amphi
 	 */
 	public Amphi getAmphi(int amphiId);
@@ -341,15 +343,15 @@ public interface IDatabase {
 	public void deleteAmphi(int amphiId);
 	
 	/**
-	 * Get user by login (login is UNIQUE)
-	 * @param login
+	 * Gets user by login (login is UNIQUE)
+	 * @param login the login of the user
 	 * @return the user
 	 */
 	public User getUser(String login);
 	
 	/**
 	 * Get user by id 
-	 * @param id
+	 * @param id the id of the user
 	 * @return the user
 	 */
 	public User getUser(int id);
@@ -380,16 +382,16 @@ public interface IDatabase {
 	
 	/**
 	 * Gets a list of courses by providing its user
-	 * @param user the user of the course
-	 * @param number
-	 * @param start
+	 * @param u the user of the course
+	 * @param number the number of courses
+	 * @param start the start number of courses
 	 * @return the list of course
 	 */
 	public List<Course> getCourses(User u, int number, int start);
 	
 	/**
 	 * Gets the total number of courses
-	 * @param user
+	 * @param u the user
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(User u);
@@ -402,7 +404,7 @@ public interface IDatabase {
 	
 	/**
 	 * Add a new tag
-	 * @param t Tag
+	 * @param t the tag
 	 */
 	public void addTag(Tag t);
 	
@@ -433,7 +435,7 @@ public interface IDatabase {
 	
 	/**
 	 * Gets a restricted list of courses
-	 * @param tag
+	 * @param tag the tag
 	 * @param number the number of courses to return
 	 * @param start the start number of the courses
 	 * @param testKeyWord1 the first key word which identifies a test
@@ -445,15 +447,18 @@ public interface IDatabase {
 
 	/**
 	 * Gets the number of courses corresponding to the given criteria
-	 * @param params the criteria of the searched courses
+	 * @param tag the tag
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(List<String> tag,String testKeyWord1, String testKeyWord2, String testKeyWord3);
 	
 	/**
 	 * Gets a restricted list of courses
-	 * @param mediafolder
-	 * @return course
+	 * @param mediafolder the folder of the media
+	 * @return the course
 	 */
 	public Course getCourseByMediafolder(String mediafolder);
 	
@@ -483,20 +488,20 @@ public interface IDatabase {
 	
 	/**
 	 * Get selection by position 
-	 * @param position
+	 * @param position the position of the selection
 	 * @return the selection
 	 */
 	public Selection getSelection(int position);
 	
 	/**
 	 * Adds a new selection
-	 * @param s Selection
+	 * @param s the selection
 	 */
 	public void addSelection(Selection s);
 	
 	/**
 	 * Modify a selection
-	 * @param s Selection
+	 * @param s the selection
 	 */
 	public void modifySelection(Selection s);
 	

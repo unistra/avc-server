@@ -14,6 +14,12 @@ import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
 
+/**
+ * Interface for service implementation methods
+ * 
+ * @author morgan
+ *
+ */
 public interface IService {
 	
 	/**
@@ -77,7 +83,7 @@ public interface IService {
 		String rssImageUrl, String recordedInterfaceUrl, String language,boolean hq);
 	
 	/**
-	 * Gets a list of all the courses (non-Univr)
+	 * Gets a list of all the courses (no-Univr)
 	 * @return the list of courses
 	 */
 	public List<Course> getAllCourses();
@@ -143,7 +149,9 @@ public interface IService {
 	
 	/**
 	 * Gets the total number of courses without test keywords
-	 * @param testkeywords
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(String testKeyWord1, String testKeyWord2, String testKeyWord3);
@@ -151,6 +159,9 @@ public interface IService {
 	/**
 	 * Gets the number of courses corresponding to the given criteria
 	 * @param params the criteria of the searched courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(HashMap<String, String> params,String testKeyWord1, String testKeyWord2, String testKeyWord3);
@@ -196,7 +207,9 @@ public interface IService {
 	
 	/**
 	 * Gets the total number of tests with test keywords
-	 * @param testkeywords
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getTestNumber(String testKeyWord1, String testKeyWord2, String testKeyWord3);
@@ -226,12 +239,7 @@ public interface IService {
 	 */
 	public List<String> getTeachers();
 	
-	/**
-	 * Gets the list of all the teachers who have at least one course with no access code
-	 * @return the list of teachers
-	 */
-	//public List<String> getTeachersWithRss();
-	
+		
 	/**
 	 * Gets the list of all the teachers
 	 * @return the list of teachers
@@ -305,13 +313,14 @@ public interface IService {
 	
 	/**
 	 * Gets a list of all the amphis
+	 * @param buildingId the id of the building
 	 * @return the list of amphis
 	 */
 	public List<Amphi> getAmphis(int buildingId);
 	
 	/**
-	 * Gets an amphi by providing its IP address
-	 * @param ip the IP address of the amphi
+	 * Gets an amphi by providing its amphi id
+	 * @param amphiId the amphiId of the amphi
 	 * @return the amphi
 	 */
 	public Amphi getAmphi(int amphiId);
@@ -343,14 +352,7 @@ public interface IService {
 	 */
 	public void deleteAmphi(int amphiId);
 	
-	/**
-	 * Checks wether a video amphi is diffusing an audio stream or a video stream
-	 * @param amphiIp the Ip address of the video amphi
-	 * @param audioLivePort the port used by the audio live
-	 * @return the stream type diffused by the amphi
-	 */
-	public String getLiveStreamType(String amphiIp, int audioLivePort);
-	
+		
 	/**
 	 * Retrieves a list of the website's available themes
 	 * @param stylesFolder the folder in which the themes are stored
@@ -374,6 +376,7 @@ public interface IService {
 	
 	/**
 	 * Creates the RSS files for all the courses and teachers
+	 * 
 	 * @param rssFolderPath the path of the folder to store the RSS files
 	 * @param rssFileName the filename of the general RSS file
 	 * @param rssTitle the title of the RSS files
@@ -388,7 +391,7 @@ public interface IService {
 	
 	/**
 	 * Creates the RSS files for all the courses and the teacher of the course in parameter
-	 * @param course c the course which has been modified or added
+	 * @param c the course which has been modified or added
 	 * @param rssFolderPath the path of the folder to store the RSS files
 	 * @param rssName the filename of the general RSS file
 	 * @param rssTitle the title of the RSS files
@@ -404,6 +407,9 @@ public interface IService {
 	/**
 	 * Sends a message over a socket to the Univ-R AV client
 	 * @param message the message to send
+	 * @param ip the ip to contact the client
+	 * @param port the port to contact the client
+	 * @param timeout the timeout to contact the client
 	 * @return the answer of the client
 	 */
 	public String sendMessageToClient(String message, String ip, int port,int timeout);
@@ -418,6 +424,7 @@ public interface IService {
 	 * Verifies if a user is logged on Univ-R
 	 * @param uid the uid of the user
 	 * @param uuid Univ-R session identifier
+	 * @param estab the establishment
 	 * @return true if the user is logged on Univ-R
 	 */
 	public boolean isUserAuth(int uid, String uuid, String estab);
@@ -425,6 +432,7 @@ public interface IService {
 	/**
 	 * Gets information about an user
 	 * @param uid the uid of the user
+	 * @param estab the establishment
 	 * @return the information about the user
 	 */
 	public HashMap<String, String> getUserInfos(int uid, String estab);
@@ -432,6 +440,7 @@ public interface IService {
 	/**
 	 * Gets information about an user
 	 * @param login the login of the user
+	 * @param estab the establishment
 	 * @return the information about the user
 	 */
 	public HashMap<String, String> getUserInfos(String login, String estab);
@@ -439,6 +448,7 @@ public interface IService {
 	/**
 	 * Gets the group name of a group
 	 * @param groupCode the code of the group
+	 * @param estab the establishment
 	 * @return the group name
 	 */
 	public String getGroupName(int groupCode, String estab);
@@ -447,6 +457,7 @@ public interface IService {
 	 * Publishes a course on Univ-R
 	 * @param courseId the id of the course to publish
 	 * @param groupCode the code of the group which will have access to the course
+	 * @param estab the establishment
 	 */
 	public void publishCourse(int courseId, int groupCode, String estab);
 	
@@ -454,6 +465,7 @@ public interface IService {
 	 * Checks if a user has access to a course
 	 * @param uid the uid of the user
 	 * @param courseId the course
+	 * @param estab the establishment
 	 * @return true if the user has access to the course
 	 */
 	public boolean hasAccessToCourse(int uid, int courseId,String estab);
@@ -466,15 +478,15 @@ public interface IService {
 	public String cleanString(String string);
 	
 	/**
-	 * Get user by login (login is UNIQUE)
-	 * @param login
+	 * Gets user by login (login is UNIQUE)
+	 * @param login the login of the user
 	 * @return the user
 	 */
 	public User getUser(String login);
 	
 	/**
 	 * Get user by id 
-	 * @param id
+	 * @param id the id of the user
 	 * @return the user
 	 */
 	public User getUser(int id);
@@ -505,16 +517,16 @@ public interface IService {
 	
 	/**
 	 * Gets a list of courses by providing its user
-	 * @param user the user of the course
-	 * @param number
-	 * @param start
+	 * @param u the user of the course
+	 * @param number the number of courses
+	 * @param start the start number of courses
 	 * @return the list of course
 	 */
 	public List<Course> getCourses(User u, int number,int start);
 	
 	/**
 	 * Gets the total number of courses
-	 * @param user
+	 * @param u the user
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(User u);
@@ -526,16 +538,16 @@ public interface IService {
 	public List<User> getAllUsers();
 	
 	/**
-	 * Send an email to confirm the add of the new course
-	 * @param subject
-	 * @param message
-	 * @param email
+	 * Send an email to confirm the add of the new course 
+	 * @param subject the subject of the mail
+	 * @param message the message of the mail
+	 * @param email the email address
 	 */
 	public void sendMail(String subject, String message, String email);
 	
 	/**
 	 * Add a new tag
-	 * @param t Tag
+	 * @param t the tag
 	 */
 	public void addTag(Tag t);
 	
@@ -566,7 +578,7 @@ public interface IService {
 	
 	/**
 	 * Gets a restricted list of courses
-	 * @param tag
+	 * @param tag the tag
 	 * @param number the number of courses to return
 	 * @param start the start number of the courses
 	 * @param testKeyWord1 the first key word which identifies a test
@@ -578,21 +590,24 @@ public interface IService {
 
 	/**
 	 * Gets the number of courses corresponding to the given criteria
-	 * @param params the criteria of the searched courses
+	 * @param tags the tags
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(List<String> tags,String testKeyWord1, String testKeyWord2, String testKeyWord3);
 	
 	/**
 	 * Gets a restricted list of courses
-	 * @param mediafolder
-	 * @return course
+	 * @param mediafolder the folder of the media
+	 * @return the course
 	 */
 	public Course getCourseByMediafolder(String mediafolder);
 	
 	/**
 	 * Get the list of ahref for the tag cloud
-	 * @param listTag
+	 * @param listTag the list of tag
 	 * @return list of ahref
 	 */
 	public List<String> getTagCloud(List<String> listTag);
@@ -623,20 +638,20 @@ public interface IService {
 	
 	/**
 	 * Get selection by position 
-	 * @param position
+	 * @param position the position of the selection
 	 * @return the selection
 	 */
 	public Selection getSelection(int position);
 	
 	/**
 	 * Adds a new selection
-	 * @param s Selection
+	 * @param s the selection
 	 */
 	public void addSelection(Selection s);
 	
 	/**
 	 * Modify a selection
-	 * @param s Selection
+	 * @param s the selection
 	 */
 	public void modifySelection(Selection s);
 	

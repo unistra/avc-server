@@ -4,11 +4,15 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.entities.Course;
 
+/**
+ * Interface of file system implementation methods
+ * 
+ * @author morgan
+ *
+ */
 public interface IFileSystem {
 
 	/**
@@ -50,20 +54,12 @@ public interface IFileSystem {
 	 * @param rssImageUrl the URL of the RSS image file
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS file
-	 * @throws ParserConfigurationException
 	 */
 	public void rssCreation( List<Course> courses, String filePath, String rssName, 
 			String rssTitle, String rssDescription, String serverUrl, String rssImageUrl, 
 			String recordedInterfaceUrl, String language );
 	
-	/**
-	 * Checks wether a video amphi is diffusing an audio stream or a video stream
-	 * @param amphiIp the Ip address of the video amphi
-	 * @param audioLivePort the port used by the audio live
-	 * @return the stream type diffused by the amphi
-	 */
-	public String getLiveStreamType(String amphiIp, int audioLivePort);
-	
+		
 	/**
 	 * Retrieves a list of the website's available themes
 	 * @param stylesFolder the folder in which the themes are stored
@@ -88,6 +84,9 @@ public interface IFileSystem {
 	/**
 	 * Sends a message over a socket to the Univ-R AV client
 	 * @param message the message to send
+	 * @param ip the ip to contact the client
+	 * @param port the port to contact the client
+	 * @param timeout the timeout to contact the client
 	 * @return the answer of the client
 	 */
 	public String sendMessageToClient(String message, String ip, int port, int timeout);
@@ -100,9 +99,9 @@ public interface IFileSystem {
 	
 	/**
 	 * Send an email to confirm the add of the new course 
-	 * @param subject
-	 * @param message
-	 * @param email
+	 * @param subject the subject of the mail
+	 * @param message the message of the mail
+	 * @param email the email address
 	 */
 	public void sendMail(String subject, String message, String email);
 	
