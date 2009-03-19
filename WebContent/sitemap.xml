@@ -12,11 +12,6 @@
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://audiovideocours.u-strasbg.fr/avc/recorded</loc>
-  <priority>0.80</priority>
-  <changefreq>daily</changefreq>
-</url>
-<url>
   <loc>http://audiovideocours.u-strasbg.fr/avc/live</loc>
   <priority>0.80</priority>
   <changefreq>daily</changefreq>
