@@ -1,24 +1,27 @@
 #!/bin/bash
 
+PATH1=/var/log/apache2
+PATH2=/var/www/webalizer/avc
+
 #gunzip *.gz
-fgrep /var/log/apache2/access-univ-rav.log -e .xml >> /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/xml.log
-fgrep /var/log/apache2/access-univ-rav.log -e .mp3 >> /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/mp3.log
-fgrep /var/log/apache2/access-univ-rav.log -e .ogg >> /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/ogg.log
-fgrep /var/log/apache2/access-univ-rav.log -e .pdf >> /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/pdf.log
-fgrep /var/log/apache2/access-univ-rav.log -e .smil >> /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/smil.log
-fgrep /var/log/apache2/access-univ-rav.log -e .zip >> /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/zip.log
-fgrep /var/log/apache2/access-univ-rav.log -e .flv >> /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/flv.log
-fgrep /var/log/apache2/access-univ-rav.log -e .rm >> /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/rm.log
-fgrep /var/log/apache2/access-univ-rav.log -e .mp4 >> /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/mp4.log
+fgrep $PATH1/access-univ-rav.log -e .xml >> $PATH2/xml.log
+fgrep $PATH1/access-univ-rav.log -e .mp3 >> $PATH2/mp3.log
+fgrep $PATH1/access-univ-rav.log -e .ogg >> $PATH2/ogg.log
+fgrep $PATH1/access-univ-rav.log -e .pdf >> $PATH2/pdf.log
+fgrep $PATH1/access-univ-rav.log -e .smil >> $PATH2/smil.log
+fgrep $PATH1/access-univ-rav.log -e .zip >> $PATH2/zip.log
+fgrep $PATH1/access-univ-rav.log -e .flv >> $PATH2/flv.log
+fgrep $PATH1/access-univ-rav.log -e .rm >> $PATH2/rm.log
+fgrep $PATH1/access-univ-rav.log -e .mp4 >> $PATH2/mp4.log
 
-visitors -B -p 2000 /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/xml.log > /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/xml.html
-visitors -B -p 2000 /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/mp3.log > /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/mp3.html
-visitors -B -p 2000 /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/ogg.log > /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/ogg.html
-visitors -B -p 2000 /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/pdf.log > /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/pdf.html
-visitors -B -p 2000 /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/smil.log > /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/smil.html
-visitors -B -p 2000 /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/zip.log > /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/zip.html
-visitors -p 2000 /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/flv.log > /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/flv.html
-visitors -p 2000 /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/rm.log > /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/rm.html
-visitors -p 2000 /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/mp4.log > /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/mp4.html
+visitors -B -p 2000 $PATH2/xml.log > $PATH2/xml.html
+visitors -B -p 2000 $PATH2/mp3.log > $PATH2/mp3.html
+visitors -B -p 2000 $PATH2/ogg.log > $PATH2/ogg.html
+visitors -B -p 2000 $PATH2/pdf.log > $PATH2/pdf.html
+visitors -B -p 2000 $PATH2/smil.log > $PATH2/smil.html
+visitors -B -p 2000 $PATH2/zip.log > $PATH2/zip.html
+visitors -p 2000 $PATH2/flv.log > $PATH2/flv.html
+visitors -p 2000 $PATH2/rm.log > $PATH2/rm.html
+visitors -p 2000 $PATH2/mp4.log > $PATH2/mp4.html
 
-mv /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/*.html /var/www/webalizer/avc/
+#mv /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_Stat_scpt/*.html $PATH2/
