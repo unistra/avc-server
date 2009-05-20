@@ -59,7 +59,7 @@
 	    		&nbsp;&nbsp;&nbsp;
 	    		<a href="<c:url value="${statsUrl}adminfms/fms_adminConsole.htm" />">FMS stats</a>
 	    		&nbsp;&nbsp;&nbsp;
-	    		<a href="<c:url value="./versionclient?ip=all"/>">Clients version stats</a>
+	    		<a href="<c:url value="./admin_versionclient?ip=all"/>">Clients version stats</a>
 	    		<br>
 	    		<br>
 	    		<a href="<c:url value="${oldStatsUrl}xml.html#Requested pages" />">XML stats</a>

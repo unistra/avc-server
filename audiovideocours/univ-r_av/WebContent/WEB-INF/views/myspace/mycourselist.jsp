@@ -92,11 +92,13 @@
 		</c:choose>
 		
 
-		<c:url var="edit" scope="page" value="./editmycourse">
+		<c:url var="edit" scope="page" value="./myspace_editmycourse">
 				<c:param name="id" value="${course.courseid}"/>
 		</c:url>
 		<td class="tdalign" onclick="document.location.href='${edit}'">
-			<a href="<c:out value="${edit}"/>"  class="aEdit"><fmt:message key="Editer"/> </a>
+			<div class="btnEdit">
+	    		<a href="<c:out value="${edit}"/>"  class="aEdit"><fmt:message key="Editer"/> </a>
+	    	</div>
 		</td>
 		
 		</tr>

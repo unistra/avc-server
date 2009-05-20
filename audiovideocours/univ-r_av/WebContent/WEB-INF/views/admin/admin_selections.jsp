@@ -55,7 +55,7 @@
 					<a href="<c:url value="${editurl}?id=${selections.position}" />">Edit</a>
 				</display:column>
 				<display:column>
-					<a href="javascript:confirmation('Delete the selection ?','${deleteurl}?id=${selections.position}')">Delete</a>
+					<a href="javascript:confirmation('Delete the selection ${selections.position}?','${deleteurl}?id=${selections.position}')">Delete</a>
 				</display:column>
 	    	</display:table>
 	    	
