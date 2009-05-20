@@ -1,9 +1,14 @@
 package org.ulpmm.univrav.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Tag;
 
 /**
  * This thread is used to upload a media
@@ -24,6 +29,9 @@ public class MediaUpload extends Thread {
 	
 	/** the media's name */
 	private FileItem mediaFile;
+	
+	/** List of tags **/
+	private String tags;
 	
 	/** Service interface */
 	private IService service;
@@ -63,6 +71,7 @@ public class MediaUpload extends Thread {
 	 * @param fs FileSystem interface
 	 * @param c The course
 	 * @param mediaFile the media's name
+	 * @param tags tags list
 	 * @param service Service interface
 	 * @param rssFolderPath the rss folder path
 	 * @param rssName The rss name
@@ -74,7 +83,7 @@ public class MediaUpload extends Thread {
 	 * @param language the language
 	 * @param hq the high quality indicator
 	 */
-	public MediaUpload(IDatabase db, IFileSystem fs, Course c, FileItem mediaFile, 
+	public MediaUpload(IDatabase db, IFileSystem fs, Course c, FileItem mediaFile, String tags,
 			IService service, String rssFolderPath, String rssName, String rssTitle, 
 			String rssDescription, String serverUrl, String rssImageUrl, 
 			String recordedInterfaceUrl, String language,boolean hq) {
@@ -84,6 +93,7 @@ public class MediaUpload extends Thread {
 		this.fs = fs;
 		this.c = c;
 		this.mediaFile = mediaFile;
+		this.tags = tags;
 		this.service = service;
 		this.rssFolderPath = rssFolderPath;
 		this.rssName = rssName;
@@ -103,6 +113,27 @@ public class MediaUpload extends Thread {
 		fs.mediaUpload(c, mediaFile,hq);
 		db.addCourse(c);
 		
+		// Adding tags
+		if(tags!=null && !tags.equals("")) {
+			// ADD TAGS		
+			List<String> listTmp=new ArrayList<String>();
+			StringTokenizer st = new StringTokenizer(tags);
+			String token = null;
+			while (st.hasMoreTokens()) {
+				token = st.nextToken();
+				if(!listTmp.contains(token)) {
+					service.addTag(new Tag(0, //is not used
+						token, // the tag
+						c.getCourseid()) // the course
+					);
+					listTmp.add(token);
+				}
+			}
+			listTmp = null;
+			st = null;
+			token = null;
+		}
+				
 		/* Generation of the RSS files */
 		if( c.getGenre() == null)
 			service.generateRss(c, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);

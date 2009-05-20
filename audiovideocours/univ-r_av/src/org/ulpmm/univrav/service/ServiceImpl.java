@@ -1,6 +1,9 @@
 package org.ulpmm.univrav.service;
 
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +23,8 @@ import org.ulpmm.univrav.entities.Tag;
 import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
+
+import sun.misc.BASE64Encoder;
 
 /**
  * Service implementation methods.
@@ -90,6 +95,7 @@ public class ServiceImpl implements IService {
 	 * Adds a new course
 	 * @param c the course to add
 	 * @param courseArchive the archive file of the course to add
+	 * @param tags list of tags
 	 * @param rssFolderPath the path of the folder to store the RSS files
 	 * @param rssName the filename of the general RSS file
 	 * @param rssTitle the title of the RSS files
@@ -99,11 +105,11 @@ public class ServiceImpl implements IService {
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
 	 */
-	public synchronized void addCourse(Course c, String courseArchive, String rssFolderPath, 
+	public synchronized void addCourse(Course c, String courseArchive, String tags, String rssFolderPath, 
 			String rssName, String rssTitle, String rssDescription, String serverUrl, 
 			String rssImageUrl, String recordedInterfaceUrl, String language) {
 		
-		CourseAddition ca = new CourseAddition(db, fs, c, courseArchive, 
+		CourseAddition ca = new CourseAddition(db, fs, c, courseArchive, tags,
 				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
 				rssImageUrl, recordedInterfaceUrl, language);
 		ca.start();
@@ -147,6 +153,7 @@ public class ServiceImpl implements IService {
 	 * Creates a course from an uploaded audio or video media file
 	 * @param c the course to create
 	 * @param mediaFile the media file of the course to create
+	 * @param tags tags list
 	 * @param rssFolderPath the path of the folder to store the RSS files
 	 * @param rssName the filename of the general RSS file
 	 * @param rssTitle the title of the RSS files
@@ -157,11 +164,11 @@ public class ServiceImpl implements IService {
 	 * @param language the language of the RSS files
 	 * @param hq High Quality
 	 */
-	public synchronized void mediaUpload( Course c, FileItem mediaFile , String rssFolderPath, 
+	public synchronized void mediaUpload( Course c, FileItem mediaFile, String tags , String rssFolderPath, 
 		String rssName, String rssTitle, String rssDescription, String serverUrl, 
 		String rssImageUrl, String recordedInterfaceUrl, String language,boolean hq) {
 		
-		MediaUpload mu = new MediaUpload(db, fs, c, mediaFile,
+		MediaUpload mu = new MediaUpload(db, fs, c, mediaFile, tags,
 				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
 				rssImageUrl, recordedInterfaceUrl, language,hq);
 		mu.start();
@@ -563,6 +570,8 @@ public class ServiceImpl implements IService {
 		List<Course> courses = db.getAllCourses();
 		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+		
 		
 		// For the teachers
 		List<String> teachers = db.getTeachers();
@@ -601,7 +610,8 @@ public class ServiceImpl implements IService {
 		List<Course> courses = db.getAllCourses();
 		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
-		
+		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+				
 		// For the teacher
 		if( ! (c.getName() == null && c.getFirstname() == null)) {
 			String teacher = db.getTeacherFullName(c.getName(), c.getFirstname());
@@ -788,7 +798,7 @@ public class ServiceImpl implements IService {
 	public User getUser(String login) {
 		return db.getUser(login);
 	}
-	
+		
 	/**
 	 * Get user by id 
 	 * @param id the id of the user
@@ -1023,4 +1033,28 @@ public class ServiceImpl implements IService {
 	public void deleteSelection(int position) {
 		db.deleteSelection(position);
 	}
+	
+	/**
+	 * 
+	 * @param plaintext
+	 * @return string encrypted
+	 * @throws NoSuchAlgorithmException
+	 * @throws UnsupportedEncodingException
+	 */
+	public synchronized String encrypt(String plaintext) {
+		
+		MessageDigest md = null;
+		
+		try {
+			md = MessageDigest.getInstance("SHA"); 
+			md.update(plaintext.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} 
+		
+		return (new BASE64Encoder()).encode(md.digest()); 
+	}
+
 }

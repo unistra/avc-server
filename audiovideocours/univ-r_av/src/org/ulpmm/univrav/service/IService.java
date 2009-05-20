@@ -1,6 +1,8 @@
 package org.ulpmm.univrav.service;
 
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.fileupload.FileItem;
@@ -26,6 +28,7 @@ public interface IService {
 	 * Adds a new course
 	 * @param c the course to add
 	 * @param courseArchive the archive file of the course to add
+	 * @param tags list of tags
 	 * @param rssFolderPath the path of the folder to store the RSS files
 	 * @param rssName the filename of the general RSS file
 	 * @param rssTitle the title of the RSS files
@@ -35,7 +38,7 @@ public interface IService {
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
 	 */
-	public void addCourse(Course c, String courseArchive, String rssFolderPath, 
+	public void addCourse(Course c, String courseArchive, String tags, String rssFolderPath, 
 			String rssName, String rssTitle, String rssDescription, String serverUrl, 
 			String rssImageUrl, String recordedInterfaceUrl, String language);
 	
@@ -68,6 +71,7 @@ public interface IService {
 	 * Creates a course from an uploaded audio or video media file
 	 * @param c the course to create
 	 * @param mediaFile the media file of the course to create
+	 * @param tags list
 	 * @param rssFolderPath the path of the folder to store the RSS files
 	 * @param rssName the filename of the general RSS file
 	 * @param rssTitle the title of the RSS files
@@ -78,7 +82,7 @@ public interface IService {
 	 * @param language the language of the RSS files
 	 * @param hq High Quality
 	 */
-	public void mediaUpload( Course c, FileItem mediaFile , String rssFolderPath, 
+	public void mediaUpload( Course c, FileItem mediaFile, String tags, String rssFolderPath, 
 		String rssName, String rssTitle, String rssDescription, String serverUrl, 
 		String rssImageUrl, String recordedInterfaceUrl, String language,boolean hq);
 	
@@ -483,7 +487,7 @@ public interface IService {
 	 * @return the user
 	 */
 	public User getUser(String login);
-	
+		
 	/**
 	 * Get user by id 
 	 * @param id the id of the user
@@ -660,5 +664,15 @@ public interface IService {
 	 * @param position the position of the selection
 	 */
 	public void deleteSelection(int position);
+	
+	/**
+	 * 
+	 * @param plaintext
+	 * @return string encrypted
+	 * @throws NoSuchAlgorithmException
+	 * @throws UnsupportedEncodingException
+	 */
+	public String encrypt(String plaintext) throws NoSuchAlgorithmException, UnsupportedEncodingException;
+
 
 }
