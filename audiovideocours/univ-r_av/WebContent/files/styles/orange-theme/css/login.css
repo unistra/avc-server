@@ -19,14 +19,6 @@
 	margin-bottom: 20px;
 }
 
-.displaytag {
-	width: 95%;
-	margin:auto;
-	border-spacing: 1px;
-	color: #000000;
-	font-size: 10px;
-}
-
 table {
 	color: #000000;
 }
@@ -34,7 +26,6 @@ table {
 th, td {
 	padding-top: 4px;
 	padding-bottom: 4px;
-	font-weight: normal;
 }
 
 td {
@@ -51,15 +42,15 @@ th a {
 
 /* Classes to alternate the color of the rows of the courses table */
 .odd {
-	background-color: #77BBFF;
+	background-color: #FFD557;
 }
 
 .even {
-	background-color: #AADDFF;
+	background-color: #E3DABA;
 }
 
-.editform {
-	width: 425px;
+.loginForm {
+	width: 275px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align:left;
@@ -67,31 +58,14 @@ th a {
 
 /* A field of the html form */
 .field {
-	width: 300px;
+	width: 150px;
 }
 
-p#nbr {
-	text-align:center;
-
-}
-
-.add {
-	text-align:center;
-}
-
-.diskspace {
-	text-align:center;
-}
-
-.infos {
-	text-align:center;
-}
-pre#pre {
-	margin-left:25%;
-	margin-right:25%;
-	text-align:left;
-}
-
-.littleField {
-	width: 20px;
+/* Zone to display a temporary message */
+.message {
+	height: 18px;
+	margin: 8px;
+	text-align: center;
+	overflow: hidden;
+	color: #ff5050;
 }

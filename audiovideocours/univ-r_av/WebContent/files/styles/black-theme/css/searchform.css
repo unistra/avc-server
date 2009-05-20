@@ -35,7 +35,7 @@
 /* Div containing the tag image */
 .tagImage {
 	position: absolute;
-	width: 180px; /*237*/
+	width: 140px; /*180*/
 	height: 139px;
 	margin-left: -20px;
 	margin-top: -20px;
