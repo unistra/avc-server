@@ -33,6 +33,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
+import org.apache.commons.lang.WordUtils;
 import org.ulpmm.univrav.dao.DaoException;
 import org.ulpmm.univrav.dao.DatabaseImpl;
 import org.ulpmm.univrav.dao.FileSystemImpl;
@@ -366,14 +367,26 @@ public class Application extends HttpServlet {
 		
 		if( page.equals("/home"))
 			displayHomePage(request, response);
-		else if (page.equals("/myspace")) 
+		else if (page.equals("/authentication_cas")) 
+			authenticationCas(request,response);
+		/*TODO else if (page.equals("/authentication")) 
+			authentication(request,response);
+		else if( page.equals("/validateAuthentication"))
+			validateAuthentication(request, response);
+		else if( page.equals("/create_account"))
+			displayCreateAccount(request, response);*/
+		else if (page.equals("/myspace_home")) 
 			displayMyspace(request,response);
 		else if(page.equals("/logout")) 
 			logout(request,response);
-		else if(page.equals("/myemail"))
+		else if(page.equals("/publication")) 
+			displayPublicationPage(request,response);
+		else if(page.equals("/publication_validatepublication")) 
+			validatePublication(request,response);
+		/*TODO else if(page.equals("/myemail"))
 			DisplayMyEmail(request,response);
 		else if(page.equals("/modifyemail"))
-			ModifyEmail(request,response);
+			ModifyEmail(request,response);*/
 		else if( page.equals("/live"))
 			displayLivePage(request, response);
 		else if( page.equals("/recorded"))
@@ -386,16 +399,16 @@ public class Application extends HttpServlet {
 			displayRssPage(request, response);
 		else if (page.equals("/courses"))
 			displayCourses(request, response);
-		else if (page.equals("/editmycourse"))
+		else if (page.equals("/myspace_editmycourse"))
 			displayEditMyCourses(request, response);
-		else if( page.equals("/validatemycourse"))
-			validateMyCourse(request, response, "./myspace");
-		else if( page.equals("/upload"))
+		else if( page.equals("/myspace_validatemycourse"))
+			validateMyCourse(request, response, "./myspace_home");
+		else if( page.equals("/myspace_upload"))
 			uploadAccess(request, response);
+		else if( page.equals("/myspace_mediaupload"))
+			mediaUpload(request, response);
 		else if( page.equals("/add") || page.equals("/UploadClient"))
 			addCourse(request, response);
-		else if( page.equals("/mediaupload"))
-			mediaUpload(request, response);
 		else if(page.equals("/livestate") || page.equals("/LiveState"))
 			liveState(request, response);
 		else if( page.equals("/courseaccess")) 
@@ -521,7 +534,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("deleteurl", "./admin_deleteunivr");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_courses.jsp").forward(request, response);
 		}
-		else if( page.equals("/versionclient"))
+		else if( page.equals("/admin_versionclient"))
 			versionclient(request, response);
 		else if( page.equals("/admin_editunivr")) {
 			request.setAttribute("course", service.getCourse(Integer.parseInt(request.getParameter("id"))));
@@ -560,8 +573,15 @@ public class Application extends HttpServlet {
 			validateUser(request, response);
 		else if( page.equals("/admin_deleteuser")) {
 			Integer userid = request.getParameter("id")!=null ? Integer.parseInt(request.getParameter("id")) : null;
-			service.deleteUser(userid);
-			response.sendRedirect(response.encodeRedirectURL("./admin_users"));
+			if(service.getCourseNumber(service.getUser(userid))==0) {
+				service.deleteUser(userid);
+				response.sendRedirect(response.encodeRedirectURL("./admin_users"));
+			}
+			else {
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "You cannot delete this user because he have courses");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+			}
 		}
 		else if( page.equals("/admin_adduser")) {
 			request.setAttribute("action","add"); 
@@ -663,6 +683,119 @@ public class Application extends HttpServlet {
 	}
 	
 	/**
+	 * Method to authenticate a user with a jsp page
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	/*TODO private void authentication(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+		
+		request.setAttribute("posturl", "./validateAuthentication");
+		request.setAttribute("gobackurl", "./home");
+		request.setAttribute("createaccounturl", "./create_account");
+		
+		/ Displays the view 
+		getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/login.jsp").forward(request, response);
+
+	}*/
+	
+	/**
+	 * Method to validate authentication form
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	/*TODO private void validateAuthentication(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// Test form paramaters
+		if( ! (request.getParameter("login").equals("") || request.getParameter("password").equals(""))) {
+			//encrypt the password into SHA1	
+			String passSha = service.encrypt(request.getParameter("password"));
+			//Gets the user
+			User user = service.getUser(request.getParameter("login"),passSha);
+			//if the user is authenticate and activate
+			if(user!=null && user.isActivate()) {
+				// Sets the user's login in the session
+				session.setAttribute("$userLogin", user.getLogin());			
+				response.sendRedirect(response.encodeRedirectURL("./myspace_home"));
+			}
+			else {
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "Wrong login or password. Try again.");
+				getServletContext().getRequestDispatcher("/avc/authentication").forward(request, response);
+				
+			}
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "All fields must be completed");
+			getServletContext().getRequestDispatcher("/avc/authentication").forward(request, response);
+		}
+	}*/
+	
+	
+	/**
+	 * Method to authenticate a cas user
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void authenticationCas(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+		
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+
+		// If we have the cas ticket
+		if(casUser!=null) {
+			// We get the user login from the session
+			// or we get the user from the database
+				User user = service.getUser(casUser);
+				
+				// If the user is null, create an account
+				if(user==null) {
+					service.addUser(new User(0,casUser,null,null,null,null,null,"ldap",true));
+				}
+								
+				//REDIRECTION
+				if(request.getParameter("returnPage")!=null && request.getParameter("returnPage").equals("publication")) {
+					request.setAttribute("publication_type", "serverCas");
+					getServletContext().getRequestDispatcher("/avc/publication").forward(request, response);
+				}
+				else if(request.getParameter("returnPage")!=null && request.getParameter("returnPage").equals("myspace")) {
+					getServletContext().getRequestDispatcher("/avc/myspace_home").forward(request, response);
+				}	
+				// from ENT
+				else {
+					session.setAttribute("btnDeco", true);
+					response.sendRedirect("./home");
+				}
+				
+			}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "You don't have access to this page");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+		
+	}
+	
+	/*TODO private void displayCreateAccount(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+	
+	request.setAttribute("posturl", "./validate_");
+	request.setAttribute("gobackurl", "./authentication");
+	
+	/ Displays the view 
+	getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/createAccount.jsp").forward(request, response);
+	}*/
+	
+	/**
 	 * Method to display the myspace page
 	 * 
 	 * @param request the request send by the client to the server
@@ -672,22 +805,24 @@ public class Application extends HttpServlet {
 	 */
 	private void displayMyspace(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
-			
+				
+		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-
-		if(casUser!=null) {
 		
-			// Try to get the user 
-			User user = service.getUser(casUser);
-
-			// Else, create user
-			if(user==null) {
-				service.addUser(new User(0,casUser,""));
-				user = service.getUser(casUser);
-			}
-
-			request.setAttribute("user", user);
-
+		User user = null;
+		// Authentification CAS	
+		if(casUser!=null) {
+			// Gets the user from the session
+			user=service.getUser(casUser);
+		}
+		// Authentification local
+		/*else if(session.getAttribute("$userLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLogin").toString());
+		}*/
+			
+		// if user is present and activate
+		if(user!=null && user.isActivate()) {
+			
 			int start = 0;
 			int pageNumber;
 
@@ -705,22 +840,24 @@ public class Application extends HttpServlet {
 			request.setAttribute("courses", service.getCourses(user,recordedCourseNumber,start));
 			request.setAttribute("items", service.getCourseNumber(user));
 			request.setAttribute("number", recordedCourseNumber);
-			request.setAttribute("resultPage", "myspace");
+			request.setAttribute("resultPage", "myspace_home");
 			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
+			request.setAttribute("user", user);
 
 			/* Saves the page for the style selection thickbox return */
-			session.setAttribute("previousPage", "/myspace?page=" + pageNumber);
+			session.setAttribute("previousPage", "/myspace_home?page=" + pageNumber);
 
 			// Button disconnect
 			session.setAttribute("btnDeco", true);
 
 			/* Displays the view */ 
-			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace.jsp").forward(request, response);
+			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace_home.jsp").forward(request, response);
 		}
 		else {
+			//TODO response.sendRedirect("./authentication");
 			request.setAttribute("messagetype", "error");
 			request.setAttribute("message", "You don't have access to this page");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 		}
 
 	}
@@ -735,16 +872,121 @@ public class Application extends HttpServlet {
 	 */
 	private void logout(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
-
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-						
-		if(casUser!=null) {	
-			// Button disconnect
-			session.setAttribute("btnDeco", false);
+		
+		// Button disconnect
+		session.setAttribute("btnDeco", false);
+		
+		// Authentication CAS
+		if(session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER)!=null) {		
 			session.removeAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
 			response.sendRedirect(casLogoutUrl);
 		}
 		
+		// Authentication local
+		/*if(session.getAttribute("$userLogin")!=null) {	
+			session.removeAttribute("$userLogin");
+			response.sendRedirect("./home");
+		}*/
+		
+	}
+	
+	
+	private void displayPublicationPage(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {  
+
+		/* The client sends parameters in the ISO8859-15 encoding */
+		//request.setCharacterEncoding("ISO8859-15");
+
+		if(request.getParameter("publication_type")!=null) {
+			request.setAttribute("publication_type", request.getParameter("publication_type"));	
+		}
+
+		if(request.getParameter("id")!=null) {
+			session.setAttribute("publication_id", request.getParameter("id"));
+		}
+
+		if(request.getParameter("mediapath")!=null) {
+			session.setAttribute("publication_mediapath", request.getParameter("mediapath"));
+		}
+
+		// Standard course
+		if( request.getParameter("id")==null || request.getParameter("id").equals("") || request.getParameter("id").equals("(id:no)") || request.getParameter("id").equals("None") ) {
+
+			// Get the form parameters if error message
+			request.setAttribute("title", request.getParameter("title"));
+			request.setAttribute("description", request.getParameter("description"));
+			request.setAttribute("name", request.getParameter("name"));
+			request.setAttribute("firstname", request.getParameter("firstname"));
+			request.setAttribute("ue", request.getParameter("ue"));
+			request.setAttribute("genre", request.getParameter("genre"));
+			request.setAttribute("tags", request.getParameter("tags"));
+			request.setAttribute("visible", request.getParameter("visible"));
+
+			//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
+			String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+
+			User user = null;
+			// Authentification CAS	
+			if(casUser!=null) {
+				// Gets the user from the session
+				user=service.getUser(casUser);
+			}
+
+			// if user is present and activate
+			if(user!=null && user.isActivate()) {
+
+				request.setAttribute("user", user);
+
+				// Button disconnect
+				session.setAttribute("btnDeco", true);
+			}
+			
+			/* Saves the page for the style selection thickbox return */
+			session.setAttribute("previousPage", "/publication");
+
+			/* Displays the view */ 
+			getServletContext().getRequestDispatcher("/WEB-INF/views/publication.jsp").forward(request, response);
+
+		}
+		// Univr Course
+		else {
+			request.setAttribute("id", "");	
+			getServletContext().getRequestDispatcher("/avc/UploadClient").forward(request, response);
+
+		}
+	}
+	
+	/**
+	 * Method to validate the publication form
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void validatePublication(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+				
+		// Test form parameters
+		if(request.getParameter("mediapath")==null || request.getParameter("mediapath").equals("")) {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Mediapath is not found!");
+			getServletContext().getRequestDispatcher("/avc/publication").forward(request, response);
+		}
+		else if(request.getParameter("title")==null || request.getParameter("title").equals("")) {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Field title must be completed");
+			getServletContext().getRequestDispatcher("/avc/publication").forward(request, response);
+		}
+		else if(request.getParameter("name")==null || request.getParameter("name").equals("")) {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Field name must be completed");
+			getServletContext().getRequestDispatcher("/avc/publication").forward(request, response);
+		}
+		// If the formulaire is valid
+		else {
+			getServletContext().getRequestDispatcher("/avc/UploadClient").forward(request, response);
+		}
 	}
 	
 	/**
@@ -755,40 +997,33 @@ public class Application extends HttpServlet {
 	 * @throws ServletException if an error occurred
 	 * @throws IOException if an error occurred
 	 */
-	private void DisplayMyEmail(HttpServletRequest request, HttpServletResponse response)
+/*TODO	private void DisplayMyEmail(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
-
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-						
-		if(casUser!=null) {	
+		
+		if(session.getAttribute("$userLogin")!=null) {
 			
-			// Try to get the user
-			User user = service.getUser(casUser);
+			// Gets the user from the session
+			User user=service.getUser(session.getAttribute("$userLogin").toString());
 			
-			// Else, create user
-			if(user==null) {
-				service.addUser(new User(0,casUser,""));
-				user = service.getUser(casUser);
-			}
-
 			request.setAttribute("user", user);
-			request.setAttribute("gobackurl", "./myspace");
+			request.setAttribute("gobackurl", "./myspace_home");
 			
 			// Button disconnect
 			session.setAttribute("btnDeco", true);
 			
-			/* Displays the view */ 
+			/ Displays the view 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myemail.jsp").forward(request, response);
 	
 		
 		}
 		else {
+			//TODO response.sendRedirect("./authentication");
 			request.setAttribute("messagetype", "error");
 			request.setAttribute("message", "You don't have access to this page");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 		}
 		
-	}
+	}*/
 	
 	/**
 	 * Method to modify an email
@@ -798,34 +1033,40 @@ public class Application extends HttpServlet {
 	 * @throws ServletException if an error occurred
 	 * @throws IOException if an error occurred
 	 */
-	private void ModifyEmail(HttpServletRequest request, HttpServletResponse response)
+/*TODO	private void ModifyEmail(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
+					
+		if(session.getAttribute("$userLogin")!=null) {
+
+			// Check the user login
+			if(session.getAttribute("$userLogin").toString().compareTo(request.getParameter("login"))==0) {
+
+				// Gets the user from database
+				User user=service.getUser(session.getAttribute("$userLogin").toString());
 				
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-			
-		// Try to get the user
-		User user = service.getUser(casUser);
-		
-		// Check the user login
-		if(user.getLogin().compareTo(request.getParameter("login"))==0) {
-		
-			user.setEmail(! request.getParameter("nouveauEmail").equals("") ? request.getParameter("nouveauEmail") : request.getParameter("emailActuel"));
-			service.modifyUser(user);
-				
-			/* Displays the view */ 
-			request.setAttribute("messagetype", "info");
-			request.setAttribute("message", "Your e-mail has been modified");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
-		
+				user.setEmail(! request.getParameter("nouveauEmail").equals("") ? request.getParameter("nouveauEmail") : request.getParameter("emailActuel"));
+				service.modifyUser(user);
+
+				/ Displays the view 
+				request.setAttribute("messagetype", "info");
+				request.setAttribute("message", "Your e-mail has been modified");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+
+			}
+			else {
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "You don't have access to this page");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+			}
+
 		}
 		else {
+			//TODO response.sendRedirect("./authentication");
 			request.setAttribute("messagetype", "error");
 			request.setAttribute("message", "You don't have access to this page");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 		}
-		
-		
-	}
+	}*/
 	
 	/**
 	 * Method to display the live page
@@ -1062,11 +1303,13 @@ public class Application extends HttpServlet {
 		
 		HashMap<String, String> params = new HashMap<String, String>();
 		
-		if( request.getParameter("author") != null) 
-			params.put("fullname", request.getParameter("author"));
+		if( request.getParameter("author") != null) {
+			params.put("fullname", WordUtils.capitalize(new String(request.getParameter("author").getBytes("8859_1"),"UTF8")));
+		}
 		
-		if( request.getParameter("formation") != null) 
-			params.put("formation", request.getParameter("formation"));
+		if( request.getParameter("formation") != null) {
+			params.put("formation", new String(request.getParameter("formation").getBytes("8859_1"),"UTF8"));
+		}
 		
 		/* Saves the hashmap in the session */
 		session.setAttribute("params", params);
@@ -1132,11 +1375,9 @@ public class Application extends HttpServlet {
 			List<String> listTags = new ArrayList<String>();
 			StringTokenizer st = new StringTokenizer(tags);
 			while(st.hasMoreTokens()) {
-				String tag = st.nextToken();
-				//TODO if(!listTags.contains(tag))
-					listTags.add(tag);
+				listTags.add(st.nextToken());
 			}
-												
+															
 			String rssNamePar=rssName;
 			
 			request.setAttribute("audio", "checked");
@@ -1161,7 +1402,8 @@ public class Application extends HttpServlet {
 			session.setAttribute("previousPage", "/tags?tags="+tags+"&page=" + pageNumber);
 			
 			listTags=null; //set list null for memory
-			
+			st = null;
+						
 			/* Displays the view */
 			getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
 		}
@@ -1180,28 +1422,45 @@ public class Application extends HttpServlet {
 	 */
 	private void validateMyCourse(HttpServletRequest request, HttpServletResponse response, String redirectUrl) 
 	throws ServletException, IOException {	
+						
+		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 		
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
+		User user = null;
+		// Authentification CAS	
+		if(casUser!=null) {
+			// Gets the user from the session
+			user=service.getUser(casUser);
+		}
+		// Authentification local
+		/*else if(session.getAttribute("$userLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLogin").toString());
+		}*/
+		
+		if(user!=null && user.isActivate()) {
 
-		// Try to get the user
-		User user = service.getUser(casUser);
-		
-		// Get the course
-		Course c = service.getCourse(Integer.parseInt(request.getParameter("courseid")));
-		
-		// Check the user id
-		if(user!=null && c.getUserid()==user.getUserid()) {
-			
-			// Button disconnect
-			session.setAttribute("btnDeco", true);
-			
-			validateCourse(request,response,redirectUrl);
-			
+			// Get the course
+			Course c = service.getCourse(Integer.parseInt(request.getParameter("courseid")));
+
+			// Check the user id
+			if(c.getUserid()==user.getUserid()) {
+
+				// Button disconnect
+				session.setAttribute("btnDeco", true);
+
+				validateCourse(request,response,redirectUrl);
+			}
+			else {
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "You don't have access to this page");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+			}
 		}
 		else {
+			//TODO response.sendRedirect("./authentication");
 			request.setAttribute("messagetype", "error");
 			request.setAttribute("message", "You don't have access to this page");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 		}
 	}
 	
@@ -1215,83 +1474,58 @@ public class Application extends HttpServlet {
 	 */
 	private void displayEditMyCourses(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
+				
+		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 		
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
-
-		// Try to get the user
-		User user = service.getUser(casUser);
-		
-		// Get the course
-		Course c = service.getCourse(Integer.parseInt(request.getParameter("id")));
-		
-		// Check user id
-		if(user!=null && c.getUserid()==user.getUserid()) {
-			
-			// Getting tags of the course
-			String tags="";
-			List<Tag> listTags = service.getTagsByCourse(c);
-			for(int i=0;i<listTags.size();i++) {
-				if(i==0)
-					tags=listTags.get(i).getTag();
-				else
-					tags=tags + " " + listTags.get(i).getTag();
-			}
-						
-			request.setAttribute("tags", tags);
-			request.setAttribute("course", c);
-			request.setAttribute("posturl", "./validatemycourse");
-			request.setAttribute("gobackurl", "./myspace");
-			
-			// Button disconnect
-			session.setAttribute("btnDeco", true);
-			
-			
-			/* Displays the view */
-			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/editmycourse.jsp").forward(request, response);
-			
-			
-		}
-		else {
-			request.setAttribute("messagetype", "error");
-			request.setAttribute("message", "You don't have access to this page");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
-		}
-	}
-		
-	/**
-	 * Method to display the upload access page
-	 * 
-	 * @param request the request send by the client to the server
-	 * @param response the response send by the server to the client
-	 * @throws ServletException if an error occurred
-	 * @throws IOException if an error occurred
-	 */
-	private void uploadAccess(HttpServletRequest request, HttpServletResponse response)
-	throws ServletException, IOException {
-
-		String forwardUrl = "/WEB-INF/views/uploadpage.jsp";
-
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
-
+		User user = null;
+		// Authentification CAS	
 		if(casUser!=null) {
+			// Gets the user from the session
+			user=service.getUser(casUser);
+		}
+		// Authentification local
+		/*else if(session.getAttribute("$userLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLogin").toString());
+		}*/
 		
-			// Try to get the user
-			User user = service.getUser(casUser);
-			
-			// Create user
-			if(user==null) {
-				service.addUser(new User(0,casUser,""));
-				user = service.getUser(casUser);
-			}
-			
-			request.setAttribute("user", user);
+		if(user!=null && user.isActivate()) {
 
-			request.setAttribute("gobackurl", "./myspace");
+			// Get the course
+			Course c = service.getCourse(Integer.parseInt(request.getParameter("id")));
 			
-			// Button disconnect
-			session.setAttribute("btnDeco", true);
-			
-			getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
+			// Check user id
+			if(c.getUserid()==user.getUserid()) {
+
+				// Getting tags of the course
+				String tags="";
+				List<Tag> listTags = service.getTagsByCourse(c);
+				for(int i=0;i<listTags.size();i++) {
+					if(i==0)
+						tags=listTags.get(i).getTag();
+					else
+						tags=tags + " " + listTags.get(i).getTag();
+				}
+
+				request.setAttribute("tags", tags);
+				request.setAttribute("course", c);
+				request.setAttribute("posturl", "./myspace_validatemycourse");
+				request.setAttribute("gobackurl", "./myspace_home");
+
+				// Button disconnect
+				session.setAttribute("btnDeco", true);
+
+
+				/* Displays the view */
+				getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace_editmycourse.jsp").forward(request, response);
+
+
+			}
+			else {
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "You don't have access to this page");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+			}
 		}
 		else {
 			request.setAttribute("messagetype", "error");
@@ -1299,6 +1533,8 @@ public class Application extends HttpServlet {
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
 		}
 	}
+		
+	
 	
 	/**
 	 * Method to add a course
@@ -1311,28 +1547,42 @@ public class Application extends HttpServlet {
 	private void addCourse(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 				
-		String id, title, description, mediapath, media, timing, name, firstname, formation, genre, login, email;
+		String id, title, description, mediapath, media, timing, name, firstname, formation, genre, login, email,tags;
+		boolean visible;
 		String message = "";
 		String messageType = "information";
 		
 		/* The client sends parameters in the ISO8859-15 encoding */
 		request.setCharacterEncoding("ISO8859-15");
 		
+		if(request.getParameter("publication_type")!=null) {
+			request.setCharacterEncoding("UTF-8");
+		}
+		
 		/* Retrieves the parameters sent by the client */
 		id = request.getParameter("id");
 		mediapath = request.getParameter("mediapath");
 		timing = request.getParameter("timing");
-		description = service.cleanString(request.getParameter("description"));
-		title = service.cleanString(request.getParameter("title"));
-		name = service.cleanString(request.getParameter("name"));
-		firstname = service.cleanString(request.getParameter("firstname"));
-		formation = service.cleanString(request.getParameter("ue"));
-		genre = request.getParameter("genre");
+		description = request.getParameter("description")!=null ? service.cleanString(request.getParameter("description")) : "";
+		title = request.getParameter("title")!=null ? service.cleanString(request.getParameter("title")) : "";
+		name = request.getParameter("name")!=null ? service.cleanString(request.getParameter("name")) : "";
+		firstname = request.getParameter("firstname")!=null ? service.cleanString(request.getParameter("firstname")) : "";
+		formation = request.getParameter("ue")!=null ? service.cleanString(request.getParameter("ue")) : "";
+		genre = request.getParameter("genre")!=null ? request.getParameter("genre") : "";
 		login = request.getParameter("login")!=null ? request.getParameter("login") : "";
 		email = request.getParameter("email")!=null ? request.getParameter("email") : "";
 		
+		tags = service.cleanString(request.getParameter("tags"));
+		
+		if(request.getParameter("publication_type")!=null) {
+			visible = request.getParameter("visible") != null ? true : false;
+		}
+		else {
+			visible = true;
+		}
+						
 		/* Verifies that all essential parameters are sent, cancels the upload if not */
-		if(id != null && description != null && mediapath != null && title != null && name != null && formation != null && login !=null && email !=null) {
+		if(id != null && mediapath != null) {
 			
 			if( timing == null )
 				timing = "n-1";
@@ -1350,15 +1600,10 @@ public class Application extends HttpServlet {
 			User user=null; // user audiovideocours
 			
 			try {
-				
+				// Login with 1.12 client
 				if(!login.equals("")) {	
 					// getting the user
 					user = service.getUser(login);
-					// if not, create user
-					if(user==null) {
-						service.addUser(new User(0,login,email));
-						user=service.getUser(login);
-					}
 				}
 			
 				// Standard course
@@ -1376,7 +1621,7 @@ public class Application extends HttpServlet {
 							clientIP,
 							0, // The duration can't be set yet
 							(genre == null || genre.equals("")) ? null : genre,
-							true,
+							visible,
 							0,
 							timing,
 							null, // The media folder can't be set yet
@@ -1384,7 +1629,7 @@ public class Application extends HttpServlet {
 							user!=null ? user.getUserid() : null
 					);
 					
-					service.addCourse(c, media, getServletContext().getRealPath("/rss"), 
+					service.addCourse(c, media, tags, getServletContext().getRealPath("/rss"), 
 							rssName, rssTitle, rssDescription, serverUrl, 
 							rssImageUrl, recordedInterfaceUrl, language);
 				}
@@ -1400,11 +1645,11 @@ public class Application extends HttpServlet {
 							rssName, rssTitle, rssDescription, serverUrl, 
 							rssImageUrl, recordedInterfaceUrl, language);
 				}
-				
+								
 				// Sending email for the user
 				String emailUserSubject = "Your new course on Univr-AV";
 				String emailUserMessage = "Dear Customer,\n\nYour course named \"" + c.getTitle()
-				+"\" is published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
+				+"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
 				+ "\n\nBest Regards,\n\nUniv-r Av Administrator" 
 				+"\n\nPlease, don't answer to this mail, for any question contact us on "+adminEmail1;
 						
@@ -1449,6 +1694,50 @@ public class Application extends HttpServlet {
 	}
 	
 	/**
+	 * Method to display the upload access page
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void uploadAccess(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+
+		String forwardUrl = "/WEB-INF/views/myspace/myspace_uploadpage.jsp";
+		
+		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+		
+		User user = null;
+		// Authentification CAS	
+		if(casUser!=null) {
+			// Gets the user from the session
+			user=service.getUser(casUser);
+		}
+		// Authentification local
+		/*else if(session.getAttribute("$userLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLogin").toString());
+		}*/
+
+		// Gets the user's login from the session		
+		if(user!=null && user.isActivate()) {
+			
+			request.setAttribute("gobackurl", "./myspace_home");
+			request.setAttribute("user", user);		
+			session.setAttribute("btnDeco", true);
+			session.setAttribute("previousPage", "/myspace_upload");
+			
+			getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "You don't have access to this page");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+	}
+	
+	/**
 	 * Method to upload a media
 	 * 
 	 * @param request the request send by the client to the server
@@ -1460,32 +1749,35 @@ public class Application extends HttpServlet {
 	private void mediaUpload(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 
-		String title, description, name, firstname, date, formation, genre;
+		// Attribute
+		String title, description, name, firstname, date, formation, genre,tags, fileName;
+		title = description = name = firstname = date = formation = genre = tags = fileName = "";
 		boolean hq=false;
+		boolean visible=false;
 		String message = "";
 		String messageType = "information";
-
+		String requestDispatcher = "/WEB-INF/views/message.jsp";
 		Calendar cal = new GregorianCalendar();        	
-
-		title = description = name = firstname = date = formation = genre = "";
-
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Date d = new Date();
 		boolean continuer=true;
 
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);
 
-		/* If the user is authenticated */
-		if( casUser != null) {
+		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 
-			// getting the user
-			User user = service.getUser(casUser);
+		User user = null;
+		// Authentification CAS	
+		if(casUser!=null) {
+			// Gets the user from the session
+			user=service.getUser(casUser);
+		}
+		// Authentification local
+		/*else if(session.getAttribute("$userLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLogin").toString());
+		}*/
 
-			// if not, create user
-			if(user==null) {
-				service.addUser(new User(0,casUser,""));
-				user = service.getUser(casUser);
-			}
+		if(user!=null && user.isActivate()) {
 
 			if( ServletFileUpload.isMultipartContent(new ServletRequestContext(request)) ) {
 
@@ -1533,16 +1825,44 @@ public class Application extends HttpServlet {
 							else if(item.getFieldName().equals("hd")) {
 								hq=true;
 							}
+							else if(item.getFieldName().equals("visible")) {
+								visible=true;
+							}
+							else if(item.getFieldName().equals("tags")) {
+								tags = item.getString("UTF8");
+							}
 
-						} /* If the element is a file */
+						} /* If the element is a file (the last element */
 						else {
-							String fileName = item.getName();
+							fileName = item.getName();
 							String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()) : "";
-
+							
+							// Test the form
+							if(fileName==null || fileName.equals("")) {
+								messageType = "error";
+								message = "File must be completed";
+								requestDispatcher="/avc/myspace_upload";								
+							}
 							/* Checks the extension of the item to have a supported file format */
-							if( extension.equals("mp3") || extension.equals("ogg") || extension.equals("avi") || extension.equals("divx") 
-									|| extension.equals("rm") || extension.equals("rv") || extension.equals("mp4") || extension.equals("mpg") 
-									|| extension.equals("mpeg") || extension.equals("mov") || extension.equals("wmv") || extension.equals("mkv") || extension.equals("flv") ) {
+							else if( !extension.equals("mp3") && !extension.equals("ogg") && !extension.equals("avi") && !extension.equals("divx") 
+									&& !extension.equals("rm") && !extension.equals("rv") && !extension.equals("mp4") && !extension.equals("mpg") 
+									&& !extension.equals("mpeg") && !extension.equals("mov") && !extension.equals("wmv") && !extension.equals("mkv") && !extension.equals("flv") ) {
+
+								messageType = "error";
+								message = "Error: Not supported file format : " + extension;
+								requestDispatcher="/avc/myspace_upload";
+							}
+							else if(title==null || title.equals("")) {
+								messageType = "error";
+								message = "Field title must be completed";
+								requestDispatcher="/avc/myspace_upload";
+							}
+							else if(name==null || name.equals("")) {
+								messageType = "error";
+								message = "Field name must be completed";
+								requestDispatcher="/avc/myspace_upload";
+							}
+							else {
 
 								String clientIP = request.getRemoteAddr();
 								String timing = "n-1";
@@ -1559,7 +1879,7 @@ public class Application extends HttpServlet {
 										clientIP,
 										0, // The duration can't be set yet
 										(genre == null || genre.equals("")) ? null : genre,
-										true,
+										visible,
 										0,
 										timing,
 										null, // The media folder can't be set yet
@@ -1567,12 +1887,11 @@ public class Application extends HttpServlet {
 										user.getUserid()
 								);
 
-
 								/* Sends the creation of the course to the service layer */
-								service.mediaUpload(c, item, getServletContext().getRealPath("/rss"), 
+								service.mediaUpload(c, item, tags, getServletContext().getRealPath("/rss"), 
 										rssName, rssTitle, rssDescription, serverUrl, 
 										rssImageUrl, recordedInterfaceUrl, language,hq);
-								
+
 								// Sending email for the user
 								String emailUserSubject = "Your new file on Univr-AV";
 								String emailUserMessage = "Dear Customer,\n\nYour file named \"" + c.getTitle()
@@ -1580,12 +1899,12 @@ public class Application extends HttpServlet {
 								+"\nDon't panic if your video doesn't appear in the website right now. The conversion may be long (30 minutes for 1 hour video)"
 								+ "\n\nBest Regards,\n\nUniv-r Av Administrator" 
 								+"\n\nPlease, don't answer to this mail, for any question contact us on "+adminEmail1;
-										
-								// If the user is not anonymous and his email is present and different of email
+
+								// If the user is not anonymous and his email is present
 								if(user!=null && user.getEmail()!=null && !user.getEmail().equals("")) {
 									service.sendMail(emailUserSubject,emailUserMessage,user.getEmail());
 								}
-												
+
 								// If course is present in the recorded page
 								if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 									// Sending email for admins
@@ -1602,10 +1921,6 @@ public class Application extends HttpServlet {
 								message = "File successfully sent ! ";
 								message += "Don't panic if your video doesn't appear in the list right now. The conversion may be long (30 minutes for 1 hour video)";
 							}
-							else {
-								messageType = "error";
-								message = "Error: Not supported file format : " + extension;
-							}
 						}
 					}
 				}
@@ -1618,19 +1933,29 @@ public class Application extends HttpServlet {
 				messageType = "error";
 				message = "Error: Incorrect file upload request";
 			}
-
-
 		}
 		else { 
 			messageType = "error";
 			message = "Error: You don't have access to this page";
 		}
 
+		
+		if(requestDispatcher.equals("/avc/myspace_upload")) {
+			request.setAttribute("title", title);
+			request.setAttribute("description", description);
+			request.setAttribute("name", name);
+			request.setAttribute("firstname", firstname);
+			request.setAttribute("ue", formation);
+			request.setAttribute("genre", genre);
+			request.setAttribute("tags", tags);
+			request.setAttribute("visible", visible!=false ? visible : null);
+			request.setAttribute("hd", hq!=false ? hq : null);
+		}
+				
 		/* Displays the result of the upload process */
 		request.setAttribute("messagetype", messageType);
 		request.setAttribute("message", message);
-		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
-
+		getServletContext().getRequestDispatcher(requestDispatcher).forward(request, response);
 	}
 
 	/**
@@ -2000,7 +2325,13 @@ public class Application extends HttpServlet {
 			User u = new User(
 					userid,
 					request.getParameter("login"),
-					request.getParameter("email")
+					request.getParameter("email"),
+					request.getParameter("firstname"),
+					request.getParameter("lastname"),
+					request.getParameter("profile"),
+					request.getParameter("establishment"),
+					request.getParameter("type"),
+					request.getParameter("activate") != null ? true : false
 			);
 						
 			if(request.getParameter("action").equals("edit"))
@@ -2101,18 +2432,6 @@ public class Application extends HttpServlet {
 		/* Verifies that all parameters were sent */
 		if( uid != null && uuid != null && groupCode != null && ip != null && (! groupCode.equals("")) && (! ip.equals("")) && estab!=null) {
 		
-			/*
-			System.out.println("ID du cours : " + courseId );
-			System.out.println("User ID : " + uid );
-			System.out.println("UUID : " + uuid );
-			System.out.println("Code groupe : " + groupCode);
-			System.out.println("ESTAB : " + estab );
-			System.out.println("Titre : " + title );
-			System.out.println("Description : " + description);
-			System.out.println("IP : " + ip );
-			System.out.println("Genre : " + genre);
-			*/
-			
 			if( service.getAmphi(ip) != null) {
 				
 				try {
@@ -2439,4 +2758,5 @@ public class Application extends HttpServlet {
 				service.addSelection(s);
 			response.sendRedirect(response.encodeRedirectURL("./admin_selections"));	
 	}
+	
 }
