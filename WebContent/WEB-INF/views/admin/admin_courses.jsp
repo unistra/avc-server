@@ -64,7 +64,7 @@
 					<a href="<c:url value="${editurl}?id=${courses.courseid}" />">Edit</a>
 				</display:column>
 				<display:column>
-					<a href="javascript:confirmation('Delete the course ?','${deleteurl}?id=${courses.courseid}')">Delete</a>
+					<a href="javascript:confirmation('Delete the course ${courses.courseid} named ${courses.title}?','${deleteurl}?id=${courses.courseid}')">Delete</a>
 				</display:column>
 	    	</display:table>
 	  	    		    		

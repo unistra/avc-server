@@ -24,6 +24,7 @@
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 	
+	<script type="text/javascript" src="../files/js/details.js"></script>
 	<script type="text/javascript" src="../files/jwflvplayer/swfobject.js"></script>
 	<!-- <script type="text/javascript" src="../files/js/ieupdate.js"></script> -->
 	<script type="text/javascript" src="../files/js/recordinterface_flash.js"></script>
@@ -75,27 +76,49 @@
 						<a href="<c:out value="${courseaccess}" />"><fmt:message key="Highquality"/></a>	
 						</c:if>
 					</div>
+	                                   
 	                  
-					<p id="info">
+					<div class="info"> 
+						<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}"/> 
+						<br>
 						<b><fmt:message key="Auteur :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>
-						<b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br>
-						<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br>
-						<b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br>
-							<fmt:message key="dateFormat" var="dateFormat" />
-						<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
-						<b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br>
-						<b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br>
-						<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
 						<b>Tags : </b>  <c:forEach var="tags" items="${tags}"><a href="./tags?tags=${tags.tag}"><c:out value="${tags.tag} "/></a></c:forEach> <br>
-						
-					</p>	      
+					
+						<div id="infocollink">
+							<a href="javascript:switchDetails('info')"><fmt:message key="[+] plus de détails"/></a>
+						</div>	   				
+						<div id="infocoldetails" class="hidden">
+							<b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br>
+							<b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br>
+							<fmt:message key="dateFormat" var="dateFormat" />
+							<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
+							<b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br>
+							<b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br>
+							<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
+							<a href="javascript:switchDetails('info')"><fmt:message key="[-] moins de détails"/></a>
+						</div> 	
+					</div>
+					
+					<br>
 										
 					<div class="permalien">						
-						<c:url var="courseaccess" scope="page" value="./courseaccess">
+						<c:url var="permacourseaccess" scope="page" value="${serverUrl}/avc/courseaccess">
 							<c:param name="id" value="${course.courseid}"/>
 							<c:param name="type" value="flash"/>
 						</c:url>
-						<b>URL:</b> <input id="permalieninput" type="text" value="${serverUrl}/avc/courseaccess?id=${course.courseid}&type=flash" onClick="javascript:focus();select();" readonly>
+						<b>URL:</b> <input id="permalieninput" type="text" value="${permacourseaccess}" onClick="javascript:focus();select();" readonly>
+						<br>
+					
+						<div id="permaliencollink">
+							<a href="javascript:switchDetails('permalien')"><fmt:message key="[+] plus de détails"/></a>
+						</div>	   				
+						<div id="permaliencoldetails" class="hidden">					
+							<b>URL <fmt:message key="Auteur"/>:</b> <input id="permalieninput" type="text" value="${serverUrl}/avc/courses?author=${course.name} ${course.firstname}" onClick="javascript:focus();select();" readonly>
+							<br>
+							<b>URL <fmt:message key="Formation"/>:</b> <input id="permalieninput" type="text" value="${serverUrl}/avc/courses?formation=${course.formation}" onClick="javascript:focus();select();" readonly>
+							<br>
+							<a href="javascript:switchDetails('permalien')"><fmt:message key="[-] moins de détails"/></a>
+						</div> 
 					</div>   
 							
 					<br>

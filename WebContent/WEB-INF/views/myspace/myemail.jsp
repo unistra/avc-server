@@ -35,6 +35,7 @@
 
   </head>
   
+  <!--
   <body>
     <div class="main">
 	    <div class="contents">
@@ -74,4 +75,6 @@
 	    </div>
     </div>
   </body>
+  -->
+  
 </html>

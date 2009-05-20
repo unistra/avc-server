@@ -49,11 +49,19 @@
 	    		<display:column property="userid" title="N°" sortable="true"/>
 	    		<display:column property="login" title="Login" sortable="true"/>
 	    		<display:column property="email" title="E-mail" sortable="true"/>
+	    		<display:column property="firstname" title="Firstname" sortable="true"/>
+	    		<display:column property="lastname" title="Lastname" sortable="true"/>
+	    		<display:column property="profile" title="Profile" sortable="true"/>
+	    		<display:column property="establishment" title="Establishment" sortable="true"/>
+	    		<display:column property="type" title="Type" sortable="true"/>
+	    		<display:column title="Activate" sortable="true">
+					<input type="checkbox" disabled="disabled" ${users.activate == true ? 'checked' : '' } />
+				</display:column>
 	    		<display:column>
 					<a href="<c:url value="${editurl}?id=${users.userid}" />">Edit</a>
 				</display:column>
 				<display:column>
-					<a href="javascript:confirmation('Delete the user ?','${deleteurl}?id=${users.userid}')">Delete</a>
+					<a href="javascript:confirmation('Delete the user ${users.login}?','${deleteurl}?id=${users.userid}')">Delete</a>
 				</display:column>
 	    	</display:table>
 	    	

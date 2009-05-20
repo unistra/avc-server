@@ -52,6 +52,7 @@
 							<li><a href="#live">Cours en direct</a></li>
 							<li><a href="#podcasting">Podcasting et flux RSS</a></li>
 							<li><a href="#myspace">Mon espace</a></li>
+							<li><a href="#publication">Publication</a></li>
 							<li><a href="#downloads">T&eacute;l&eacute;chargements</a></li>
 						</ul>
 					</div>
@@ -120,7 +121,20 @@
 			    		<p>L'upload d&eacute;pend de la taille de votre fichier et de votre vitesse d'envoi. Cela peut &ecirc;tre assez long. Soyez patient, ne fermez pas la page "envoi en cours" avant d'avoir re&ccedil;u le message de succ&egrave;s ou d'&eacute;chec.</p>
 			    		<p>L'option Haute-D&eacute;finition vous permet d'uploader une vid&eacute;o haute-d&eacute;finition. Attention, cette option augmente consid&eacute;rablement le temps de traitement de votre vid&eacute;o. En effet, le traitement d'une vid&eacute;o en mode Haute-D&eacute;finition dure 3 heures pour 1 heure de film.</p>
 			    		<a class="link" href="../files/img/help/upload.png">Screenshot</a>
-			    	
+			    		
+			    		<h3><a id="publication"></a>Publication</h3>
+			    		<h5>Depuis un client v1.13 ou supérieur</h5>
+			    		<p>Apr&egrave;s avoir effectu&eacute; un enregistrement via le client AVC (voir doc correspondante) et cliqu&eacute; sur le  bouton « Publier », vous serez rediriger sur une page du site permettant la saisie des informations et la publication finale de l'enregistrement:</p>
+			    		<a class="link" href="../files/img/help/pub1.png">Screenshot</a>
+			    		
+			    		<p>Deux possibilit&eacute;s s'offrent &agrave; vous:</p>
+			    		<p>1) Compte UDS: En vous connectant avec votre compte ENT, votre enregistrement sera associ&eacute; &agrave; votre compte. Ainsi, vous aurez par la suite acc&egrave;s aux fonctionnalit&eacute;s de « mon espace » pour &eacute;diter votre enregistrement par exemple (modifier le titre, la visibilit&eacute;, la description, les tags, ...)</p>
+			    		<p>2) Libre: En choisissant l'option libre, vous pouvez envoyer un enregistrement sans avoir de compte UDS. N&eacute;anmoins, vous n'aurez pas acc&egrave;s aux fonctionnalit&eacute;s de « mon espace ». Vous ne pourrez donc plus &eacute;diter votre cours par exemple.</p>
+			    		<p>Apr&egrave;s avoir choisi l'une des deux options, vous devez remplir le formulaire. Les champs « Titre » et « Nom Auteur » sont obligatoires.</p>
+			    		<a class="link" href="../files/img/help/pub2.png">Screenshot</a>
+			    					    		
+			    		<p>Validez l'enregistrement en cliquant sur « Publier l'enregistrement ». Un message vous indiquant que le fichier a &eacute;t&eacute; correctement envoy&eacute; appara&icirc;tra &agrave; l'&eacute;cran.</p>
+			    		
 			    	</div>
 			    	
 			    	<div class="rightCol">

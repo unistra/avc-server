@@ -58,13 +58,13 @@
 					<a href="<c:url value="./livestate?recordingPlace=${amphis.ipAddress}&status=end" />">Off</a>
 				</display:column>
 				<display:column title="client">
-					<a href="<c:url value="./versionclient?ip=${amphis.ipAddress}"/>">version</a>
+					<a href="<c:url value="./admin_versionclient?ip=${amphis.ipAddress}"/>">version</a>
 				</display:column>
 				<display:column>
 					<a href="<c:url value="./admin_editamphi?id=${amphis.amphiid}&buildingId=${buildingId}" />">Edit</a>
 				</display:column>
 				<display:column>
-					<a href="javascript:confirmation('Delete the amphi ?','./admin_deleteamphi?id=${amphis.amphiid}&buildingId=${buildingId}')">Delete</a>
+					<a href="javascript:confirmation('Delete the amphi ${amphis.name}?','./admin_deleteamphi?id=${amphis.amphiid}&buildingId=${buildingId}')">Delete</a>
 				</display:column>
 	    	</display:table>
 	    	<br>

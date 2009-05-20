@@ -47,37 +47,38 @@
 	     	</div>
 	    	
 	    	<div class="welcome">
-	    		<p><fmt:message key="Bienvenue"/> ${user.login}</p>
-	    		<p><fmt:message key="Votre e-mail"/> ${user.email}</p>
+	    		<c:choose>
+					<c:when test="${user.lastname!=null}">	
+	    				<p><fmt:message key="Bienvenue"/> ${user.firstname} ${user.lastname}</p>
+					</c:when>
+					<c:otherwise>
+						<p><fmt:message key="Bienvenue"/> ${user.login}</p>
+					</c:otherwise>
+				</c:choose>		
 	    	</div>
-	    	
 	    	<br>
-	    		
 	    	<div class=btnMyspace>	
-	    		
 	    		<div class="btnUpload">
-	    		<a href="<c:url value="./upload" />" title="<fmt:message key="upload"/>" ><fmt:message key="upload"/></a>
+	    			<a href="<c:url value="./myspace_upload" />" title="<fmt:message key="upload"/>" ><fmt:message key="upload"/></a>
 	    		</div>
-	    	
-	    		<div class="btnModifierEmail">
+	    	<!--	<div class="btnModifierEmail">
 	    		<a href="<c:url value="./myemail" />" title="<fmt:message key="modifieremail"/>" ><fmt:message key="modifieremail"/></a>
-	    		</div>
-	    	
+	    		</div> -->
 	    	</div>
 	    	
 	    	<c:choose>
 			<c:when test="${!empty courses}">	
-	    	<div class="course">
-				<table cellspacing="0">
-					<tr class="tableheader">
-						<th colspan="5" id="courses"><fmt:message key="Mes cours"/></th>
-						<th colspan="1"><fmt:message key="Editer"/></th>
-					</tr>
-					<c:import url="./mycourselist.jsp" />
-				</table>
-				
-	    		<div class="pagination">
-	    			<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" />
+	    		<div class="course">
+					<table cellspacing="0">
+						<tr class="tableheader">
+							<th colspan="5" id="courses"><fmt:message key="Mes cours"/></th>
+							<th colspan="1"><fmt:message key="Editer"/></th>
+						</tr>
+						<c:import url="./mycourselist.jsp" />
+					</table>
+	    			<div class="pagination">
+	    				<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" />
+					</div>
 				</div>
 				</c:when>
 					<c:otherwise>
@@ -87,7 +88,6 @@
 						</div>
 					</c:otherwise>
 				</c:choose>
-	    	</div>
     	</div>
 	    	
 	    <div class="footer">
