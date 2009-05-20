@@ -1,11 +1,14 @@
 package org.ulpmm.univrav.service;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Tag;
 
 /**
  * This thread is used to add a course
@@ -26,6 +29,9 @@ public class CourseAddition extends Thread {
 	
 	/** the media's name */
 	private String courseArchive;
+	
+	/** List of tags **/
+	private String tags;
 	
 	/** Service interface */
 	private IService service;
@@ -62,6 +68,7 @@ public class CourseAddition extends Thread {
 	 * @param fs FileSystem interface
 	 * @param c The course
 	 * @param courseArchive the media's name
+	 * @param tags tags list
 	 * @param service Service interface
 	 * @param rssFolderPath the rss folder path
 	 * @param rssName The rss name
@@ -72,7 +79,7 @@ public class CourseAddition extends Thread {
 	 * @param recordedInterfaceUrl the url of the recorded interface
 	 * @param language the language
 	 */
-	public CourseAddition(IDatabase db, IFileSystem fs, Course c, String courseArchive, 
+	public CourseAddition(IDatabase db, IFileSystem fs, Course c, String courseArchive, String tags,
 			IService service, String rssFolderPath, String rssName, String rssTitle, 
 			String rssDescription, String serverUrl, String rssImageUrl, 
 			String recordedInterfaceUrl, String language) {
@@ -82,6 +89,7 @@ public class CourseAddition extends Thread {
 		this.fs = fs;
 		this.c = c;
 		this.courseArchive = courseArchive;
+		this.tags=tags;
 		this.service = service;
 		this.rssFolderPath = rssFolderPath;
 		this.rssName = rssName;
@@ -114,6 +122,27 @@ public class CourseAddition extends Thread {
 		
 		for( int i = 0 ; i< list.size() - (time-1) ; i++)
 			db.addSlide(new Slide(c.getCourseid(), Math.round(Float.parseFloat(list.get(i)))));
+		
+		// Adding tags
+		if(tags!=null && !tags.equals("")) {
+			// ADD TAGS		
+			List<String> listTmp=new ArrayList<String>();
+			StringTokenizer st = new StringTokenizer(tags);
+			String token = null;
+			while (st.hasMoreTokens()) {
+				token = st.nextToken();
+				if(!listTmp.contains(token)) {
+					service.addTag(new Tag(0, //is not used
+						token, // the tag
+						c.getCourseid()) // the course
+					);
+					listTmp.add(token);
+				}
+			}
+			listTmp = null;
+			st = null;
+			token = null;
+		}
 		
 		/* Generation of the RSS files */
 		if( c.getGenre() == null)
