@@ -118,6 +118,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The course " + c + " has not been added to the database");
 				throw new DaoException("The course " + c + " has not been added to the database");
 			}
+			
+			pstmt.close();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new Course " + c);
@@ -145,6 +147,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The Univr course " + u + " has not been added to the database");
 				throw new DaoException("The Univr course " + u + " has not been added to the database");
 			}
+			
+			pstmt.close();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new Univr course " + u);
@@ -480,6 +484,7 @@ public class DatabaseImpl implements IDatabase {
 					));
 				}
 				rs.close();
+				pstmt.close();
 			}
 			catch( SQLException sqle) {
 				System.out.println("Error while retrieving the courses list");
@@ -539,6 +544,7 @@ public class DatabaseImpl implements IDatabase {
 				));
 			}
 			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the courses list for the author " + author);
@@ -591,6 +597,7 @@ public class DatabaseImpl implements IDatabase {
 				));
 			}
 			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the courses list for the formation " + formation);
@@ -639,6 +646,9 @@ public class DatabaseImpl implements IDatabase {
 			}
 			else
 				throw new DaoException("Course " + courseId + " not found");
+		
+			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the course " + courseId);
@@ -687,6 +697,9 @@ public class DatabaseImpl implements IDatabase {
 			}
 			else
 				throw new DaoException("Course " + courseId + " not found with this genre");
+			
+			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the course " + courseId);
@@ -822,7 +835,9 @@ public class DatabaseImpl implements IDatabase {
 				
 				if(rs.next()) 
 					number = rs.getInt("count");
+				
 				rs.close();
+				pstmt.close();
 			}
 			catch( SQLException sqle) {
 				System.out.println("Error while retrieving the buildings list");
@@ -860,6 +875,9 @@ public class DatabaseImpl implements IDatabase {
 			}
 			else
 				throw new DaoException("Univr course " + courseId + " not found");
+			
+			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the Univr course " + courseId);
@@ -953,6 +971,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The course " + c + " has not been modified");
 				throw new DaoException("The course " + c + " has not been modified");
 			}
+			
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while modifying the course " + c);
@@ -976,6 +996,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("the course " + courseId + " has not been deleted");
 				throw new DaoException("the course " + courseId + " has not been deleted");
 			}
+			
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the course " + courseId);
@@ -998,6 +1020,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("the course " + courseId + " has not been deleted");
 				throw new DaoException("the course " + courseId + " has not been deleted");
 			}
+			
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the course " + courseId);
@@ -1132,6 +1156,7 @@ public class DatabaseImpl implements IDatabase {
 			try {
 				Statement stmt = cnt.createStatement();
 				stmt.executeUpdate(sql);
+				stmt.close();
 			}
 			catch( SQLException sqle) {
 				System.out.println("Error while deleting the tests");
@@ -1158,6 +1183,7 @@ public class DatabaseImpl implements IDatabase {
 			try {
 				Statement stmt = cnt.createStatement();
 				stmt.executeUpdate(sql);
+				stmt.close();
 			}
 			catch( SQLException sqle) {
 				System.out.println("Error while hiding the tests");
@@ -1174,14 +1200,18 @@ public class DatabaseImpl implements IDatabase {
 	public int getNextCoursId() {
 		int id = 0 ;
 		
-		ResultSet rs = pa.query("SELECT nextval('course_courseid_seq')");
+		
 		try {
+			ResultSet rs = pa.query("SELECT nextval('course_courseid_seq')");
+			
 			if( rs.next() ) 
 				id = rs.getInt("nextval");
 			else {
 				System.out.println("The next course Id hasn't been retrieved");
 				throw new DaoException("The next course Id hasn't been retrieved");
 			}
+			
+			rs.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the next course Id");
@@ -1199,11 +1229,15 @@ public class DatabaseImpl implements IDatabase {
 	public List<String> getTeachers() {
 		List<String> l = new ArrayList<String>();
 		
-		ResultSet rs = pa.query("SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE visible = true AND title IS NOT NULL AND NOT (name IS NULL AND firstname IS NULL)");
 		try {
+			
+			ResultSet rs = pa.query("SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE visible = true AND title IS NOT NULL AND NOT (name IS NULL AND firstname IS NULL)");
+			
 			while( rs.next() ) {
 				l.add(rs.getString("fullname"));
 			}
+			
+			rs.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the teachers list");
@@ -1221,10 +1255,12 @@ public class DatabaseImpl implements IDatabase {
 	public List<Teacher> getAllTeachers() {
 		List<Teacher> l = new ArrayList<Teacher>();
 		
-		ResultSet rs = pa.query("SELECT INITCAP(name) AS ic_name, INITCAP(firstname) AS ic_firstname, count(*) FROM course " +
-				"WHERE NOT (name IS NULL AND firstname IS NULL) GROUP BY ic_name, ic_firstname ORDER BY ic_name");
 		
-		try {			
+		try {	
+			
+			ResultSet rs = pa.query("SELECT INITCAP(name) AS ic_name, INITCAP(firstname) AS ic_firstname, count(*) FROM course " +
+			"WHERE NOT (name IS NULL AND firstname IS NULL) GROUP BY ic_name, ic_firstname ORDER BY ic_name");
+
 			while( rs.next() ) {
 				l.add( 
 					new Teacher(
@@ -1233,6 +1269,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getInt("count"))
 				);
 			}
+			
+			rs.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the teachers list");
@@ -1273,6 +1311,7 @@ public class DatabaseImpl implements IDatabase {
 				fullname = rs.getString("fullname");
 			}
 			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the teacher full name");
@@ -1290,11 +1329,14 @@ public class DatabaseImpl implements IDatabase {
 	public List<String> getFormations() {
 		List<String> l = new ArrayList<String>();
 
-		ResultSet rs = pa.query("SELECT DISTINCT formation from course WHERE visible = true AND formation IS NOT NULL");
 		try {
+			ResultSet rs = pa.query("SELECT DISTINCT formation from course WHERE visible = true AND formation IS NOT NULL");
+						
 			while( rs.next() ) {
 				l.add(rs.getString("formation"));
 			}
+			
+			rs.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the formations list");
@@ -1324,6 +1366,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The consultations have not been incremented");
 				throw new DaoException("The consultations have not been incremented");
 			}
+			
+			pstmt.close();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while incrementing the consultations");
@@ -1348,6 +1392,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The slide has not been added");
 				throw new DaoException("The slide has not been added");
 			}
+			
+			pstmt.close();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the Slide");
@@ -1378,6 +1424,7 @@ public class DatabaseImpl implements IDatabase {
 				));
 			}
 			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the slides list");
@@ -1405,6 +1452,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The building " + b + " has not been added to the database");
 				throw new DaoException("The building " + b + " has not been added to the database");
 			}
+			
+			pstmt.close();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new Building " + b);
@@ -1468,6 +1517,9 @@ public class DatabaseImpl implements IDatabase {
 			}
 			else
 				throw new DaoException("Building " + buildingId + " not found");
+			
+			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the building " + buildingId);
@@ -1495,6 +1547,8 @@ public class DatabaseImpl implements IDatabase {
 			if( rs.next() ) {
 				name = rs.getString("name");
 			}
+			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the building of amphi " + amphiIp);
@@ -1528,6 +1582,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The building " + b + " has not been modified");
 				throw new DaoException("The building " + b + " has not been modified");
 			}
+			
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while modifying the building " + b);
@@ -1551,6 +1607,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("the building " + buildingId + " has not been deleted");
 				throw new DaoException("the building " + buildingId + " has not been deleted");
 			}
+			
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the course " + buildingId);
@@ -1584,6 +1642,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The amphi " + a + " has not been added to the database");
 				throw new DaoException("The amphi " + a + " has not been added to the database");
 			}
+			
+			pstmt.close();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new amphi " + a);
@@ -1625,6 +1685,7 @@ public class DatabaseImpl implements IDatabase {
 				l.add(a);
 			}
 			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the amphis list");
@@ -1659,6 +1720,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("version")
 				);
 			}
+			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the amphi " + amphiId);
@@ -1692,6 +1755,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("version")
 				);
 			}
+			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the amphi " + ip);
@@ -1741,6 +1806,8 @@ public class DatabaseImpl implements IDatabase {
 					"' WHERE ipaddress='" + oldAmphiip + "'";
 				pstmt = cnt.prepareStatement(sql);
 			}
+			
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while modifying the amphi " + a);
@@ -1763,6 +1830,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("the amphi " + amphiId + " has not been deleted");
 				throw new DaoException("the amphi " + amphiId + " has not been deleted");
 			}
+			
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the amphi " + amphiId);
@@ -1787,7 +1856,7 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The status of the amphi has not been changed");
 				throw new DaoException("The status of the amphi has not been changed");
 			}
-			
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while updating the status of the amphi " + ip);
@@ -1813,9 +1882,18 @@ public class DatabaseImpl implements IDatabase {
 				u = new User(
 					rs.getInt("userid"),
 					rs.getString("login"),
-					rs.getString("email")
+					rs.getString("email"),
+					rs.getString("firstname"),
+					rs.getString("lastname"),
+					rs.getString("profile"),
+					rs.getString("establishment"),
+					rs.getString("type"),
+					rs.getBoolean("activate")
+					
 				);
 			}
+			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the user " + login);
@@ -1826,6 +1904,7 @@ public class DatabaseImpl implements IDatabase {
 		return u;
 	}
 	
+		
 	/**
 	 * Get user by id 
 	 * @param id the id of the user
@@ -1841,11 +1920,19 @@ public class DatabaseImpl implements IDatabase {
 			ResultSet rs = pstmt.executeQuery();
 			if( rs.next() ) {
 				u = new User(
-					rs.getInt("userid"),
-					rs.getString("login"),
-					rs.getString("email")
+						rs.getInt("userid"),
+						rs.getString("login"),
+						rs.getString("email"),
+						rs.getString("firstname"),
+						rs.getString("lastname"),
+						rs.getString("profile"),
+						rs.getString("establishment"),
+						rs.getString("type"),
+						rs.getBoolean("activate")
 				);
 			}
+			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the user " + id);
@@ -1863,14 +1950,16 @@ public class DatabaseImpl implements IDatabase {
 	public int getNextUserId() {
 		int id = 0 ;
 		
-		ResultSet rs = pa.query("SELECT nextval('user_userid_seq')");
 		try {
+			ResultSet rs = pa.query("SELECT nextval('user_userid_seq')");
+			
 			if( rs.next() ) 
 				id = rs.getInt("nextval");
 			else {
 				System.out.println("The next user Id hasn't been retrieved");
 				throw new DaoException("The next user Id hasn't been retrieved");
 			}
+			rs.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the next user Id");
@@ -1887,17 +1976,25 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addUser(User u) {
 		Connection cnt = pa.getConnection();
-		String sql = "INSERT INTO \"user\"(\"login\",email) values(?,?)";
+		String sql = "INSERT INTO \"user\"(\"login\",email,firstname,lastname,profile,establishment,type,activate) values(?,?,?,?,?,?,?,?)";
 		
 		try {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setString(1, u.getLogin());
 			pstmt.setString(2, u.getEmail());
+			pstmt.setString(3, u.getFirstname());
+			pstmt.setString(4, u.getLastname());
+			pstmt.setString(5, u.getProfile());
+			pstmt.setString(6, u.getEstablishment());
+			pstmt.setString(7, u.getType());
+			pstmt.setBoolean(8, u.isActivate());
 			
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("The User " + u + " has not been added to the database");
 				throw new DaoException("The User " + u + " has not been added to the database");
 			}
+			
+			pstmt.close();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new user " + u);
@@ -1914,7 +2011,8 @@ public class DatabaseImpl implements IDatabase {
 		Connection cnt = pa.getConnection();
 		
 		/* Creation of the SQL query string */
-		String sql = "UPDATE \"user\" SET userid = ?, login = ? , email = ? ";
+		String sql = "UPDATE \"user\" SET userid = ?, login = ? , email = ?, firstname = ?,lastname = ?," +
+				"profile = ?,establishment = ?,type = ?,activate = ? ";
 		sql += "WHERE userid = ?";
 		
 		try {
@@ -1924,12 +2022,20 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setInt(1, u.getUserid());
 			pstmt.setString(2, u.getLogin());
 			pstmt.setString(3, u.getEmail());
-			pstmt.setInt(4, u.getUserid());
+			pstmt.setString(4, u.getFirstname());
+			pstmt.setString(5, u.getLastname());
+			pstmt.setString(6, u.getProfile());
+			pstmt.setString(7, u.getEstablishment());
+			pstmt.setString(8, u.getType());
+			pstmt.setBoolean(9, u.isActivate());
+			pstmt.setInt(10, u.getUserid());
 						
 			if( pstmt.executeUpdate() == 0 ) {
 				System.out.println("The user " + u + " has not been modified");
 				throw new DaoException("The user " + u + " has not been modified");
 			}
+			
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while modifying the user " + u);
@@ -1954,6 +2060,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("the user " + userid + " has not been deleted");
 				throw new DaoException("the user " + userid + " has not been deleted");
 			}
+			
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the user " + userid);
@@ -2001,6 +2109,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("userid")
 				));
 			}
+			rs.close();
+			pstmt.close();
 		}	
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the course with user " + u.getUserid());
@@ -2053,12 +2163,20 @@ public class DatabaseImpl implements IDatabase {
 			ResultSet rs = pstmt.executeQuery();
 			while(rs.next()) {
 				l.add( new User(
-					rs.getInt("userid"),
-					rs.getString("login"),
-					rs.getString("email")
+						rs.getInt("userid"),
+						rs.getString("login"),
+						rs.getString("email"),
+						rs.getString("firstname"),
+						rs.getString("lastname"),
+						rs.getString("profile"),
+						rs.getString("establishment"),
+						rs.getString("type"),
+						rs.getBoolean("activate")
 					
 				));
 			}
+			rs.close();
+			pstmt.close();
 		}	
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the list of users");
@@ -2087,6 +2205,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The tag " + t + " has not been added to the database");
 				throw new DaoException("The tag " + t + " has not been added to the database");
 			}
+			
+			pstmt.close();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new tag " + t);
@@ -2107,6 +2227,7 @@ public class DatabaseImpl implements IDatabase {
 			PreparedStatement pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseid);
 			pstmt.executeUpdate();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting tags of course " + courseid);
@@ -2284,7 +2405,9 @@ public class DatabaseImpl implements IDatabase {
 				
 				if(rs.next()) 
 					number = rs.getInt("count");
+				
 				rs.close();
+				pstmt.close();
 			}
 			catch( SQLException sqle) {
 				System.out.println("Error while retrieving the course number");
@@ -2336,6 +2459,9 @@ public class DatabaseImpl implements IDatabase {
 			}
 			else
 				throw new DaoException("Course " + mediafolder + " not found");
+			
+			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the course " + mediafolder);
@@ -2473,6 +2599,8 @@ public class DatabaseImpl implements IDatabase {
 					
 				));
 			}
+			rs.close();
+			pstmt.close();
 		}	
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the list of selections");
@@ -2503,6 +2631,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("formationcollection")
 				);
 			}
+			rs.close();
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while retrieving the selection " + position);
@@ -2532,6 +2662,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The Selection " + s + " has not been added to the database");
 				throw new DaoException("The Selection " + s + " has not been added to the database");
 			}
+			
+			pstmt.close();
 		}
 		catch(SQLException sqle){
 			System.out.println("Error while adding the new selection " + s);
@@ -2564,6 +2696,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("The selection " + s + " has not been modified");
 				throw new DaoException("The selection " + s + " has not been modified");
 			}
+			
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while modifying the selection " + s);
@@ -2588,6 +2722,8 @@ public class DatabaseImpl implements IDatabase {
 				System.out.println("the selection " + position + " has not been deleted");
 				throw new DaoException("the selection " + position + " has not been deleted");
 			}
+			
+			pstmt.close();
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error while deleting the selection " + position);
