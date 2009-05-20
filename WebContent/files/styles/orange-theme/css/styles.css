@@ -190,3 +190,8 @@ a, .linkText, .helpText, h5, .buildingName, .searchText {
 .tableheader, .displaytag th {
 	background-image: url("../img/array_title.png");
 }
+
+.divCenter {
+	text-align:center;
+	margin:auto;
+}

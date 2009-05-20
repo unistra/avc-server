@@ -4,7 +4,7 @@
 
 .btnMyspace {
 	text-align:center; 
-	width: 300px;
+	width: 140px;
 	height: 20px;
 	margin-left: auto;
 	margin-right: auto;
@@ -26,8 +26,37 @@
 .btnUpload a {
 	color:white;
 	font-weight: bold;
+	float:left;
+	width: 140px;
+	height: 20px;
+	margin-top:3px;
 }
 
+.btnEdit {
+	float:left;
+	width: 61px;
+	height: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	background: url(../img/btn_blue_edit.png) 50% 50%;
+  	background-repeat: no-repeat;
+  	font-size: 12px;
+	text-align:center; 	
+}
+
+.btnEdit a {
+	color:white;
+	font-weight: bold;
+}
+
+.aEdit {
+	float:left;
+	width: 61px;
+	height: 20px;
+	margin-top:3px;
+}
+
+/*
 .btnModifierEmail {
 	float:right;
 	width: 140px;
@@ -43,8 +72,4 @@
 .btnModifierEmail a {
 	color:white;
 	font-weight: bold;
-}
-
-.aEdit:hover {
-	color:white;
-}
+}*/

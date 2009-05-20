@@ -53,8 +53,8 @@ function updateTimeBar(time) {
 			tabw=new Array(	   800,  1024,  1152,  1280,   1680,  1920);
    			tabh=new Array(	   600,   768,   864,  1024,   1050,  1200);
    			
-   			tabwimg=new Array( 620,   620,   620,   900,   1024,  1280);
-   			tabhimg=new Array( 472,   472,   472,   644,    768,  1024);
+   			tabwimg=new Array( 620,   620,   620,   840,   1004,  1280);
+   			tabhimg=new Array( 472,   472,   472,   584,    748,  1024);
 
    			// Width and height of the window
    			if(!document.all) { 

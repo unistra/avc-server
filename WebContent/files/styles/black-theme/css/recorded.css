@@ -64,8 +64,3 @@
 	vertical-align:middle;
 	margin-bottom:1.5px; /* for compatibility IE - Firefox */
 }
-
-.divCenter {
-	text-align:center;
-	margin:auto;
-}

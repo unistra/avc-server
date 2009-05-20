@@ -61,6 +61,7 @@ th a {
 	width: 425px;
 	margin-left: auto;
 	margin-right: auto;
+	text-align:left;
 }
 
 /* A field of the html form */
