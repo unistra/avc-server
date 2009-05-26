@@ -2032,26 +2032,7 @@ public class Application extends HttpServlet {
 				
 				service.incrementConsultations(c);
 				
-				if( type.equals("real")) {
-					/* redirection to the SMIL interface */
-					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
-					request.setAttribute("slidesurl", coursesUrl + c.getMediaFolder() + "/screenshots/");
-					List<Slide> slides = service.getSlides(c.getCourseid());
-					request.setAttribute("slides", slides);
-					Amphi a = service.getAmphi(c.getIpaddress());
-					String amphi = a != null ? a.getName() : c.getIpaddress();
-					String building = service.getBuildingName(c.getIpaddress());
-					request.setAttribute("amphi", amphi);
-					request.setAttribute("building", building);
-					if( c.getTiming().equals("n-1"))
-						request.setAttribute("timing", 1);
-					else
-						request.setAttribute("timing", 0);
-					
-					/* Displays the view */
-					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_smil.jsp").forward(request, response);
-				}
-				else if( type == null || type.equals("flash")) {
+				if( type == null || type.equals("flash")) {
 					/* redirection to the FlvPlay JS interface */
 					String courseExtension = "";
 					if( c.getType().equals("audio"))
@@ -2079,6 +2060,25 @@ public class Application extends HttpServlet {
 					
 					/* displays the .jsp view */
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
+				}
+				else if( type.equals("real")) {
+					/* redirection to the SMIL interface */
+					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
+					request.setAttribute("slidesurl", coursesUrl + c.getMediaFolder() + "/screenshots/");
+					List<Slide> slides = service.getSlides(c.getCourseid());
+					request.setAttribute("slides", slides);
+					Amphi a = service.getAmphi(c.getIpaddress());
+					String amphi = a != null ? a.getName() : c.getIpaddress();
+					String building = service.getBuildingName(c.getIpaddress());
+					request.setAttribute("amphi", amphi);
+					request.setAttribute("building", building);
+					if( c.getTiming().equals("n-1"))
+						request.setAttribute("timing", 1);
+					else
+						request.setAttribute("timing", 0);
+					
+					/* Displays the view */
+					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_smil.jsp").forward(request, response);
 				}
 				// High Quality
 				else if( type.equals("hq")) {
