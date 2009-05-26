@@ -2025,7 +2025,7 @@ public class Application extends HttpServlet {
 				
 				/* Redirects the client to the access code typing form */
 				request.setAttribute("id", courseid);
-				request.setAttribute("type", type != null ? type : "real");
+				request.setAttribute("type", type != null ? type : "flash");
 				getServletContext().getRequestDispatcher("/WEB-INF/views/codeform.jsp").forward(request, response);
 			}
 			else {
