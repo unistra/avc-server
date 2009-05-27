@@ -100,7 +100,8 @@
 					</div>
 					
 					<br>
-										
+					
+					<c:if test="${!univr}">					
 					<div class="permalien">						
 						<c:url var="permacourseaccess" scope="page" value="${serverUrl}/avc/courseaccess">
 							<c:param name="id" value="${course.courseid}"/>
@@ -120,6 +121,7 @@
 							<a href="javascript:switchDetails('permalien')"><fmt:message key="[-] moins de détails"/></a>
 						</div> 
 					</div>   
+					</c:if>
 							
 					<br>
 													
