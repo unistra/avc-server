@@ -2030,6 +2030,13 @@ public class Application extends HttpServlet {
 			}
 			else {
 				
+				// To fix a bug with SSL and IE
+				String slidesurl = null;
+				if(request.getRequestURL().toString().substring(0, 5).equals("https") && coursesUrl.substring(0, 4).equals("http"))
+					slidesurl = coursesUrl.replace("http", "https") + c.getMediaFolder() + "/screenshots/";
+				else 
+					slidesurl = coursesUrl + c.getMediaFolder() + "/screenshots/";
+		
 				service.incrementConsultations(c);
 				
 				if( type == null || type.equals("flash")) {
@@ -2041,7 +2048,7 @@ public class Application extends HttpServlet {
 						courseExtension = ".flv";
 					
 					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + courseExtension);
-					request.setAttribute("slidesurl", coursesUrl + c.getMediaFolder() + "/screenshots/");
+					request.setAttribute("slidesurl", slidesurl);
 					request.setAttribute("course", c);
 					List<Slide> slides = service.getSlides(c.getCourseid());
 					request.setAttribute("slides", slides);
@@ -2064,7 +2071,7 @@ public class Application extends HttpServlet {
 				else if( type.equals("real")) {
 					/* redirection to the SMIL interface */
 					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
-					request.setAttribute("slidesurl", coursesUrl + c.getMediaFolder() + "/screenshots/");
+					request.setAttribute("slidesurl", slidesurl);
 					List<Slide> slides = service.getSlides(c.getCourseid());
 					request.setAttribute("slides", slides);
 					Amphi a = service.getAmphi(c.getIpaddress());
@@ -2533,7 +2540,7 @@ public class Application extends HttpServlet {
 		throws ServletException, IOException {
 		
 		String message = "";
-		String forwardUrl = "/WEB-INF/views/recordinterface_smil.jsp";
+		String forwardUrl = "/WEB-INF/views/recordinterface_flash.jsp";
 		
 		String id = request.getParameter("id");
 		String uid = request.getParameter("uid");
@@ -2557,9 +2564,23 @@ public class Application extends HttpServlet {
 						c = service.getCourse(courseId);	
 						service.incrementConsultations(c);
 						
-						/* redirection to the visualization interface */
-						request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
-						request.setAttribute("slidesurl", coursesUrl + c.getMediaFolder() + "/screenshots/");
+						// To fix a bug with SSL and IE
+						String slidesurl = null;
+						if(request.getRequestURL().toString().substring(0, 5).equals("https") && coursesUrl.substring(0, 4).equals("http"))
+							slidesurl = coursesUrl.replace("http", "https") + c.getMediaFolder() + "/screenshots/";
+						else 
+							slidesurl = coursesUrl + c.getMediaFolder() + "/screenshots/";
+																						
+						/* redirection to the FlvPlay JS interface */
+						String courseExtension = "";
+						if( c.getType().equals("audio"))
+							courseExtension = ".mp3";
+						else if( c.getType().equals("video"))
+							courseExtension = ".flv";
+						
+						request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + courseExtension);
+						request.setAttribute("slidesurl", slidesurl);
+						request.setAttribute("course", c);
 						List<Slide> slides = service.getSlides(c.getCourseid());
 						request.setAttribute("slides", slides);
 						Amphi a = service.getAmphi(c.getIpaddress());
@@ -2571,6 +2592,10 @@ public class Application extends HttpServlet {
 							request.setAttribute("timing", 1);
 						else
 							request.setAttribute("timing", 0);
+						
+						request.setAttribute("serverUrl",serverUrl);
+						request.setAttribute("tags", service.getTagsByCourse(c));
+						request.setAttribute("univr", true);
 						
 					} else {
 						message = "Error: access refused";
