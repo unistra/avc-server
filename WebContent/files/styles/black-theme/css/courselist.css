@@ -55,10 +55,6 @@ td {
 	display: none;
 }
 
-a#lienCol {
-	color:white;
-}
-
 tr:hover,tr.hover { 
 	background: #808080;
  }
