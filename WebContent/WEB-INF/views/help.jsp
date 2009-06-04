@@ -65,7 +65,7 @@
 			    	<div class="leftCol">
 			    		
 			    		<h3><a id="browsers"></a>Navigateurs conseill&eacute;s</h3>
-						<p>Firefox 3.0 (Linux, MacOSX, Windows), IE7 (Windows)</p>
+						<p>Firefox 3.0 (Linux, MacOSX, Windows), IE7 (Windows), with Javascript</p>
 						
 						<h3><a id="accueil"></a>Accueil</h3>
 						<h5>Pr&eacute;sentation</h5>
