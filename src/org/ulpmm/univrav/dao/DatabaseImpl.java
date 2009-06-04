@@ -29,15 +29,15 @@ import org.ulpmm.univrav.entities.User;
  */
 public class DatabaseImpl implements IDatabase {
 	
-	/** The pgsql access for the database connection */
-	private static PgsqlAccess pa;
+	/** The datasource for the database connection */
+	private DataSource datasrc;
 	
 	/**
 	 * Constructor for database connection
 	 * @param ds the datasources
 	 */
 	public DatabaseImpl(DataSource ds) {
-		pa = new PgsqlAccess(ds);
+		datasrc = ds;
 	}
 	
 	/**
@@ -45,7 +45,8 @@ public class DatabaseImpl implements IDatabase {
 	 * @param c the course to add
 	 */
 	public void addCourse(Course c) {
-	
+		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";	
 		PreparedStatement pstmt = null;
 		
@@ -132,7 +133,8 @@ public class DatabaseImpl implements IDatabase {
 	 * @param u the Univ-R course
 	 */
 	public void addUnivr(Univr u) {
-
+		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "INSERT INTO univr values(?,?,?,?)";
 		PreparedStatement pstmt =null;
 		
@@ -164,6 +166,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getAllCourses() {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<Course> l = new ArrayList<Course>();
@@ -214,6 +217,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getUnivrCourses() {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		ResultSet rs = null;
 		Statement stmt = null;
 		List<Course> l = new ArrayList<Course>();
@@ -263,6 +267,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getAllUnlockedCourses() {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		ResultSet rs = null;
 		Statement stmt = null;
 		List<Course> l = new ArrayList<Course>();
@@ -313,6 +318,8 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getNLastCourses(int n, String testKeyWord1, String testKeyWord2) {
+		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		
 		String sql = "SELECT * From course WHERE genre IS NULL AND visible = true " +
 			"AND INITCAP(title) NOT LIKE '" + testKeyWord1 + "%' ";
@@ -374,6 +381,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getCourses(int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		
 		String sql = "SELECT * From course WHERE visible = true " +
 			"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
@@ -437,7 +445,8 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getCourses(HashMap<String, String> params, int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
-			
+		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		List<Course> l = new ArrayList<Course>();
 		
 		if( ! params.isEmpty() ) {
@@ -546,6 +555,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getCoursesByAuthor(String author) {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		List<Course> l = new ArrayList<Course>();
 	
 		String sql = "SELECT * FROM course WHERE " +
@@ -602,6 +612,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getCoursesByFormation(String formation) {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		List<Course> l = new ArrayList<Course>();
 	
 		String sql = "SELECT * FROM course WHERE " +
@@ -658,7 +669,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Course getCourse(int courseId) {
 		Course c = null;
-	
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "SELECT * FROM course WHERE courseid = ?";
 		
 		PreparedStatement pstmt = null;
@@ -712,7 +723,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Course getCourse(int courseId, String genre) {
 		Course c = null;
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "SELECT * FROM course WHERE courseid = ? AND GENRE = ?";
 		
 		PreparedStatement pstmt = null;
@@ -767,6 +778,8 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(String testKeyWord1, String testKeyWord2, String testKeyWord3) {
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		
 		int number = 0;			
 		String sql = "SELECT COUNT(*) From course WHERE visible = true " +
 		"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
@@ -802,6 +815,8 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the number of courses
 	 */
 	public int getCourseNumber() {
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		
 		int number = 0;
 		String sql = "SELECT COUNT(*) FROM course WHERE visible = true";
 		
@@ -836,6 +851,8 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(HashMap<String, String> params,String testKeyWord1, String testKeyWord2, String testKeyWord3) {
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		
 		int number = 0;
 		
 		if( ! params.isEmpty() ) {
@@ -921,7 +938,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Univr getUnivr(int courseId) {
 		Univr u = null;
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "SELECT * FROM univr WHERE courseid = ?";
 		
 		PreparedStatement pstmt = null;
@@ -968,6 +985,7 @@ public class DatabaseImpl implements IDatabase {
 		sql += "WHERE courseid = ?";
 		
 		PreparedStatement pstmt = null;
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		
 		try {
 			pstmt = pa.getConnection().prepareStatement(sql);
@@ -1057,6 +1075,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteCourse(int courseId) {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "DELETE FROM course WHERE courseid = ?";
 		PreparedStatement pstmt = null;
 		try {
@@ -1083,6 +1102,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteUnivr(int courseId) {
 	
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "DELETE FROM univr WHERE courseid = ?";
 		PreparedStatement pstmt = null;
 		try {
@@ -1110,6 +1130,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<String> getTestsMediaFolders(String testKeyWord) {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<String> l = new ArrayList<String>();
@@ -1144,6 +1165,8 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getTests(int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
+		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		
 		String sql = "SELECT * From course " +
 			"WHERE INITCAP(genre) = '" + testKeyWord1 + "' " +
@@ -1214,6 +1237,7 @@ public class DatabaseImpl implements IDatabase {
 		
 		ResultSet rs = null;
 		Statement stmt = null;
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		try {
 			stmt = pa.getConnection().createStatement();
 			rs = pa.query(stmt, sql);
@@ -1244,6 +1268,7 @@ public class DatabaseImpl implements IDatabase {
 			
 			String sql = "DELETE FROM course WHERE INITCAP(genre) = '" + testKeyWord + "'";
 			Statement stmt = null;
+			PgsqlAccess pa = new PgsqlAccess(datasrc);
 			try {
 				stmt = pa.getConnection().createStatement();
 				stmt.executeUpdate(sql);
@@ -1274,7 +1299,7 @@ public class DatabaseImpl implements IDatabase {
 				sql += "OR INITCAP(title) LIKE '" + testKeyWord2 + "%'";
 			
 			Statement stmt = null;
-			
+			PgsqlAccess pa = new PgsqlAccess(datasrc);
 			try {
 				stmt = pa.getConnection().createStatement();
 				stmt.executeUpdate(sql);
@@ -1298,7 +1323,7 @@ public class DatabaseImpl implements IDatabase {
 		int id = 0 ;
 		ResultSet rs = null;
 		Statement stmt = null;
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		try {
 			stmt = pa.getConnection().createStatement();
 			rs = pa.query(stmt, "SELECT nextval('course_courseid_seq')");
@@ -1330,7 +1355,7 @@ public class DatabaseImpl implements IDatabase {
 		List<String> l = new ArrayList<String>();
 		ResultSet rs = null;
 		Statement stmt = null;
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		try {
 			stmt = pa.getConnection().createStatement();
 			rs = pa.query(stmt, "SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE visible = true AND title IS NOT NULL AND NOT (name IS NULL AND firstname IS NULL)");
@@ -1359,7 +1384,7 @@ public class DatabaseImpl implements IDatabase {
 		List<Teacher> l = new ArrayList<Teacher>();
 		ResultSet rs = null;
 		Statement stmt = null;
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		try {	
 			stmt = pa.getConnection().createStatement();
 			rs = pa.query(stmt,"SELECT INITCAP(name) AS ic_name, INITCAP(firstname) AS ic_firstname, count(*) FROM course " +
@@ -1394,6 +1419,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public String getTeacherFullName(String name, String firstname) {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String fullname = "";
 		String sql = "SELECT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE" +
 				(name != null ? " INITCAP(name) = INITCAP(?) " : "") +
@@ -1439,6 +1465,7 @@ public class DatabaseImpl implements IDatabase {
 		List<String> l = new ArrayList<String>();
 		ResultSet rs = null;
 		Statement stmt = null;
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		
 		try {
 			stmt = pa.getConnection().createStatement();
@@ -1467,7 +1494,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void incrementConsultations(Course c) {
 		int consultations = c.getConsultations() + 1;
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		
 		String sql = "UPDATE course SET consultations = ? WHERE courseid = ? ";
 		PreparedStatement pstmt = null;
@@ -1497,6 +1524,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addSlide(Slide s) {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "INSERT INTO Slide(courseid, slidetime) values(?,?)";
 		PreparedStatement pstmt = null;
 		
@@ -1526,6 +1554,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Slide> getSlides(int courseId) {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		List<Slide> l = new ArrayList<Slide>();
 		String sql = "SELECT * FROM slide WHERE courseid = ? ORDER BY slidetime";
 		PreparedStatement pstmt = null;
@@ -1561,6 +1590,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addBuilding(Building b) {
 	
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "INSERT INTO building(name, imagefile) values(?,?)";
 		PreparedStatement pstmt = null;
 		try {
@@ -1589,6 +1619,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Building> getBuildings() {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		List<Building> l = new ArrayList<Building>();
 		String sql = "SELECT * FROM building ORDER BY buildingid";
 		ResultSet rs = null;
@@ -1634,7 +1665,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Building getBuilding(int buildingId) {
 		Building b = null;
-	
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "SELECT * FROM building WHERE buildingid = ?";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -1672,7 +1703,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public String getBuildingName(String amphiIp) {
 		String name = "";
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "SELECT name FROM building WHERE buildingid = ( SELECT buildingid FROM amphi WHERE ipaddress = ? )";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -1703,7 +1734,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void modifyBuilding(Building b) {
 		
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		/* Creation of the SQL query string */
 		String sql = "UPDATE building SET name = ? , imagefile = ? ";
 		sql += "WHERE buildingid = ?";
@@ -1740,6 +1771,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteBuilding(int buildingId) {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "DELETE FROM building WHERE buildingid = ?";
 		PreparedStatement pstmt = null;
 		try {
@@ -1768,7 +1800,7 @@ public class DatabaseImpl implements IDatabase {
 	
 		String sql = "INSERT INTO amphi(buildingid, name, ipaddress, status, gmapurl, version) values(?,?,?,?,?,?,?)";
 		PreparedStatement pstmt = null;
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		try {
 			pstmt = pa.getConnection().prepareStatement(sql);
 			pstmt.setInt(1, a.getBuildingid());
@@ -1804,6 +1836,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Amphi> getAmphis(int buildingId) {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		List<Amphi> l = new ArrayList<Amphi>();
 		String sql = "SELECT amphi.*, count(course.ipaddress) FROM amphi LEFT OUTER JOIN course " +
 				"ON amphi.ipaddress = course.ipaddress " +
@@ -1852,7 +1885,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Amphi getAmphi(int amphiId) {
 		Amphi a = null;
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "SELECT * FROM amphi WHERE amphiid = ?";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -1891,7 +1924,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Amphi getAmphi(String ip) {
 		Amphi a = null;
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "SELECT * FROM amphi WHERE ipaddress = ?";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -1930,7 +1963,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void modifyAmphi(Amphi a, String oldAmphiip) {
 		
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		/* Creation of the SQL query string */
 		String sql = "UPDATE amphi SET buildingid = ?, name = ?, ";
 		sql += "ipaddress = ?, status = ?, gmapurl = ?, version = ? WHERE amphiid = ?";
@@ -1981,6 +2014,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteAmphi(int amphiId) {
 	
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "DELETE FROM amphi WHERE amphiid = ?";
 		PreparedStatement pstmt = null;
 		try {
@@ -2008,6 +2042,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void setAmphiStatus(String ip, boolean status) {
 	
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "UPDATE amphi SET status = ? WHERE ipaddress = ? ";
 		PreparedStatement pstmt = null;
 		try {
@@ -2036,7 +2071,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public User getUser(String login) {
 		User u = null;
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "SELECT * FROM \"user\" WHERE login = ?";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -2079,7 +2114,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public User getUser(int id) {
 		User u = null;
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "SELECT * FROM \"user\" WHERE userid = ?";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -2121,6 +2156,7 @@ public class DatabaseImpl implements IDatabase {
 		int id = 0 ;
 		ResultSet rs = null;
 		Statement stmt = null;
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		try {
 			stmt = pa.getConnection().createStatement();
 			rs = pa.query(stmt,"SELECT nextval('user_userid_seq')");
@@ -2152,6 +2188,7 @@ public class DatabaseImpl implements IDatabase {
 		
 		String sql = "INSERT INTO \"user\"(\"login\",email,firstname,lastname,profile,establishment,type,activate) values(?,?,?,?,?,?,?,?)";
 		PreparedStatement pstmt = null;
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		
 		try {
 			pstmt = pa.getConnection().prepareStatement(sql);
@@ -2185,7 +2222,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void modifyUser(User u) {
 		
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		/* Creation of the SQL query string */
 		String sql = "UPDATE \"user\" SET userid = ?, login = ? , email = ?, firstname = ?,lastname = ?," +
 				"profile = ?,establishment = ?,type = ?,activate = ? ";
@@ -2230,7 +2267,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteUser(int userid) {
 		
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "DELETE FROM \"user\" WHERE userid = ?";
 		PreparedStatement pstmt = null;
 		
@@ -2262,7 +2299,7 @@ public class DatabaseImpl implements IDatabase {
 	public List<Course> getCourses(User u, int number, int start) {
 		
 		List<Course> l = new ArrayList<Course>();
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 	
 		String sql = "SELECT * FROM course WHERE userid = ? ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start;
 		PreparedStatement pstmt = null;
@@ -2316,6 +2353,7 @@ public class DatabaseImpl implements IDatabase {
 		String sql = "SELECT COUNT(*) FROM course WHERE userid="+u.getUserid();
 		ResultSet rs = null;
 		Statement stmt = null;
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		
 		try {
 			stmt = pa.getConnection().createStatement();
@@ -2344,7 +2382,7 @@ public class DatabaseImpl implements IDatabase {
 		
 		List<User> l = new ArrayList<User>();
 		
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "SELECT * FROM \"user\"";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -2388,6 +2426,7 @@ public class DatabaseImpl implements IDatabase {
 		
 		String sql = "INSERT INTO tag(tag,courseid) values(?,?)";
 		PreparedStatement pstmt = null;
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		
 		try {
 			pstmt = pa.getConnection().prepareStatement(sql);
@@ -2415,7 +2454,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteTag(int courseid) {
 		
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "DELETE FROM tag WHERE courseid = ?";
 		PreparedStatement pstmt = null;
 		try {
@@ -2441,6 +2480,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Tag> getTagsByCourse(Course c) {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<Tag> l = new ArrayList<Tag>();
@@ -2475,6 +2515,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<String> getAllTags() {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<String> l = new ArrayList<String>();
@@ -2504,6 +2545,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<String> getMostPopularTags() {
 		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<String> l = new ArrayList<String>();
@@ -2540,7 +2582,8 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getCoursesByTags(List<String> tags, int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
-			
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		
 		String sql = "SELECT * From course WHERE visible = true " +
 			"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
 			"AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
@@ -2622,6 +2665,7 @@ public class DatabaseImpl implements IDatabase {
 			
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
+			PgsqlAccess pa = new PgsqlAccess(datasrc);
 			
 			try {
 				pstmt = pa.getConnection().prepareStatement(sql);
@@ -2654,7 +2698,7 @@ public class DatabaseImpl implements IDatabase {
 	public Course getCourseByMediafolder(String mediafolder) {
 								
 		Course c = null;
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "SELECT * From course WHERE mediafolder= '" + mediafolder + "'";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -2716,6 +2760,7 @@ public class DatabaseImpl implements IDatabase {
 				
 		Statement stmt = null;
 		ResultSet rs = null;
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		List<Course> l = new ArrayList<Course>();
 		try {
 			stmt = pa.getConnection().createStatement();
@@ -2775,6 +2820,7 @@ public class DatabaseImpl implements IDatabase {
 		ResultSet rs = null;
 		Statement stmt = null;
 		List<Course> l = new ArrayList<Course>();
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		try {
 			stmt = pa.getConnection().createStatement();
 			rs = pa.query(stmt, sql);
@@ -2820,7 +2866,7 @@ public class DatabaseImpl implements IDatabase {
 	public List<Selection> getAllSelections() {
 		
 		List<Selection> l = new ArrayList<Selection>();
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		
 		String sql = "SELECT * FROM selection order by position";
 		PreparedStatement pstmt = null;
@@ -2858,7 +2904,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Selection getSelection(int position) {
 		Selection s = null;
-	
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "SELECT * FROM selection WHERE position = ?";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -2896,6 +2942,7 @@ public class DatabaseImpl implements IDatabase {
 		
 		String sql = "INSERT INTO selection(idcourseselection,formationcollection) values(?,?)";
 		PreparedStatement pstmt = null;
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		
 		try {
 			pstmt = pa.getConnection().prepareStatement(sql);
@@ -2923,7 +2970,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void modifySelection(Selection s) {
 		
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		/* Creation of the SQL query string */
 		String sql = "UPDATE selection SET position = ?, idcourseselection = ? , formationcollection = ? ";
 		sql += "WHERE position = ?";
@@ -2960,7 +3007,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteSelection(int position) {
 		
-		
+		PgsqlAccess pa = new PgsqlAccess(datasrc);
 		String sql = "DELETE FROM selection WHERE position = ?";
 		PreparedStatement pstmt = null;
 		try {
