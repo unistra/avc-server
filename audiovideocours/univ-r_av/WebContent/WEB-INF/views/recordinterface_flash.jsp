@@ -52,7 +52,7 @@
 	    	<table class="flashslide">
 	    	<tr>
 				<td id="cellule_flash">
-					<p id="flash">Please install flash player</p>
+					<p id="flash">Please install flash player and activate javascript</p>
 	            	<script type="text/javascript">
 		            var so = new SWFObject('../files/jwflvplayer/mediaplayer.swf','flashvideo','320','260','8');
 		            so.addParam('allowscriptaccess','always'); 
