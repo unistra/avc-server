@@ -45,47 +45,61 @@
 		</c:otherwise>
 	</c:choose>
 
-		
+<!-- Note: If javascript isn't activated, you can access to the course with the ahref on the img -->		
 		<c:choose>
 			<c:when test="${course.genre == null}">
-				<td><a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a></td>
+				<td>
+				<script type="text/javascript">
+					document.write('<img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video">');
+				</script>
+				<noscript>
+					<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a>
+				</noscript>
+				</td>
 				<td> 	    				
-					<a href="<c:out value="${courseaccess}"/>" id="lienCol"><b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br></a>
-					<a href="<c:out value="${courseaccess}"/>" id="lienCol"><b><fmt:message key="Auteur :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br></a>			
+					<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br>
+					<b><fmt:message key="Auteur :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>			
 				</td>
 				<td>
-					<a href="<c:out value="${courseaccess}"/>" id="lienCol"><b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br></a>
-					<a href="<c:out value="${courseaccess}"/>" id="lienCol"><b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br></a>
+					<b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br>
+					<b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br>
 				</td>
 				<td nowrap="nowrap">
 					<fmt:message key="dateFormat" var="dateFormat" />
-					<a href="<c:out value="${courseaccess}"/>" id="lienCol"><b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br></a>
-					<a href="<c:out value="${courseaccess}"/>" id="lienCol"><b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br></a>
+					<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
+					<b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br>
 				</td>
 				<td nowrap="nowrap">
-					<a href="<c:out value="${courseaccess}"/>" id="lienCol"><b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br></a>
-					<a href="<c:out value="${courseaccess}"/>" id="lienCol"><b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br></a>
+					<b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br>
+					<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
 				</td>
 				
 			</c:when>
 			<c:otherwise>
-				<td><a href="<c:out value="${courseaccess}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a></td>
+				<td>
+				<script type="text/javascript">
+					document.write('<img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video">');
+				</script>
+				<noscript>
+					<a href="<c:out value="${courseaccess}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a>
+				</noscript>
+				</td>
 				<td> 	    				
-					<a href="<c:out value="${courseaccess}"/>" class="thickbox" id="lienCol"><b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br></a>
-					<a href="<c:out value="${courseaccess}"/>" class="thickbox" id="lienCol"><b><fmt:message key="Auteur :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br></a>			
+					<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br>
+					<b><fmt:message key="Auteur :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>			
 				</td>
 				<td>
-					<a href="<c:out value="${courseaccess}"/>" class="thickbox" id="lienCol"><b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br></a>
-					<a href="<c:out value="${courseaccess}"/>" class="thickbox" id="lienCol"><b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br></a>
+					<b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br>
+					<b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br>
 				</td>
 				<td nowrap="nowrap">
 					<fmt:message key="dateFormat" var="dateFormat" />
-					<a href="<c:out value="${courseaccess}"/>" class="thickbox" id="lienCol"><b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br></a>
-					<a href="<c:out value="${courseaccess}"/>" class="thickbox" id="lienCol"><b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br></a>
+					<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
+					<b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br>
 				</td>
 				<td nowrap="nowrap">
-					<a href="<c:out value="${courseaccess}"/>" class="thickbox" id="lienCol"><b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br></a>
-					<a href="<c:out value="${courseaccess}"/>" class="thickbox" id="lienCol"><b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br></a>
+					<b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br>
+					<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
 				</td>
 			</c:otherwise>
 		</c:choose>
