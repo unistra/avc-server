@@ -45,11 +45,19 @@
 		<c:param name="type" value="flash"/>
 	</c:url>
 		
+	<!-- Note: If javascript isn't activated, you can access to the course with the ahref on the img -->
 	<tr class="${class}" onclick="document.location.href='${courseaccess}'" style="cursor:pointer">			
-		<td><a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a></td>
+		<td>
+		<script type="text/javascript">
+			document.write('<img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video">');
+		</script>
+		<noscript>
+			<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a>
+		</noscript>
+		</td>
 		<td> 	    				
-			<a href="<c:out value="${courseaccess}"/>" id="lienCol"><b><c:out value="${course.title}"/></b> <br></a>
-			<a href="<c:out value="${courseaccess}"/>" id="lienCol"><b></b>par <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br></a>			
+			<b><c:out value="${course.title}"/></b> <br>
+			<b></b>par <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>
 		</td>
 			
 	<!-- Defines the class of the next row of the table -->
