@@ -33,36 +33,44 @@
   
   <body>
     <div class="main">
-	    <div class="banner">
-	    	<c:import url="../include/banner.jsp" />
-	    </div>
 	    <div class="contents">
+	    	<div class="banner">
+	    		<c:import url="../include/banner.jsp" />
+	    	</div>
+	    
 	    	<div class="links">
 		    	<c:import url="./links.jsp" />
 	    	</div>
 	    	
-	    	<c:out value="${buildingName}" />
+	    	<p id="nbr"><c:out value="${buildingName}"/></p>
 	    	<br>
 	    	
 	    	<display:table id="amphis" name="amphis" requestURI="./admin_amphis" class="displaytag">
 	    		<display:column property="amphiid" sortable="true"/>
 	    		<display:column property="buildingid" />
 				<display:column property="name" title="Name" sortable="true" />
-				<display:column property="type" sortable="true" />
 				<display:column property="ipAddress" sortable="true" />
+				<display:column property="version" sortable="true" />
 				<display:column property="number" title="Courses" sortable="true" />
-				<display:column title="status">
-					<input type="checkbox" disabled="disabled" ${amphi.status == true ? 'checked' : '' } />
+				<display:column title="status live">
+					<input type="checkbox" disabled="disabled" ${amphis.status == true ? 'checked' : '' } />
+					<a href="<c:url value="./livestate?recordingPlace=${amphis.ipAddress}&status=begin" />">On</a> /
+					<a href="<c:url value="./livestate?recordingPlace=${amphis.ipAddress}&status=end" />">Off</a>
+				</display:column>
+				<display:column title="client">
+					<a href="<c:url value="./admin_versionclient?ip=${amphis.ipAddress}"/>">version</a>
 				</display:column>
 				<display:column>
 					<a href="<c:url value="./admin_editamphi?id=${amphis.amphiid}&buildingId=${buildingId}" />">Edit</a>
 				</display:column>
 				<display:column>
-					<a href="javascript:confirmation('Delete the amphi ?','./admin_deleteamphi?id=${amphis.amphiid}&buildingId=${buildingId}')">Delete</a>
+					<a href="javascript:confirmation('Delete the amphi ${amphis.name}?','./admin_deleteamphi?id=${amphis.amphiid}&buildingId=${buildingId}')">Delete</a>
 				</display:column>
 	    	</display:table>
 	    	<br>
-	    	<a href="<c:url value="./admin_addamphi?buildingId=${buildingId}" />">Add</a>		
+	    	<div class="add">
+	    		<a href="<c:url value="./admin_addamphi?buildingId=${buildingId}" />">Add</a>		
+	  		</div>
 	    </div>
 	    	
 	    <div class="footer">

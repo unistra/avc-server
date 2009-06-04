@@ -1,22 +1,45 @@
 /* Div of the search part of the page */
 .search {
-	width: 728px;
-	margin-left: 116px;
-	margin-right: 76px;
+	width: 900px;
+	margin-left: auto;
+	margin-right: auto;
 	margin-top: 20px;
-	background-color: #747474;
 	overflow: hidden;
 	font-size: 12px;
+}
+
+.searchform {
+	width: 400px;
+	height:145px;
+	background-color: #747474;
+	float:left;	
+}
+
+.tagsform {
+	width: 400px;
+	height:145px;
+	background-color: #747474;
+	float:right;
 }
 
 /* Div containing the search image */
 .searchImage {
 	position: absolute;
-	width: 237px;
+	width: 180px;
 	height: 139px;
 	margin-left: -20px;
 	margin-top: -20px;
 	background-image: url(../img/search.png);
+}
+
+/* Div containing the tag image */
+.tagImage {
+	position: absolute;
+	width: 140px; /*180*/
+	height: 139px;
+	margin-left: -20px;
+	margin-top: -20px;
+	background-image: url(../img/tags.png);
 }
 
 /* Div containing the "search" text */
@@ -30,10 +53,10 @@
 /* Float div containing search criteria */
 .criteria {
 	float: right;
-	padding-top: 15px;
-	padding-bottom: 15px;
-	padding-left: 8px;
-	padding-right: 8px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 30px;
+	padding-right: 30px;
 	text-align: right;
 }
 
@@ -41,13 +64,6 @@
 .field {
 	width: 200px;
 	margin: 3px;
-}
-
-fieldset {
-	width: 190px;
-	text-align: left;
-	border: 1px solid #DDDDDD;
-	padding: 10px;
 }
 
 .checkbox {
@@ -64,12 +80,45 @@ fieldset {
 }
 
 /* vertical line in the "search" div */
-hr {
+.hr {
 	position: absolute;
 	background-color: #DDDDDD;
 	border: 0;
-	left: 335px;
-	margin-top: 10px;
-	height: 105px;
+	margin-top:30px;
+	margin-left:190px;
+	height: 80px;
 	width: 1px;
+	text-align:left;
+}
+
+.launchsearch {
+	float: left;
+	padding-top: 100px; 
+	padding-left: 3px;
+	text-align: left;
+}
+
+/* TAG CLOUD */
+#tagcloud {							
+	width: 250px;
+	height:65px;
+	text-align: right;
+	margin-left: 50px;
+	margin-bottom: 5px;
+}
+#tagcloud a {
+	text-decoration:none;
+}
+#tagcloud a:hover {
+	text-decoration:none;
+	background-color:#B3B3B3;
+	color:#FFFFFF;
+}
+#tag1,#tag2,#tag3,#tag4,#tag5,#tag6,#tag7,#tag8  {
+	font-size: 12px;
+	font-weight: bold;
+}
+
+#tag9,#tag10,#tag11,#tag12,#tag13,#tag14,#tag15,#tag16,#tag17,#tag18,#tag19,#tag20 {
+	font-size: 12px;
 }

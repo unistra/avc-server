@@ -33,10 +33,13 @@
   
   <body>
     <div class="main">
-	    <div class="banner">
-	    	<c:import url="../include/banner.jsp" />
-	    </div>
+	   
 	    <div class="contents">
+	    
+	     	<div class="banner">
+	    		<c:import url="../include/banner.jsp" />
+	    	</div>
+	    	
 	    	<div class="links">
 		    	<c:import url="./links.jsp" />
 	    	</div>
@@ -48,7 +51,7 @@
 	    	</display:table>
 	    	
 	    	<br>
-	    	<p>${number} teachers</p>
+	    	<p id="nbr">${number} authors</p>
 	    </div>
 	    	
 	    <div class="footer">

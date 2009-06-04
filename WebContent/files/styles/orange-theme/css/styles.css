@@ -2,6 +2,7 @@
 html {
 	height: 100%;
 	margin: 0;
+	background-color:black; /* #959595 */ 
 }
 
 /* Page body */
@@ -10,15 +11,13 @@ body {
 	color: #FFFFFF;
 	height: 100%;
 	margin: 0;
-	background-image: url("../img/gradient.png");
-	background-repeat: repeat-x;
-	background-color:#58585a;	
 }
 
 /* Main div */
 .main {
 	position: relative;
-	width: 970px;
+	width:90%;
+	min-width: 980px;
 	min-height: 100%;
 	margin-left: auto;
 	margin-right: auto;
@@ -27,49 +26,57 @@ body {
 
 /* Div containing the website's banner */
 .banner {
-	width: 940px;
-	height: 180px;
-	margin-left: 15px;
-	margin-right: 15px;
-	background-image: url(../img/banner.png);
+	width: 980px; /* 940 */
+	height: 200px; /* 180 */
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 0px;
+	background: url(../img/banner_or.png) 50% 50%;
   	background-repeat: no-repeat;
 }
 
 /* Clickable zone to go back to the banner page */
 .bannerPageZone {
 	position: absolute;
-	width : 202px;
-	height: 86px;
-	margin-left: 25px;
+	width : 250px;
+	height: 58px;
+	margin-left: 45px; /* 25 */
 	margin-top: 12px;
-	background-image: url(../img/univr-av-logo.png);
+	/*background-image: url(../img/univr-av-logo.png);*/
+	background-image: url(../img/audiovideocours-logo.png);
 }
 
 /* Clickable zone, link to the ULPMM website */
-.ulpmmZone {
+.udsZone {
 	position: absolute;
-	width : 100px;
-	height: 34px;
-	margin-left:135px;
-	margin-top: 146px;
-	background-image: url(../img/ulpmm-logo.png);
+	width : 126px;
+	height: 58px;
+	margin-left:45px; /*200*/
+	margin-top: 105px;/*105*/
+	background-image: url(../img/uds-logo.png);
 }
 
-/* Clickable zone, link to the ULP website */
-.ulpZone {
+/* Div containing the "logout" link */
+.logout {
 	position: absolute;
-	width : 52px;
-	height: 34px;
-	margin-left:235px;
-	margin-top: 146px;
-	background-image: url(../img/ulp-logo.png);
+	font-size: 12px;
+	margin-left:870px; /* 870 */
+	margin-top: 5px;
+}
+
+/* Div containing the "Myspace" link */
+.myspace {
+	position: absolute;
+	font-size: 12px;
+	margin-left:880px; /* 870 */
+	margin-top: 55px;
 }
 
 /* Div containing the "Styles" link */
 .styles {
 	position: absolute;
 	font-size: 12px;
-	margin-left:870px;
+	margin-left:890px; /* 870 */
 	margin-top: 80px;
 }
 
@@ -77,7 +84,7 @@ body {
 .languages {
 	position: absolute;
 	font-size: 12px;
-	margin-left:870px;
+	margin-left:890px; /* 870 */
 	margin-top: 105px;
 }
 
@@ -85,7 +92,7 @@ body {
 .help {
 	position: absolute;
 	font-size: 12px;
-	margin-left:870px;
+	margin-left:890px; /* 870 */
 	margin-top: 130px;
 }
 
@@ -93,18 +100,23 @@ body {
 .download {
 	position: absolute;
 	font-size: 12px;
-	margin-left:820px;
+	margin-left:840px; /* 820 */
 	margin-top: 155px;
 }
 
-.styles a, .languages a, .download a, .help a {
+.myspace a, .styles a, .languages a, .download a, .help a {
 	color: white;
+}
+
+.logout a {
+	color: white;	
+	font-weight: bold;
 }
 
 /*  Div containing the "Live" button */
 .recorded {
 	position: absolute;
-	margin-left: 312px;
+	margin-left: 332px; /* 312 */
 	width: 115px;
 	height: 180px;
 }
@@ -121,7 +133,7 @@ body {
 /*  Div containing the "Recorded" button */
 .live {
 	position: absolute;
-	margin-left: 428px;
+	margin-left: 448px; /* 428 */
 	width: 115px;
 	height: 180px;
 }
@@ -144,12 +156,9 @@ body {
 
 /* Page content div */
 .contents {
-	width: 940px;
-	margin-top: 20px;
-	margin-left: 15px;
-	margin-right: 15px;
+	margin-left: auto;
+	margin-right: auto;
 	padding-bottom: 50px;
-	/*border: 1px dotted white; */
 	overflow: auto;
 }
 
@@ -157,7 +166,7 @@ body {
 .footer {
 	position: absolute;
 	bottom: 0px;
-	width: 970px;
+	width: 100%;
 	margin-bottom: 5px;
 	text-align: center;
 	font-size: 11px;
@@ -179,5 +188,10 @@ a, .linkText, .helpText, h5, .buildingName, .searchText {
 }
 
 .tableheader, .displaytag th {
-	background-color: #FF9602;
+	background-image: url("../img/array_title.png");
+}
+
+.divCenter {
+	text-align:center;
+	margin:auto;
 }

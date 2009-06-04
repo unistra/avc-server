@@ -13,16 +13,23 @@ import javax.sql.DataSource;
  */
 public class PgsqlAccess {
 	
+	/** the connection object */
 	private Connection cnt;
+	
+	/** the datasource object */
 	private DataSource ds;
 	
+	/**
+	 * Constructor to initialize datasource
+	 * 
+	 * @param ds the datasource object
+	 */
 	public PgsqlAccess(DataSource ds) {
 		this.ds = ds;
 	}
 	
 	/**
-	 *  Initialisation of the connection 
-	 *  
+	 *  Initialization of the connection 
 	 */
 	public void connect() {
 		try {
@@ -57,16 +64,14 @@ public class PgsqlAccess {
 	 * @param sql the SQL query to execute
 	 * @return the Resultset of the query
 	 */
-	public ResultSet query(String sql) {
+	public ResultSet query(Statement stmt, String sql) {
 		ResultSet rs = null;
 		
 		try {
 			if( cnt == null || cnt.isClosed())
 				connect();
-			//if( cnt != null && ! cnt.isClosed()) {
-				Statement stmt = cnt.createStatement();
+			
 				rs = stmt.executeQuery(sql);
-			//}
 		}
 		catch( SQLException sqle) {
 			System.out.println("Error executing the query :" + sql);
@@ -74,6 +79,32 @@ public class PgsqlAccess {
 		}
 		
 		return rs;
+	}
+	
+	/**
+	 * Method to close a query (resultset, statement and connection)
+	 * @param rs resultset
+	 * @param ps statement
+	 */
+	public void closeQuery(ResultSet rs, Statement ps) {
+		if (rs!=null) {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				System.out.println("Error while close the resultset");
+				e.printStackTrace();
+			}
+		}
+		if (ps != null) {
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				System.out.println("Error while close the statement");
+				e.printStackTrace();
+			}
+		}
+		
+		disconnect();
 	}
 	
 	/**

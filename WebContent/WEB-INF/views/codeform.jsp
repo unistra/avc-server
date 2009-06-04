@@ -31,10 +31,11 @@
   
   <body>
     <div class="main">
-	    <div class="banner">
-	    	<c:import url="include/banner.jsp" />
-	    </div>
 	    <div class="contents">
+	    	<div class="banner">
+	    		<c:import url="include/banner.jsp" />
+	    	</div>
+	    	
 	    	<div id="codeForm">
 		    	<form method="post" action="./courseaccess?id=${id}">
 					<legend><fmt:message key="Code d'acc&egrave;s"/></legend>

@@ -35,10 +35,12 @@ response.setStatus(200);
   
   <body>
     <div class="main">
-	    <div class="banner">
-	    	<c:import url="include/banner.jsp" />
-	    </div>
 	    <div class="contents">
+	    
+	    	<div class="banner">
+	    		<c:import url="include/banner.jsp" />
+	    	</div>
+	    	
 	    	<p><fmt:message key="exceptionMessage"/> : <%= exception %></p>
 	    	<p>
 	    	<% 

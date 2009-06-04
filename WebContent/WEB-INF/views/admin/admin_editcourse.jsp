@@ -31,10 +31,11 @@
   
   <body>
     <div class="main">
-	    <div class="banner">
-	    	<c:import url="../include/banner.jsp" />
-	    </div>
 	    <div class="contents">
+	    	<div class="banner">
+	    		<c:import url="../include/banner.jsp" />
+	    	</div>
+	    	
 	    	<div class="links">
 		    	<c:import url="./links.jsp" />
 	    	</div>
@@ -56,7 +57,7 @@
 			    		</tr>
 			    		<tr class="even">
 				    		<td>Title</td>
-				    		<td><input type="hidden" name="title" value="${course.title}">${course.title}</td>
+				    		<td><input type="text" name="title" value="${course.title}" class="field"></td>
 			    		</tr>
 			    		<tr class="odd">
 				    		<td>Description</td>
@@ -101,6 +102,19 @@
 			    		<tr class="odd">
 				    		<td>MediaFolder</td>
 				    		<td><input type="hidden" name="mediaFolder" value="${course.mediaFolder}">${course.mediaFolder}</td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>High Quality</td>
+				    	<!--<td><input type="checkbox" name="highquality" ${course.highquality == true ? 'checked' : ''}></td>-->
+			    			<td><input type="hidden" name="highquality" value="${course.highquality}">${course.highquality}</td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>UserId</td>
+				    		<td><input type="hidden" name="userid" value="${course.userid}">${course.userid}</td>
+			    		</tr>
+			    		<tr class="even">
+				    		<td>Tags</td>
+				    		<td><input type="text" name="tags" value="${tags}" class="field"></td>
 			    		</tr>
 			    	</table>
 			    	<br>

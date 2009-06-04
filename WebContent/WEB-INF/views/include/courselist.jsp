@@ -6,43 +6,11 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<tr class="row2">
-	<td colspan="3">&nbsp;</td>
-	<td class="tdalign">
-		<img src="../files/styles/${sessionScope.style}/img/smile.png" alt="smile"><br>
-		smil
-	</td>
-	<td class="tdalign">
-		<img src="../files/styles/${sessionScope.style}/img/real_v2.png" alt="real"><br>
-		realplayer
-	</td>
-	<td class="tdalign">
-		<img src="../files/styles/${sessionScope.style}/img/flash.png" alt="flash"><br>
-		flash
-	</td>
-	<td class="tdalign">
-		<img src="../files/styles/${sessionScope.style}/img/ogg_v2.png" alt="ogg"><br>
-		ogg
-	</td>
-	<td class="tdalign">
-		<img src="../files/styles/${sessionScope.style}/img/mp3_v2.png" alt="mp3"><br>
-		mp3
-	</td>
-	<td class="tdalign">
-		<img src="../files/styles/${sessionScope.style}/img/winzip3.png" alt="zip"><br>
-		zip
-	</td>
-	<td class="tdalign">
-		<img src="../files/styles/${sessionScope.style}/img/acrobat.png" alt="pdf"><br>
-		pdf
-	</td>
-</tr>
-
 <!-- Displays the courses of the list in the table -->
 <c:set var="class" value="row1" />
 <c:forEach var="course" varStatus="status" items="${courses}">
-	<tr class="${class}">
-		<!-- Defines the image file which represents the course type -->
+
+<!-- Defines the image file which represents the course type -->
 		<c:choose>
 			<c:when test="${course.type == 'audio' && course.genre == null}">
 				<c:set var="typeImg" value="sound" />
@@ -57,191 +25,87 @@
 				<c:set var="typeImg" value="video_locked" />
 			</c:when>
 		</c:choose>
-		<c:choose>
+
+	<c:choose>
 			<c:when test="${course.genre == null}">
 				<c:url var="courseaccess" scope="page" value="./courseaccess">
 					<c:param name="id" value="${course.courseid}"/>
 					<c:param name="type" value="flash"/>
-				</c:url>
-				<td><a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a></td>
-			</c:when>
+				</c:url>		
+				<tr class="${class}" onclick="document.location.href='${courseaccess}'" style="cursor:pointer">
+				</c:when>
 			<c:otherwise>
-				<c:url var="thick_codeform" scope="page" value="./thick_codeform">
+				<c:url var="courseaccess" scope="page" value="./thick_codeform">
 					<c:param name="id" value="${course.courseid}"/>
 					<c:param name="type" value="flash"/>
 					<c:param name="width" value="250"/>
 					<c:param name="height" value="120"/>
 				</c:url>
-				<td><a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a></td>
-			</c:otherwise>
-		</c:choose>
-		<td>	    				
-			<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br>
-			<b><fmt:message key="Enseignant :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>
-			<div id="row${status.count}col1link">
-				<a href="javascript:switchDetails('row${status.count}')"><fmt:message key="[+] plus de détails"/></a>
-			</div>	    				
-			<div id="row${status.count}col1details" class="hidden">
+				<tr class="${class}" onclick="dotb('', '${courseaccess}?width=250&height=120');return false;" style="cursor:pointer">
+		</c:otherwise>
+	</c:choose>
+
+<!-- Note: If javascript isn't activated, you can access to the course with the ahref on the img -->		
+		<c:choose>
+			<c:when test="${course.genre == null}">
+				<td>
+				<script type="text/javascript">
+					document.write('<img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video">');
+				</script>
+				<noscript>
+					<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a>
+				</noscript>
+				</td>
+				<td> 	    				
+					<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br>
+					<b><fmt:message key="Auteur :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>			
+				</td>
+				<td>
 					<b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br>
 					<b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br>
-					<a href="javascript:switchDetails('row${status.count}')"><fmt:message key="[-] moins de détails"/></a>
-			</div>	    				
-		</td>
-		<td>
-			<fmt:message key="dateFormat" var="dateFormat" />
-			<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
-			<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
-			<div id="row${status.count}col2link">
-				<a href="javascript:switchDetails('row${status.count}')"><fmt:message key="[+] plus de détails"/></a>
-			</div>
-			<div id="row${status.count}col2details" class="hidden">
+				</td>
+				<td nowrap="nowrap">
+					<fmt:message key="dateFormat" var="dateFormat" />
+					<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
 					<b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br>
+				</td>
+				<td nowrap="nowrap">
 					<b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br>
-					<a href="javascript:switchDetails('row${status.count}')"><fmt:message key="[-] moins de détails"/></a>
-			</div>
-		</td>
-		<td class="tdalign">
-			<c:choose>
-				<c:when test="${course.genre == null}">
-					<c:url var="courseaccess" scope="page" value="./courseaccess">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="smil"/>
-					</c:url>
-					<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:when>
-				<c:otherwise>
-					<c:url var="thick_codeform" scope="page" value="./thick_codeform">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="smil"/>
-						<c:param name="width" value="250"/>
-						<c:param name="height" value="120"/>
-					</c:url>
-					<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:otherwise>
-			</c:choose>
-		</td>
-		<td class="tdalign">
-			<c:choose>
-				<c:when test="${course.genre == null}">
-					<c:url var="courseaccess" scope="page" value="./courseaccess">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="real"/>
-					</c:url>
-					<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:when>
-				<c:otherwise>
-					<c:url var="thick_codeform" scope="page" value="./thick_codeform">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="real"/>
-						<c:param name="width" value="250"/>
-						<c:param name="height" value="120"/>
-					</c:url>
-					<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:otherwise>
-			</c:choose>
-		</td>
-		<td class="tdalign">
-			<c:choose>
-
-				<c:when test="${course.genre == null}">
-					<c:url var="courseaccess" scope="page" value="./courseaccess">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="flash"/>
-					</c:url>
-					<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:when>
-				<c:otherwise>
-					<c:url var="thick_codeform" scope="page" value="./thick_codeform">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="flash"/>
-						<c:param name="width" value="250"/>
-						<c:param name="height" value="120"/>
-					</c:url>
-					<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:otherwise>
-			</c:choose>
-		</td>
-		<td class="tdalign">
-			<c:choose>
-				<c:when test="${course.genre == null}">
-					<c:url var="courseaccess" scope="page" value="./courseaccess">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="ogg"/>
-					</c:url>
-					<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:when>
-				<c:otherwise>
-					<c:url var="thick_codeform" scope="page" value="./thick_codeform">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="ogg"/>
-						<c:param name="width" value="250"/>
-						<c:param name="height" value="120"/>
-					</c:url>
-					<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:otherwise>
-			</c:choose>
-		</td>
-		<td class="tdalign">
-			<c:choose>
-				<c:when test="${course.genre == null}">
-					<c:url var="courseaccess" scope="page" value="./courseaccess">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="mp3"/>
-					</c:url>
-					<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:when>
-				<c:otherwise>
-					<c:url var="thick_codeform" scope="page" value="./thick_codeform">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="mp3"/>
-						<c:param name="width" value="250"/>
-						<c:param name="height" value="120"/>
-					</c:url>
-					<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:otherwise>
-			</c:choose>
-		</td>
-		<td class="tdalign">
-			<c:choose>
-				<c:when test="${course.genre == null}">
-					<c:url var="courseaccess" scope="page" value="./courseaccess">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="zip"/>
-					</c:url>
-					<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:when>
-				<c:otherwise>
-					<c:url var="thick_codeform" scope="page" value="./thick_codeform">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="zip"/>
-						<c:param name="width" value="250"/>
-						<c:param name="height" value="120"/>
-					</c:url>
-					<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:otherwise>
-			</c:choose>
-		</td>
-		<td class="tdalign">
-			<c:choose>
-				<c:when test="${course.genre == null}">
-					<c:url var="courseaccess" scope="page" value="./courseaccess">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="pdf"/>
-					</c:url>
-					<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:when>
-				<c:otherwise>
-					<c:url var="thick_codeform" scope="page" value="./thick_codeform">
-						<c:param name="id" value="${course.courseid}"/>
-						<c:param name="type" value="pdf"/>
-						<c:param name="width" value="250"/>
-						<c:param name="height" value="120"/>
-					</c:url>
-					<a href="<c:out value="${thick_codeform}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/chip.png" alt="chip"></a>
-				</c:otherwise>
-			</c:choose>
-		</td>
-	</tr>
+					<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
+				</td>
+				
+			</c:when>
+			<c:otherwise>
+				<td>
+				<script type="text/javascript">
+					document.write('<img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video">');
+				</script>
+				<noscript>
+					<a href="<c:out value="${courseaccess}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a>
+				</noscript>
+				</td>
+				<td> 	    				
+					<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br>
+					<b><fmt:message key="Auteur :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>			
+				</td>
+				<td>
+					<b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br>
+					<b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br>
+				</td>
+				<td nowrap="nowrap">
+					<fmt:message key="dateFormat" var="dateFormat" />
+					<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
+					<b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br>
+				</td>
+				<td nowrap="nowrap">
+					<b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br>
+					<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
+				</td>
+			</c:otherwise>
+		</c:choose>
+		
+		</tr>
+		
 	<!-- Defines the class of the next row of the table -->
 	<c:choose>
 		<c:when test="${status.count % 2 == 0}">

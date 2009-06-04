@@ -1,14 +1,23 @@
 /* Clickable zone to go back to the banner page */
 .bannerPageZone {
-	background-image: url(../img/univr-av-logo.gif);
+	background-image: url(../img/audiovideocours-logo.gif);
+}
+
+.udsZone {
+	background-image: url(../img/uds-logo.gif);
 }
 
 /* Clickable zone, link to the ULPMM website */
-.ulpmmZone {
+/*.ulpmmZone {
 	background-image: url(../img/ulpmm-logo.gif);
-}
+}*/
 
 /* Clickable zone, link to the ULP website */
-.ulpZone {
+/*.ulpZone {
 	background-image: url(../img/ulp-logo.gif);
+}*/
+
+.banner {
+	background: url(../img/banner_blu.gif) 50% 50%;
+  	background-repeat: no-repeat;
 }

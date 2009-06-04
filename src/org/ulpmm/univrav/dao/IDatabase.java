@@ -6,10 +6,19 @@ import java.util.List;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
+import org.ulpmm.univrav.entities.Tag;
 import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
+import org.ulpmm.univrav.entities.User;
 
+/**
+ * Interface for database implementation methods
+ * 
+ * @author morgan
+ *
+ */
 public interface IDatabase {
 	
 	/**
@@ -25,7 +34,7 @@ public interface IDatabase {
 	public void addUnivr(Univr u);
 	
 	/**
-	 * Gets a list of all the courses (non-Univr)
+	 * Gets a list of all the courses (no-Univr)
 	 * @return the list of courses
 	 */
 	public List<Course> getAllCourses();
@@ -37,7 +46,7 @@ public interface IDatabase {
 	public List<Course> getUnivrCourses();
 	
 	/**
-	 * Gets a list of all the courses without an access code
+	 * Gets a list of all the courses without access code
 	 * @return the list of courses
 	 */
 	public List<Course> getAllUnlockedCourses();
@@ -75,11 +84,18 @@ public interface IDatabase {
 	public List<Course> getCourses(HashMap<String, String> params, int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3);
 	
 	/**
-	 * Gets the list of courses without access code for a teacher
-	 * @param teacher the teacher
+	 * Gets the list of courses for an author
+	 * @param author the author
 	 * @return the list of courses
 	 */
-	public List<Course> getUnlockedCourses(String teacher);
+	public List<Course> getCoursesByAuthor(String author);
+	
+	/**
+	 * Gets the list of courses without access code for a teacher
+	 * @param formation the formation
+	 * @return the list of courses
+	 */
+	public List<Course> getCoursesByFormation(String formation);
 	
 	/**
 	 * Gets a course by providing its id
@@ -103,11 +119,23 @@ public interface IDatabase {
 	public int getCourseNumber();
 	
 	/**
-	 * Gets the number of courses corresponding to the given criteria
-	 * @param params the criteria of the searched courses
+	 * Gets the total number of courses without test keywords
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
 	 * @return the number of courses
 	 */
-	public int getCourseNumber(HashMap<String, String> params);
+	public int getCourseNumber(String testKeyWord1, String testKeyWord2, String testKeyWord3);
+	
+	/**
+	 * Gets the number of courses corresponding to the given criteria
+	 * @param params the criteria of the searched courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(HashMap<String, String> params,String testKeyWord1, String testKeyWord2, String testKeyWord3);
 	
 	/**
 	 * Gets a Univr course by providing its id
@@ -129,9 +157,15 @@ public interface IDatabase {
 	public void deleteCourse(int courseId);
 	
 	/**
+	 * Deletes a univr by providing its id
+	 * @param courseId the id of the course
+	 */
+	public void deleteUnivr(int courseId);
+	
+	/**
 	 * Gets the list of the media folders of the test courses
-	 * @return the list of media folders
 	 * @param testKeyWord the key word which identifies a test
+	 * @return the list of media folders
 	 */
 	public List<String> getTestsMediaFolders(String testKeyWord);
 	
@@ -145,6 +179,15 @@ public interface IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getTests(int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3);
+	
+	/**
+	 * Gets the total number of tests with test keywords
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
+	 * @return the number of courses
+	 */
+	public int getTestNumber(String testKeyWord1, String testKeyWord2, String testKeyWord3);
 	
 	/**
 	 * Deletes the test courses (courses with genre 'Suppression')
@@ -185,18 +228,14 @@ public interface IDatabase {
 	 */
 	public String getTeacherFullName(String name, String firstname);
 	
-	/**
-	 * Gets the list of all the teachers who have at least one course with no access code
-	 * @return the list of teachers
-	 */
-	public List<String> getTeachersWithRss();
-	
+		
 	/**
 	 * Gets the list of all the formations
 	 * @return the list of formations
 	 */
 	public List<String> getFormations();
 	
+		
 	/**
 	 * Increments the number of consultations for a course
 	 * @param c the course
@@ -264,13 +303,14 @@ public interface IDatabase {
 	
 	/**
 	 * Gets a list of all the amphis
+	 * @param buildingId the id of the building
 	 * @return the list of amphis
 	 */
 	public List<Amphi> getAmphis(int buildingId);
 	
 	/**
-	 * Gets an amphi by providing its IP address
-	 * @param ip the IP address of the amphi
+	 * Gets an amphi by providing its id
+	 * @param amphiId the id of the amphi
 	 * @return the amphi
 	 */
 	public Amphi getAmphi(int amphiId);
@@ -301,4 +341,174 @@ public interface IDatabase {
 	 * @param amphiId the id of the amphi
 	 */
 	public void deleteAmphi(int amphiId);
+	
+	/**
+	 * Gets user by login (login is UNIQUE)
+	 * @param login the login of the user
+	 * @return the user
+	 */
+	public User getUser(String login);
+	
+	/**
+	 * Get user by id 
+	 * @param id the id of the user
+	 * @return the user
+	 */
+	public User getUser(int id);
+	
+	/**
+	 * Gets the id of the next user which will be uploaded
+	 * @return the id of the user
+	 */
+	public int getNextUserId();
+	
+	/**
+	 * Adds a new user
+	 * @param u User
+	 */
+	public void addUser(User u);
+	
+	/**
+	 * Modify a user
+	 * @param u User
+	 */
+	public void modifyUser(User u);
+	
+	/**
+	 * Deletes an user by providing its id
+	 * @param userid the id of the user
+	 */
+	public void deleteUser(int userid);
+	
+	/**
+	 * Gets a list of courses by providing its user
+	 * @param u the user of the course
+	 * @param number the number of courses
+	 * @param start the start number of courses
+	 * @return the list of course
+	 */
+	public List<Course> getCourses(User u, int number, int start);
+	
+	/**
+	 * Gets the total number of courses
+	 * @param u the user
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(User u);
+	
+	/**
+	 * Gets the list of all the users
+	 * @return the list of users
+	 */
+	public List<User> getAllUsers();
+	
+	/**
+	 * Add a new tag
+	 * @param t the tag
+	 */
+	public void addTag(Tag t);
+	
+	/**
+	 * Deletes tags by providing its courseid
+	 * @param courseid the id of the course
+	 */
+	public void deleteTag(int courseid);
+	
+	/**
+	 * Gets a list of all tags of a course
+	 * @param c Course
+	 * @return the list of tags
+	 */
+	public List<Tag> getTagsByCourse(Course c);
+	
+	/**
+	 * Gets a list of all tags
+	 * @return the list of tags
+	 */
+	public List<String> getAllTags();
+	
+	/**
+	 * Gets a list of most popular tags
+	 * @return the list of most popular tags
+	 */
+	public List<String> getMostPopularTags();
+	
+	/**
+	 * Gets a restricted list of courses
+	 * @param tag the tag
+	 * @param number the number of courses to return
+	 * @param start the start number of the courses
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getCoursesByTags(List<String> tag, int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3);
+
+	/**
+	 * Gets the number of courses corresponding to the given criteria
+	 * @param tag the tag
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @param testKeyWord3 the third key word which identifies a test
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(List<String> tag,String testKeyWord1, String testKeyWord2, String testKeyWord3);
+	
+	/**
+	 * Gets a restricted list of courses
+	 * @param mediafolder the folder of the media
+	 * @return the course
+	 */
+	public Course getCourseByMediafolder(String mediafolder);
+	
+	/**
+	 * Gets a list of the n selection courses
+	 * @param n the number of courses to return
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getNSelectionCourses(int n, String testKeyWord1, String testKeyWord2);
+
+	/**
+	 * Gets a list of the n selection courses
+	 * @param n the number of courses to return
+	 * @param testKeyWord1 the first key word which identifies a test
+	 * @param testKeyWord2 the second key word which identifies a test
+	 * @return the list of courses
+	 */
+	public List<Course> getNFormationCourses(int n, String testKeyWord1, String testKeyWord2);
+	
+	/**
+	 * Gets the list of all the selection
+	 * @return the list of users
+	 */
+	public List<Selection> getAllSelections();
+	
+	/**
+	 * Get selection by position 
+	 * @param position the position of the selection
+	 * @return the selection
+	 */
+	public Selection getSelection(int position);
+	
+	/**
+	 * Adds a new selection
+	 * @param s the selection
+	 */
+	public void addSelection(Selection s);
+	
+	/**
+	 * Modify a selection
+	 * @param s the selection
+	 */
+	public void modifySelection(Selection s);
+	
+	/**
+	 * Deletes a selection by providing its id
+	 * @param position the position of the selection
+	 */
+	public void deleteSelection(int position);
+
 }

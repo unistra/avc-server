@@ -10,7 +10,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,20 +38,60 @@ import org.ulpmm.univrav.entities.Course;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * File system implementation methods
+ * 
+ * @author morgan
+ *
+ */
 public class FileSystemImpl implements IFileSystem {
 
+	/** The runtime object */
 	private static Runtime r;
 	
-	private static File scriptsFolder; //folder which contains the scripts
-	private static String ftpFolder; // folder in which the courses are uploaded via FTP
-	private static String coursesFolder; // folder which contains all the media folders
+	/** Folder which contains all scripts */
+	private static File scriptsFolder;
+	
+	/** Folder in which the courses are uploaded by FTP */
+	private static String ftpFolder;
+	
+	/** Folder which contains all the courses folders */
+	private static String coursesFolder;
+	
+	/** The URL of courses */
 	private static String coursesUrl;
+	
+	/** Default MP3 filename in the archive sent by the client */
 	private static String defaultMp3File;
+	
+	/** Default RM filename in the archive sent by the client */
 	private static String defaultRmFile;
+	
+	/** Default Flash filename in the archive sent by the client */
 	private static String defaultFlashFile;
+	
+	/** Folder which contains all screenshots in the archive sent by the client */
 	private static String defaultScreenshotsFolder;
+	
+	/** Copyright comment */
 	private static String comment;
 	
+	/**
+	 * Constructor for file system
+	 * 
+	 * @param scriptsFolder Folder which contains the scripts
+	 * @param ftpFolder Folder in which the courses are uploaded via FTP
+	 * @param coursesFolder Folder which contains all the courses folders
+	 * @param liveFolder Folder which contains all the media for the live
+	 * @param coursesUrl The URL of courses
+	 * @param defaultMp3File Default MP3 filename in the archive sent by the client
+	 * @param defaultRmFile Default RM filename in the archive sent by the client
+	 * @param defaultSmilFile Default Smil filename in the archive sent by the client
+	 * @param defaultFlashFile Default Flash filename in the archive sent by the client
+	 * @param defaultScreenshotsFolder Folder which contains all screenshots in the archive sent by the client
+	 * @param comment Copyright comment
+	 */
+	@SuppressWarnings("static-access")
 	public FileSystemImpl(String scriptsFolder, String ftpFolder, String coursesFolder, 
 		String liveFolder, String coursesUrl, String defaultMp3File, String defaultRmFile, 
 		String defaultSmilFile, String defaultFlashFile, String defaultScreenshotsFolder, 
@@ -116,8 +158,9 @@ public class FileSystemImpl implements IFileSystem {
 	 * Creates a course from an uploaded audio or video media file
 	 * @param c the course to create
 	 * @param mediaFile the media file of the course to create
+	 * @param hq High Quality
 	 */
-	public void mediaUpload(Course c, FileItem mediaFile) {
+	public void mediaUpload(Course c, FileItem mediaFile,boolean hq) {
 		String fileName = mediaFile.getName();
 		
 		/* Used to fix full path problem with IE */
@@ -154,14 +197,12 @@ public class FileSystemImpl implements IFileSystem {
 		else if( extension.equals("avi") || extension.equals("divx") || extension.equals("rm") 
 				|| extension.equals("rv") || extension.equals("mp4") || extension.equals("mpg") 
     			|| extension.equals("mpeg") || extension.equals("mov") || extension.equals("wmv")
-    			|| extension.equals("mkv")) { // video files
+    			|| extension.equals("mkv") || extension.equals("flv")) { // video files
 			
 			c.setType("flash");
 			
 			if( extension.equals("flv") )
 				renameFile(c.getMediaFolder(), fileName, c.getMediasFileName() + ".flv");
-			/*else if( extension.equals("rm") || extension.equals("rv") || extension.equals("mkv") )
-				rmMkvConvert(c.getMediaFolder(), fileName, c.getMediasFileName());*/
 			else
 				videoConvert(c.getMediaFolder(), fileName, c.getMediasFileName());
 			
@@ -173,6 +214,9 @@ public class FileSystemImpl implements IFileSystem {
 			mp3ToOgg(c.getMediaFolder(), c.getMediasFileName());
 			courseZip(c, c.getMediaFolder(), c.getMediasFileName());
 			
+			if(hq)  // for High-Quality video
+				videoHighQualityConvert(c.getMediaFolder(), fileName, c.getMediasFileName());
+				
 			c.setType("video");
 		}
 
@@ -194,8 +238,8 @@ public class FileSystemImpl implements IFileSystem {
 			in.close();
 		}
 		catch(IOException ioe) {
-			/*System.out.println("Impossible to load the timecodes file");
-			ioe.printStackTrace();*/
+			System.out.println("Impossible to load the timecodes file");
+			ioe.printStackTrace();
 		}
 		return timecodes;
 	}
@@ -222,42 +266,7 @@ public class FileSystemImpl implements IFileSystem {
 		}
 	}
 	
-	/**
-	 * Checks wether a video amphi is diffusing an audio stream or a video stream
-	 * @param amphiIp the Ip address of the video amphi
-	 * @param audioLivePort the port used by the audio live
-	 * @return the stream type diffused by the amphi
-	 */
-	public String getLiveStreamType(String amphiIp, int audioLivePort) {
 		
-		String result="";
-		
-		try {
-			String command = "wget -o live_" + amphiIp + ".log --timeout=2 -t2 --spider -S http://" + amphiIp + ":" + audioLivePort;
-			Process p = r.exec(command, null, new File("/tmp"));
-			p.waitFor();
-			
-			FileInputStream fis = new FileInputStream("/tmp/live_" + amphiIp + ".log");
-			BufferedReader entree = new BufferedReader(new InputStreamReader(fis));
-			String text="";
-			while( (text = entree.readLine()) != null )
-				result+= text;
-		}
-		catch( IOException ioe) {
-			System.out.println("Error while checking the Stream type for the amphi " + amphiIp);
-			ioe.printStackTrace();
-		}
-		catch( InterruptedException ie) {
-			System.out.println("Error while checking the Stream type for the amphi " + amphiIp);
-			ie.printStackTrace();
-		}
-		
-		if( result.indexOf("200 OK") != -1)
-			return "audio";
-		else
-			return "video";
-	}
-	
 	/**
 	 * Retrieves a list of the website's available themes
 	 * @param stylesFolder the folder in which the themes are stored
@@ -320,17 +329,24 @@ public class FileSystemImpl implements IFileSystem {
 	/**
 	 * Sends a message over a socket to the Univ-R AV client
 	 * @param message the message to send
+	 * @param ip the ip to contact the client
+	 * @param port the port to contact the client
+	 * @param timeout the timeout to contact the client
 	 * @return the answer of the client
 	 */
-	public String sendMessageToClient(String message, String ip, int port) {
+	public String sendMessageToClient(String message, String ip, int port, int timeout) {
 		
 		String answer = "";
 		
 		try {
 			/* Sends the message to the client */
-			Socket client = new Socket(ip, port);
+		//	Socket client = new Socket(ip, port);
+			SocketAddress sockaddr = new InetSocketAddress(ip, port);
+			Socket client = new Socket();
+			client.connect(sockaddr, timeout);
+				
 			PrintWriter output = new PrintWriter(client.getOutputStream());
-			output.println(message);
+			output.print(message);
 			output.flush();
 			/* Reception of the answer */
 			BufferedReader entree = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -356,7 +372,6 @@ public class FileSystemImpl implements IFileSystem {
 	 * @param rssImageUrl the URL of the RSS image file
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS file
-	 * @throws ParserConfigurationException
 	 */
 	public void rssCreation( List<Course> courses, String filePath, String rssName, 
 			String rssTitle, String rssDescription, String serverUrl, String rssImageUrl, 
@@ -453,7 +468,7 @@ public class FileSystemImpl implements IFileSystem {
 			        item.appendChild(coursCategory);
 			        
 			        Element coursLink = document.createElement("link");
-			        coursLink.setTextContent(recordedInterfaceUrl + "?id=" + course.getCourseid() + "&type=real");
+			        coursLink.setTextContent(recordedInterfaceUrl + "?id=" + course.getCourseid() + "&type=flash");
 			        item.appendChild(coursLink);
 			        
 			        Element coursPubDate = document.createElement("pubDate");
@@ -462,29 +477,31 @@ public class FileSystemImpl implements IFileSystem {
 			        
 			        String courseMediaUrl = coursesUrl + course.getMediaFolder() + "/" + course.getMediasFileName();
 			        
-			        Element coursEnclosure = document.createElement("enclosure");
-			        coursEnclosure.setAttribute("url",courseMediaUrl + ".mp3");
-			        coursEnclosure.setAttribute("type","audio/mpeg");
-			        coursEnclosure.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".mp3")));
-			        item.appendChild(coursEnclosure);
+			        if(course.getGenre()==null) {
+			        	Element coursEnclosure = document.createElement("enclosure");
+			        	coursEnclosure.setAttribute("url",courseMediaUrl + ".mp3");
+			        	coursEnclosure.setAttribute("type","audio/mpeg");
+			        	coursEnclosure.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".mp3")));
+			        	item.appendChild(coursEnclosure);
 			        
-			        Element coursEnclosure2 = document.createElement("enclosure");
-			        coursEnclosure2.setAttribute("url",courseMediaUrl + ".ogg");
-			        coursEnclosure2.setAttribute("type","application/ogg");
-			        coursEnclosure2.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".ogg")));
-			        item.appendChild(coursEnclosure2);
+			        	Element coursEnclosure2 = document.createElement("enclosure");
+			        	coursEnclosure2.setAttribute("url",courseMediaUrl + ".ogg");
+			        	coursEnclosure2.setAttribute("type","application/ogg");
+			        	coursEnclosure2.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".ogg")));
+			        	item.appendChild(coursEnclosure2);
 			        
-			        Element coursEnclosure3 = document.createElement("enclosure");
-			        coursEnclosure3.setAttribute("url",courseMediaUrl + ".pdf");
-			        coursEnclosure3.setAttribute("type","application/pdf");
-			        coursEnclosure3.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".pdf")));
-			        item.appendChild(coursEnclosure3);
+			        	Element coursEnclosure3 = document.createElement("enclosure");
+			        	coursEnclosure3.setAttribute("url",courseMediaUrl + ".pdf");
+			        	coursEnclosure3.setAttribute("type","application/pdf");
+			        	coursEnclosure3.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".pdf")));
+			        	item.appendChild(coursEnclosure3);
 			        
-			        Element coursEnclosure4 = document.createElement("enclosure");
-			        coursEnclosure4.setAttribute("url",courseMediaUrl + ".zip");
-			        coursEnclosure4.setAttribute("type","application/zip");
-			        coursEnclosure4.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".zip")));
-			        item.appendChild(coursEnclosure4);
+			        	Element coursEnclosure4 = document.createElement("enclosure");
+			        	coursEnclosure4.setAttribute("url",courseMediaUrl + ".zip");
+			        	coursEnclosure4.setAttribute("type","application/zip");
+			        	coursEnclosure4.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".zip")));
+			        	item.appendChild(coursEnclosure4);
+			        }
 				}
 			}
 		        
@@ -775,6 +792,7 @@ public class FileSystemImpl implements IFileSystem {
 	
 	/** 
 	 * Renames a file
+	 * @param mediaFolder the folder which contains the media files of a course
 	 * @param oldFileName the old name of the file
 	 * @param newFileName the new name of the file
 	 */ 
@@ -799,6 +817,7 @@ public class FileSystemImpl implements IFileSystem {
 	 * Launches a bash script which converts a rm or flv media file to mp3
 	 * @param mediaFolder the folder which contains the media files of a course
 	 * @param mediaFileName the name used by all the media files of a course
+	 * @param mediaFileExtension the extension used by the media file
 	 */
 	private static void rmFlvToMp3( String mediaFolder, String mediaFileName, String mediaFileExtension) {
 		try {
@@ -1005,27 +1024,31 @@ public class FileSystemImpl implements IFileSystem {
 		}
 	}
 	
-	/* Procédure permettant de sauvegarder le fichier XML du flux RSS */
+	/**
+	 * To save the xml file of the Rss flux
+	 * @param document the document
+	 * @param fichier the file
+	 */
 	private static void svgXml(Document document, String fichier) {
         try {
-	        // Création de la source DOM
+	        // Create DOM source
 	        Source source = new DOMSource(document);
 	        
-	        // Création du fichier de sortie
+	        // Create output file
 	        File file = new File(fichier);
-	        //File file = new File("../../../rss/" + fichier);
 	        Result resultat = new StreamResult(file);
 	        
-	        // Configuration du transformer
+	        // Transformer configuration
 	        TransformerFactory fabrique = TransformerFactory.newInstance();
 	        Transformer transformer = fabrique.newTransformer();
 	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 	        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 	        
-	        // Transformation en fichier XML
+	        // Transformation into xml file
 	        transformer.transform(source, resultat);
 	        
-        }catch(Exception e){
+        }
+        catch(Exception e){
         	e.printStackTrace();
         }
 	}
@@ -1044,6 +1067,7 @@ public class FileSystemImpl implements IFileSystem {
 	 * Creates the media folder of a course created from a media file
 	 * @param c the course
 	 * @param mediaFile the media file
+	 * @param fileName the file name
 	 */
 	private static void mediaFolderCreation( Course c, FileItem mediaFile, String fileName) {
 		Calendar cal = new GregorianCalendar();
@@ -1099,6 +1123,39 @@ public class FileSystemImpl implements IFileSystem {
 	}
 	
 	/** 
+	 * converts a video format into .mp4 format in High Quality
+	 * @param mediaFolder the folder which contains the media files of a course
+	 * @param inputFileName the input video filename (with extension)
+	 * @param outputName the output video name (without extension)
+	 */
+	private static void videoHighQualityConvert( String mediaFolder, String inputFileName, String outputName) {
+				
+		try {						
+			String[] cmd = new String[] {"bash" , "convertAll2Mp4.sh" , coursesFolder + mediaFolder , inputFileName , outputName};
+			Process p = r.exec(cmd, null, scriptsFolder);
+			
+			// Used to avoid ffmpeg crash ... 
+			InputStream in=p.getInputStream();
+			BufferedReader entree = new BufferedReader(new InputStreamReader(in));
+
+			while( entree.readLine() != null );
+			
+			if( p.waitFor() != 0 ) {
+				System.out.println("Error while converting the file " + inputFileName + " to mp4");
+				throw new DaoException("Error while converting the file " + inputFileName + " to mp4");
+			}
+		}
+		catch(IOException ioe) {
+			System.out.println("Error while converting the file " + inputFileName + " to mp4");
+			ioe.printStackTrace();
+		}
+		catch(InterruptedException ie) {
+			System.out.println("Error while converting the file " + inputFileName + " to mp4");
+			ie.printStackTrace();
+		}
+	}
+	
+	/** 
 	 * converts a video in .rm/.rv/.mkv format into .flv format
 	 * @param mediaFolder the folder which contains the media files of a course
 	 * @param inputFileName the input video filename (with extension)
@@ -1108,12 +1165,7 @@ public class FileSystemImpl implements IFileSystem {
 		
 		try {
 			Process p = r.exec("bash convertRmMkv2Flv.sh "  + coursesFolder + mediaFolder + " " + inputFileName + " " + outputName, null, scriptsFolder);
-			
-			/* Used to avoid mencoder crash ... */
-			/*InputStream in=p.getInputStream();
-			BufferedReader entree = new BufferedReader(new InputStreamReader(in));
-			while( entree.readLine() != null );*/
-			
+						
 			if( p.waitFor() != 0 ) {
 				System.out.println("Error while converting the file " + inputFileName + " to flv");
 				throw new DaoException("Error while converting the file " + inputFileName + " to flv");
@@ -1127,5 +1179,34 @@ public class FileSystemImpl implements IFileSystem {
 			System.out.println("Error while converting the file " + inputFileName + " to flv");
 			ie.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Send an email to confirm the add of the new course 
+	 * @param subject the subject of the mail
+	 * @param message the message of the mail
+	 * @param email the email address
+	 */
+	public void sendMail(String subject, String message, String email) {
+		  
+	  String[] command_array = {"bash","mail.sh",message,subject, email};
+		
+		try {
+			Process p = r.exec(command_array, null, scriptsFolder);
+						
+			if( p.waitFor() != 0 ) {
+				System.out.println("Error while send the mail to " + email);
+				throw new DaoException("Error while send the mail to " + email);
+			}
+		}
+		catch(IOException ioe) {
+			System.out.println("Error while send the mail to " + email);
+			ioe.printStackTrace();
+		}
+		catch(InterruptedException ie) {
+			System.out.println("Error while send the mail to " + email);
+			ie.printStackTrace();
+		}
+		
 	}
 }

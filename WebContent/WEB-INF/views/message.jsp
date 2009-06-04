@@ -30,10 +30,12 @@
   
   <body>
     <div class="main">
-	    <div class="banner">
-	    	<c:import url="include/banner.jsp" />
-	    </div>
+	    
 	    <div class="contents">
+	    	<div class="banner">
+	    		<c:import url="include/banner.jsp" />
+	    	</div>
+	    	
 	    	<div class="message">
 	    		<p class="${messagetype}"><c:out value="${message}" /></p>
 	    	</div>

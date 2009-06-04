@@ -16,19 +16,37 @@ import org.ulpmm.univrav.entities.Course;
  */
 public class RemoteAudioSmil1 implements ISmil {
 
+	/** the course */
 	private Course c;
+	
+	/** the absolute media folder of the course in the file system */
 	private String absoluteMediaFolder;
+	
+	/** the media folder name of the course in the file system */
 	private String mediaFolder;
+	
+	/** the media file name of the course in the file system */
 	private String mediaFileName;
+	
+	/** the url of courses */
 	private String coursesUrl;
+	
+	/** Copyright comment */
 	private String comment;
+	
+	/** the list of timecodes */
 	private ArrayList<String> timecodes;
 	
 	/**
+	 * RemoteAudioSmil1's constructor
+	 * 
 	 * @param c the course
 	 * @param absoluteMediaFolder the absolute media folder of the course in the file system
 	 * @param mediaFolder the media folder name of the course in the file system
 	 * @param mediaFileName the name of all the media files
+	 * @param coursesUrl the url of courses
+	 * @param comment copyright comment
+	 * @param timecodes the list of timecodes
 	 */
 	public RemoteAudioSmil1(Course c, String absoluteMediaFolder, String mediaFolder, String mediaFileName, 
 			String coursesUrl, String comment, ArrayList<String> timecodes) {

@@ -16,6 +16,7 @@
 	
 	<!--[if IE]>
    		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/visualization_ie.css" media="screen" />
 	<![endif]-->
 	<!--[if lte IE 6]>
 		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/visualization_ie6.css" media="screen" />
@@ -30,6 +31,8 @@
 		var slidesurl = "${slidesurl}";
 		var timing = ${timing};
 	</script>
+	
+	<META NAME=”robots” CONTENT=”nofollow”>
 
   </head>
   
@@ -38,8 +41,10 @@
 	    <div class="contents">
 	    	
 	    	<div class="amphitheatre">${building} ${building != '' ? '|' : ''} ${amphi}</div>
-	    	
+	    		    	
 	    	<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
+	    	
+	    	<br><br>
 	    	
 			<div class="smil">
 				<object name="video" classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="970" height="550">
@@ -64,10 +69,13 @@
 			<div id="videoLine">
 			</div>
 			
-			<a class="leftPagination" href="javascript:previousPage()">&lt;&lt;</a>
+			<div class="leftPagination">
+				<a href="javascript:previousPage()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fmt:message key="Precedent"/></a>
+			</div>
+			
 			<div class="rightPagination">
 			<fmt:message key="Page"/> <span id="pageNumber"></span>
-			<a href="javascript:nextPage()">&gt;&gt;</a>
+			<a href="javascript:nextPage()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fmt:message key="Suivant"/></a>
 			| <fmt:message key="diapositive"/> <span id="slideNumber"></span>
 			</div>
 

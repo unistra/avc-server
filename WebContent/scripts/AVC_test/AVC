@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd /var/lib/tomcat5.5/webapps/univ-r_av/scripts/AVC_test
+rm Test.log
+wget "http://audiovideocours.u-strasbg.fr/avc/home" -t 1 -T 10 -o logAVC404
+cat logAVC404 | grep "404 Not Found" >> Test.log
+cat logAVC404 | grep "ERREUR" >> Test.log
+rm home
+./zero

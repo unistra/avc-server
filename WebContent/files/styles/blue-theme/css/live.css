@@ -20,23 +20,25 @@
 
 /* Div containing a line of 3 "building" div with equal height */
 .line {
-	width: 870px;
+	/*width: 980px; /* 870px*/
+	width: 100%;
 	margin-left: auto;
 	margin-right: auto;
 	overflow: hidden;
-	margin-bottom: 10px;
+	margin-bottom: 10px; 	
 }
 
 /* Div of the building block */
 .building {
 	float: left;
-	width: 270px;
+	/*width: 233px; /*270 */
+	width: 23.75%;
 	background-color: #FFFFFF;
-	margin: 5px;
+	margin: 5px; 
 	text-align: center;	
-	padding: 5px;
+	padding: 1px; /* 5 */
 	margin-bottom: -2000px;
-	padding-bottom: 2005px;
+	padding-bottom: 2005px;	
 }
 
 /* Name of the building */

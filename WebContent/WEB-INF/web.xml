@@ -56,8 +56,19 @@
 			<url-pattern>/avc/admin_editunivr</url-pattern>
 			<url-pattern>/avc/admin_deleteunivr</url-pattern>
 			<url-pattern>/avc/admin_validateunivr</url-pattern>
+			<url-pattern>/avc/admin_users</url-pattern>
+			<url-pattern>/avc/admin_edituser</url-pattern>
+			<url-pattern>/avc/admin_validateuser</url-pattern>
+			<url-pattern>/avc/admin_deleteuser</url-pattern>
+			<url-pattern>/avc/admin_adduser</url-pattern>			
 			<url-pattern>/avc/admin_teachers</url-pattern>
 			<url-pattern>/avc/admin_stats</url-pattern>
+			<url-pattern>/avc/admin_versionclient</url-pattern>
+			<url-pattern>/avc/admin_selections</url-pattern>
+			<url-pattern>/avc/admin_editselection</url-pattern>
+			<url-pattern>/avc/admin_validateselection</url-pattern>
+			<url-pattern>/avc/admin_deleteselection</url-pattern>
+			<url-pattern>/avc/admin_addselection</url-pattern>
 			<http-method>GET</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>
@@ -65,7 +76,30 @@
 		<auth-constraint>
 			<role-name>ulpmm</role-name>
 		</auth-constraint>
+		<!-- SSL -->
+		<user-data-constraint>
+   			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
 	</security-constraint>
+	
+	<!-- Protected Page SSL -->	
+	<security-constraint>
+	<display-name>Security constraint</display-name>
+	<web-resource-collection>
+   		<web-resource-name>Automatic SLL Forwarding</web-resource-name>
+			<url-pattern>/avc/myspace_home</url-pattern>
+			<url-pattern>/avc/myspace_editmycourse</url-pattern>
+			<url-pattern>/avc/myspace_validatemycourse</url-pattern>
+			<url-pattern>/avc/myspace_upload</url-pattern>
+			<url-pattern>/avc/myspace_mediaupload</url-pattern>
+			<url-pattern>/avc/publication</url-pattern>
+			<url-pattern>/avc/publication_validatepublication</url-pattern>
+			<url-pattern>/avc/authentication_cas</url-pattern>
+	</web-resource-collection>
+	<user-data-constraint>
+   		<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+	</user-data-constraint>
+    </security-constraint>
 	
 	<!-- authentication type -->
 	<login-config>
@@ -95,16 +129,13 @@
 		</init-param> 
 		<init-param>                     
 			<param-name>edu.yale.its.tp.cas.client.filter.serverName</param-name>                     
-			<param-value>univ-rav.u-strasbg.fr</param-value>
+			<param-value>audiovideocours.u-strasbg.fr</param-value>
 		</init-param>
 	</filter>
+			
 	<filter-mapping>
-		<filter-name>CAS filter</filter-name> 
-		<url-pattern>/avc/upload</url-pattern>
+	<filter-name>CAS filter</filter-name> 
+		<url-pattern>/avc/authentication_cas</url-pattern>
 	</filter-mapping>
-	<filter-mapping>
-		<filter-name>CAS filter</filter-name> 
-		<url-pattern>/avc/mediaupload</url-pattern>
-	</filter-mapping>  
-	
+					
 </web-app>

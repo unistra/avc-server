@@ -31,10 +31,10 @@
   
   <body>
     <div class="main">
-	    <div class="banner">
-	    	<c:import url="../include/banner.jsp" />
-	    </div>
 	    <div class="contents">
+	    	<div class="banner">
+	    		<c:import url="../include/banner.jsp" />
+	    	</div>
 	    	<div class="links">
 		    	<c:import url="./links.jsp" />
 	    	</div>
@@ -55,25 +55,20 @@
 				    		<td><input type="text" name="name" value="${amphi.name}" class="field"></td>
 			    		</tr>
 			    		<tr class="even">
-				    		<td>Type</td>
-				    		<td>
-				    			<select name="type" title="Type" class="field">
-				    				<option value="audio">Audio</option>
-				    				<option value="video">Video</option>
-				    			</select>
-				    		</td>
-			    		</tr>
-			    		<tr class="odd">
 				    		<td>IpAddress</td>
 				    		<td><input type="text" name="ipaddress" value="${amphi.ipAddress}" class="field"></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>Status</td>
 				    		<td><input type="hidden" name="status" value="${amphi.status}">${amphi.status}</td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>Google Map</td>
 				    		<td><input type="text" name="gmapurl" value="${amphi.gmapurl}" class="field"></td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>Version</td>
+				    		<td><input type="hidden" name="version" value="${amphi.version}">${amphi.version}</td>
 			    		</tr>
 			    	</table>
 			    	<br>

@@ -26,20 +26,22 @@
 	
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
+	<script type="text/javascript">window.setInterval("location.reload(true)",60000);</script>
 
   </head>
   
   <body>
     
 	    <div class="main">
-		    <div class="banner">
-		    	<c:import url="include/banner.jsp" />
-		    </div>
 		    <div class="contents">
+		    
+		    	<div class="banner">
+		    		<c:import url="include/banner.jsp" />
+		   		</div>
 		    	
 		    	<c:forEach var="building" varStatus="status" items="${buildings}">
 		    		
-		    		<c:if test="${status.count % 3 == 1}">
+		    		<c:if test="${status.count % 4 == 1}">
 						<c:out value='<div class="line">' escapeXml="false" />
 					</c:if>
 		    		
@@ -102,7 +104,7 @@
 				    	</table>
 				    	</div>
 			    	
-			    	<c:if test="${status.count % 3 == 0 || status.last }">
+			    	<c:if test="${status.count % 4 == 0 || status.last }">
 						<c:out value='</div>' escapeXml="false" />
 					</c:if>
 					

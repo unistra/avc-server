@@ -33,14 +33,15 @@
   
   <body>
     <div class="main">
-	    <div class="banner">
-	    	<c:import url="../include/banner.jsp" />
-	    </div>
 	    <div class="contents">
+	    	<div class="banner">
+	    		<c:import url="../include/banner.jsp" />
+	    	</div>
+	    	
 	    	<div class="links">
 		    	<c:import url="./links.jsp" />
 	    	</div>
-	    	
+	    		    	
 	    	<display:table id="courses" name="courses" requestURI="${viewurl}" class="displaytag">
 	    		<display:column property="courseid" title="N°" sortable="true"/>
 	    		<display:column property="date" sortable="true" />
@@ -55,16 +56,20 @@
 					<input type="checkbox" disabled="disabled" ${courses.visible == true ? 'checked' : '' } />
 				</display:column>
 				<display:column property="consultations" title="views" sortable="true" />
+				<display:column title="high quality" sortable="true">
+					<input type="checkbox" disabled="disabled" ${courses.highquality == true ? 'checked' : '' } />
+				</display:column>
+				<display:column property="userid" title="user id" sortable="true" />
 				<display:column>
 					<a href="<c:url value="${editurl}?id=${courses.courseid}" />">Edit</a>
 				</display:column>
 				<display:column>
-					<a href="javascript:confirmation('Delete the course ?','${deleteurl}?id=${courses.courseid}')">Delete</a>
+					<a href="javascript:confirmation('Delete the course ${courses.courseid} named ${courses.title}?','${deleteurl}?id=${courses.courseid}')">Delete</a>
 				</display:column>
 	    	</display:table>
-	    	
+	  	    		    		
 	    	<br>
-	    	<p>${number} courses</p>
+	    	<p id="nbr">${number} courses</p>
 	    </div>
 	    	
 	    <div class="footer">

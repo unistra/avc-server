@@ -6,8 +6,9 @@
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
 <a class="bannerPageZone" href="<c:url value="./home" />"></a>
-<a class="ulpmmZone" href="http://ulpmultimedia.u-strasbg.fr/" target="external"></a>
-<a class="ulpZone" href="http://www-ulp.u-strasbg.fr/" target="external"></a>
+<a class="udsZone" href="http://www.unistra.fr/" target="external"></a>
+<!--<a class="ulpmmZone" href="http://ulpmultimedia.u-strasbg.fr/" target="external"></a>-->
+<!--<a class="ulpZone" href="http://www-ulp.u-strasbg.fr/" target="external"></a>-->
 <div class="recorded">
 	<a class="recordedZone" href="<c:url value="./recorded" />"><fmt:message key="Enregistr&eacute;"/></a>
 </div>
@@ -26,6 +27,16 @@
 	<c:param name="width" value="370"/>
 	<c:param name="height" value="220"/>
 </c:url>
+
+<c:if test="${btnDeco}">
+	<div class="logout">
+		<a href="<c:url value="./logout" />" title="<fmt:message key="Logout"/>"><fmt:message key="Logout"/></a>
+	</div>
+</c:if>
+
+<div class="myspace">
+	<a href="<c:url value="./authentication_cas?returnPage=myspace" />" title="<fmt:message key="myspace"/>"><fmt:message key="myspace"/></a>
+</div>
 <div class="styles">
 	<a href="<c:out value="${thick_styles}" />" title="<fmt:message key="S&eacute;l&eacute;ction du th&egrave;me"/>" class="thickbox"><fmt:message key="style"/></a>
 </div>

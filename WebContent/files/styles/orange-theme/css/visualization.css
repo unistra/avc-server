@@ -1,6 +1,17 @@
+/* Main div */
+.main {
+	position: relative;
+	width:100%;
+	min-width: 980px;
+	min-height: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	background-color:#606060;
+}
+
 /* Page content div */
 .contents {
-	width: 970px;
+	width: 100%;
 	margin-top: 0;
 	margin-left: 0;
 	margin-right: 0;
@@ -37,34 +48,79 @@
 /* Div containing the flash video and the current slide */
 .flashslide {
 	position: relative;
-	height: 442px;
+	width: 100%;
 	background-image: url("../../../img/bg_flash.png");
 }
 
+td#cellule_flash {
+	vertical-align: top;
+	width: 320px;
+}
+
 p#flash {
-	float: left;
-	margin-top: 0px;
-	margin-bottom: 20px;
 	margin-left: 15px;
 }
 
-/* Displays information about the course */
-p#info {
-	margin-left: 20px;
+.highquality {
+	margin-top:-15px;
+	margin-left: 15px;
 	font-size: 12px;
 }
 
-/* Displays the current slide in a big size */
-div#currentDia img{
-	float: right;
-	margin-right: 15px;
+/* Displays information about the course */
+.info {
+	margin-left: 15px;
+	font-size: 12px;
 }
 
+p#textHqPlayer {
+	font-size: 18px;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;	
+}
+
+p#hqPlayer {
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;	
+}
+
+.telecharger {
+	margin-left:15px;
+}
+
+b#type {
+	font-size: 12px;
+}
+
+.permalien {
+	margin-left:15px;
+	font-size: 11px;
+	white-space:nowrap;
+}
+
+.permalien input{
+	width:230px;
+	font-size: 11px;
+}
+
+/* Displays the current slide in a big size */
+td#cellule_dia {
+	vertical-align: top;
+	horizontal-align: center;
+}
+
+div#currentDia {
+	text-align:center;
+}
+
+
 /* The current slide which is displayed */
+/*
 .slide {
-	float: left;
-	width: 590px;
-	height: 442px;
+	width: 620px;
+	height: 472px;
 }
 
 .slide img {
@@ -72,16 +128,23 @@ div#currentDia img{
 	height: 100%;
 }
 
+a:hover .slide {
+	width: 916px; 
+	height: 660px;
+}
+*/
+
 /* Line containing the timecodes points */
 div#videoLine {
 	position: absolute;
 	width: 970px;
 	height: 11px;
 	margin-bottom: 40px;
-	left: 0px;
-	background-image: url("../img/1px_video_line.png");
-	background-repeat: repeat-x;
+	text-align: center;
+	left: 50%;
+	margin-left: -485px;	
 }
+
 
 /* The thumb corresponding to the media's current play position */
 .currentThumb {
@@ -118,13 +181,31 @@ a:hover .otherThumb, a:hover .currentThumb {
 	float: right;
 }
 
-.rightPagination a {
-	color: #FFFFFF;
-}
 
 .leftPagination, .rightPagination {
 	color: #FFFFFF;
 	font-size: 12px;
 	margin : 4px;
 	margin-top: 50px;
+}
+
+.rightPagination a {
+	background-image: url("../img/next.png");
+	background-repeat:no-repeat;
+}
+
+.leftPagination a {
+	background-image: url("../img/previous.png");
+	background-repeat:no-repeat;
+}
+
+.smil {	
+	text-align:center;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+/* Div with its content hidden */
+.hidden {
+	display: none;
 }

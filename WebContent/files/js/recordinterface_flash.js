@@ -49,9 +49,37 @@ function updateTimeBar(time) {
 			
 			// changes the points images for the current and old slide
 			document.getElementById('time' + currentSlide).className="currentThumb";
-			
+					
+			tabw=new Array(	   800,  1024,  1152,  1280,   1680,  1920);
+   			tabh=new Array(	   600,   768,   864,  1024,   1050,  1200);
+   			
+   			tabwimg=new Array( 620,   620,   620,   840,   1004,  1280);
+   			tabhimg=new Array( 472,   472,   472,   584,    748,  1024);
+
+   			// Width and height of the window
+   			if(!document.all) { 
+   				w=window.innerWidth; 
+   				h=window.innerHeight; 
+   			}
+   			else { 
+   				w=document.documentElement.offsetWidth; 
+   			    h=document.documentElement.offsetHeight;
+   			}
+   			
+   			for(i=tabw.length-1;i>=0;i--) {
+   				if((w>tabw[i]) || (h>tabh[i])) {
+   				//	alert("BRK w " + w + " h " + h + " i" + i + " tabw[i] " + tabw[i] +" tabh[i]" + tabh[i] );
+   					break;
+   				}	
+   			}
+   			
+
+			if(i<tabw.length-1){
+				i++;
+			}
+   				
 			// changes the current slide
-			document.getElementById("currentDia").innerHTML = '<a target="external" href="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg"><img class="slide" src="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg" /></a>';
+			document.getElementById("currentDia").innerHTML = '<a target="external" href="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg"><img class="slide" src="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg" width="'+tabwimg[i]+'" height="'+tabhimg[i]+'"/></a>';
 			
 			if(oldSlide > 0)
 				document.getElementById('time' + oldSlide).className="otherThumb";
@@ -147,3 +175,4 @@ function nextPage() {
 		//updatePagination();
 	}
 }
+

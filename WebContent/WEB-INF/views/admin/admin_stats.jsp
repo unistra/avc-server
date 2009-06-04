@@ -33,24 +33,55 @@
   
   <body>
     <div class="main">
-	    <div class="banner">
-	    	<c:import url="../include/banner.jsp" />
-	    </div>
+	    
 	    <div class="contents">
+	    	<div class="banner">
+	    		<c:import url="../include/banner.jsp" />
+	    	</div>
+	    	
 	    	<div class="links">
 		    	<c:import url="./links.jsp" />
 	    	</div>
 	    	
-	    	<h2>Disk space information (MB)</h2>
-	    	<pre>
-	    		<c:out value="${diskspaceinfo}" />
-	    	</pre>
+	    	<div class="diskspace">
 	    	
-	    	<br>
-	    	
-	    	<a href="<c:url value="${statsUrl}" />">Univ-R AV access stats</a>
-	    	&nbsp;&nbsp;&nbsp;
-	    	<a href="<c:url value="${oldStatsUrl}" />">Audiovideocours access stats</a>
+	    		<div class="infos">
+	    			<h2>Disk space information (MB)</h2>
+	    			<pre id="pre">
+	    				<c:out value="${diskspaceinfo}" />
+	    			</pre>
+	    		
+	    		</div>	    
+	    			
+	    		<br>
+	    		
+	    		<a href="<c:url value="${statsUrl}" />">Univ-R AV access stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${statsUrl}adminfms/fms_adminConsole.htm" />">FMS stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="./admin_versionclient?ip=all"/>">Clients version stats</a>
+	    		<br>
+	    		<br>
+	    		<a href="<c:url value="${oldStatsUrl}xml.html#Requested pages" />">XML stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}mp3.html#Requested pages" />">MP3 stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}pdf.html#Requested pages" />">PDF stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}flv.html#Requested pages" />">FLV stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}ogg.html#Requested pages" />">OGG stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}rm.html#Requested pages" />">RM stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}smil.html#Requested pages" />">SMIL stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}zip.html#Requested pages" />">ZIP stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="${oldStatsUrl}mp4.html#Requested pages" />">MP4 stats</a>
+	    		&nbsp;&nbsp;&nbsp;
+	    			    			
+	    	</div>
 	    	
 	    </div>
 	    	

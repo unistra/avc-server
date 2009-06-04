@@ -3,7 +3,7 @@
 <html>
   <head>
      <title>Slide Frame</title>
-     <meta http-equiv="Refresh" content="10; URL=./iframe_liveslide?ip=${ip}&amp;url=${url}">
+     <meta http-equiv="Refresh" content="5; URL=./iframe_liveslide?ip=${ip}&amp;url=${url}">
      <link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/liveslide.css">
   </head>
   <body style="padding:0">

@@ -33,10 +33,11 @@
   
   <body>
     <div class="main">
-	    <div class="banner">
-	    	<c:import url="../include/banner.jsp" />
-	    </div>
 	    <div class="contents">
+	    	<div class="banner">
+	    		<c:import url="../include/banner.jsp" />
+	    	</div>
+	    	
 	    	<div class="links">
 		    	<c:import url="./links.jsp" />
 	    	</div>
@@ -49,14 +50,16 @@
 					<a href="<c:url value="./admin_editbuilding?id=${buildings.buildingid}" />">Edit</a>
 				</display:column>
 				<display:column>
-					<a href="javascript:confirmation('Delete the building ?','./admin_deletebuilding?id=${buildings.buildingid}')">Delete</a>
+					<a href="javascript:confirmation('Delete the building ${buildings.name}?','./admin_deletebuilding?id=${buildings.buildingid}')">Delete</a>
 				</display:column>
 				<display:column>
 					<a href="<c:url value="./admin_amphis?buildingId=${buildings.buildingid}" />">Amphis</a>
 				</display:column>
 	    	</display:table> 
 	    	<br>
-	    	<a href="<c:url value="./admin_addbuilding" />">Add</a>	
+	    	<div class="add">
+	    		<a href="<c:url value="./admin_addbuilding"/>">Add</a>	
+	    	</div>
 	    </div>
 	    	
 	    <div class="footer">
