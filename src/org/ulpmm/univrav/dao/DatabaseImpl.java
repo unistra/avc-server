@@ -1,5 +1,6 @@
 package org.ulpmm.univrav.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,17 +42,53 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
+	 * Method to close a query (resultset, statement and connection)
+	 * @param rs resultset
+	 * @param ps statement
+	 * @param cnt connection
+	 */
+	private void close(ResultSet rs, Statement ps, Connection cnt) {
+		if (rs!=null) {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				System.out.println("Error while close the resultset");
+				e.printStackTrace();
+			}
+		}
+		if (ps != null) {
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				System.out.println("Error while close the statement");
+				e.printStackTrace();
+			}
+		}
+		if( cnt != null) {
+			try {
+				if(!cnt.isClosed())
+					cnt.close();
+			}
+			catch( SQLException sqle) {
+				System.out.println("The database disconnection has failed");
+				sqle.printStackTrace();
+			}
+		}
+	}
+	
+	/**
 	 * Adds a new course
 	 * @param c the course to add
 	 */
 	public void addCourse(Course c) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";	
 		PreparedStatement pstmt = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, c.getCourseid());
 			pstmt.setTimestamp(2, c.getDate());
 			
@@ -124,7 +161,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while adding the new Course " + c);
 		}
 		finally {
-			pa.closeQuery(null, pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -134,12 +171,13 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addUnivr(Univr u) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "INSERT INTO univr values(?,?,?,?)";
 		PreparedStatement pstmt =null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, u.getCourseid());
 			pstmt.setInt(2, u.getUid());
 			pstmt.setInt(3, u.getGroupCode());
@@ -156,7 +194,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while adding the new Univr course " + u);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -166,15 +204,15 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getAllCourses() {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<Course> l = new ArrayList<Course>();
 		
 		try {
-			
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, "SELECT * From course WHERE courseid NOT IN " +
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( "SELECT * From course WHERE courseid NOT IN " +
 			"( SELECT courseid FROM univr ) ORDER BY date DESC");
 			
 			while(rs.next()) {
@@ -205,7 +243,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -217,14 +255,15 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getUnivrCourses() {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		ResultSet rs = null;
 		Statement stmt = null;
 		List<Course> l = new ArrayList<Course>();
 		
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, "SELECT * From course WHERE courseid IN " +
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( "SELECT * From course WHERE courseid IN " +
 			"( SELECT courseid FROM univr ) ORDER BY date DESC");
 			
 			while(rs.next()) {
@@ -255,7 +294,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally{
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -267,14 +306,15 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getAllUnlockedCourses() {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		ResultSet rs = null;
 		Statement stmt = null;
 		List<Course> l = new ArrayList<Course>();
 		
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, "SELECT * From course WHERE genre IS NULL AND visible = true ORDER BY date DESC");
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( "SELECT * From course WHERE genre IS NULL AND visible = true ORDER BY date DESC");
 			
 			while(rs.next()) {
 				l.add(new Course(
@@ -304,7 +344,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 
 		return l;
@@ -319,7 +359,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getNLastCourses(int n, String testKeyWord1, String testKeyWord2) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		String sql = "SELECT * From course WHERE genre IS NULL AND visible = true " +
 			"AND INITCAP(title) NOT LIKE '" + testKeyWord1 + "%' ";
@@ -334,8 +374,9 @@ public class DatabaseImpl implements IDatabase {
 		List<Course> l = new ArrayList<Course>();
 		
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt,sql);
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery(sql);
 			
 			while(rs.next()) {
 				l.add(new Course(
@@ -365,7 +406,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -381,7 +422,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getCourses(int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		String sql = "SELECT * From course WHERE visible = true " +
 			"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
@@ -396,9 +437,9 @@ public class DatabaseImpl implements IDatabase {
 		ResultSet rs = null;
 		List<Course> l = new ArrayList<Course>();
 		try {
-			
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, sql);
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( sql);
 			
 			while(rs.next()) {
 				l.add(new Course(
@@ -428,7 +469,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -446,7 +487,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getCourses(HashMap<String, String> params, int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		List<Course> l = new ArrayList<Course>();
 		
 		if( ! params.isEmpty() ) {
@@ -480,7 +521,8 @@ public class DatabaseImpl implements IDatabase {
 			ResultSet rs = null;
 			
 			try {
-				pstmt = pa.getConnection().prepareStatement(sql);
+				cnt = datasrc.getConnection();
+				pstmt = cnt.prepareStatement(sql);
 
 				/* Applies the parameters to the query */
 				it = keys.iterator();
@@ -536,7 +578,7 @@ public class DatabaseImpl implements IDatabase {
 				throw new DaoException("Error while retrieving the courses list");
 			}
 			finally {
-				pa.closeQuery(rs,pstmt);
+				close(rs,pstmt,cnt);
 			}
 			
 		}
@@ -555,7 +597,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getCoursesByAuthor(String author) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		List<Course> l = new ArrayList<Course>();
 	
 		String sql = "SELECT * FROM course WHERE " +
@@ -566,7 +608,8 @@ public class DatabaseImpl implements IDatabase {
 		ResultSet rs = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setString(1, author);
 			rs = pstmt.executeQuery();
 			
@@ -599,7 +642,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the courses list for the author " + author);
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return l;
@@ -612,7 +655,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getCoursesByFormation(String formation) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		List<Course> l = new ArrayList<Course>();
 	
 		String sql = "SELECT * FROM course WHERE " +
@@ -622,7 +665,8 @@ public class DatabaseImpl implements IDatabase {
 		ResultSet rs = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setString(1, formation);
 			rs = pstmt.executeQuery();
 			
@@ -655,7 +699,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the courses list for the formation " + formation);
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return l;
@@ -669,14 +713,15 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Course getCourse(int courseId) {
 		Course c = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "SELECT * FROM course WHERE courseid = ?";
 		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseId);
 			rs = pstmt.executeQuery();
 			if( rs.next() ) {
@@ -709,7 +754,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the course " + courseId);
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return c;
@@ -723,14 +768,15 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Course getCourse(int courseId, String genre) {
 		Course c = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "SELECT * FROM course WHERE courseid = ? AND GENRE = ?";
 		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseId);
 			pstmt.setString(2, genre);
 			rs = pstmt.executeQuery();
@@ -764,7 +810,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the course " + courseId);
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return c;
@@ -778,7 +824,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(String testKeyWord1, String testKeyWord2, String testKeyWord3) {
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		int number = 0;			
 		String sql = "SELECT COUNT(*) From course WHERE visible = true " +
@@ -792,8 +838,9 @@ public class DatabaseImpl implements IDatabase {
 		Statement stmt = null;
 		
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, sql);
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( sql);
 			
 			if(rs.next()) 
 				number = rs.getInt("count");
@@ -804,7 +851,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the course number");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 
 		return number;
@@ -815,7 +862,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the number of courses
 	 */
 	public int getCourseNumber() {
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		int number = 0;
 		String sql = "SELECT COUNT(*) FROM course WHERE visible = true";
@@ -824,8 +871,9 @@ public class DatabaseImpl implements IDatabase {
 		Statement stmt = null;
 		
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, sql);
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( sql);
 			
 			if(rs.next()) 
 				number = rs.getInt("count");
@@ -836,7 +884,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the course number");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 
 		return number;
@@ -851,7 +899,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(HashMap<String, String> params,String testKeyWord1, String testKeyWord2, String testKeyWord3) {
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		int number = 0;
 		
@@ -886,7 +934,8 @@ public class DatabaseImpl implements IDatabase {
 			ResultSet rs = null;
 			
 			try {
-				pstmt = pa.getConnection().prepareStatement(sql);
+				cnt = datasrc.getConnection();
+				pstmt = cnt.prepareStatement(sql);
 				
 				/* Applies the parameters to the query */
 				it = keys.iterator();
@@ -922,7 +971,7 @@ public class DatabaseImpl implements IDatabase {
 				throw new DaoException("Error while retrieving the buildings list");
 			}
 			finally {
-				pa.closeQuery(rs,pstmt);
+				close(rs,pstmt,cnt);
 			}
 		}
 		else
@@ -938,14 +987,15 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Univr getUnivr(int courseId) {
 		Univr u = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "SELECT * FROM univr WHERE courseid = ?";
 		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseId);
 			rs = pstmt.executeQuery();
 			if( rs.next() ) {
@@ -965,7 +1015,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the Univr course " + courseId);
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return u;
@@ -985,10 +1035,11 @@ public class DatabaseImpl implements IDatabase {
 		sql += "WHERE courseid = ?";
 		
 		PreparedStatement pstmt = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			
 			/* Applies the parameters to the query */
 			pstmt.setTimestamp(1, c.getDate());
@@ -1064,7 +1115,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while modifying the course " + c);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 		
 	}
@@ -1075,11 +1126,12 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteCourse(int courseId) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "DELETE FROM course WHERE courseid = ?";
 		PreparedStatement pstmt = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseId);
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("the course " + courseId + " has not been deleted");
@@ -1092,7 +1144,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while deleting the course " + courseId);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -1102,11 +1154,12 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteUnivr(int courseId) {
 	
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "DELETE FROM univr WHERE courseid = ?";
 		PreparedStatement pstmt = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseId);
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("the course " + courseId + " has not been deleted");
@@ -1119,7 +1172,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while deleting the course " + courseId);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -1130,14 +1183,15 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<String> getTestsMediaFolders(String testKeyWord) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<String> l = new ArrayList<String>();
 		
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt,"SELECT mediafolder FROM course WHERE initcap(genre) = '" + testKeyWord + "'");
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery("SELECT mediafolder FROM course WHERE initcap(genre) = '" + testKeyWord + "'");
 						
 			while(rs.next()) {
 				l.add(rs.getString("mediafolder"));
@@ -1149,7 +1203,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the media folders list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -1166,7 +1220,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Course> getTests(int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		String sql = "SELECT * From course " +
 			"WHERE INITCAP(genre) = '" + testKeyWord1 + "' " +
@@ -1182,8 +1236,9 @@ public class DatabaseImpl implements IDatabase {
 		
 		List<Course> l = new ArrayList<Course>();
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, sql);
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( sql);
 			
 			while(rs.next()) {
 				l.add(new Course(
@@ -1213,7 +1268,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -1237,10 +1292,11 @@ public class DatabaseImpl implements IDatabase {
 		
 		ResultSet rs = null;
 		Statement stmt = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, sql);
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( sql);
 			
 			if(rs.next()) 
 				number = rs.getInt("count");
@@ -1251,7 +1307,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the course number");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 
 		return number;
@@ -1268,9 +1324,10 @@ public class DatabaseImpl implements IDatabase {
 			
 			String sql = "DELETE FROM course WHERE INITCAP(genre) = '" + testKeyWord + "'";
 			Statement stmt = null;
-			PgsqlAccess pa = new PgsqlAccess(datasrc);
+			Connection cnt = null;
 			try {
-				stmt = pa.getConnection().createStatement();
+				cnt = datasrc.getConnection();
+				stmt = cnt.createStatement();
 				stmt.executeUpdate(sql);
 			}
 			catch( SQLException sqle) {
@@ -1279,7 +1336,7 @@ public class DatabaseImpl implements IDatabase {
 				throw new DaoException("Error while deleting the tests");
 			}
 			finally {
-				pa.closeQuery(null,stmt);
+				close(null,stmt,cnt);
 			}
 		}
 	}
@@ -1299,9 +1356,10 @@ public class DatabaseImpl implements IDatabase {
 				sql += "OR INITCAP(title) LIKE '" + testKeyWord2 + "%'";
 			
 			Statement stmt = null;
-			PgsqlAccess pa = new PgsqlAccess(datasrc);
+			Connection cnt = null;
 			try {
-				stmt = pa.getConnection().createStatement();
+				cnt = datasrc.getConnection();
+				stmt = cnt.createStatement();
 				stmt.executeUpdate(sql);
 			}
 			catch( SQLException sqle) {
@@ -1310,7 +1368,7 @@ public class DatabaseImpl implements IDatabase {
 				throw new DaoException("Error while hiding the tests");
 			}
 			finally {
-				pa.closeQuery(null,stmt);
+				close(null,stmt,cnt);
 			}
 		}
 	}
@@ -1323,10 +1381,11 @@ public class DatabaseImpl implements IDatabase {
 		int id = 0 ;
 		ResultSet rs = null;
 		Statement stmt = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, "SELECT nextval('course_courseid_seq')");
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( "SELECT nextval('course_courseid_seq')");
 			
 			if( rs.next() ) 
 				id = rs.getInt("nextval");
@@ -1341,7 +1400,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the next course Id");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 				
 		return id;
@@ -1355,10 +1414,11 @@ public class DatabaseImpl implements IDatabase {
 		List<String> l = new ArrayList<String>();
 		ResultSet rs = null;
 		Statement stmt = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, "SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE visible = true AND title IS NOT NULL AND NOT (name IS NULL AND firstname IS NULL)");
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( "SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE visible = true AND title IS NOT NULL AND NOT (name IS NULL AND firstname IS NULL)");
 			
 			while( rs.next() ) {
 				l.add(rs.getString("fullname"));
@@ -1370,7 +1430,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the teachers list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -1384,10 +1444,11 @@ public class DatabaseImpl implements IDatabase {
 		List<Teacher> l = new ArrayList<Teacher>();
 		ResultSet rs = null;
 		Statement stmt = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		try {	
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt,"SELECT INITCAP(name) AS ic_name, INITCAP(firstname) AS ic_firstname, count(*) FROM course " +
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery("SELECT INITCAP(name) AS ic_name, INITCAP(firstname) AS ic_firstname, count(*) FROM course " +
 			"WHERE NOT (name IS NULL AND firstname IS NULL) GROUP BY ic_name, ic_firstname ORDER BY ic_name");
 
 			while( rs.next() ) {
@@ -1405,7 +1466,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the teachers list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -1419,7 +1480,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public String getTeacherFullName(String name, String firstname) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String fullname = "";
 		String sql = "SELECT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE" +
 				(name != null ? " INITCAP(name) = INITCAP(?) " : "") +
@@ -1430,7 +1491,8 @@ public class DatabaseImpl implements IDatabase {
 		ResultSet rs = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			if(name != null)
 				pstmt.setString(1, name);
 			else if( firstname != null)
@@ -1451,7 +1513,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the teacher full name");
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return fullname;
@@ -1465,11 +1527,12 @@ public class DatabaseImpl implements IDatabase {
 		List<String> l = new ArrayList<String>();
 		ResultSet rs = null;
 		Statement stmt = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, "SELECT DISTINCT formation from course WHERE visible = true AND formation IS NOT NULL");
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( "SELECT DISTINCT formation from course WHERE visible = true AND formation IS NOT NULL");
 						
 			while( rs.next() ) {
 				l.add(rs.getString("formation"));
@@ -1481,7 +1544,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the formations list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -1494,13 +1557,14 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void incrementConsultations(Course c) {
 		int consultations = c.getConsultations() + 1;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		String sql = "UPDATE course SET consultations = ? WHERE courseid = ? ";
 		PreparedStatement pstmt = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, consultations);
 			pstmt.setInt(2, c.getCourseid());
 			if( pstmt.executeUpdate() == 0 ) {
@@ -1514,7 +1578,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while incrementing the consultations");
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -1524,12 +1588,13 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addSlide(Slide s) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "INSERT INTO Slide(courseid, slidetime) values(?,?)";
 		PreparedStatement pstmt = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, s.getCourseid());
 			pstmt.setInt(2, s.getSlidetime());
 			if( pstmt.executeUpdate() == 0 ) {
@@ -1543,7 +1608,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while adding the Slide");
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -1554,14 +1619,15 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Slide> getSlides(int courseId) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		List<Slide> l = new ArrayList<Slide>();
 		String sql = "SELECT * FROM slide WHERE courseid = ? ORDER BY slidetime";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseId);
 			rs = pstmt.executeQuery();
 			
@@ -1578,7 +1644,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the slides list");
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 
 		return l;
@@ -1590,11 +1656,12 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addBuilding(Building b) {
 	
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "INSERT INTO building(name, imagefile) values(?,?)";
 		PreparedStatement pstmt = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setString(1, b.getName());
 			pstmt.setString(2, b.getImageFile());
 			
@@ -1609,7 +1676,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while adding the new Building " + b);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -1619,14 +1686,15 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Building> getBuildings() {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		List<Building> l = new ArrayList<Building>();
 		String sql = "SELECT * FROM building ORDER BY buildingid";
 		ResultSet rs = null;
 		Statement stmt = null;
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt,sql);
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery(sql);
 			
 			while(rs.next()) {
 				Building b = new Building(
@@ -1634,16 +1702,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("name"),
 					rs.getString("imagefile")
 				);
-			//	b.setAmphis(getAmphis(b.getBuildingid()));
-				l.add(b);
-			}
-			
-			// Sets amphis of buildings
-			for(int i=0;i<l.size();i++) {
-				Building b = l.get(i);
 				b.setAmphis(getAmphis(b.getBuildingid()));
-				l.remove(i);
-				l.add(i, b);
+				l.add(b);
 			}
 		}
 		catch( SQLException sqle) {
@@ -1652,7 +1712,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the buildings list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -1665,13 +1725,14 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Building getBuilding(int buildingId) {
 		Building b = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "SELECT * FROM building WHERE buildingid = ?";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, buildingId);
 			rs = pstmt.executeQuery();
 			if( rs.next() ) {
@@ -1690,7 +1751,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the building " + buildingId);
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return b;
@@ -1703,13 +1764,14 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public String getBuildingName(String amphiIp) {
 		String name = "";
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "SELECT name FROM building WHERE buildingid = ( SELECT buildingid FROM amphi WHERE ipaddress = ? )";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setString(1, amphiIp);
 			rs = pstmt.executeQuery();
 			if( rs.next() ) {
@@ -1722,7 +1784,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the building of amphi " + amphiIp);
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return name;
@@ -1734,7 +1796,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void modifyBuilding(Building b) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		/* Creation of the SQL query string */
 		String sql = "UPDATE building SET name = ? , imagefile = ? ";
 		sql += "WHERE buildingid = ?";
@@ -1742,7 +1804,8 @@ public class DatabaseImpl implements IDatabase {
 		PreparedStatement pstmt = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			
 			/* Applies the parameters to the query */
 			pstmt.setString(1, b.getName());
@@ -1760,7 +1823,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while modifying the building " + b);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 		
 	}
@@ -1771,11 +1834,12 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteBuilding(int buildingId) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "DELETE FROM building WHERE buildingid = ?";
 		PreparedStatement pstmt = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, buildingId);
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("the building " + buildingId + " has not been deleted");
@@ -1788,7 +1852,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while deleting the course " + buildingId);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -1800,9 +1864,10 @@ public class DatabaseImpl implements IDatabase {
 	
 		String sql = "INSERT INTO amphi(buildingid, name, ipaddress, status, gmapurl, version) values(?,?,?,?,?,?,?)";
 		PreparedStatement pstmt = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, a.getBuildingid());
 			pstmt.setString(2, a.getName());
 			pstmt.setString(3, a.getIpAddress());
@@ -1825,7 +1890,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while adding the new amphi " + a);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -1836,7 +1901,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Amphi> getAmphis(int buildingId) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		List<Amphi> l = new ArrayList<Amphi>();
 		String sql = "SELECT amphi.*, count(course.ipaddress) FROM amphi LEFT OUTER JOIN course " +
 				"ON amphi.ipaddress = course.ipaddress " +
@@ -1848,7 +1913,8 @@ public class DatabaseImpl implements IDatabase {
 		ResultSet rs = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, buildingId);
 			rs = pstmt.executeQuery();
 			
@@ -1872,7 +1938,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the amphis list");
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return l;
@@ -1885,13 +1951,14 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Amphi getAmphi(int amphiId) {
 		Amphi a = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "SELECT * FROM amphi WHERE amphiid = ?";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, amphiId);
 			rs = pstmt.executeQuery();
 			if( rs.next() ) {
@@ -1911,7 +1978,7 @@ public class DatabaseImpl implements IDatabase {
 			sqle.printStackTrace();
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return a;
@@ -1924,12 +1991,13 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Amphi getAmphi(String ip) {
 		Amphi a = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "SELECT * FROM amphi WHERE ipaddress = ?";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setString(1, ip);
 			rs = pstmt.executeQuery();
 			if( rs.next() ) {
@@ -1950,7 +2018,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the amphi " + ip);
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return a;
@@ -1963,7 +2031,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void modifyAmphi(Amphi a, String oldAmphiip) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		/* Creation of the SQL query string */
 		String sql = "UPDATE amphi SET buildingid = ?, name = ?, ";
 		sql += "ipaddress = ?, status = ?, gmapurl = ?, version = ? WHERE amphiid = ?";
@@ -1971,7 +2039,8 @@ public class DatabaseImpl implements IDatabase {
 		PreparedStatement pstmt = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			
 			/* Applies the parameters to the query */
 			pstmt.setInt(1, a.getBuildingid());
@@ -1995,7 +2064,7 @@ public class DatabaseImpl implements IDatabase {
 			if( ! oldAmphiip.equals(a.getIpAddress())) {
 				sql = "UPDATE course SET ipaddress='"+ a.getIpAddress() + 
 					"' WHERE ipaddress='" + oldAmphiip + "'";
-				pstmt = pa.getConnection().prepareStatement(sql);
+				pstmt = cnt.prepareStatement(sql);
 			}
 		}
 		catch( SQLException sqle) {
@@ -2004,7 +2073,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while modifying the amphi " + a);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 
@@ -2014,11 +2083,12 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteAmphi(int amphiId) {
 	
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "DELETE FROM amphi WHERE amphiid = ?";
 		PreparedStatement pstmt = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, amphiId);
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("the amphi " + amphiId + " has not been deleted");
@@ -2031,7 +2101,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while deleting the amphi " + amphiId);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -2042,11 +2112,12 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void setAmphiStatus(String ip, boolean status) {
 	
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "UPDATE amphi SET status = ? WHERE ipaddress = ? ";
 		PreparedStatement pstmt = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setBoolean(1, status);
 			pstmt.setString(2, ip);
 			if( pstmt.executeUpdate() == 0) {
@@ -2060,7 +2131,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while updating the status of the amphi " + ip);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -2071,12 +2142,13 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public User getUser(String login) {
 		User u = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "SELECT * FROM \"user\" WHERE login = ?";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setString(1, login);
 			rs = pstmt.executeQuery();
 			if( rs.next() ) {
@@ -2100,7 +2172,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the user " + login);
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return u;
@@ -2114,12 +2186,13 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public User getUser(int id) {
 		User u = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "SELECT * FROM \"user\" WHERE userid = ?";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, id);
 			rs = pstmt.executeQuery();
 			if( rs.next() ) {
@@ -2142,7 +2215,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the user " + id);
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return u;
@@ -2156,10 +2229,11 @@ public class DatabaseImpl implements IDatabase {
 		int id = 0 ;
 		ResultSet rs = null;
 		Statement stmt = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt,"SELECT nextval('user_userid_seq')");
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery("SELECT nextval('user_userid_seq')");
 			
 			if( rs.next() ) 
 				id = rs.getInt("nextval");
@@ -2174,7 +2248,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the next user Id");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return id;
@@ -2188,10 +2262,11 @@ public class DatabaseImpl implements IDatabase {
 		
 		String sql = "INSERT INTO \"user\"(\"login\",email,firstname,lastname,profile,establishment,type,activate) values(?,?,?,?,?,?,?,?)";
 		PreparedStatement pstmt = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setString(1, u.getLogin());
 			pstmt.setString(2, u.getEmail());
 			pstmt.setString(3, u.getFirstname());
@@ -2212,7 +2287,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while adding the new user " + u);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -2222,7 +2297,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void modifyUser(User u) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		/* Creation of the SQL query string */
 		String sql = "UPDATE \"user\" SET userid = ?, login = ? , email = ?, firstname = ?,lastname = ?," +
 				"profile = ?,establishment = ?,type = ?,activate = ? ";
@@ -2231,7 +2306,8 @@ public class DatabaseImpl implements IDatabase {
 		PreparedStatement pstmt = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			
 			/* Applies the parameters to the query */
 			pstmt.setInt(1, u.getUserid());
@@ -2256,7 +2332,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while modifying the user " + u);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 		
 	}
@@ -2267,12 +2343,13 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteUser(int userid) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "DELETE FROM \"user\" WHERE userid = ?";
 		PreparedStatement pstmt = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, userid);
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("the user " + userid + " has not been deleted");
@@ -2285,7 +2362,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while deleting the user " + userid);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -2299,14 +2376,15 @@ public class DatabaseImpl implements IDatabase {
 	public List<Course> getCourses(User u, int number, int start) {
 		
 		List<Course> l = new ArrayList<Course>();
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 	
 		String sql = "SELECT * FROM course WHERE userid = ? ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, u.getUserid());
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
@@ -2337,7 +2415,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the course with user " + u.getUserid());
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return l;
@@ -2353,11 +2431,12 @@ public class DatabaseImpl implements IDatabase {
 		String sql = "SELECT COUNT(*) FROM course WHERE userid="+u.getUserid();
 		ResultSet rs = null;
 		Statement stmt = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt,sql);
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery(sql);
 			
 			if(rs.next()) 
 				number = rs.getInt("count");
@@ -2368,7 +2447,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the course number");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 
 		return number;
@@ -2382,12 +2461,13 @@ public class DatabaseImpl implements IDatabase {
 		
 		List<User> l = new ArrayList<User>();
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "SELECT * FROM \"user\"";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
@@ -2411,7 +2491,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the list of users");
 		}
 		finally {
-			pa.closeQuery(rs, pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return l;
@@ -2426,10 +2506,11 @@ public class DatabaseImpl implements IDatabase {
 		
 		String sql = "INSERT INTO tag(tag,courseid) values(?,?)";
 		PreparedStatement pstmt = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setString(1, t.getTag());
 			pstmt.setInt(2, t.getCourseid());
 			
@@ -2444,7 +2525,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while adding the new tag " + t);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -2454,11 +2535,12 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteTag(int courseid) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "DELETE FROM tag WHERE courseid = ?";
 		PreparedStatement pstmt = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseid);
 			pstmt.executeUpdate();
 		}
@@ -2468,7 +2550,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while deleting tags of course " + courseid);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -2480,13 +2562,14 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<Tag> getTagsByCourse(Course c) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<Tag> l = new ArrayList<Tag>();
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, "SELECT * From tag WHERE courseid="+c.getCourseid()+ "ORDER BY tag");
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( "SELECT * From tag WHERE courseid="+c.getCourseid()+ "ORDER BY tag");
 			
 			while(rs.next()) {
 				l.add(new Tag(
@@ -2502,7 +2585,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the tags list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -2515,13 +2598,14 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<String> getAllTags() {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<String> l = new ArrayList<String>();
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, "SELECT distinct(tag) From tag ORDER BY tag");
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( "SELECT distinct(tag) From tag ORDER BY tag");
 			
 			while(rs.next()) {
 				l.add(rs.getString("tag"));
@@ -2533,7 +2617,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the tags list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -2545,14 +2629,15 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public List<String> getMostPopularTags() {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<String> l = new ArrayList<String>();
 		
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, "select tag, count(*) from tag group by tag order by 2 desc,tag limit 20");
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( "select tag, count(*) from tag group by tag order by 2 desc,tag limit 20");
 			
 			while(rs.next()) {
 				l.add(rs.getString("tag"));
@@ -2564,7 +2649,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the tags list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -2582,7 +2667,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @return the list of courses
 	 */
 	public List<Course> getCoursesByTags(List<String> tags, int number, int start, String testKeyWord1, String testKeyWord2, String testKeyWord3) {
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		String sql = "SELECT * From course WHERE visible = true " +
 			"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
@@ -2600,9 +2685,9 @@ public class DatabaseImpl implements IDatabase {
 		Statement stmt = null;
 		List<Course> l = new ArrayList<Course>();
 		try {
-			
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, sql);
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( sql);
 			
 			while(rs.next()) {
 				l.add(new Course(
@@ -2632,7 +2717,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -2665,10 +2750,11 @@ public class DatabaseImpl implements IDatabase {
 			
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
-			PgsqlAccess pa = new PgsqlAccess(datasrc);
+			Connection cnt = null;
 			
 			try {
-				pstmt = pa.getConnection().prepareStatement(sql);
+				cnt = datasrc.getConnection();
+				pstmt = cnt.prepareStatement(sql);
 				rs = pstmt.executeQuery();
 				
 				if(rs.next()) 
@@ -2680,7 +2766,7 @@ public class DatabaseImpl implements IDatabase {
 				throw new DaoException("Error while retrieving the course number");
 			}
 			finally {
-				pa.closeQuery(rs, pstmt);
+				close(rs,pstmt,cnt);
 			}
 		}
 		else
@@ -2698,12 +2784,13 @@ public class DatabaseImpl implements IDatabase {
 	public Course getCourseByMediafolder(String mediafolder) {
 								
 		Course c = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "SELECT * From course WHERE mediafolder= '" + mediafolder + "'";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			if( rs.next() ) {
 				c = new Course(
@@ -2735,7 +2822,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the course " + mediafolder);
 		}
 		finally {
-			pa.closeQuery(rs, pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return c;
@@ -2760,11 +2847,12 @@ public class DatabaseImpl implements IDatabase {
 				
 		Statement stmt = null;
 		ResultSet rs = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		List<Course> l = new ArrayList<Course>();
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, sql);
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( sql);
 			
 			while(rs.next()) {
 				l.add(new Course(
@@ -2794,7 +2882,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -2820,10 +2908,11 @@ public class DatabaseImpl implements IDatabase {
 		ResultSet rs = null;
 		Statement stmt = null;
 		List<Course> l = new ArrayList<Course>();
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		try {
-			stmt = pa.getConnection().createStatement();
-			rs = pa.query(stmt, sql);
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery( sql);
 			
 			while(rs.next()) {
 				l.add(new Course(
@@ -2853,7 +2942,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
-			pa.closeQuery(rs,stmt);
+			close(rs,stmt,cnt);
 		}
 		
 		return l;
@@ -2866,14 +2955,15 @@ public class DatabaseImpl implements IDatabase {
 	public List<Selection> getAllSelections() {
 		
 		List<Selection> l = new ArrayList<Selection>();
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		String sql = "SELECT * FROM selection order by position";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
@@ -2891,7 +2981,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the list of selections");
 		}
 		finally {
-			pa.closeQuery(rs, pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return l;
@@ -2904,12 +2994,13 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public Selection getSelection(int position) {
 		Selection s = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "SELECT * FROM selection WHERE position = ?";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, position);
 			rs = pstmt.executeQuery();
 			if( rs.next() ) {
@@ -2926,7 +3017,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while retrieving the selection " + position);
 		}
 		finally {
-			pa.closeQuery(rs,pstmt);
+			close(rs,pstmt,cnt);
 		}
 		
 		return s;
@@ -2942,10 +3033,11 @@ public class DatabaseImpl implements IDatabase {
 		
 		String sql = "INSERT INTO selection(idcourseselection,formationcollection) values(?,?)";
 		PreparedStatement pstmt = null;
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, s.getIdcourseselection());
 			pstmt.setString(2, s.getFormationcollection());
 			
@@ -2960,7 +3052,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while adding the new selection " + s);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
@@ -2970,14 +3062,15 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void modifySelection(Selection s) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		/* Creation of the SQL query string */
 		String sql = "UPDATE selection SET position = ?, idcourseselection = ? , formationcollection = ? ";
 		sql += "WHERE position = ?";
 		
 		PreparedStatement pstmt = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			
 			/* Applies the parameters to the query */
 			pstmt.setInt(1, s.getPosition());
@@ -2996,7 +3089,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while modifying the selection " + s);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 		
 	}
@@ -3007,11 +3100,12 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void deleteSelection(int position) {
 		
-		PgsqlAccess pa = new PgsqlAccess(datasrc);
+		Connection cnt = null;
 		String sql = "DELETE FROM selection WHERE position = ?";
 		PreparedStatement pstmt = null;
 		try {
-			pstmt = pa.getConnection().prepareStatement(sql);
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, position);
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("the selection " + position + " has not been deleted");
@@ -3024,7 +3118,7 @@ public class DatabaseImpl implements IDatabase {
 			throw new DaoException("Error while deleting the selection " + position);
 		}
 		finally {
-			pa.closeQuery(null,pstmt);
+			close(null,pstmt,cnt);
 		}
 	}
 	
