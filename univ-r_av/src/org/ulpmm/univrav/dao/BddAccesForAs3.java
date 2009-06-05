@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,13 +15,14 @@ import javax.sql.DataSource;
 
 /**
  * Database access for AS3 (Full flash)
+ * Not used for the moment
  * @author morgan
  *
  */
 public class BddAccesForAs3 {
 	 
 	  /** The pgsql access for the database connection */
-	  private static PgsqlAccess pa;
+	  private DataSource datasrc;
 		  
 	  /**
 	   * Constructor for database connection
@@ -34,13 +36,12 @@ public class BddAccesForAs3 {
 				  throw new Exception("No context found!");
 			  }
 			  
-			  DataSource ds = (DataSource) cxt.lookup( "java:/comp/env/jdbc/postgres" );
+			  datasrc = (DataSource) cxt.lookup( "java:/comp/env/jdbc/postgres" );
 
-			  if ( ds == null ) {
+			  if ( datasrc == null ) {
 				  throw new Exception("Data source not found!");
 			  }
 			  
-			  pa = new PgsqlAccess(ds);
 		  }
 		  catch (ClassNotFoundException e) {
 			  e.printStackTrace();
@@ -61,9 +62,10 @@ public class BddAccesForAs3 {
 	  public String getXml(String var, String id) {
 		  
 		  Hashtable<String,String> bdd=new Hashtable<String,String>();
-				
-		  try {		  
-			  Statement st = pa.getConnection().createStatement();
+		  Connection cnt = null;
+		  try {		
+			  cnt = datasrc.getConnection();
+			  Statement st = cnt.createStatement();
 			  ResultSet rs = st.executeQuery("SELECT name, firstname, formation, title, description, date, type, duration, consultations, mediafolder FROM course WHERE courseid=" + id);
 			  rs.next();
 			  if(rs.getString("name")!=null) {
@@ -101,7 +103,7 @@ public class BddAccesForAs3 {
 			  }
 			  rs.close();
 			  st.close();
-			  pa.disconnect();
+			  cnt.close();
 		  }
 		  catch (SQLException se) {
 			  System.err.println(se.getMessage());
@@ -120,11 +122,11 @@ public class BddAccesForAs3 {
 	  public String getTimeCode(String var, String id) {  
 		  
 		  String stringTimeCode = "";
-		  
+		  Connection cnt = null;
 		  try {
+			  cnt = datasrc.getConnection();
 			  String mediafolder=null;
-			  
-			  Statement st = pa.getConnection().createStatement();
+			  Statement st = cnt.createStatement();
 			  ResultSet rs = st.executeQuery("SELECT mediafolder FROM course WHERE courseid=" + id);
 			  rs.next();
 			  if(rs.getString("mediafolder")!=null) {
@@ -132,7 +134,7 @@ public class BddAccesForAs3 {
 			  }
 			  rs.close();
 			  st.close();
-			  pa.disconnect();
+			  cnt.close();
 			  	  
 			  String adresseCoursSmil = "http://univ-rav.u-strasbg.fr/coursv2/" + mediafolder + "/timecode.csv";
 			  String tablo[] = new String[200];
