@@ -105,4 +105,18 @@ public interface IFileSystem {
 	 */
 	public void sendMail(String subject, String message, String email);
 	
+	/**
+	 * Add an additional document to a course
+	 * @param mediafolder the mediafolder
+	 * @param docFile the fileitem of the document
+	 */
+	public void addAdditionalDoc(String mediafolder, FileItem docFile);
+	
+	/**
+	 * Delete an additional document of a course
+	 * @param mediafolder the mediafolder
+	 * @param addDocName the name of the additional document
+	 */
+	public void deleteAdditionalDoc(String mediafolder, String addDocName);
+	
 }

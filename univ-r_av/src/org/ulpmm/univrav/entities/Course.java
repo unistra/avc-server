@@ -61,6 +61,9 @@ public class Course {
 	
 	/** the user id */
 	private Integer userid;
+	
+	/** the additional document name **/
+	private String adddocname;
 
 	
 	/**
@@ -88,8 +91,9 @@ public class Course {
 	 * @param mediaFolder Folder which contains all media of the course
 	 * @param highquality the course's high quality indicator
 	 * @param userid the high quality indicator
+	 * @param adddocname additional document name
 	 */
-	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, boolean highquality, Integer userid) {
+	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, boolean highquality, Integer userid, String adddocname) {
 		this.courseid = courseid;
 		this.date = date;
 		this.type = type;
@@ -107,6 +111,7 @@ public class Course {
 		this.mediaFolder = mediaFolder;
 		this.highquality=highquality;
 		this.userid=userid;
+		this.adddocname=adddocname;
 	}
 	
 	
@@ -425,5 +430,21 @@ public class Course {
 	 */
 	public void setUserid(Integer userid) {
 		this.userid = userid;
+	}
+
+	/**
+	 * Gets additional document name
+	 * @return the additional document name
+	 */
+	public String getAdddocname() {
+		return adddocname;
+	}
+
+	/**
+	 * Sets additional document name
+	 * @param adddocname
+	 */
+	public void setAdddocname(String adddocname) {
+		this.adddocname = adddocname;
 	}	
 }

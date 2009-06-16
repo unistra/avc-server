@@ -2,9 +2,9 @@
 -- PostgreSQL database dump
 --
 
--- Started on 2009-03-09 17:45:59 CET
+-- Started on 2009-06-16 15:13:34 CET
 
-SET client_encoding = 'LATIN9';
+SET client_encoding = 'UTF8';
 SET standard_conforming_strings = off;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
@@ -121,7 +121,8 @@ CREATE TABLE course (
     timing character varying DEFAULT 'n-1'::character varying,
     mediafolder character varying,
     highquality boolean,
-    userid integer
+    userid integer,
+    adddocname character varying
 );
 
 

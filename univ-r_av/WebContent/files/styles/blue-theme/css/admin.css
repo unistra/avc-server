@@ -95,3 +95,13 @@ pre#pre {
 .littleField {
 	width: 20px;
 }
+
+/* additional doc for edit course */ 
+img#process { 
+	visibility: hidden;
+}
+
+.fieldAdddoc {
+	width: 300px;
+	background-color:#d3d3d3;
+}

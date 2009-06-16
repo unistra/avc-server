@@ -1209,4 +1209,46 @@ public class FileSystemImpl implements IFileSystem {
 		}
 		
 	}
+	
+	/**
+	 * Add an additional document to a course
+	 * @param mediafolder the mediafolder
+	 * @param docFile the fileitem of the document
+	 */
+	public void addAdditionalDoc(String mediafolder, FileItem docFile) {
+		
+		String fileName = docFile.getName();
+		
+		/* Used to fix full path problem with IE */
+		if( fileName.indexOf("\\") != -1 ) {
+			fileName = fileName.substring(fileName.lastIndexOf("\\") + 1,fileName.length());
+			docFile.setFieldName(fileName);
+		}
+				
+		File docFolder = new File(coursesFolder + mediafolder +"/additional_docs");
+		// Create the directory if not exist
+		if(!docFolder.exists()) {
+			docFolder.mkdir();
+		}
+		
+		try {
+			docFile.write(new File(docFolder, fileName));
+		}
+		catch( Exception e) {
+			System.out.println("Error while writing the doc file " + fileName);
+			e.printStackTrace();
+		}		
+	}
+	
+	/**
+	 * Delete an additional document of a course
+	 * @param mediafolder the mediafolder
+	 * @param addDocName name of the additional document
+	 */
+	public void deleteAdditionalDoc(String mediafolder, String addDocName) {
+		
+		File addDocFile = new File(coursesFolder + mediafolder +"/additional_docs/" + addDocName);
+		File newAddDocFile = new File(coursesFolder + mediafolder +"/additional_docs/" + new Date().getTime() + "." + addDocName);
+		addDocFile.renameTo(newAddDocFile);
+	}
 }

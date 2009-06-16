@@ -407,6 +407,10 @@ public class Application extends HttpServlet {
 			uploadAccess(request, response);
 		else if( page.equals("/myspace_mediaupload"))
 			mediaUpload(request, response);
+		else if( page.equals("/myspace_adddocupload"))
+			myspaceAddDocUpload(request, response);
+		else if( page.equals("/myspace_deleteadddoc"))
+			myspaceDeleteAddDoc(request, response);
 		else if( page.equals("/add") || page.equals("/UploadClient"))
 			addCourse(request, response);
 		else if(page.equals("/livestate") || page.equals("/LiveState"))
@@ -480,6 +484,10 @@ public class Application extends HttpServlet {
 		}
 		else if( page.equals("/admin_validatecourse"))
 			validateCourse(request, response, "./admin_courses");
+		else if( page.equals("/admin_adddocupload"))
+			addDocUpload(request, response);
+		else if( page.equals("/admin_deleteadddoc"))
+			deleteAddDoc(request, response);
 		else if( page.equals("/admin_buildings")) {
 			request.setAttribute("buildings", service.getBuildings());
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_buildings.jsp").forward(request, response);
@@ -1626,7 +1634,8 @@ public class Application extends HttpServlet {
 							timing,
 							null, // The media folder can't be set yet
 							false,
-							user!=null ? user.getUserid() : null
+							user!=null ? user.getUserid() : null,
+							null
 					);
 					
 					service.addCourse(c, media, tags, getServletContext().getRealPath("/rss"), 
@@ -1884,7 +1893,8 @@ public class Application extends HttpServlet {
 										timing,
 										null, // The media folder can't be set yet
 										hq,
-										user.getUserid()
+										user.getUserid(),
+										null
 								);
 
 								/* Sends the creation of the course to the service layer */
@@ -2127,6 +2137,19 @@ public class Application extends HttpServlet {
 						previousPage = "/home";
 					response.sendRedirect("." + previousPage);*/
 				}
+				else if(type.equals("adddoc")) {
+					String filename = coursesFolder + c.getMediaFolder() +"/additional_docs/" + c.getAdddocname();
+					
+					/* Initializes the headers */
+					response.setContentType("application/x-download");
+					response.setHeader("Content-Disposition", "attachment; filename=" + c.getAdddocname());
+	
+					/* Sends the file */
+					OutputStream out = response.getOutputStream();
+					service.returnFile(filename, out);
+					
+				}
+				
 			}
 		}
 		catch(DaoException de) {
@@ -2213,7 +2236,8 @@ public class Application extends HttpServlet {
 			! request.getParameter("mediaFolder").equals("") ? request.getParameter("mediaFolder") : null,
 			//request.getParameter("highquality") != null ? true : false,
 			Boolean.parseBoolean(request.getParameter("highquality")),
-			! request.getParameter("userid").equals("0") ? Integer.parseInt(request.getParameter("userid")) : null		
+			! request.getParameter("userid").equals("0") ? Integer.parseInt(request.getParameter("userid")) : null,
+			! request.getParameter("adddocname").equals("") ? request.getParameter("adddocname") : null		
 		);
 		service.modifyCourse(c);
 		
@@ -2478,6 +2502,7 @@ public class Application extends HttpServlet {
 									null, // The timing can't be set yet
 									null, // The media folder can't be set yet
 									false,
+									null,
 									null
 							);
 							
@@ -2783,5 +2808,220 @@ public class Application extends HttpServlet {
 				service.addSelection(s);
 			response.sendRedirect(response.encodeRedirectURL("./admin_selections"));	
 	}
+		
+	
+	/**
+	 * Method to upload a document from myspace
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void myspaceAddDocUpload(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+
+		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+
+		User user = null;
+		// Authentification CAS	
+		if(casUser!=null) {
+			// Gets the user from the session
+			user=service.getUser(casUser);
+		}
+		// Authentification local
+		/*else if(session.getAttribute("$userLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLogin").toString());
+		}*/
+
+		if(user!=null && user.isActivate()) {
+
+			String courseid = request.getParameter("courseid");
+
+			if(courseid!=null) {
+				// Get the course
+				Course c = service.getCourse(Integer.parseInt(courseid));
+
+				// Check user id
+				if(c.getUserid()==user.getUserid()) {
+					addDocUpload(request,response);
+				}
+				else { 
+					request.setAttribute("messagetype", "error");
+					request.setAttribute("message", "Error: You don't have access to this page");
+					getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+				}		
+
+			}
+			else { 
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "Error: You don't have access to this page");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+			}	
+
+		}
+		else { 
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Error: Wrong parameters");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+		}	
+	}
+	
+	
+	/**
+	 * Methode to delete an additional document from myspace
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void myspaceDeleteAddDoc(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+	
+		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+
+		User user = null;
+		// Authentification CAS	
+		if(casUser!=null) {
+			// Gets the user from the session
+			user=service.getUser(casUser);
+		}
+		// Authentification local
+		/*else if(session.getAttribute("$userLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLogin").toString());
+		}*/
+
+		if(user!=null && user.isActivate()) {
+			
+			// Get the course
+			Course c = service.getCourse(Integer.parseInt(request.getParameter("courseid")));
+			
+			// Check user id
+			if(c.getUserid()==user.getUserid()) {
+				deleteAddDoc(request, response);
+			}
+			else { 
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "Error: You don't have access to this page");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+			}		
+		}
+		else { 
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Error: You don't have access to this page");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+		}	
+	}
+	
+	
+	/**
+	 * Method to upload a document
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	@SuppressWarnings("unchecked")
+	private void addDocUpload(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+
+		// Attribute
+		String courseid, fileName, returnUrl;
+		courseid = fileName = returnUrl = "";
+		String message = "";
+		String messageType = "information";
+		String requestDispatcher = "/WEB-INF/views/message.jsp";
+		
+		if( ServletFileUpload.isMultipartContent(new ServletRequestContext(request)) ) {
+
+			try {
+				/* Prepares to parse the request to get the different elements of the POST */
+				FileItemFactory factory = new DiskFileItemFactory();
+				ServletFileUpload upload = new ServletFileUpload(factory);
+				List<FileItem> items = upload.parseRequest(request);
+
+				/* Processes the different elements */
+				Iterator<FileItem> iter = items.iterator();
+				while (iter.hasNext()) {
+					FileItem item = (FileItem) iter.next();
+
+					/* If the element is a form field, retrieves the info */
+					if (item.isFormField()) {
+
+						if(item.getFieldName().equals("courseid"))
+							courseid = item.getString("UTF8");
+						else if(item.getFieldName().equals("returnUrl"))
+							returnUrl = item.getString("UTF8");
+
+					} /* If the element is a file (the last element */
+					else {
+						fileName = item.getName();
+						String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()) : "";
+
+						// Test the form
+						if(fileName==null || fileName.equals("")) {
+							messageType = "error";
+							message = "File must be completed";							
+						}
+						/* Checks the extension of the item to have a supported file format */
+						else if( !extension.equals("pdf") && !extension.equals("ppt") && !extension.equals("pptx") && !extension.equals("odp") 
+								&& !extension.equals("docx") && !extension.equals("doc") && !extension.equals("odt") && !extension.equals("zip") ) {
+
+							messageType = "error";
+							message = "Error: Not supported file format : " + extension;
+						}
+						else {
+							// Get the course
+							Course c = service.getCourse(Integer.parseInt(courseid));
+
+							// Add the document to the course									
+							service.addAdditionalDoc(c,item);
+							requestDispatcher=returnUrl;
+						}
+					}
+				}
+			}
+			catch( FileUploadException fue) {
+				messageType = "error";
+				message = "Error : File upload error";
+			}
+		}
+		else {
+			messageType = "error";
+			message = "Error: Incorrect file upload request";
+		}
+
+		/* Displays the result of the upload process */
+		request.setAttribute("messagetype", messageType);
+		request.setAttribute("message", message);
+		getServletContext().getRequestDispatcher(requestDispatcher).forward(request, response);
+	}
+	
+	
+	/**
+	 * Methode to delete an additional document
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void deleteAddDoc(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+				
+		// Get the course
+		Course c = service.getCourse(Integer.parseInt(request.getParameter("courseid")));
+
+		// Delete the document to the course									
+		service.deleteAdditionalDoc(c);
+		
+		/* Displays the result of the upload process */
+		getServletContext().getRequestDispatcher(request.getParameter("returnUrl")).forward(request, response);
+	}
+
 	
 }

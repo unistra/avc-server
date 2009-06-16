@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
@@ -50,7 +51,7 @@
 					<a href="<c:url value="./admin_editbuilding?id=${buildings.buildingid}" />">Edit</a>
 				</display:column>
 				<display:column>
-					<a href="javascript:confirmation('Delete the building ${buildings.name}?','./admin_deletebuilding?id=${buildings.buildingid}')">Delete</a>
+					<a href="javascript:confirmation('Delete the building named ${fn:replace(buildings.name,'\'',' ')}?','./admin_deletebuilding?id=${buildings.buildingid}')">Delete</a>
 				</display:column>
 				<display:column>
 					<a href="<c:url value="./admin_amphis?buildingId=${buildings.buildingid}" />">Amphis</a>

@@ -41,8 +41,11 @@
 	    	</div>
 	    	
 	    	<div class="editform">
-		    	<form method="POST" action="<c:url value="${posturl}" />">
+		    	<form method="POST" action="<c:url value="${posturl}"/>" class="subeditform" name="subeditform">
 			    	<table>
+			    		<tr class="tableheader">
+							<th colspan="2" id="editcourse"><fmt:message key="editcourse"/></th>
+						</tr>
 			    		<tr class="odd">
 				    		<td>N°</td>
 				    		<td><input type="hidden" name="courseid" value="${course.courseid}">${course.courseid}</td>
@@ -116,13 +119,67 @@
 				    		<td>Tags</td>
 				    		<td><input type="text" name="tags" value="${tags}" class="field"></td>
 			    		</tr>
+			    		<tr class="odd">
+				    		<td>AddDocName</td>
+				    		<td><input type="hidden" name="adddocname" value="${course.adddocname}">${course.adddocname}</td>
+			    		</tr>
 			    	</table>
 			    	<br>
-			    	<input type="submit" value="Validate">
-			    	<br><br>
-			    	<a href="<c:url value="${gobackurl}" />">Go back</a>
+			    	<input type="submit" class="valider" name="valider" value="<fmt:message key="Valider"/>">			    	
 		    	</form>
+		    	
+		    	<br><br>
+		    			    			    	
+		    <c:choose>
+		    	<c:when test="${course.adddocname == null}">
+		    		<form action="<c:url value="./admin_adddocupload"/>" method="post" enctype="multipart/form-data">
+						<input type="hidden" name="courseid" value="${course.courseid}">
+						<input type="hidden" name="returnUrl" value="/avc/admin_editcourse?id=${course.courseid}">
+						<table>
+						<tr class="tableheader">
+							<th colspan="2" id="adddoc"><fmt:message key="uploadadddoc"/></th>
+						</tr>
+						<tr class="odd">
+							<td><fmt:message key="file"/> : </td>
+							<td><input type="file" name="media" class="field"> </td>
+						</tr>
+						<tr>
+							<td><input type="submit" name="valider" onclick="javascript:document.getElementById('process').style.visibility='visible';document.subeditform.valider.disabled=true;this.disabled=true;" value="<fmt:message key="sendFile"/>"> </td>
+							<td><img id="process" src="../files/img/squaresCircle.gif" /></td>
+						</tr>
+						</table>
+					</form>
+		   		 </c:when>
+		    	<c:otherwise>
+		    	<form method="POST" action="<c:url value="./admin_deleteadddoc" />">	    	
+		    		<input type="hidden" name="courseid" value="${course.courseid}">
+		    		<input type="hidden" name="returnUrl" value="/avc/admin_editcourse?id=${course.courseid}">
+		    		<table>
+						<tr class="tableheader">
+							<th colspan="2" id="adddoc"><fmt:message key="deleteadddoc"/></th>
+						</tr>
+						<tr class="odd">
+							<td><fmt:message key="file"/> : </td>
+							<td><input type="text" name="media" class="fieldAdddoc" readonly="readonly" value="${course.adddocname}"></td>
+						</tr>
+						<tr>
+							<td><input type="submit" name="valider" value="<fmt:message key="deletefile"/>"> </td>
+						</tr>
+					</table>
+				</form>
+		    	</c:otherwise>
+		    </c:choose>
+		   
+		   <br>
+		
+			<a href="<c:url value="${gobackurl}" />"><fmt:message key="Retour"/></a>
+			
 	    	</div>
+	    	
+	    	<br>
+	    	<p><fmt:message key="editmessage1"/></p> 
+	        <p><fmt:message key="editmessage2"/></p> 
+		  		
 	    </div>
 	    	
 	    <div class="footer">

@@ -666,13 +666,26 @@ public interface IService {
 	public void deleteSelection(int position);
 	
 	/**
-	 * 
+	 * Encrypt a text
 	 * @param plaintext
 	 * @return string encrypted
 	 * @throws NoSuchAlgorithmException
 	 * @throws UnsupportedEncodingException
 	 */
 	public String encrypt(String plaintext) throws NoSuchAlgorithmException, UnsupportedEncodingException;
+	
+	/**
+	 * Add an additional document to a course
+	 * @param c the course
+	 * @param docFile the fileitem of the document
+	 */
+	public void addAdditionalDoc(Course c, FileItem docFile);
+	
+	/**
+	 * Delete an additional document of a course
+	 * @param c the course
+	 */
+	public void deleteAdditionalDoc(Course c);
 
 
 }

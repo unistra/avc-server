@@ -83,7 +83,7 @@ public class DatabaseImpl implements IDatabase {
 	public void addCourse(Course c) {
 		
 		Connection cnt = null;
-		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";	
+		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";	
 		PreparedStatement pstmt = null;
 		
 		try {
@@ -149,6 +149,11 @@ public class DatabaseImpl implements IDatabase {
 				pstmt.setInt(17, c.getUserid());
 			else
 				pstmt.setNull(17, Types.INTEGER);
+			
+			if( c.getAdddocname() != null)
+				pstmt.setString(18, c.getAdddocname());
+			else
+				pstmt.setNull(18, Types.VARCHAR);
 			
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("The course " + c + " has not been added to the database");
@@ -233,7 +238,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
 					rs.getBoolean("highquality"),
-					rs.getInt("userid")
+					rs.getInt("userid"),
+					rs.getString("adddocname")
 				));
 			}
 		}
@@ -284,7 +290,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
 					rs.getBoolean("highquality"),
-					rs.getInt("userid")
+					rs.getInt("userid"),
+					rs.getString("adddocname")
 				));
 			}
 		}
@@ -334,7 +341,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
 					rs.getBoolean("highquality"),
-					rs.getInt("userid")
+					rs.getInt("userid"),
+					rs.getString("adddocname")
 				));
 			}
 		}
@@ -396,7 +404,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
 					rs.getBoolean("highquality"),
-					rs.getInt("userid")
+					rs.getInt("userid"),
+					rs.getString("adddocname")
 				));
 			}
 		}
@@ -459,7 +468,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
 					rs.getBoolean("highquality"),
-					rs.getInt("userid")
+					rs.getInt("userid"),
+					rs.getString("adddocname")
 				));
 			}
 		}
@@ -568,7 +578,8 @@ public class DatabaseImpl implements IDatabase {
 							rs.getString("timing"),
 							rs.getString("mediafolder"),
 							rs.getBoolean("highquality"),
-							rs.getInt("userid")
+							rs.getInt("userid"),
+							rs.getString("adddocname")
 					));
 				}
 			}
@@ -632,7 +643,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getString("timing"),
 						rs.getString("mediafolder"),
 						rs.getBoolean("highquality"),
-						rs.getInt("userid")
+						rs.getInt("userid"),
+						rs.getString("adddocname")
 				));
 			}
 		}
@@ -689,7 +701,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getString("timing"),
 						rs.getString("mediafolder"),
 						rs.getBoolean("highquality"),
-						rs.getInt("userid")
+						rs.getInt("userid"),
+						rs.getString("adddocname")
 				));
 			}
 		}
@@ -742,7 +755,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
 					rs.getBoolean("highquality"),
-					rs.getInt("userid")
+					rs.getInt("userid"),
+					rs.getString("adddocname")
 				);
 			}
 			else
@@ -798,7 +812,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
 					rs.getBoolean("highquality"),
-					rs.getInt("userid")
+					rs.getInt("userid"),
+					rs.getString("adddocname")
 				);
 			}
 			else
@@ -1031,7 +1046,7 @@ public class DatabaseImpl implements IDatabase {
 		/* Creation of the SQL query string */
 		String sql = "UPDATE course SET date = ? , type = ? , title = ? , description = ? , ";
 		sql += "formation = ? , name = ? , firstname = ? , ipaddress = ? , duration = ? , ";
-		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, mediafolder = ?, highquality = ?, userid = ? ";
+		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, mediafolder = ?, highquality = ?, userid = ?, adddocname = ? ";
 		sql += "WHERE courseid = ?";
 		
 		PreparedStatement pstmt = null;
@@ -1102,7 +1117,12 @@ public class DatabaseImpl implements IDatabase {
 			else
 				pstmt.setNull(16, Types.INTEGER);
 						
-			pstmt.setInt(17, c.getCourseid());
+			if( c.getAdddocname() != null)
+				pstmt.setString(17, c.getAdddocname());
+			else
+				pstmt.setNull(17, Types.VARCHAR);
+			
+			pstmt.setInt(18, c.getCourseid());
 			
 			if( pstmt.executeUpdate() == 0 ) {
 				System.out.println("The course " + c + " has not been modified");
@@ -1258,7 +1278,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
 					rs.getBoolean("highquality"),
-					rs.getInt("userid")
+					rs.getInt("userid"),
+					rs.getString("adddocname")
 				));
 			}
 		}
@@ -2405,7 +2426,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
 					rs.getBoolean("highquality"),
-					rs.getInt("userid")
+					rs.getInt("userid"),
+					rs.getString("adddocname")
 				));
 			}
 		}	
@@ -2707,7 +2729,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
 					rs.getBoolean("highquality"),
-					rs.getInt("userid")
+					rs.getInt("userid"),
+					rs.getString("adddocname")
 				));
 			}
 		}
@@ -2810,7 +2833,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
 					rs.getBoolean("highquality"),
-					rs.getInt("userid")
+					rs.getInt("userid"),
+					rs.getString("adddocname")
 				);
 			}
 			else
@@ -2872,7 +2896,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
 					rs.getBoolean("highquality"),
-					rs.getInt("userid")
+					rs.getInt("userid"),
+					rs.getString("adddocname")
 				));
 			}
 		}
@@ -2932,7 +2957,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
 					rs.getBoolean("highquality"),
-					rs.getInt("userid")
+					rs.getInt("userid"),
+					rs.getString("adddocname")
 				));
 			}
 		}
