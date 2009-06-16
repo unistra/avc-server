@@ -578,7 +578,7 @@ public class ServiceImpl implements IService {
 		for( String teacher : teachers) {
 			courses = db.getCoursesByAuthor(teacher);
 			rssPath = rssFolderPath + "/" + cleanFileName(teacher) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+teacher, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		}
 				
 		// For the formation
@@ -586,7 +586,7 @@ public class ServiceImpl implements IService {
 		for( String formation : formations) {
 			courses = db.getCoursesByFormation(formation);
 			rssPath = rssFolderPath + "/" + cleanFileName(formation) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+formation, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		}
 		
 		
@@ -617,14 +617,14 @@ public class ServiceImpl implements IService {
 			String teacher = db.getTeacherFullName(c.getName(), c.getFirstname());
 			courses = db.getCoursesByAuthor(teacher);
 			rssPath = rssFolderPath + "/" + cleanFileName(teacher) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+teacher, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 		}
 		
 		//For the formation
 		if(c.getFormation()!=null) {
 			courses = db.getCoursesByFormation(c.getFormation());
 			rssPath = rssFolderPath + "/" + cleanFileName(c.getFormation()) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+c.getFormation(), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
 	
 		}
 		
@@ -1035,7 +1035,7 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
-	 * 
+	 * Encrypt a text
 	 * @param plaintext
 	 * @return string encrypted
 	 * @throws NoSuchAlgorithmException
@@ -1055,6 +1055,27 @@ public class ServiceImpl implements IService {
 		} 
 		
 		return (new BASE64Encoder()).encode(md.digest()); 
+	}
+	
+	/**
+	 * Add an additional document to a course
+	 * @param c the course
+	 * @param docFile the fileitem of the document
+	 */
+	public void addAdditionalDoc(Course c, FileItem docFile) {
+		fs.addAdditionalDoc(c.getMediaFolder(),docFile);
+		c.setAdddocname(docFile.getName());
+		db.modifyCourse(c);
+	}
+	
+	/**
+	 * Delete an additional document of a course
+	 * @param c the course
+	 */
+	public void deleteAdditionalDoc(Course c) {
+		fs.deleteAdditionalDoc(c.getMediaFolder(),c.getAdddocname());
+		c.setAdddocname(null);
+		db.modifyCourse(c);
 	}
 
 }

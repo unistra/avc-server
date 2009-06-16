@@ -184,6 +184,20 @@
 					</table>
 					</div>
 					
+					<br>
+					
+					<div class="info">
+					
+					<c:if test="${course.adddocname !=null}">
+						<c:url var="courseaccess" scope="page" value="./courseaccess">
+								<c:param name="id" value="${course.courseid}"/>
+								<c:param name="type" value="adddoc"/>
+							</c:url>
+						<b>Supplément: </b><a href="<c:out value="${courseaccess}" />">${course.adddocname }</a>	
+					</c:if>
+					
+					</div>
+					
 	            </td>
 	            
 	            <td id="cellule_dia">

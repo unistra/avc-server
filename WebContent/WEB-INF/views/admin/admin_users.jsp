@@ -3,6 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
@@ -61,7 +62,7 @@
 					<a href="<c:url value="${editurl}?id=${users.userid}" />">Edit</a>
 				</display:column>
 				<display:column>
-					<a href="javascript:confirmation('Delete the user ${users.login}?','${deleteurl}?id=${users.userid}')">Delete</a>
+					<a href="javascript:confirmation('Delete the user named ${fn:replace(users.login,'\'',' ')}?','${deleteurl}?id=${users.userid}')">Delete</a>
 				</display:column>
 	    	</display:table>
 	    	

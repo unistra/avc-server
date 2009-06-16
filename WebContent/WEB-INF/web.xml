@@ -69,6 +69,8 @@
 			<url-pattern>/avc/admin_validateselection</url-pattern>
 			<url-pattern>/avc/admin_deleteselection</url-pattern>
 			<url-pattern>/avc/admin_addselection</url-pattern>
+			<url-pattern>/avc/admin_adddocupload</url-pattern>
+			<url-pattern>/avc/admin_deleteadddoc</url-pattern>
 			<http-method>GET</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>
