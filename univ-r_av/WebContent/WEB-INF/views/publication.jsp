@@ -146,7 +146,7 @@
 					</tr>
 					<tr class="even">
 						<td><fmt:message key="Code d'acc&egrave;s"/> : </td>
-						<td><input type="password" name="genre" class="${classField}" <c:out value="${disabledField}"/> value="${genre }"></td>
+						<td><input type="text" name="genre" class="${classField}" <c:out value="${disabledField}"/> value="${genre }"></td>
 					</tr>				
 					<tr class="odd">
 				    	<td>Tags</td>

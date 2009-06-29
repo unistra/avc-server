@@ -2533,7 +2533,7 @@ public class DatabaseImpl implements IDatabase {
 		try {
 			cnt = datasrc.getConnection();
 			pstmt = cnt.prepareStatement(sql);
-			pstmt.setString(1, t.getTag());
+			pstmt.setString(1, t.getTag().toLowerCase());
 			pstmt.setInt(2, t.getCourseid());
 			
 			if( pstmt.executeUpdate() == 0) {
@@ -2596,7 +2596,7 @@ public class DatabaseImpl implements IDatabase {
 			while(rs.next()) {
 				l.add(new Tag(
 					rs.getInt("tagid"),
-					rs.getString("tag"),
+					rs.getString("tag").toLowerCase(),
 					rs.getInt("courseid")
 				));
 			}
@@ -2630,7 +2630,7 @@ public class DatabaseImpl implements IDatabase {
 			rs = stmt.executeQuery( "SELECT distinct(tag) From tag ORDER BY tag");
 			
 			while(rs.next()) {
-				l.add(rs.getString("tag"));
+				l.add(rs.getString("tag").toLowerCase());
 			}
 		}
 		catch( SQLException sqle) {
@@ -2662,7 +2662,7 @@ public class DatabaseImpl implements IDatabase {
 			rs = stmt.executeQuery( "select tag, count(*) from tag group by tag order by 2 desc,tag limit 20");
 			
 			while(rs.next()) {
-				l.add(rs.getString("tag"));
+				l.add(rs.getString("tag").toLowerCase());
 			}
 		}
 		catch( SQLException sqle) {
@@ -2699,7 +2699,7 @@ public class DatabaseImpl implements IDatabase {
 				sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord3 + "%' ";
 						
 			for(int i=0;i<tags.size();i++) 
-				sql += "and courseid in (select courseid from tag where tag='" + tags.get(i) + "') "; 
+				sql += "and courseid in (select courseid from tag where lower(tag)='" + tags.get(i).toLowerCase() + "') "; 
 							
 		sql += "ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start;
 		
