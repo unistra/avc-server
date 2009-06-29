@@ -126,7 +126,7 @@
 			    	<td class="chpsObl"><b class="boldStar">*</b>: <fmt:message key="requiredField"/></td>
 			    </tr>
 				<tr>
-					<td><input type="submit" name="valider" onclick="javascript:document.getElementById('process').style.visibility='visible';this.disabled=true;" value="<fmt:message key="sendFile"/>"> </td>
+					<td><input type="submit" name="valider" onclick="javascript:document.getElementById('process').style.visibility='visible';" value="<fmt:message key="sendFile"/>"> </td>
 					<td><img id="process" src="../files/img/squaresCircle.gif" /></td>
 				</tr>
 				<tr>
@@ -143,6 +143,8 @@
 			<p class="message"><fmt:message key="uploadmessage2"/></p>
 			<br>
 			<p class="message"><fmt:message key="uploadmessage3"/></p>
+			<br>
+			<p class="message"><fmt:message key="uploadmessage5"/></p>
 
     	</div>
 	    	

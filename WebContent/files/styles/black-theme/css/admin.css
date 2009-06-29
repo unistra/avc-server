@@ -105,3 +105,8 @@ img#process {
 	width: 300px;
 	background-color:#d3d3d3;
 }
+
+.editcourse, .adddoc {
+	color:#FFFFFF;
+	font-weight:bold;
+}

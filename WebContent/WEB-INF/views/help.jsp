@@ -57,6 +57,13 @@
 						</ul>
 					</div>
 					
+					<div class="helpLinks2">
+						<a href="http://support.unistra.fr"><fmt:message key="supportLink"/></a>
+						<br><br>
+						<a href="./contactUs"><fmt:message key="contactUs"/></a>
+					</div>
+									
+					
 				</div>
 		    	
 		    	
@@ -113,6 +120,7 @@
 			    		<h5>Editer un cours</h5>
 			    		<p>Pour &eacute;diter un cours, il vous suffit de cliquer sur « Editer », d'effectuer vos modifications dans le formulaire, et de valider.<br>
 			    		Vous avez ainsi la possibilit&eacute; de modifier le titre du cours, sa description, la discipline concern&eacute;e, le nom et le pr&eacute;nom de l'auteur, le code d'acc&egrave;s, la visibilit&eacute; et les tags.</p>
+			    		<p>Il est &eacute;galement possible de d&eacute;poser un fichier compl&eacute;mentaire &agrave; l'enregistrement. Celui-ci sera ainsi t&eacute;l&eacute;chargeable dans l'interface de visualisation flash du cours. Les formats suivants sont pris en charge: Pdf, Ppt, Pptx, Odp, Docx, Doc, Odt, Archive Zip. Pour ajouter plusieurs documents compl&eacute;mentaires &agrave; l'enregistrement, veuillez les mettre dans une archive zip.</p>
 			    		<a class="link" href="../files/img/help/editcourse.png">Screenshot</a>
 			    		<h5>D&eacute;poser un fichier</h5>
 			    		<p>Pour d&eacute;poser un fichier, il vous suffit de cliquer sur le bouton « D&eacute;poser un fichier », de remplir le formulaire et de valider.</p>
@@ -123,7 +131,7 @@
 			    		<a class="link" href="../files/img/help/upload.png">Screenshot</a>
 			    		
 			    		<h3><a id="publication"></a>Publication</h3>
-			    		<h5>Depuis un client v1.13 ou supérieur</h5>
+			    		<h5>Depuis un client v1.13 ou sup&eacute;rieur</h5>
 			    		<p>Apr&egrave;s avoir effectu&eacute; un enregistrement via le client AVC (voir doc correspondante) et cliqu&eacute; sur le  bouton « Publier », vous serez rediriger sur une page du site permettant la saisie des informations et la publication finale de l'enregistrement:</p>
 			    		<a class="link" href="../files/img/help/pub1.png">Screenshot</a>
 			    		

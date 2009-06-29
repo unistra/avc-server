@@ -424,6 +424,14 @@ public class Application extends HttpServlet {
 			session.setAttribute("previousPage", "/help");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/help.jsp").forward(request, response);
 		}
+		else if( page.equals("/contactUs")) {
+			/* Saves the page for the style selection thickbox return */
+			session.setAttribute("previousPage", "/contactUs");
+			request.setAttribute("posturl", "/avc/contactUsSendMail");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/contactUs.jsp").forward(request, response);
+		}
+		else if( page.equals("/contactUsSendMail"))
+			sendMailContactUs(request, response);
 		else if( page.equals("/test"))
 			displayTestPage(request, response);
 		else if( page.equals("/changestyle"))
@@ -2063,7 +2071,7 @@ public class Application extends HttpServlet {
 					List<Slide> slides = service.getSlides(c.getCourseid());
 					request.setAttribute("slides", slides);
 					Amphi a = service.getAmphi(c.getIpaddress());
-					String amphi = a != null ? a.getName() : c.getIpaddress();
+					String amphi = a != null ? a.getName() : "";
 					String building = service.getBuildingName(c.getIpaddress());
 					request.setAttribute("amphi", amphi);
 					request.setAttribute("building", building);
@@ -2085,7 +2093,7 @@ public class Application extends HttpServlet {
 					List<Slide> slides = service.getSlides(c.getCourseid());
 					request.setAttribute("slides", slides);
 					Amphi a = service.getAmphi(c.getIpaddress());
-					String amphi = a != null ? a.getName() : c.getIpaddress();
+					String amphi = a != null ? a.getName() : "";
 					String building = service.getBuildingName(c.getIpaddress());
 					request.setAttribute("amphi", amphi);
 					request.setAttribute("building", building);
@@ -2102,7 +2110,7 @@ public class Application extends HttpServlet {
 					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".mp4");
 					request.setAttribute("course", c);					
 					Amphi a = service.getAmphi(c.getIpaddress());
-					String amphi = a != null ? a.getName() : c.getIpaddress();
+					String amphi = a != null ? a.getName() : "";
 					String building = service.getBuildingName(c.getIpaddress());
 					request.setAttribute("amphi", amphi);
 					request.setAttribute("building", building);
@@ -3021,6 +3029,35 @@ public class Application extends HttpServlet {
 		
 		/* Displays the result of the upload process */
 		getServletContext().getRequestDispatcher(request.getParameter("returnUrl")).forward(request, response);
+	}
+	
+	
+	/**
+	 * Send mail from the contact us form
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void sendMailContactUs(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+		
+		String subject = request.getParameter("subject");
+		String useremail = request.getParameter("useremail");
+		String yourmessage = request.getParameter("yourmessage");
+		
+		if(!adminEmail1.equals(""))
+			service.sendMail(subject,"from: " + useremail + "\n\n" + yourmessage,adminEmail1);
+		if(!adminEmail2.equals(""))
+			service.sendMail(subject,"from: " + useremail + "\n\n" + yourmessage,adminEmail2);
+		if(!adminEmail3.equals(""))
+			service.sendMail(subject,"from: " + useremail + "\n\n" + yourmessage,adminEmail3);
+		request.setAttribute("messagetype", "info");
+		request.setAttribute("message", "E-mail successfully sent !");
+		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+
+	
 	}
 
 	
