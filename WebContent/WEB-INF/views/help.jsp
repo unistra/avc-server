@@ -58,9 +58,10 @@
 					</div>
 					
 					<div class="helpLinks2">
-						<a href="http://support.unistra.fr"><fmt:message key="supportLink"/></a>
-						<br><br>
-						<a href="./contactUs"><fmt:message key="contactUs"/></a>
+						<ul>
+							<li><a href="http://support.unistra.fr"><fmt:message key="supportLink"/></a></li>
+							<li><a href="./contactUs"><fmt:message key="contactUs"/></a></li>
+						</ul>
 					</div>
 									
 					
