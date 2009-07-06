@@ -37,7 +37,7 @@
 	    	</div>
 	    	
 	    	<div class="divCenter">
-	    		<p><fmt:message key="publiMsg"/></p>
+	    		<p><fmt:message key="publicationmessage1"/></p>
 	    	</div>
 	    	
 	    	<br>
@@ -166,6 +166,14 @@
 				
 				</table>
 			</form>
+			
+			<br>
+			
+			<div class="divCenter">
+	    		<p><fmt:message key="publicationmessage2"/></p>
+	    		<p><fmt:message key="publicationmessage3"/><a href="http://audiovideocours.u-strasbg.fr/avc/test">http://audiovideocours.u-strasbg.fr/avc/test</a></p>
+	    		<p><fmt:message key="publicationmessage4"/></p>
+	    	</div>
 			
     	</div>
 	    	
