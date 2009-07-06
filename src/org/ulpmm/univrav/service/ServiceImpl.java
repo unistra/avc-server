@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FilenameUtils;
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.dao.IUnivrDao;
@@ -1064,7 +1065,7 @@ public class ServiceImpl implements IService {
 	 */
 	public void addAdditionalDoc(Course c, FileItem docFile) {
 		fs.addAdditionalDoc(c.getMediaFolder(),docFile);
-		c.setAdddocname(docFile.getName());
+		c.setAdddocname(FilenameUtils.getName(docFile.getName()));		
 		db.modifyCourse(c);
 	}
 	
