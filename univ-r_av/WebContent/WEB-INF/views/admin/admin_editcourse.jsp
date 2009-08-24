@@ -123,6 +123,10 @@
 				    		<td>AddDocName</td>
 				    		<td><input type="hidden" name="adddocname" value="${course.adddocname}">${course.adddocname}</td>
 			    		</tr>
+			    		<tr class="even">
+				    		<td>Download</td>
+				    		<td><input type="checkbox" name="download" ${course.download == true ? 'checked' : ''} ></td>
+			    		</tr>
 			    	</table>
 			    	<br>
 			    	<input type="submit" class="valider" name="valider" value="<fmt:message key="Valider"/>">			    	
