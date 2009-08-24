@@ -16,8 +16,7 @@
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/home.css">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/searchform.css">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/courselist.css">
-	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/jScrollPane.css">
-	
+		
 	<!--[if IE]>
    		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
 		<style type="text/css">.row1,.row2{ behavior: url('../files/js/IEHoverFixes.htc');}</style>
