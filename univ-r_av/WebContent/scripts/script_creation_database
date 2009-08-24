@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Started on 2009-06-16 15:13:34 CET
+-- Started on 2009-08-24 15:13:34 CET
 
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = off;
@@ -122,7 +122,8 @@ CREATE TABLE course (
     mediafolder character varying,
     highquality boolean,
     userid integer,
-    adddocname character varying
+    adddocname character varying,
+    download boolean DEFAULT true NOT NULL
 );
 
 
