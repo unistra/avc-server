@@ -54,10 +54,19 @@ public interface IFileSystem {
 	 * @param rssImageUrl the URL of the RSS image file
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS file
+	 * @param rssCategory the category of the RSS file
+	 * @param itunesAuthor The itunes author
+	 * @param itunesSubtitle The itunes subtitle
+	 * @param itunesSummary The itunes summary
+	 * @param itunesImage The itunes image
+	 * @param itunesCategory The itunes category
+	 * @param itunesKeywords The itunes keywords
+	 * @param db the database interface
 	 */
 	public void rssCreation( List<Course> courses, String filePath, String rssName, 
 			String rssTitle, String rssDescription, String serverUrl, String rssImageUrl, 
-			String recordedInterfaceUrl, String language );
+			String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords,IDatabase db);
 	
 		
 	/**

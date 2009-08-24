@@ -64,7 +64,9 @@ public class Course {
 	
 	/** the additional document name **/
 	private String adddocname;
-
+	
+	/** the download indicator **/
+	private boolean download;
 	
 	/**
 	 * Default constructor
@@ -93,7 +95,7 @@ public class Course {
 	 * @param userid the high quality indicator
 	 * @param adddocname additional document name
 	 */
-	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, boolean highquality, Integer userid, String adddocname) {
+	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, boolean highquality, Integer userid, String adddocname, boolean download) {
 		this.courseid = courseid;
 		this.date = date;
 		this.type = type;
@@ -112,6 +114,7 @@ public class Course {
 		this.highquality=highquality;
 		this.userid=userid;
 		this.adddocname=adddocname;
+		this.download=download;
 	}
 	
 	
@@ -188,6 +191,21 @@ public class Course {
 		res += durationHour > 0 ? durationHour + "h" : "";
     	res += durationHour > 0 || durationMinute > 0 ? durationMinute + "min" : "";
     	res += durationSecond + "sec";
+		return res;
+	}
+	
+	/**
+	 * Gets the course's duration in a string for iTunes tags
+	 * @return the duration in a String
+	 */
+	public String getDurationStringItunes() {
+		String res = "";
+		int durationHour = duration / 3600;
+		int durationMinute = (duration % 3600) / 60 ;
+		int durationSecond = ((duration % 3600) % 60) ;
+		res += durationHour > 0 ? durationHour + ":" : "";
+    	res += durationHour > 0 || durationMinute > 0 ? durationMinute + ":" : "";
+    	res += durationSecond;
 		return res;
 	}
 	
@@ -446,5 +464,23 @@ public class Course {
 	 */
 	public void setAdddocname(String adddocname) {
 		this.adddocname = adddocname;
+	}
+
+	/**
+	 * Gets the download indicator
+	 * @return download indicator
+	 */
+	public boolean isDownload() {
+		return download;
+	}
+	
+	/**
+	 * Sets the download indicator
+	 * @param download
+	 */
+	public void setDownload(boolean download) {
+		this.download = download;
 	}	
+	
+	
 }
