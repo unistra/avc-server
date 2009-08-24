@@ -14,7 +14,6 @@
 }
 
 table {
-	margin-top: 20px;
 	margin-left: auto;
 	margin-right: auto;
 	color: #959595;
@@ -78,7 +77,7 @@ img#process {
  
   /* Links for publication page */
  .pubLinks {
-	width: 230px;
+	width: 235px;
 	height: 35px;
 	margin-left: auto;
 	margin-right: auto;
