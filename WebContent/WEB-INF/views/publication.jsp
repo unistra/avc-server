@@ -42,18 +42,23 @@
 	    	
 	    	<br>
 	    	
+	    	<c:if test="${publication_type == 'serverFree'}">
+	    	 	<c:set var="borderstyleFree" value="border:2px dotted red;" />
+	    	</c:if>
+	    	<c:if test="${publication_type == 'serverCas'}">
+	       		<c:set var="borderstyleCas" value="border:2px dotted red;" />
+	    	</c:if>
+	    				
 	    	<!-- Choose if you have an account or not -->
 	    	<div class="pubLinks">
-	    		<div class="divPubCas">
+	    		<div class="divPubCas" style="${borderstyleCas}">
 	    			<a class="linkPubCas" href="./authentication_cas?returnPage=publication"><fmt:message key="udsAccount"/></a>
 	    		</div>
-	    		<div class="divPubFree">
+	    		<div class="divPubFree" style="${borderstyleFree}">
 	    			<a class="linkPubFree" href="./publication?publication_type=serverFree"><fmt:message key="free"/></a>
 	    		</div>
 	    	</div>
-	    	
 	    	<br>
-	    	
 	    	<div class="divCenter">
 	    		<p class="${messagetype}"><c:out value="${message}" /></p>
 	  	 	</div>

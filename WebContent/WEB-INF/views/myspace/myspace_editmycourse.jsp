@@ -93,7 +93,10 @@
 				    		<td>Tags</td>
 				    		<td><input type="text" name="tags" value="${tags}" class="field"></td>
 			    		</tr>
-			    				    	
+			    		<tr class="odd">
+				    		<td><fmt:message key="Telecharger"/></td>
+				    		<td><input type="checkbox" name="download" ${course.download == true ? 'checked' : ''} ></td>
+			    		</tr>		    	
 			    	</table>
 			    	<br>
 			    	<input type="submit" class="valider" name="valider" value="<fmt:message key="Valider"/> ">

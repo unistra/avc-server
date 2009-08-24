@@ -24,6 +24,10 @@
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 	
+	<c:forEach var="rssfile" items="${rssfiles}" begin="0" end="1">
+		<link rel="alternate" type="application/rss+xml" title="${rssfile.key}" href="${rssfile.value}"/>
+	</c:forEach>
+	
 	<script type="text/javascript" src="../files/js/details.js"></script>
 	<script type="text/javascript" src="../files/jwflvplayer/swfobject.js"></script>
 	<!-- <script type="text/javascript" src="../files/js/ieupdate.js"></script> -->
@@ -124,12 +128,11 @@
 					</c:if>
 							
 					<br>
-													
-					<div class="telecharger">
-					<table>
-					
-					<tr>
-					
+						
+					<c:if test="${course.download}">						
+						<div class="telecharger">
+						<table>
+						<tr>
 						<td class="tdalign">
 							<b id=type><fmt:message key="Telecharger"/>:&nbsp;</b>
 						</td>
@@ -180,9 +183,10 @@
 							<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/acrobat.png" alt="pdf"></a>
 							<b id=type>pdf</b>
 						</td>
-					</tr>						
-					</table>
-					</div>
+						</tr>						
+						</table>
+						</div>
+					</c:if>	
 					
 					<br>
 					
@@ -199,13 +203,10 @@
 					</div>
 					
 	            </td>
-	            
-	            <td id="cellule_dia">
-	           			
-	           		<div id="currentDia">
-	           			           	           		
+	  
+	            <td id="cellule_dia">	
+	           		<div id="currentDia">          	           		
 	            		<img class="slide" id="slide" src="../files/img/DiaVide.png" width="620" height="472">
-	            			
 					</div>
 				</td>
 			</tr>

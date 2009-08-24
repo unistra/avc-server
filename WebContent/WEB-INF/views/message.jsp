@@ -36,9 +36,19 @@
 	    		<c:import url="include/banner.jsp" />
 	    	</div>
 	    	
-	    	<div class="message">
-	    		<p class="${messagetype}"><c:out value="${message}" /></p>
-	    	</div>
+	    	<c:if test="${message!=null}">
+	    		<div class="message">
+	    			<p class="${messagetype}"><c:out value="${message}"/></p>
+	    			<c:if test="${ahref!=null}"><a href="${ahref}"><c:out value="${ahref}"/></a></c:if>
+	    		</div>
+	    	</c:if>
+	    	
+	    	<c:if test="${message2!=null}">
+	    		<div class="message">
+	    			<p class="${messagetype2}"><c:out value="${message2}" /></p>
+	    			<c:if test="${ahref2!=null}"><a href="${ahref2}"><c:out value="${ahref2}"/></a></c:if>
+	    		</div>
+	    	</c:if>
     	</div>
 	    	
 	    <div class="footer">
