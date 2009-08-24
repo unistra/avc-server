@@ -76,7 +76,7 @@ img#process {
  
  /* Links for publication page */
  .pubLinks {
-	width: 230px;
+	width: 235px;
 	height: 35px;
 	margin-left: auto;
 	margin-right: auto;
@@ -122,7 +122,7 @@ img#process {
 	color:red;
 }
 
- .chpsHd {
+.chpsHd {
 	font-size:12px;
  	color:black;
  }
