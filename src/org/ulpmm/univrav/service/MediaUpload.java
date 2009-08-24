@@ -54,6 +54,9 @@ public class MediaUpload extends Thread {
 	/** the url of the rss image */
 	private String rssImageUrl;
 	
+	/** the RSS category */
+	private String rssCategory;
+	
 	/** the url of the recorded interface */
 	private String recordedInterfaceUrl;
 	
@@ -62,6 +65,19 @@ public class MediaUpload extends Thread {
 
 	/** the high quality indicator **/
 	private boolean hq;
+	
+	/** The itunes author */
+	private String itunesAuthor;
+	/** The itunes subtitle */
+	private String itunesSubtitle;
+	/** The itunes summary */
+	private String itunesSummary;
+	/** The itunes image */
+	private String itunesImage;
+	/** The itunes category */
+	private String itunesCategory;
+	/** The itunes keywords */
+	private String itunesKeywords;
 	
 
 	/**
@@ -82,11 +98,19 @@ public class MediaUpload extends Thread {
 	 * @param recordedInterfaceUrl the url of the recorded interface
 	 * @param language the language
 	 * @param hq the high quality indicator
+	 * @param rssCategory the category of the RSS file
+	 * @param itunesAuthor The itunes author
+	 * @param itunesSubtitle The itunes subtitle
+	 * @param itunesSummary The itunes summary
+	 * @param itunesImage The itunes image
+	 * @param itunesCategory The itunes category
+	 * @param itunesKeywords The itunes keywords
 	 */
 	public MediaUpload(IDatabase db, IFileSystem fs, Course c, FileItem mediaFile, String tags,
 			IService service, String rssFolderPath, String rssName, String rssTitle, 
 			String rssDescription, String serverUrl, String rssImageUrl, 
-			String recordedInterfaceUrl, String language,boolean hq) {
+			String recordedInterfaceUrl, String language,boolean hq, String rssCategory, String itunesAuthor,
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		
 		super();
 		this.db = db;
@@ -104,6 +128,13 @@ public class MediaUpload extends Thread {
 		this.recordedInterfaceUrl = recordedInterfaceUrl;
 		this.language = language;
 		this.hq=hq;
+		this.rssCategory = rssCategory;
+		this.itunesAuthor = itunesAuthor;
+		this.itunesCategory = itunesCategory;
+		this.itunesImage = itunesImage;
+		this.itunesKeywords = itunesKeywords;
+		this.itunesSubtitle = itunesSubtitle;
+		this.itunesSummary = itunesSummary;
 	}
 
 	/**
@@ -136,7 +167,7 @@ public class MediaUpload extends Thread {
 				
 		/* Generation of the RSS files */
 		if( c.getGenre() == null)
-			service.generateRss(c, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			service.generateRss(c, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 	}
 	
 	

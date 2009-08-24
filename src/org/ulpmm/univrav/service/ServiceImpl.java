@@ -105,14 +105,23 @@ public class ServiceImpl implements IService {
 	 * @param rssImageUrl the URL of the RSS image files
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
+	 * @param rssCategory the category of the RSS file
+	 * @param itunesAuthor The itunes author
+	 * @param itunesSubtitle The itunes subtitle
+	 * @param itunesSummary The itunes summary
+	 * @param itunesImage The itunes image
+	 * @param itunesCategory The itunes category
+	 * @param itunesKeywords The itunes keywords
 	 */
 	public synchronized void addCourse(Course c, String courseArchive, String tags, String rssFolderPath, 
 			String rssName, String rssTitle, String rssDescription, String serverUrl, 
-			String rssImageUrl, String recordedInterfaceUrl, String language) {
+			String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		
 		CourseAddition ca = new CourseAddition(db, fs, c, courseArchive, tags,
 				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
-				rssImageUrl, recordedInterfaceUrl, language);
+				rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor,
+				itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		ca.start();
 	}
 	
@@ -139,14 +148,23 @@ public class ServiceImpl implements IService {
 	 * @param rssImageUrl the URL of the RSS image files
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
+	 * @param rssCategory the category of the RSS file
+	 * @param itunesAuthor The itunes author
+	 * @param itunesSubtitle The itunes subtitle
+	 * @param itunesSummary The itunes summary
+	 * @param itunesImage The itunes image
+	 * @param itunesCategory The itunes category
+	 * @param itunesKeywords The itunes keywords
 	 */
 	public synchronized void completeUnivrCourse(Course c, Univr u, String courseArchive , String rssFolderPath, 
 			String rssName, String rssTitle, String rssDescription, String serverUrl, 
-			String rssImageUrl, String recordedInterfaceUrl, String language) {
+			String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		
 		UnivrCourseCompletion ucc = new UnivrCourseCompletion(db, fs, ud, c, u, courseArchive,
 				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
-				rssImageUrl, recordedInterfaceUrl, language);
+				rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor,
+				itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		ucc.start();
 	}
 	
@@ -164,14 +182,23 @@ public class ServiceImpl implements IService {
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
 	 * @param hq High Quality
+	 * @param rssCategory the category of the RSS file
+	 * @param itunesAuthor The itunes author
+	 * @param itunesSubtitle The itunes subtitle
+	 * @param itunesSummary The itunes summary
+	 * @param itunesImage The itunes image
+	 * @param itunesCategory The itunes category
+	 * @param itunesKeywords The itunes keywords
 	 */
 	public synchronized void mediaUpload( Course c, FileItem mediaFile, String tags , String rssFolderPath, 
 		String rssName, String rssTitle, String rssDescription, String serverUrl, 
-		String rssImageUrl, String recordedInterfaceUrl, String language,boolean hq) {
+		String rssImageUrl, String recordedInterfaceUrl, String language,boolean hq, String rssCategory, String itunesAuthor,
+		String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		
 		MediaUpload mu = new MediaUpload(db, fs, c, mediaFile, tags,
 				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
-				rssImageUrl, recordedInterfaceUrl, language,hq);
+				rssImageUrl, recordedInterfaceUrl, language,hq, rssCategory, itunesAuthor,
+				itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		mu.start();
 	}
 	
@@ -564,14 +591,22 @@ public class ServiceImpl implements IService {
 	 * @param rssImageUrl the URL of the RSS image files
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
+	 * @param rssCategory the category of the RSS file
+	 * @param itunesAuthor The itunes author
+	 * @param itunesSubtitle The itunes subtitle
+	 * @param itunesSummary The itunes summary
+	 * @param itunesImage The itunes image
+	 * @param itunesCategory The itunes category
+	 * @param itunesKeywords The itunes keywords
 	 */
 	public void generateRss( String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
-			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language) {
+			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language,String rssCategory, String itunesAuthor,
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		// For all courses 
 		List<Course> courses = db.getAllCourses();
 		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
-		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
-		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
+		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
 		
 		
 		// For the teachers
@@ -579,7 +614,7 @@ public class ServiceImpl implements IService {
 		for( String teacher : teachers) {
 			courses = db.getCoursesByAuthor(teacher);
 			rssPath = rssFolderPath + "/" + cleanFileName(teacher) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+teacher, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+teacher, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
 		}
 				
 		// For the formation
@@ -587,7 +622,15 @@ public class ServiceImpl implements IService {
 		for( String formation : formations) {
 			courses = db.getCoursesByFormation(formation);
 			rssPath = rssFolderPath + "/" + cleanFileName(formation) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+formation, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+formation, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
+		}
+		
+		//For the login
+		List<User> users = db.getAllUsers();
+		for(User u : users) {
+			courses = db.getCoursesByUser(u, null, null);	
+			rssPath = rssFolderPath + "/" + cleanFileName("lgn_" + u.getLogin()) + ".xml";
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+"lgn_"+u.getLogin(), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
 		}
 		
 		
@@ -604,29 +647,44 @@ public class ServiceImpl implements IService {
 	 * @param rssImageUrl the URL of the RSS image files
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
+	 * @param rssCategory the category of the RSS file
+	 * @param itunesAuthor The itunes author
+	 * @param itunesSubtitle The itunes subtitle
+	 * @param itunesSummary The itunes summary
+	 * @param itunesImage The itunes image
+	 * @param itunesCategory The itunes category
+	 * @param itunesKeywords The itunes keywords
 	 */
 	public void generateRss( Course c, String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
-			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language) {
+			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language,String rssCategory, String itunesAuthor,
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		// For all courses
 		List<Course> courses = db.getAllCourses();
 		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
-		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
-		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
+		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
 				
 		// For the teacher
 		if( ! (c.getName() == null && c.getFirstname() == null)) {
 			String teacher = db.getTeacherFullName(c.getName(), c.getFirstname());
 			courses = db.getCoursesByAuthor(teacher);
 			rssPath = rssFolderPath + "/" + cleanFileName(teacher) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+teacher, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+teacher, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
 		}
 		
 		//For the formation
 		if(c.getFormation()!=null) {
 			courses = db.getCoursesByFormation(c.getFormation());
 			rssPath = rssFolderPath + "/" + cleanFileName(c.getFormation()) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+c.getFormation(), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
-	
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+c.getFormation(), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
+		}
+		
+		//For the login
+		if(c.getUserid()!=null && c.getUserid()!=0) {
+			User u = db.getUser(c.getUserid());
+			courses = db.getCoursesByUser(u, null, null);
+			rssPath = rssFolderPath + "/" + cleanFileName("lgn_" + u.getLogin()) + ".xml";
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+"lgn_"+u.getLogin(), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
 		}
 		
 	}
@@ -657,6 +715,27 @@ public class ServiceImpl implements IService {
 			);
 		}
 		
+		return rss;
+	}
+	
+	/**
+	 * Gets the list of RSS files of a course
+	 * @param c the course
+	 * @return the hashMap of the RSS titles and files
+	 */
+	public HashMap<String, String> getRssCourseFileList(Course c) {
+		LinkedHashMap<String, String> rss = new LinkedHashMap<String, String>();
+		
+		if(c!=null) {
+			
+			if((c.getName()!=null && !c.getName().equals("")) || (c.getFirstname()!=null && !c.getFirstname().equals(""))) {
+				String teacher = db.getTeacherFullName(c.getName(), c.getFirstname());
+				rss.put(teacher,"../rss/" + cleanFileName(teacher) + ".xml");
+			}
+
+			if(c.getFormation()!=null && !c.getFormation().equals(""))
+				rss.put(c.getFormation(),"../rss/" + cleanFileName(c.getFormation()) + ".xml");
+		}
 		return rss;
 	}
 	
@@ -848,8 +927,8 @@ public class ServiceImpl implements IService {
 	 * @param start the start number of courses
 	 * @return the list of course
 	 */
-	public List<Course> getCourses(User u,int number,int start) {
-		return db.getCourses(u,number,start);
+	public List<Course> getCoursesByUser(User u,Integer number,Integer start) {
+		return db.getCoursesByUser(u,number,start);
 	}
 	
 	/**

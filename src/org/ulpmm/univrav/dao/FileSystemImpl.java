@@ -35,6 +35,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Tag;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -372,10 +373,19 @@ public class FileSystemImpl implements IFileSystem {
 	 * @param rssImageUrl the URL of the RSS image file
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS file
+	 * @param rssCategory the category of the RSS file
+	 * @param itunesAuthor The itunes author
+	 * @param itunesSubtitle The itunes subtitle
+	 * @param itunesSummary The itunes summary
+	 * @param itunesImage The itunes image
+	 * @param itunesCategory The itunes category
+	 * @param itunesKeywords The itunes keywords
+	 * @param db the database interface
 	 */
 	public void rssCreation( List<Course> courses, String filePath, String rssName, 
 			String rssTitle, String rssDescription, String serverUrl, String rssImageUrl, 
-			String recordedInterfaceUrl, String language ) {
+			String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords, IDatabase db) {
 		
 		try {		
 			// Création d'un nouveau DOM
@@ -389,6 +399,7 @@ public class FileSystemImpl implements IFileSystem {
 	        
 	        // Création de l'arborescence du DOM
 	        Element racine = document.createElement("rss");
+	        racine.setAttribute("xmlns:itunes", "http://www.itunes.com/dtds/podcast-1.0.dtd");
 	        racine.setAttribute("version", "2.0");
 	        
 	        Element channel = document.createElement("channel");
@@ -400,6 +411,10 @@ public class FileSystemImpl implements IFileSystem {
 	        title.setTextContent(rssTitle);
 	        channel.appendChild(title);
 	        
+	        Element itAuthor = document.createElement("itunes:author");
+	        itAuthor.setTextContent(itunesAuthor);
+	        channel.appendChild(itAuthor);
+	        
 	        Element link = document.createElement("link");
 	        link.setTextContent(serverUrl);
 	        channel.appendChild(link);
@@ -407,6 +422,14 @@ public class FileSystemImpl implements IFileSystem {
 	        Element description = document.createElement("description");
 	        description.setTextContent(rssDescription);
 	        channel.appendChild(description);
+	        
+	        Element itSubtitle = document.createElement("itunes:subtitle");
+	        itSubtitle.setTextContent(itunesSubtitle);
+	        channel.appendChild(itSubtitle);
+	        
+	        Element iSummary = document.createElement("itunes:summary");
+	        iSummary.setTextContent(itunesSummary);
+	        channel.appendChild(iSummary);
 	        
 	        Element lang = document.createElement("language");
 	        lang.setTextContent(language);
@@ -431,6 +454,26 @@ public class FileSystemImpl implements IFileSystem {
 	        Element imageLink = document.createElement("link");
 	        imageLink.setTextContent(serverUrl);
 	        image.appendChild(imageLink);
+	        
+	        Element itImage = document.createElement("itunes:image");
+	        itImage.setAttribute("href",itunesImage);
+	        channel.appendChild(itImage);
+	        
+	        Element itCategory = document.createElement("itunes:category");
+	        itCategory.setAttribute("text", itunesCategory);
+	        channel.appendChild(itCategory);
+	        
+	        Element category = document.createElement("category");
+	        category.setTextContent(rssCategory);
+	        channel.appendChild(category);
+	        
+	        Element itKeywords = document.createElement("itunes:keywords");
+	        itKeywords.setTextContent(itunesKeywords);
+	        channel.appendChild(itKeywords);
+	        
+	        Element itExplicit = document.createElement("itunes:explicit");
+	        itExplicit.setTextContent("no");
+	        channel.appendChild(itExplicit);
 	        
 	        // Recherche de cours et création d'un item pour chaque cours
 			for( Course course : courses) {
@@ -502,6 +545,22 @@ public class FileSystemImpl implements IFileSystem {
 			        	coursEnclosure4.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".zip")));
 			        	item.appendChild(coursEnclosure4);
 			        }
+			        
+			        Element itDuration = document.createElement("itunes:duration");
+			        itDuration.setTextContent(course.getDurationStringItunes());
+			        item.appendChild(itDuration);
+			        
+			     // Getting tags of the course
+					String tags="";
+					List<Tag> listTags = db.getTagsByCourse(course);
+					for(int i=0;i<listTags.size();i++) {
+							tags=tags + "," + listTags.get(i).getTag();
+					}
+			        
+			        Element itItemKeywords = document.createElement("itunes:keywords");
+			        itItemKeywords.setTextContent(itunesKeywords + tags);
+			        item.appendChild(itItemKeywords);
+			        
 				}
 			}
 		        

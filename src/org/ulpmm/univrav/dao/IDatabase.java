@@ -387,7 +387,7 @@ public interface IDatabase {
 	 * @param start the start number of courses
 	 * @return the list of course
 	 */
-	public List<Course> getCourses(User u, int number, int start);
+	public List<Course> getCoursesByUser(User u, Integer number, Integer start);
 	
 	/**
 	 * Gets the total number of courses

@@ -37,10 +37,18 @@ public interface IService {
 	 * @param rssImageUrl the URL of the RSS image files
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
+	 * @param rssCategory the category of the RSS file
+	 * @param itunesAuthor The itunes author
+	 * @param itunesSubtitle The itunes subtitle
+	 * @param itunesSummary The itunes summary
+	 * @param itunesImage The itunes image
+	 * @param itunesCategory The itunes category
+	 * @param itunesKeywords The itunes keywords
 	 */
 	public void addCourse(Course c, String courseArchive, String tags, String rssFolderPath, 
 			String rssName, String rssTitle, String rssDescription, String serverUrl, 
-			String rssImageUrl, String recordedInterfaceUrl, String language);
+			String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords);
 	
 	/**
 	 * Adds a new course from Univ-R
@@ -62,16 +70,24 @@ public interface IService {
 	 * @param rssImageUrl the URL of the RSS image files
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
+	 * @param rssCategory the category of the RSS file
+	 * @param itunesAuthor The itunes author
+	 * @param itunesSubtitle The itunes subtitle
+	 * @param itunesSummary The itunes summary
+	 * @param itunesImage The itunes image
+	 * @param itunesCategory The itunes category
+	 * @param itunesKeywords The itunes keywords
 	 */
 	public void completeUnivrCourse(Course c, Univr u, String courseArchive , String rssFolderPath, 
 			String rssName, String rssTitle, String rssDescription, String serverUrl, 
-			String rssImageUrl, String recordedInterfaceUrl, String language);
+			String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords);
 	
 	/**
 	 * Creates a course from an uploaded audio or video media file
 	 * @param c the course to create
 	 * @param mediaFile the media file of the course to create
-	 * @param tags list
+	 * @param tags tags list
 	 * @param rssFolderPath the path of the folder to store the RSS files
 	 * @param rssName the filename of the general RSS file
 	 * @param rssTitle the title of the RSS files
@@ -81,10 +97,18 @@ public interface IService {
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
 	 * @param hq High Quality
+	 * @param rssCategory the category of the RSS file
+	 * @param itunesAuthor The itunes author
+	 * @param itunesSubtitle The itunes subtitle
+	 * @param itunesSummary The itunes summary
+	 * @param itunesImage The itunes image
+	 * @param itunesCategory The itunes category
+	 * @param itunesKeywords The itunes keywords
 	 */
-	public void mediaUpload( Course c, FileItem mediaFile, String tags, String rssFolderPath, 
+	public void mediaUpload( Course c, FileItem mediaFile, String tags , String rssFolderPath, 
 		String rssName, String rssTitle, String rssDescription, String serverUrl, 
-		String rssImageUrl, String recordedInterfaceUrl, String language,boolean hq);
+		String rssImageUrl, String recordedInterfaceUrl, String language,boolean hq, String rssCategory, String itunesAuthor,
+		String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords);
 	
 	/**
 	 * Gets a list of all the courses (no-Univr)
@@ -380,18 +404,25 @@ public interface IService {
 	
 	/**
 	 * Creates the RSS files for all the courses and teachers
-	 * 
 	 * @param rssFolderPath the path of the folder to store the RSS files
-	 * @param rssFileName the filename of the general RSS file
+	 * @param rssName the filename of the general RSS file
 	 * @param rssTitle the title of the RSS files
 	 * @param rssDescription the description of the RSS files
 	 * @param serverUrl the URL of the application on the server
 	 * @param rssImageUrl the URL of the RSS image files
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
+	 * @param rssCategory the category of the RSS file
+	 * @param itunesAuthor The itunes author
+	 * @param itunesSubtitle The itunes subtitle
+	 * @param itunesSummary The itunes summary
+	 * @param itunesImage The itunes image
+	 * @param itunesCategory The itunes category
+	 * @param itunesKeywords The itunes keywords
 	 */
-	public void generateRss( String rssFolderPath, String rssFileName, String rssTitle, String rssDescription, 
-			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language);
+	public void generateRss( String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
+			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language,String rssCategory, String itunesAuthor,
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords);
 	
 	/**
 	 * Creates the RSS files for all the courses and the teacher of the course in parameter
@@ -404,9 +435,17 @@ public interface IService {
 	 * @param rssImageUrl the URL of the RSS image files
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
+	 * @param rssCategory the category of the RSS file
+	 * @param itunesAuthor The itunes author
+	 * @param itunesSubtitle The itunes subtitle
+	 * @param itunesSummary The itunes summary
+	 * @param itunesImage The itunes image
+	 * @param itunesCategory The itunes category
+	 * @param itunesKeywords The itunes keywords
 	 */
 	public void generateRss( Course c, String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
-			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language);
+			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language,String rssCategory, String itunesAuthor,
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords);
 	
 	/**
 	 * Sends a message over a socket to the Univ-R AV client
@@ -526,7 +565,7 @@ public interface IService {
 	 * @param start the start number of courses
 	 * @return the list of course
 	 */
-	public List<Course> getCourses(User u, int number,int start);
+	public List<Course> getCoursesByUser(User u, Integer number, Integer start);
 	
 	/**
 	 * Gets the total number of courses

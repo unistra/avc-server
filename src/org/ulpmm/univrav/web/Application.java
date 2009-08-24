@@ -111,10 +111,25 @@ public class Application extends HttpServlet {
 	private static String serverUrl;
 	/** The url of the rss image */
 	private static String rssImageUrl;
+	/** the RSS category */
+	private static String rssCategory;
 	/** The url of the recorded interface */
 	private static String recordedInterfaceUrl;
 	/** The language */
 	private static String language;
+	
+	/** The itunes author */
+	private static String itunesAuthor;
+	/** The itunes subtitle */
+	private static String itunesSubtitle;
+	/** The itunes summary */
+	private static String itunesSummary;
+	/** The itunes image */
+	private static String itunesImage;
+	/** The itunes category */
+	private static String itunesCategory;
+	/** The itunes keywords */
+	private static String itunesKeywords;
 	
 	/** The numbers of last courses to display */
 	private static int lastCourseNumber;
@@ -148,6 +163,9 @@ public class Application extends HttpServlet {
 	
 	/** the url for cas logout */
 	private static String casLogoutUrl;
+	
+	/** Additional document formats **/
+	private static String addDocFormats;
 	
 	/**
 	 * Initialization of the servlet. <br>
@@ -195,14 +213,23 @@ public class Application extends HttpServlet {
 			flashServerIp = p.getProperty("flashServerIp");
 						
 						
-			// The settings of the RSS files
+			// The settings of the RSS files, of the permalien (interface flash) and of emails
 			rssTitle = p.getProperty("rssTitle");
 			rssName = p.getProperty("rssName");
 			rssDescription = p.getProperty("rssDescription");
 			serverUrl = p.getProperty("serverUrl");
 			rssImageUrl = p.getProperty("rssImageUrl");
+			rssCategory = p.getProperty("rssCategory");
 			recordedInterfaceUrl = p.getProperty("recordedInterfaceUrl");
 			language = p.getProperty("language");
+			
+			// The setting of the RSS files for iTunes
+			itunesAuthor = p.getProperty("itunesAuthor");
+			itunesSubtitle = p.getProperty("itunesSubtitle");
+			itunesSummary = p.getProperty("itunesSummary");
+			itunesImage = p.getProperty("itunesImage");
+			itunesCategory = p.getProperty("itunesCategory");
+			itunesKeywords = p.getProperty("itunesKeywords");
 			
 			// The numbers of courses to display at the same time
 			lastCourseNumber = Integer.parseInt(p.getProperty("lastCourseNumber"));
@@ -231,6 +258,9 @@ public class Application extends HttpServlet {
 			
 			//cas logout url
 			casLogoutUrl = p.getProperty("casLogoutUrl");
+			
+			//add doc formats
+			addDocFormats = p.getProperty("addDocFormats");
 							
 			/* Datasource retrieving */
 			
@@ -267,7 +297,7 @@ public class Application extends HttpServlet {
 			
 			/* Creation of the RSS files */
 			
-			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 			
 		}
 		catch( IOException e) {
@@ -442,7 +472,7 @@ public class Application extends HttpServlet {
 			service.deleteTests(testKeyWord1);
 			service.hideTests(testKeyWord2, testKeyWord3);
 			/* Regeneration of the RSS files */
-			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		}
 		else if( page.equals("/thick_codeform")) {
 			request.setAttribute("id", request.getParameter("id"));
@@ -487,7 +517,7 @@ public class Application extends HttpServlet {
 			service.deleteTag(courseid);
 			service.deleteCourse(courseid, service.getCourse(courseid).getMediaFolder());
 			/* Regeneration of the RSS files */
-			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 			response.sendRedirect(response.encodeRedirectURL("./admin_courses"));
 		}
 		else if( page.equals("/admin_validatecourse"))
@@ -564,7 +594,7 @@ public class Application extends HttpServlet {
 			service.deleteTag(courseid);
 			service.deleteCourse(courseid, service.getCourse(courseid).getMediaFolder());
 			/* Regeneration of the RSS files */
-			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 			response.sendRedirect(response.encodeRedirectURL("./admin_univr"));
 		}
 		else if( page.equals("/admin_validateunivr"))
@@ -853,7 +883,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("page", pageNumber);
 			request.setAttribute("teachers", service.getTeachers());
 			request.setAttribute("formations", service.getFormations());
-			request.setAttribute("courses", service.getCourses(user,recordedCourseNumber,start));
+			request.setAttribute("courses", service.getCoursesByUser(user,recordedCourseNumber,start));
 			request.setAttribute("items", service.getCourseNumber(user));
 			request.setAttribute("number", recordedCourseNumber);
 			request.setAttribute("resultPage", "myspace_home");
@@ -1565,7 +1595,8 @@ public class Application extends HttpServlet {
 				
 		String id, title, description, mediapath, media, timing, name, firstname, formation, genre, login, email,tags;
 		boolean visible;
-		String message = "";
+		String message, message2, ahref, ahref2;
+		message=message2=ahref=ahref2="";
 		String messageType = "information";
 		
 		/* The client sends parameters in the ISO8859-15 encoding */
@@ -1643,12 +1674,14 @@ public class Application extends HttpServlet {
 							null, // The media folder can't be set yet
 							false,
 							user!=null ? user.getUserid() : null,
-							null
+							null,
+							true
 					);
 					
 					service.addCourse(c, media, tags, getServletContext().getRealPath("/rss"), 
 							rssName, rssTitle, rssDescription, serverUrl, 
-							rssImageUrl, recordedInterfaceUrl, language);
+							rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor,
+							itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 				}
 				else { // Univ-R course
 					int courseid = Integer.parseInt(id);
@@ -1660,7 +1693,8 @@ public class Application extends HttpServlet {
 					c.setUserid(user!=null ? user.getUserid() : null);
 					service.completeUnivrCourse(c, u, media, getServletContext().getRealPath("/rss"), 
 							rssName, rssTitle, rssDescription, serverUrl, 
-							rssImageUrl, recordedInterfaceUrl, language);
+							rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor,
+							itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 				}
 								
 				// Sending email for the user
@@ -1692,7 +1726,16 @@ public class Application extends HttpServlet {
 						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail3);
 				}
 				
-				message = "File successfully sent !";
+				message = "File successfully sent. Your course named \"" + c.getTitle() +"\" will be published on: ";
+				ahref = recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash";
+				message2 = "You can access in your space here: ";
+				ahref2 = serverUrl + "/avc/authentication_cas?returnPage=myspace";
+			
+				
+				request.setAttribute("messagetype2", messageType);
+				request.setAttribute("message2", message2);
+				request.setAttribute("ahref", ahref);
+				request.setAttribute("ahref2", ahref2);
 			}
 			catch( DaoException de) {
 				messageType = "error";
@@ -1902,13 +1945,15 @@ public class Application extends HttpServlet {
 										null, // The media folder can't be set yet
 										hq,
 										user.getUserid(),
-										null
+										null,
+										true
 								);
 
 								/* Sends the creation of the course to the service layer */
 								service.mediaUpload(c, item, tags, getServletContext().getRealPath("/rss"), 
 										rssName, rssTitle, rssDescription, serverUrl, 
-										rssImageUrl, recordedInterfaceUrl, language,hq);
+										rssImageUrl, recordedInterfaceUrl, language,hq, rssCategory, itunesAuthor,
+										itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 
 								// Sending email for the user
 								String emailUserSubject = "Your new file on Univr-AV";
@@ -2082,6 +2127,8 @@ public class Application extends HttpServlet {
 					
 					request.setAttribute("serverUrl",serverUrl);
 					request.setAttribute("tags", service.getTagsByCourse(c));
+													
+					request.setAttribute("rssfiles", service.getRssCourseFileList(c));
 					
 					/* displays the .jsp view */
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
@@ -2129,7 +2176,7 @@ public class Application extends HttpServlet {
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_fullflash.jsp").forward(request, response);
 					
 				}*/
-				else if(type.equals("smil") ||type.equals("mp3") || type.equals("ogg") || type.equals("zip") || type.equals("pdf")) {
+				else if(c.isDownload() & (type.equals("smil") ||type.equals("mp3") || type.equals("ogg") || type.equals("zip") || type.equals("pdf"))) {
 					String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
 					
 					/* Initializes the headers */
@@ -2242,10 +2289,10 @@ public class Application extends HttpServlet {
 			Integer.parseInt(request.getParameter("consultations")),
 			! request.getParameter("timing").equals("") ? request.getParameter("timing") : null,
 			! request.getParameter("mediaFolder").equals("") ? request.getParameter("mediaFolder") : null,
-			//request.getParameter("highquality") != null ? true : false,
 			Boolean.parseBoolean(request.getParameter("highquality")),
 			! request.getParameter("userid").equals("0") ? Integer.parseInt(request.getParameter("userid")) : null,
-			! request.getParameter("adddocname").equals("") ? request.getParameter("adddocname") : null		
+			! request.getParameter("adddocname").equals("") ? request.getParameter("adddocname") : null,
+			request.getParameter("download") != null ? true : false
 		);
 		service.modifyCourse(c);
 		
@@ -2268,7 +2315,7 @@ public class Application extends HttpServlet {
 		
 		/* Generation of the RSS files */
 		if( c.getGenre() == null)
-			service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language);
+			service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		response.sendRedirect(response.encodeRedirectURL(redirectUrl));
 	}
 	
@@ -2511,7 +2558,8 @@ public class Application extends HttpServlet {
 									null, // The media folder can't be set yet
 									false,
 									null,
-									null
+									null,
+									true
 							);
 							
 							Univr u = new Univr(courseId, user, group,estab);
@@ -2970,15 +3018,20 @@ public class Application extends HttpServlet {
 						fileName = item.getName();
 						String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()) : "";
 
+						/* Checks the extension of the item to have a supported file format */				
+						StringTokenizer stokadf = new StringTokenizer(addDocFormats);
+						boolean isExtVal = false;
+						while(stokadf.hasMoreTokens() && !isExtVal) {
+							isExtVal = extension.equals(stokadf.nextToken());
+						}
+																		
 						// Test the form
 						if(fileName==null || fileName.equals("")) {
 							messageType = "error";
 							message = "File must be completed";							
 						}
 						/* Checks the extension of the item to have a supported file format */
-						else if( !extension.equals("pdf") && !extension.equals("ppt") && !extension.equals("pptx") && !extension.equals("odp") 
-								&& !extension.equals("docx") && !extension.equals("doc") && !extension.equals("odt") && !extension.equals("zip") ) {
-
+						else if(!isExtVal) {
 							messageType = "error";
 							message = "Error: Not supported file format : " + extension;
 						}
