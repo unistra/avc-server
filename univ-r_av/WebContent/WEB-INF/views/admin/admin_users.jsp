@@ -58,6 +58,9 @@
 	    		<display:column title="Activate" sortable="true">
 					<input type="checkbox" disabled="disabled" ${users.activate == true ? 'checked' : '' } />
 				</display:column>
+				<display:column title="Rss" sortable="false">
+					<a href="../rss/lgn_${fn:replace(users.login,'.','_')}.xml">Link</a>
+				</display:column>
 	    		<display:column>
 					<a href="<c:url value="${editurl}?id=${users.userid}" />">Edit</a>
 				</display:column>
