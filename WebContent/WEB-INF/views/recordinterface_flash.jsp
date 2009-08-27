@@ -117,10 +117,16 @@
 						<div id="permaliencollink">
 							<a href="javascript:switchDetails('permalien')"><fmt:message key="[+] plus de détails"/></a>
 						</div>	   				
-						<div id="permaliencoldetails" class="hidden">					
-							<b>URL <fmt:message key="Auteur"/>:</b> <input id="permalieninput" type="text" value="${serverUrl}/avc/courses?author=${course.name} ${course.firstname}" onClick="javascript:focus();select();" readonly>
+						<div id="permaliencoldetails" class="hidden">				
+							<c:url var="permaauthor" scope="page" value="${serverUrl}/avc/courses">
+								<c:param name="author" value="${course.name} ${course.firstname}"/>
+							</c:url>	
+							<b>URL <fmt:message key="Auteur"/>:</b> <input id="permalieninput" type="text" value="${permaauthor}" onClick="javascript:focus();select();" readonly>
 							<br>
-							<b>URL <fmt:message key="Formation"/>:</b> <input id="permalieninput" type="text" value="${serverUrl}/avc/courses?formation=${course.formation}" onClick="javascript:focus();select();" readonly>
+							<c:url var="permaformation" scope="page" value="${serverUrl}/avc/courses">
+								<c:param name="formation" value="${course.formation}"/>
+							</c:url>	
+							<b>URL <fmt:message key="Formation"/>:</b> <input id="permalieninput" type="text" value="${permaformation}" onClick="javascript:focus();select();" readonly>
 							<br>
 							<a href="javascript:switchDetails('permalien')"><fmt:message key="[-] moins de détails"/></a>
 						</div> 
