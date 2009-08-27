@@ -93,7 +93,7 @@
 				<table>
 					 <c:if test="${publication_type == 'serverCas'}">
 	   				 <tr class="odd">
-						<td><fmt:message key="login"/> : </td>
+						<td title="<fmt:message key="ib_login"/>"><fmt:message key="login"/> : </td>
 						<c:choose>
 							<c:when test="${user != null and publication_type == 'serverCas'}">
 								<td><input type="text" name="login" class="txtDisabled" <c:out value="${disabledField}"/> readonly="readonly" value="${user.login }" > </td>
@@ -104,7 +104,7 @@
 						</c:choose>
 					</tr>
 					<tr class="even">
-						<td>E-mail : </td>
+						<td title="<fmt:message key="ib_email"/>">E-mail : </td>
 						<c:choose>
 							<c:when test="${user != null and publication_type == 'serverCas'}">
 								<td><input type="text" name="email" class="txtDisabled" <c:out value="${disabledField}"/> readonly="readonly" value="${user.email }" > </td>
@@ -116,15 +116,15 @@
 					</tr>
 					</c:if>
 					<tr class="odd">
-						<td><fmt:message key="title"/><b class="boldStar">*</b> : </td>
+						<td title="<fmt:message key="ib_title"/>"><fmt:message key="title"/><b class="boldStar">*</b> : </td>
 						<td><input type="text" name="title" class="${classField}" <c:out value="${disabledField}"/> value="${title}"> </td>
 					</tr>
 					<tr class="even">
-						<td><fmt:message key="description"/> : </td>
+						<td title="<fmt:message key="ib_desc"/>"><fmt:message key="description"/> : </td>
 						<td><input type="text" name="description" class="${classField}" <c:out value="${disabledField}"/> value="${description}"></td>
 					 </tr>
 					<tr class="odd"> 
-						<td><fmt:message key="name"/><b class="boldStar">*</b> : </td>
+						<td title="<fmt:message key="ib_name"/>"><fmt:message key="name"/><b class="boldStar">*</b> : </td>
 						<c:choose>
 							<c:when test="${user != null and publication_type == 'serverCas' and message==null}">
 								<td><input type="text" name="name" class="${classField}" <c:out value="${disabledField}"/> value="${user.lastname }" > </td>
@@ -135,7 +135,7 @@
 						</c:choose>
 					</tr>
 					<tr class="even">
-						<td><fmt:message key="firstname"/> : </td>
+						<td title="<fmt:message key="ib_firstname"/>"><fmt:message key="firstname"/> : </td>
 						<c:choose>
 							<c:when test="${user!=null and publication_type == 'serverCas' and message==null}">
 								<td><input type="text" name="firstname" class="${classField}" <c:out value="${disabledField}"/> value="${user.firstname }" > </td>
@@ -146,19 +146,19 @@
 						</c:choose>
 					</tr>
 					<tr class="odd">
-						<td><fmt:message key="ue"/> : </td>
+						<td title="<fmt:message key="ib_form"/>"><fmt:message key="ue"/> : </td>
 						<td><input type="text" name="ue" class="${classField}" <c:out value="${disabledField}"/> value="${ue}"> </td>
 					</tr>
 					<tr class="even">
-						<td><fmt:message key="Code d'acc&egrave;s"/> : </td>
+						<td title="<fmt:message key="ib_code"/>"><fmt:message key="Code d'acc&egrave;s"/> : </td>
 						<td><input type="text" name="genre" class="${classField}" <c:out value="${disabledField}"/> value="${genre }"></td>
 					</tr>				
 					<tr class="odd">
-				    	<td>Tags</td>
+				    	<td title="<fmt:message key="ib_tags"/>">Tags</td>
 				  	  <td><input type="text" name="tags" class="${classField}" <c:out value="${disabledField}"/> value="${tags }"></td>
 			    	</tr>
 			    	<tr class="even">
-					    <td>Visible</td>
+					    <td title="<fmt:message key="ib_visible"/>">Visible</td>
 					    <td><input type="checkbox" name="visible" <c:out value="${checkedVisbleField}"/> <c:out value="${disabledField}"/>></td>
 			   		</tr>
 			    	<tr>

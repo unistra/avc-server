@@ -61,23 +61,23 @@
 	    	<form action="<c:url value="./myspace_mediaupload"/>" method="post" enctype="multipart/form-data">
 				<table>
 				<tr class="odd"> 
-					<td><fmt:message key="login"/> : </td>
+					<td title="<fmt:message key="ib_login"/>"><fmt:message key="login"/> : </td>
 					<td><input type="text" value="${user.login}" readonly="readonly" class="txtDisabled"> </td>
 				</tr>
 				<tr class="even"> 
-					<td>E-mail : </td>
+					<td title="<fmt:message key="ib_email"/>">E-mail : </td>
 					<td><input type="text" name="email" class="txtDisabled" readonly="readonly" value="${user.email }" > </td>
 				</tr>
 				<tr class="odd">
-					<td><fmt:message key="title"/><b class="boldStar">*</b> : </td>
+					<td title="<fmt:message key="ib_title"/>"><fmt:message key="title"/><b class="boldStar">*</b> : </td>
 					<td><input type="text" name="title" class="field" value="${title}"> </td>
 				</tr>
 				<tr class="even">
-					<td><fmt:message key="description"/> : </td>
+					<td title="<fmt:message key="ib_desc"/>"><fmt:message key="description"/> : </td>
 					<td><input type="text" name="description" class="field" value="${description}"></td>
 				 </tr>
 				<tr class="odd">
-					<td><fmt:message key="name"/><b class="boldStar">*</b> : </td>
+					<td title="<fmt:message key="ib_name"/>"><fmt:message key="name"/><b class="boldStar">*</b> : </td>
 				 	<c:choose>
 						<c:when test="${message==null}">
 							<td><input type="text" name="name" value="${user.lastname}" class="field"> </td>
@@ -88,7 +88,7 @@
 					</c:choose>
 				</tr>
 				<tr class="even">
-					<td><fmt:message key="firstname"/> : </td>
+					<td title="<fmt:message key="ib_firstname"/>"><fmt:message key="firstname"/> : </td>
 				 	<c:choose>
 						<c:when test="${message==null}">
 							<td><input type="text" name="firstname" value="${user.firstname}" class="field"> </td>
@@ -99,27 +99,27 @@
 					</c:choose>
 				</tr>
 				<tr class="odd">
-					<td><fmt:message key="ue"/> : </td>
+					<td title="<fmt:message key="ib_form"/>"><fmt:message key="ue"/> : </td>
 					<td><input type="text" name="formation" class="field" value="${ue}"> </td>
 				</tr>
 				<tr class="even">
-					<td><fmt:message key="Code d'acc&egrave;s"/> : </td>
+					<td title="<fmt:message key="ib_code"/>"><fmt:message key="Code d'acc&egrave;s"/> : </td>
 					<td><input type="password" name="genre" class="field" value="${genre}"></td>
 				</tr>
 				<tr class="odd">
-				   	<td>Tags</td>
+				   	<td title="<fmt:message key="ib_tags"/>">Tags</td>
 					<td><input type="text" name="tags" class="field" value="${tags}"></td>
 			    </tr>
 			    <tr class="even">
-				    <td>Visible</td>
+				    <td title="<fmt:message key="ib_visible"/>">Visible</td>
 				    <td><input type="checkbox" name="visible" <c:out value="${checkedVisbleField}"/>></td>
 			   	</tr>
 				<tr class="odd">
-					<td><fmt:message key="hd"/> : </td>
+					<td title="<fmt:message key="ib_hq"/>"><fmt:message key="hd"/> : </td>
 					<td><input type="checkbox" name="hd" <c:out value="${checkedHdField}"/>> <font class="chpsHd"><fmt:message key="uploadmessage4"/></font> </td>
 				</tr>
 				<tr class="even">
-					<td><fmt:message key="file"/><b class="boldStar">*</b> : </td>
+					<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/><b class="boldStar">*</b> : </td>
 					<td><input type="file" name="media" class="field"> </td>
 				</tr>
 				<tr>

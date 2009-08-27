@@ -1124,7 +1124,7 @@ public class DatabaseImpl implements IDatabase {
 			
 			pstmt.setBoolean(15, c.isHighquality());
 			
-			if(c.getUserid() !=null)
+			if(c.getUserid() !=null && c.getUserid() !=0)
 				pstmt.setInt(16, c.getUserid());
 			else
 				pstmt.setNull(16, Types.INTEGER);

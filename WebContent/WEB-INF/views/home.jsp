@@ -108,7 +108,10 @@
 				<div class="flexcroll">	
 				<table cellspacing="0" class="tableHome">
 					<tr class="tableheader">
-						<th colspan="3" id="courses"><fmt:message key="collection"/>: <b class="titleColl">${collectionname}</b></th>
+						<c:url var="permaformation" scope="page" value="${serverUrl}/avc/courses">
+							<c:param name="formation" value="${collectionname}"/>
+						</c:url>	
+						<th colspan="3" id="courses"><fmt:message key="collection"/>: <a href="${permaformation}"><b class="titleColl">${collectionname}</b></a></th>
 					</tr>
 					<c:import url="include/homecourselist.jsp">
 						<c:param name="courses" value="collectioncourses"/>
