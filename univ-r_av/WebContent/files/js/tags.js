@@ -35,22 +35,27 @@ function LienCumulTags() {
 
 // To delete a tag from the URL
 function closeTag(tag) {
-	
-	tag=encodeURI(tag);
-	
-	var debTag = parent.location.href.lastIndexOf(tag);
-	var finTag = parent.location.href.lastIndexOf(tag)+tag.length;
-	
-	// To delete the character "+" of the URL
-	if(parent.location.href.substring(debTag-1,debTag)=='+') {
-		debTag = debTag-1;
-	}
-		
-	// Remove the tag from the url
-	url = parent.location.href.substring(0,debTag) +
-	parent.location.href.substring(finTag,parent.location.href.length);
-		
-	parent.location.href = url;
+   
+    var debTag = parent.location.href.lastIndexOf(tag);
+    var finTag = parent.location.href.lastIndexOf(tag)+tag.length;
+   
+    // Because difference between IE/Mozilla with accents (ex: IE print 'é', Mozilla print '%C3%A9')
+    if(parent.location.href.lastIndexOf(tag)=='-1') {
+        tag=encodeURI(tag);
+        debTag = parent.location.href.lastIndexOf(tag);
+        finTag = parent.location.href.lastIndexOf(tag)+tag.length;
+    }
+   
+    // To delete the character "+" of the URL
+    if(parent.location.href.substring(debTag-1,debTag)=='+') {
+        debTag = debTag-1;
+    }
+       
+    // Remove the tag from the url
+    url = parent.location.href.substring(0,debTag) +
+    parent.location.href.substring(finTag,parent.location.href.length);
+       
+    parent.location.href = url;
 }
 
 
