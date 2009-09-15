@@ -167,6 +167,11 @@ public class Application extends HttpServlet {
 	/** Additional document formats **/
 	private static String addDocFormats;
 	
+	/** To lock access of Medicine course and live with UDS account **/
+	private static Boolean lockMedicine;
+	private static Integer buildingMedicineId;
+	private static String disciplineMedicine;
+	
 	/**
 	 * Initialization of the servlet. <br>
 	 *
@@ -261,6 +266,15 @@ public class Application extends HttpServlet {
 			
 			//add doc formats
 			addDocFormats = p.getProperty("addDocFormats");
+			
+			// lock medicine 
+			lockMedicine = Boolean.parseBoolean(p.getProperty("lockMedicine"));
+			
+			// building medicine id
+			buildingMedicineId = !p.getProperty("buildingMedicineId").equals("") ? Integer.parseInt(p.getProperty("buildingMedicineId")) : -1;
+			
+			// name of the medicine discipline
+			disciplineMedicine = p.getProperty("disciplineMedicine");
 							
 			/* Datasource retrieving */
 			
@@ -283,7 +297,7 @@ public class Application extends HttpServlet {
 					getServletContext().getRealPath("/") + "scripts",
 					ftpFolder, coursesFolder, liveFolder, coursesUrl,
 					defaultMp3File, defaultRmFile, defaultSmilFile, 
-					defaultFlashFile, defaultScreenshotsFolder, comment
+					defaultFlashFile, defaultScreenshotsFolder, comment,lockMedicine,buildingMedicineId
 			);
 			UnivrDaoImpl ud = new UnivrDaoImpl();
 			
@@ -399,12 +413,6 @@ public class Application extends HttpServlet {
 			displayHomePage(request, response);
 		else if (page.equals("/authentication_cas")) 
 			authenticationCas(request,response);
-		/*TODO else if (page.equals("/authentication")) 
-			authentication(request,response);
-		else if( page.equals("/validateAuthentication"))
-			validateAuthentication(request, response);
-		else if( page.equals("/create_account"))
-			displayCreateAccount(request, response);*/
 		else if (page.equals("/myspace_home")) 
 			displayMyspace(request,response);
 		else if(page.equals("/logout")) 
@@ -413,10 +421,6 @@ public class Application extends HttpServlet {
 			displayPublicationPage(request,response);
 		else if(page.equals("/publication_validatepublication")) 
 			validatePublication(request,response);
-		/*TODO else if(page.equals("/myemail"))
-			DisplayMyEmail(request,response);
-		else if(page.equals("/modifyemail"))
-			ModifyEmail(request,response);*/
 		else if( page.equals("/live"))
 			displayLivePage(request, response);
 		else if( page.equals("/recorded"))
@@ -711,7 +715,7 @@ public class Application extends HttpServlet {
 		/* initializes the model */
 		request.setAttribute("teachers", service.getTeachers());
 		request.setAttribute("formations", service.getFormations());
-		request.setAttribute("lastcourses", service.getNLastCourses(lastCourseNumber, testKeyWord2, testKeyWord3));
+		request.setAttribute("lastcourses", service.getNLastCourses(lastCourseNumber, testKeyWord2, testKeyWord3,lockMedicine,buildingMedicineId));
 		request.setAttribute("selectioncourses", service.getNSelectionCourses(selectionCourseNumber, testKeyWord2, testKeyWord3));
 		request.setAttribute("collectioncourses", service.getNFormationCourses(collectionCourseNumber, testKeyWord2, testKeyWord3));
 		request.setAttribute("collectionname", service.getSelection(1)!=null ? service.getSelection(1).getFormationcollection() : "");
@@ -727,62 +731,6 @@ public class Application extends HttpServlet {
 		/* Displays the view */
 		getServletContext().getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
 	}
-	
-	/**
-	 * Method to authenticate a user with a jsp page
-	 * @param request the request send by the client to the server
-	 * @param response the response send by the server to the client
-	 * @throws ServletException if an error occurred
-	 * @throws IOException if an error occurred
-	 */
-	/*TODO private void authentication(HttpServletRequest request, HttpServletResponse response)
-	throws ServletException, IOException {
-		
-		request.setAttribute("posturl", "./validateAuthentication");
-		request.setAttribute("gobackurl", "./home");
-		request.setAttribute("createaccounturl", "./create_account");
-		
-		/ Displays the view 
-		getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/login.jsp").forward(request, response);
-
-	}*/
-	
-	/**
-	 * Method to validate authentication form
-	 * 
-	 * @param request the request send by the client to the server
-	 * @param response the response send by the server to the client
-	 * @throws ServletException if an error occurred
-	 * @throws IOException if an error occurred
-	 */
-	/*TODO private void validateAuthentication(HttpServletRequest request, HttpServletResponse response) 
-		throws ServletException, IOException {
-		
-		// Test form paramaters
-		if( ! (request.getParameter("login").equals("") || request.getParameter("password").equals(""))) {
-			//encrypt the password into SHA1	
-			String passSha = service.encrypt(request.getParameter("password"));
-			//Gets the user
-			User user = service.getUser(request.getParameter("login"),passSha);
-			//if the user is authenticate and activate
-			if(user!=null && user.isActivate()) {
-				// Sets the user's login in the session
-				session.setAttribute("$userLogin", user.getLogin());			
-				response.sendRedirect(response.encodeRedirectURL("./myspace_home"));
-			}
-			else {
-				request.setAttribute("messagetype", "error");
-				request.setAttribute("message", "Wrong login or password. Try again.");
-				getServletContext().getRequestDispatcher("/avc/authentication").forward(request, response);
-				
-			}
-		}
-		else {
-			request.setAttribute("messagetype", "error");
-			request.setAttribute("message", "All fields must be completed");
-			getServletContext().getRequestDispatcher("/avc/authentication").forward(request, response);
-		}
-	}*/
 	
 	
 	/**
@@ -807,18 +755,29 @@ public class Application extends HttpServlet {
 				if(user==null) {
 					service.addUser(new User(0,casUser,null,null,null,null,null,"ldap",true));
 				}
-								
+							
+				session.setAttribute("btnDeco", true);
+				
 				//REDIRECTION
+				// Publication
 				if(request.getParameter("returnPage")!=null && request.getParameter("returnPage").equals("publication")) {
 					request.setAttribute("publication_type", "serverCas");
 					getServletContext().getRequestDispatcher("/avc/publication").forward(request, response);
 				}
+				//Myspace
 				else if(request.getParameter("returnPage")!=null && request.getParameter("returnPage").equals("myspace")) {
 					getServletContext().getRequestDispatcher("/avc/myspace_home").forward(request, response);
 				}	
+				//Course access for medicine
+				else if(request.getParameter("returnPage")!=null && request.getParameter("returnPage").equals("courseaccess")) {
+					getServletContext().getRequestDispatcher("/avc/courseaccess").forward(request, response);
+				}
+				//Live access for medicine
+				else if(request.getParameter("returnPage")!=null && request.getParameter("returnPage").equals("liveaccess")) {
+					getServletContext().getRequestDispatcher("/avc/liveaccess").forward(request, response);
+				}
 				// from ENT
 				else {
-					session.setAttribute("btnDeco", true);
 					response.sendRedirect("./home");
 				}
 				
@@ -831,15 +790,6 @@ public class Application extends HttpServlet {
 		
 	}
 	
-	/*TODO private void displayCreateAccount(HttpServletRequest request, HttpServletResponse response)
-	throws ServletException, IOException {
-	
-	request.setAttribute("posturl", "./validate_");
-	request.setAttribute("gobackurl", "./authentication");
-	
-	/ Displays the view 
-	getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/createAccount.jsp").forward(request, response);
-	}*/
 	
 	/**
 	 * Method to display the myspace page
@@ -954,7 +904,7 @@ public class Application extends HttpServlet {
 		if(request.getParameter("mediapath")!=null) {
 			session.setAttribute("publication_mediapath", request.getParameter("mediapath"));
 		}
-
+		
 		// Standard course
 		if( request.getParameter("id")==null || request.getParameter("id").equals("") || request.getParameter("id").equals("(id:no)") || request.getParameter("id").equals("None") ) {
 
@@ -967,6 +917,15 @@ public class Application extends HttpServlet {
 			request.setAttribute("genre", request.getParameter("genre"));
 			request.setAttribute("tags", request.getParameter("tags"));
 			request.setAttribute("visible", request.getParameter("visible"));
+			
+			// to set the discipline into the formulaire
+			if(lockMedicine) {
+				Amphi a = service.getAmphi(request.getRemoteAddr());	
+				if(a!=null && a.getBuildingid() == buildingMedicineId) {
+					request.setAttribute("ue", disciplineMedicine);	
+					request.setAttribute("lockMedicine", lockMedicine);	
+				}
+			}
 
 			//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
 			String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
@@ -1035,84 +994,6 @@ public class Application extends HttpServlet {
 		}
 	}
 	
-	/**
-	 * Method to display the myemail page
-	 * 
-	 * @param request the request send by the client to the server
-	 * @param response the response send by the server to the client
-	 * @throws ServletException if an error occurred
-	 * @throws IOException if an error occurred
-	 */
-/*TODO	private void DisplayMyEmail(HttpServletRequest request, HttpServletResponse response)
-	throws ServletException, IOException {
-		
-		if(session.getAttribute("$userLogin")!=null) {
-			
-			// Gets the user from the session
-			User user=service.getUser(session.getAttribute("$userLogin").toString());
-			
-			request.setAttribute("user", user);
-			request.setAttribute("gobackurl", "./myspace_home");
-			
-			// Button disconnect
-			session.setAttribute("btnDeco", true);
-			
-			/ Displays the view 
-			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myemail.jsp").forward(request, response);
-	
-		
-		}
-		else {
-			//TODO response.sendRedirect("./authentication");
-			request.setAttribute("messagetype", "error");
-			request.setAttribute("message", "You don't have access to this page");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
-		}
-		
-	}*/
-	
-	/**
-	 * Method to modify an email
-	 * 
-	 * @param request the request send by the client to the server
-	 * @param response the response send by the server to the client
-	 * @throws ServletException if an error occurred
-	 * @throws IOException if an error occurred
-	 */
-/*TODO	private void ModifyEmail(HttpServletRequest request, HttpServletResponse response)
-	throws ServletException, IOException {
-					
-		if(session.getAttribute("$userLogin")!=null) {
-
-			// Check the user login
-			if(session.getAttribute("$userLogin").toString().compareTo(request.getParameter("login"))==0) {
-
-				// Gets the user from database
-				User user=service.getUser(session.getAttribute("$userLogin").toString());
-				
-				user.setEmail(! request.getParameter("nouveauEmail").equals("") ? request.getParameter("nouveauEmail") : request.getParameter("emailActuel"));
-				service.modifyUser(user);
-
-				/ Displays the view 
-				request.setAttribute("messagetype", "info");
-				request.setAttribute("message", "Your e-mail has been modified");
-				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
-
-			}
-			else {
-				request.setAttribute("messagetype", "error");
-				request.setAttribute("message", "You don't have access to this page");
-				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
-			}
-
-		}
-		else {
-			//TODO response.sendRedirect("./authentication");
-			request.setAttribute("messagetype", "error");
-			request.setAttribute("message", "You don't have access to this page");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
-		}
-	}*/
 	
 	/**
 	 * Method to display the live page
@@ -2084,127 +1965,155 @@ public class Application extends HttpServlet {
 			else
 				c = service.getCourse(courseid, genre);
 			
-			if( genre == null && c.getGenre() != null) { // The user tries to access to the protected course directly via the URL
-				
-				/* Redirects the client to the access code typing form */
-				request.setAttribute("id", courseid);
-				request.setAttribute("type", type != null ? type : "flash");
-				getServletContext().getRequestDispatcher("/WEB-INF/views/codeform.jsp").forward(request, response);
+
+			//To lock access of Medicine course with UDS account
+			User user = null;
+			boolean amphiMedicine=false;
+			if(lockMedicine) {
+				Amphi a = service.getAmphi(c.getIpaddress());	
+				if(a!=null && a.getBuildingid() == buildingMedicineId) {
+					amphiMedicine = true;
+					String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+					if(casUser!=null) // Authentification CAS	
+						user=service.getUser(casUser); // Gets the user from the session		
+				}
+
+			}
+					
+			// if the user is not authenticated, redirection to authentication_cas
+			if(lockMedicine && amphiMedicine && user==null) {
+				response.sendRedirect("./authentication_cas?returnPage=courseaccess&id="+courseid+"&type="+(type != null ? type : "flash")+(genre !=null ? "&code="+genre:""));
+			}
+			else if(lockMedicine && amphiMedicine && user!=null && !user.isActivate()) {
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "You don't have access to this page");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
 			}
 			else {
-				
-				// To fix a bug with SSL and IE
-				String slidesurl = null;
-				if(request.getRequestURL().toString().substring(0, 5).equals("https") && coursesUrl.substring(0, 4).equals("http"))
-					slidesurl = coursesUrl.replace("http", "https") + c.getMediaFolder() + "/screenshots/";
-				else 
-					slidesurl = coursesUrl + c.getMediaFolder() + "/screenshots/";
-		
-				service.incrementConsultations(c);
-				
-				if( type == null || type.equals("flash")) {
-					/* redirection to the FlvPlay JS interface */
-					String courseExtension = "";
-					if( c.getType().equals("audio"))
-						courseExtension = ".mp3";
-					else if( c.getType().equals("video"))
-						courseExtension = ".flv";
-					
-					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + courseExtension);
-					request.setAttribute("slidesurl", slidesurl);
-					request.setAttribute("course", c);
-					List<Slide> slides = service.getSlides(c.getCourseid());
-					request.setAttribute("slides", slides);
-					Amphi a = service.getAmphi(c.getIpaddress());
-					String amphi = a != null ? a.getName() : "";
-					String building = service.getBuildingName(c.getIpaddress());
-					request.setAttribute("amphi", amphi);
-					request.setAttribute("building", building);
-					if( c.getTiming().equals("n-1"))
-						request.setAttribute("timing", 1);
-					else
-						request.setAttribute("timing", 0);
-					
-					request.setAttribute("serverUrl",serverUrl);
-					request.setAttribute("tags", service.getTagsByCourse(c));
-													
-					request.setAttribute("rssfiles", service.getRssCourseFileList(c));
-					
-					/* displays the .jsp view */
-					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
+
+				if( genre == null && c.getGenre() != null) { // The user tries to access to the protected course directly via the URL
+
+					/* Redirects the client to the access code typing form */
+					request.setAttribute("id", courseid);
+					request.setAttribute("type", type != null ? type : "flash");
+					getServletContext().getRequestDispatcher("/WEB-INF/views/codeform.jsp").forward(request, response);
 				}
-				else if( type.equals("real")) {
-					/* redirection to the SMIL interface */
-					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
-					request.setAttribute("slidesurl", slidesurl);
-					List<Slide> slides = service.getSlides(c.getCourseid());
-					request.setAttribute("slides", slides);
-					Amphi a = service.getAmphi(c.getIpaddress());
-					String amphi = a != null ? a.getName() : "";
-					String building = service.getBuildingName(c.getIpaddress());
-					request.setAttribute("amphi", amphi);
-					request.setAttribute("building", building);
-					if( c.getTiming().equals("n-1"))
-						request.setAttribute("timing", 1);
-					else
-						request.setAttribute("timing", 0);
-					
-					/* Displays the view */
-					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_smil.jsp").forward(request, response);
-				}
-				// High Quality
-				else if( type.equals("hq")) {
-					request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".mp4");
-					request.setAttribute("course", c);					
-					Amphi a = service.getAmphi(c.getIpaddress());
-					String amphi = a != null ? a.getName() : "";
-					String building = service.getBuildingName(c.getIpaddress());
-					request.setAttribute("amphi", amphi);
-					request.setAttribute("building", building);
-					request.setAttribute("serverUrl",serverUrl);
-										
-					/* Displays the view */
-					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_hq.jsp").forward(request, response);
-		
-				}
-				// TODO Full Flash
-				/*else if(type.equals("fullflash")) {
-					
+				else {
+
+					// To fix a bug with SSL and IE
+					String slidesurl = null;
+					if(request.getRequestURL().toString().substring(0, 5).equals("https") && coursesUrl.substring(0, 4).equals("http"))
+						slidesurl = coursesUrl.replace("http", "https") + c.getMediaFolder() + "/screenshots/";
+					else 
+						slidesurl = coursesUrl + c.getMediaFolder() + "/screenshots/";
+
+					service.incrementConsultations(c);
+
+					if( type == null || type.equals("flash")) {
+						/* redirection to the FlvPlay JS interface */
+						String courseExtension = "";
+						if( c.getType().equals("audio"))
+							courseExtension = ".mp3";
+						else if( c.getType().equals("video"))
+							courseExtension = ".flv";
+
+						request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + courseExtension);
+						request.setAttribute("slidesurl", slidesurl);
+						request.setAttribute("course", c);
+						List<Slide> slides = service.getSlides(c.getCourseid());
+						request.setAttribute("slides", slides);
+						Amphi a = service.getAmphi(c.getIpaddress());
+						String amphi = a != null ? a.getName() : "";
+						String building = service.getBuildingName(c.getIpaddress());
+						request.setAttribute("amphi", amphi);
+						request.setAttribute("building", building);
+						if( c.getTiming().equals("n-1"))
+							request.setAttribute("timing", 1);
+						else
+							request.setAttribute("timing", 0);
+
+						request.setAttribute("serverUrl",serverUrl);
+						request.setAttribute("tags", service.getTagsByCourse(c));
+
+						request.setAttribute("rssfiles", service.getRssCourseFileList(c));
+
+						/* displays the .jsp view */
+						getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
+					}
+					else if( type.equals("real")) {
+						/* redirection to the SMIL interface */
+						request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
+						request.setAttribute("slidesurl", slidesurl);
+						List<Slide> slides = service.getSlides(c.getCourseid());
+						request.setAttribute("slides", slides);
+						Amphi a = service.getAmphi(c.getIpaddress());
+						String amphi = a != null ? a.getName() : "";
+						String building = service.getBuildingName(c.getIpaddress());
+						request.setAttribute("amphi", amphi);
+						request.setAttribute("building", building);
+						if( c.getTiming().equals("n-1"))
+							request.setAttribute("timing", 1);
+						else
+							request.setAttribute("timing", 0);
+
+						/* Displays the view */
+						getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_smil.jsp").forward(request, response);
+					}
+					// High Quality
+					else if( type.equals("hq")) {
+						request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".mp4");
+						request.setAttribute("course", c);					
+						Amphi a = service.getAmphi(c.getIpaddress());
+						String amphi = a != null ? a.getName() : "";
+						String building = service.getBuildingName(c.getIpaddress());
+						request.setAttribute("amphi", amphi);
+						request.setAttribute("building", building);
+						request.setAttribute("serverUrl",serverUrl);
+
+						/* Displays the view */
+						getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_hq.jsp").forward(request, response);
+
+					}
+					// TODO Full Flash
+					/*else if(type.equals("fullflash")) {
+
 					request.setAttribute("idcours",c.getCourseid());
-				
+
 					// Displays the view 
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_fullflash.jsp").forward(request, response);
-					
+
 				}*/
-				else if(c.isDownload() & (type.equals("smil") ||type.equals("mp3") || type.equals("ogg") || type.equals("zip") || type.equals("pdf"))) {
-					String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
-					
-					/* Initializes the headers */
-					response.setContentType("application/x-download");
-					response.setHeader("Content-Disposition", "attachment; filename=" + c.getMediasFileName() + "." + type);
-	
-					/* Sends the file */
-					OutputStream out = response.getOutputStream();
-					service.returnFile(filename, out);
-					
-					/*String previousPage = (String) request.getSession().getAttribute("previousPage");
+					else if(c.isDownload() & (type.equals("smil") ||type.equals("mp3") || type.equals("ogg") || type.equals("zip") || type.equals("pdf"))) {
+						String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
+
+						/* Initializes the headers */
+						response.setContentType("application/x-download");
+						response.setHeader("Content-Disposition", "attachment; filename=" + c.getMediasFileName() + "." + type);
+
+						/* Sends the file */
+						OutputStream out = response.getOutputStream();
+						service.returnFile(filename, out);
+
+						/*String previousPage = (String) request.getSession().getAttribute("previousPage");
 					if( previousPage == null)
 						previousPage = "/home";
 					response.sendRedirect("." + previousPage);*/
+					}
+					else if(type.equals("adddoc")) {
+						String filename = coursesFolder + c.getMediaFolder() +"/additional_docs/" + c.getAdddocname();
+
+						/* Initializes the headers */
+						response.setContentType("application/x-download");
+						response.setHeader("Content-Disposition", "attachment; filename=" + c.getAdddocname());
+
+						/* Sends the file */
+						OutputStream out = response.getOutputStream();
+						service.returnFile(filename, out);
+
+					}
+
 				}
-				else if(type.equals("adddoc")) {
-					String filename = coursesFolder + c.getMediaFolder() +"/additional_docs/" + c.getAdddocname();
-					
-					/* Initializes the headers */
-					response.setContentType("application/x-download");
-					response.setHeader("Content-Disposition", "attachment; filename=" + c.getAdddocname());
-	
-					/* Sends the file */
-					OutputStream out = response.getOutputStream();
-					service.returnFile(filename, out);
-					
-				}
-				
+
 			}
 		}
 		catch(DaoException de) {
@@ -2230,17 +2139,41 @@ public class Application extends HttpServlet {
 		Amphi a = service.getAmphi(ip);
 		String amphi = a != null ? a.getName() : ip;
 		String building = service.getBuildingName(ip);
-		String url = "";
-		
-		url = "rtmp://" + flashServerIp + "/live&id=" + ip.replace('.', '_');
-		request.setAttribute("type", "video");	
-		
-		request.setAttribute("amphi", amphi);
-		request.setAttribute("building", building);
-		request.setAttribute("ip", ip);
-		request.setAttribute("url", url);
-		
-		getServletContext().getRequestDispatcher("/WEB-INF/views/liveinterface.jsp").forward(request, response);
+		String url = "rtmp://" + flashServerIp + "/live&id=" + ip.replace('.', '_');
+				
+		//To lock access of Medicine course with UDS account
+		User user = null;
+		boolean amphiMedicine=false;
+		if(lockMedicine) {
+			if(a!=null && a.getBuildingid() == buildingMedicineId) {
+				amphiMedicine = true;
+				String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+				if(casUser!=null) // Authentification CAS	
+					user=service.getUser(casUser); // Gets the user from the session		
+			}
+
+		}
+				
+		// if the user is not authenticated, redirection to authentication_cas
+		if(lockMedicine && amphiMedicine && user==null) {
+			response.sendRedirect("./authentication_cas?returnPage=liveaccess&amphi="+ip);
+		}
+		else if(lockMedicine && amphiMedicine && user!=null && !user.isActivate()) {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "You don't have access to this page");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+		else {
+
+			request.setAttribute("type", "video");	
+			request.setAttribute("amphi", amphi);
+			request.setAttribute("building", building);
+			request.setAttribute("ip", ip);
+			request.setAttribute("url", url);
+
+			getServletContext().getRequestDispatcher("/WEB-INF/views/liveinterface.jsp").forward(request, response);
+
+		}
 	}
 	
 	/**
@@ -2352,6 +2285,7 @@ public class Application extends HttpServlet {
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 		}
 	}
+	
 	
 	/**
 	 * Method to validate an amphi form
