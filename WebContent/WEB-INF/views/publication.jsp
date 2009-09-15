@@ -54,9 +54,17 @@
 	    		<div class="divPubCas" style="${borderstyleCas}">
 	    			<a class="linkPubCas" href="./authentication_cas?returnPage=publication"><fmt:message key="udsAccount"/></a>
 	    		</div>
-	    		<div class="divPubFree" style="${borderstyleFree}">
-	    			<a class="linkPubFree" href="./publication?publication_type=serverFree"><fmt:message key="free"/></a>
-	    		</div>
+	    		
+	    		<c:if test="${!lockMedicine}">
+	    			<div class="divPubFree" style="${borderstyleFree}">
+	    				<a class="linkPubFree" href="./publication?publication_type=serverFree"><fmt:message key="free"/></a>
+	    			</div>
+	    		</c:if>
+	    		<c:if test="${lockMedicine}">
+	    			<div class="divPubFreeLock">
+	    				<a class="linkPubFree"><fmt:message key="free"/></a>
+	    			</div>
+	    		</c:if>
 	    	</div>
 	    	<br>
 	    	<div class="divCenter">
