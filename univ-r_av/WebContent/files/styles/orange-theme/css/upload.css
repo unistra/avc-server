@@ -100,6 +100,14 @@ img#process {
 	height: 35px;
 }
 
+.divPubFreeLock {
+	float:left;
+	background-image: url(../img/btn_pub_bl.png);
+	background-repeat:no-repeat;
+	width: 115px;
+	height: 35px;
+}
+
 .linkPubCas {
 	float:left;
 	width: 105px;
