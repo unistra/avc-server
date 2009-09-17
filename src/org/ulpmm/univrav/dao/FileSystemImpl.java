@@ -131,7 +131,7 @@ public class FileSystemImpl implements IFileSystem {
 		thumbCheck(c.getMediaFolder());
 		
 		if( c.getType().equals("audio")) {
-			mp3Modif(c.getMediaFolder(), defaultMp3File, c.getMediasFileName() + ".mp3");
+			renameFile(c.getMediaFolder(), defaultMp3File, c.getMediasFileName() + ".mp3");
 			mp3Tag(c, c.getMediaFolder(), c.getMediasFileName());
 			setCourseDuration(c, c.getMediaFolder(), c.getMediasFileName());
 			pdfCreation(c.getMediaFolder(), c.getMediasFileName());
@@ -186,7 +186,7 @@ public class FileSystemImpl implements IFileSystem {
 		if( extension.equals("mp3") || extension.equals("ogg")) { // audio files
 			c.setType("audio");
 			if( extension.equals("mp3")) {
-				mp3Modif(c.getMediaFolder(), fileName, c.getMediasFileName() + ".mp3");
+				renameFile(c.getMediaFolder(), fileName, c.getMediasFileName() + ".mp3");
 				mp3Tag(c, c.getMediaFolder(), c.getMediasFileName());
 				setCourseDuration(c, c.getMediaFolder(), c.getMediasFileName());
 				emptyPdfCopy(c.getMediaFolder(), c.getMediasFileName());
@@ -713,7 +713,7 @@ public class FileSystemImpl implements IFileSystem {
 	 */
 	private static void thumbCheck(String mediaFolder) {
 		try {
-			Process p = r.exec("python2.5 thumbCheck.py " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder, null, scriptsFolder); 
+			Process p = r.exec("python thumbCheck.py " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder, null, scriptsFolder); 
 			if( p.waitFor() != 0 ) {
 				System.out.println("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder);
 				throw new DaoException("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder);
@@ -729,46 +729,7 @@ public class FileSystemImpl implements IFileSystem {
 		}
 	}
 	
-	/**
-	 * Regenerates the mp3 file to fix the problems with RealPlayer and renames it
-	 * @param mediaFolder the folder which contains the media files of a course
-	 * @param oldFileName the old name of the rm/rv file
-	 * @param newFileName the new name of the rm/rv file
-	 */
-	private static void mp3Modif(String mediaFolder, String oldFileName, String newFileName) {
 		
-		try {
-			/* Regeneration of the mp3 file to fix the play problems with RealPlayer */
-			Process p = r.exec("bash ./mp3cl.sh " + coursesFolder + mediaFolder + " " + oldFileName, null, scriptsFolder);
-			if( p.waitFor() != 0 ) {
-				System.out.println("Error while cleaning the mp3 file " + oldFileName);
-				throw new DaoException("Error while cleaning the mp3 file " + oldFileName);
-			}
-			
-			/* Renames the mp3 file */
-			p = r.exec("mv clean_" + oldFileName + " " + newFileName, null, new File(coursesFolder + mediaFolder));
-			if( p.waitFor() != 0 ) {
-				System.out.println("Error while renaming the mp3 file clean_" + oldFileName);
-				throw new DaoException("Error while renaming the mp3 file clean_" + oldFileName);
-			}
-			
-			/* Removes the default media file to free disk space */
-			p = r.exec("rm " + oldFileName, null, new File(coursesFolder + mediaFolder));
-			if( p.waitFor() != 0 ) {
-				System.out.println("Error while deleting the media file " + oldFileName);
-				throw new DaoException("Error while deleting the media file " + oldFileName);
-			}
-		}
-		catch( IOException ioe) {
-			System.out.println("Error while modifying the mp3 file");
-			ioe.printStackTrace();
-		}
-		catch( InterruptedException ie) {
-			System.out.println("Error while modifying the mp3 file");
-			ie.printStackTrace();
-		}
-	}
-	
 	/**
 	 * Adds the id3 tags to the mp3 file
 	 * @param c the course
@@ -997,7 +958,7 @@ public class FileSystemImpl implements IFileSystem {
 	 */
 	private static void pdfCreation(String mediaFolder, String mediaFileName) {
 		try {
-			Process p = r.exec("python2.5 CreatePDF.py " + coursesFolder + mediaFolder + " " + mediaFileName, null, scriptsFolder); 
+			Process p = r.exec("python CreatePDF.py " + coursesFolder + mediaFolder + " " + mediaFileName, null, scriptsFolder); 
 			if( p.waitFor() != 0 ) {
 				System.out.println("Error while creating the pdf file " + mediaFileName + ".pdf");
 				throw new DaoException("Error while creating the pdf file " + mediaFileName + ".pdf");
