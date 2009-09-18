@@ -34,7 +34,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.fileupload.FileItem;
-import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Tag;
 import org.w3c.dom.Document;
@@ -77,11 +76,7 @@ public class FileSystemImpl implements IFileSystem {
 	
 	/** Copyright comment */
 	private static String comment;
-	
-	/** To protected MP3 of rss flux **/
-	private static Boolean lockMedicine;
-	private static Integer buildingMedicineId;
-	
+		
 	/**
 	 * Constructor for file system
 	 * 
@@ -96,14 +91,12 @@ public class FileSystemImpl implements IFileSystem {
 	 * @param defaultFlashFile Default Flash filename in the archive sent by the client
 	 * @param defaultScreenshotsFolder Folder which contains all screenshots in the archive sent by the client
 	 * @param comment Copyright comment
-	 * @param lockMedicine lock medicine parameter
-	 * @param buildingMedicineId
 	 */
 	@SuppressWarnings("static-access")
 	public FileSystemImpl(String scriptsFolder, String ftpFolder, String coursesFolder, 
 		String liveFolder, String coursesUrl, String defaultMp3File, String defaultRmFile, 
 		String defaultSmilFile, String defaultFlashFile, String defaultScreenshotsFolder, 
-		String comment,Boolean lockMedicine, Integer buildingMedicineId) {
+		String comment) {
 		
 		r = Runtime.getRuntime();
 		this.scriptsFolder = new File(scriptsFolder);
@@ -115,8 +108,6 @@ public class FileSystemImpl implements IFileSystem {
 		this.defaultFlashFile = defaultFlashFile;
 		this.defaultScreenshotsFolder = defaultScreenshotsFolder;
 		this.comment = comment;
-		this.lockMedicine = lockMedicine;
-		this.buildingMedicineId = buildingMedicineId;
 	}
 	
 	/**
@@ -528,17 +519,8 @@ public class FileSystemImpl implements IFileSystem {
 			        item.appendChild(coursPubDate);
 			        
 			        String courseMediaUrl = coursesUrl + course.getMediaFolder() + "/" + course.getMediasFileName();
-			        			        
-			        // To protect MP3 for Medicine course
-			        boolean lockAmphiMedicine = false;
-			        if(lockMedicine) {
-			        	Amphi a = db.getAmphi(course.getIpaddress());
-			        	if(a!=null && a.getBuildingid() == buildingMedicineId) {
-			        		lockAmphiMedicine = true;
-			        	}
-			        }
-			        
-			        if(course.getGenre()==null && !lockAmphiMedicine) {
+			        		        
+			        if(course.getGenre()==null && !course.isRestrictionuds()) {
 			        	Element coursEnclosure = document.createElement("enclosure");
 			        	coursEnclosure.setAttribute("url",courseMediaUrl + ".mp3");
 			        	coursEnclosure.setAttribute("type","audio/mpeg");
