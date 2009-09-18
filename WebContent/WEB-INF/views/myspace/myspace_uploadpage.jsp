@@ -128,7 +128,7 @@
 				</tr>
 				<tr class="even">
 				    <td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds</td>
-				    <td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/>></td>
+				    <td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/>> <font class="chpsHd"><fmt:message key="uploadmessage6"/></font> </td>
 			   	</tr>
 				<tr class="odd">
 					<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/><b class="boldStar">*</b> : </td>
