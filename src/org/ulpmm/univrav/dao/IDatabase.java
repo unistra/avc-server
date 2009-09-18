@@ -56,11 +56,9 @@ public interface IDatabase {
 	 * @param n the number of courses to return
 	 * @param testKeyWord1 the first key word which identifies a test
 	 * @param testKeyWord2 the second key word which identifies a test
-	 * @param lockMedicine the lock Medicine attribute
-	 * @param buildingMedicineId the building medicine id
 	 * @return the list of courses
 	 */
-	public List<Course> getNLastCourses(int n, String testKeyWord1, String testKeyWord2, Boolean lockMedicine, Integer buildingMedicineId);
+	public List<Course> getNLastCourses(int n, String testKeyWord1, String testKeyWord2);
 	
 	/**
 	 * Gets a restricted list of courses
