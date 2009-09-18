@@ -68,6 +68,9 @@ public class Course {
 	/** the download indicator **/
 	private boolean download;
 	
+	/** to protect course access with UDS account **/
+	private boolean restrictionuds;
+	
 	/**
 	 * Default constructor
 	 */
@@ -94,8 +97,9 @@ public class Course {
 	 * @param highquality the course's high quality indicator
 	 * @param userid the high quality indicator
 	 * @param adddocname additional document name
+	 * @param restrictionuds the restriction uds
 	 */
-	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, boolean highquality, Integer userid, String adddocname, boolean download) {
+	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, boolean highquality, Integer userid, String adddocname, boolean download, boolean restrictionuds) {
 		this.courseid = courseid;
 		this.date = date;
 		this.type = type;
@@ -115,6 +119,7 @@ public class Course {
 		this.userid=userid;
 		this.adddocname=adddocname;
 		this.download=download;
+		this.restrictionuds=restrictionuds;
 	}
 	
 	
@@ -482,5 +487,19 @@ public class Course {
 		this.download = download;
 	}	
 	
-	
+	/**
+	 * Gets the restriction uds of the amphi
+	 * @return restrictionuds the restriction uds
+	 */
+	public boolean isRestrictionuds() {
+		return restrictionuds;
+	}
+
+	/**
+	 * Sets the restriction uds of the amphi
+	 * @param restrictionuds the restriction uds
+	 */
+	public void setRestrictionuds(boolean restrictionuds) {
+		this.restrictionuds = restrictionuds;
+	}
 }

@@ -32,6 +32,9 @@ public class Amphi implements Comparable<Amphi>{
 	/** the client version installed */
 	private String version;
 	
+	/** to protect live access with UDS account **/
+	private boolean restrictionuds;
+	
 	/**
 	 * Default contructor
 	 */
@@ -47,9 +50,10 @@ public class Amphi implements Comparable<Amphi>{
 	 * @param status the live status
 	 * @param gmapurl the url of google map
 	 * @param version the client version installed
+	 * @param restrictionuds the restriction uds
 	 */
 	public Amphi(int amphiid, int buildingid, String name, String ipAddress,
-			boolean status, String gmapurl,String version) {
+			boolean status, String gmapurl,String version,boolean restrictionuds) {
 		super();
 		this.amphiid = amphiid;
 		this.buildingid = buildingid;
@@ -58,6 +62,7 @@ public class Amphi implements Comparable<Amphi>{
 		this.status = status;
 		this.gmapurl = gmapurl;
 		this.version = version;
+		this.restrictionuds=restrictionuds;
 	}
 	
 	/**
@@ -156,6 +161,22 @@ public class Amphi implements Comparable<Amphi>{
 	public void setVersion(String version) {
 		this.version = version;
 	}
-	
+
+	/**
+	 * Gets the restriction uds of the amphi
+	 * @return restrictionuds the restriction uds
+	 */
+	public boolean isRestrictionuds() {
+		return restrictionuds;
+	}
+
+	/**
+	 * Sets the restriction uds of the amphi
+	 * @param restrictionuds the restriction uds
+	 */
+	public void setRestrictionuds(boolean restrictionuds) {
+		this.restrictionuds = restrictionuds;
+	}
+
 	
 }
