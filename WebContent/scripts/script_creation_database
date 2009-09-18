@@ -29,7 +29,8 @@ CREATE TABLE amphi (
     ipaddress character varying NOT NULL,
     status boolean NOT NULL,
     gmapurl character varying,
-    version character varying
+    version character varying,
+    restrictionuds boolean NOT NULL
 );
 
 
@@ -123,7 +124,8 @@ CREATE TABLE course (
     highquality boolean,
     userid integer,
     adddocname character varying,
-    download boolean DEFAULT true NOT NULL
+    download boolean DEFAULT true NOT NULL,
+    restrictionuds boolean NOT NULL
 );
 
 
