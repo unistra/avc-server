@@ -12,17 +12,29 @@
 
 <!-- Defines the image file which represents the course type -->
 		<c:choose>
-			<c:when test="${course.type == 'audio' && course.genre == null}">
+			<c:when test="${course.type == 'audio' && course.genre == null && !course.restrictionuds}">
 				<c:set var="typeImg" value="sound" />
 			</c:when>
-			<c:when test="${course.type == 'audio'}">
+			<c:when test="${course.type == 'audio' && !course.restrictionuds}">
 				<c:set var="typeImg" value="sound_locked" />
 			</c:when>
-			<c:when test="${course.type == 'video' && course.genre == null}">
+			<c:when test="${course.type == 'video' && course.genre == null && !course.restrictionuds}">
 				<c:set var="typeImg" value="video" />
 			</c:when>
-			<c:when test="${course.type == 'video'}">
+			<c:when test="${course.type == 'video' && !course.restrictionuds}">
 				<c:set var="typeImg" value="video_locked" />
+			</c:when>
+			<c:when test="${course.type == 'audio' && course.genre == null && course.restrictionuds}">
+				<c:set var="typeImg" value="uds_sound" />
+			</c:when>
+			<c:when test="${course.type == 'audio' && course.restrictionuds}">
+				<c:set var="typeImg" value="uds_sound_locked" />
+			</c:when>
+			<c:when test="${course.type == 'video' && course.genre == null && course.restrictionuds}">
+				<c:set var="typeImg" value="uds_video" />
+			</c:when>
+			<c:when test="${course.type == 'video' && course.restrictionuds}">
+				<c:set var="typeImg" value="uds_video_locked" />
 			</c:when>
 		</c:choose>
 
