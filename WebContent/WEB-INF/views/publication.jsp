@@ -169,10 +169,12 @@
 					    <td title="<fmt:message key="ib_visible"/>">Visible</td>
 					    <td><input type="checkbox" name="visible" <c:out value="${checkedVisbleField}"/> <c:out value="${disabledField}"/>></td>
 			   		</tr>
-			   		<tr class="odd">
-					    <td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds</td>
-					    <td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/> <c:out value="${disabledField}"/>></td>
-			   		</tr>
+			   		<c:if test="${publication_type == 'serverCas'}">
+			   			<tr class="odd">
+					   	 <td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds</td>
+					    	<td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/> <c:out value="${disabledField}"/>><font class="chpsHd"><fmt:message key="uploadmessage6"/></td>
+			   			</tr>
+			   		</c:if>	
 			    	<tr>
 			    		<td class="chpsObl"><b class="boldStar">*</b>: <fmt:message key="requiredField"/></td>
 			    	</tr>
