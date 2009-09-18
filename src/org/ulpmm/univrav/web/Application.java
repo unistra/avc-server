@@ -1483,6 +1483,7 @@ public class Application extends HttpServlet {
 		if(request.getParameter("publication_type")!=null) {
 			visible = request.getParameter("visible") != null ? true : false;
 		}
+		// for old client
 		else {
 			visible = true;
 		}
@@ -1490,8 +1491,9 @@ public class Application extends HttpServlet {
 		if(request.getParameter("publication_type")!=null) {
 			restrictionuds = request.getParameter("restrictionuds") != null ? true : false;
 		}
+		// for old client
 		else {
-			restrictionuds = true;
+			restrictionuds = false;
 		}
 						
 		/* Verifies that all essential parameters are sent, cancels the upload if not */
