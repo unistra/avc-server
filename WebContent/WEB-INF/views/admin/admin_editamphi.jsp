@@ -70,6 +70,10 @@
 				    		<td>Version</td>
 				    		<td><input type="hidden" name="version" value="${amphi.version}">${amphi.version}</td>
 			    		</tr>
+			    		<tr class="even">
+				    		<td>Restriction Uds</td>
+				    		<td><input type="checkbox" name="restrictionuds" ${amphi.restrictionuds == true ? 'checked' : ''} ></td>
+			    		</tr>
 			    	</table>
 			    	<br>
 			    	<input type="hidden" name="oldAmphiip" value="${amphi.ipAddress}">

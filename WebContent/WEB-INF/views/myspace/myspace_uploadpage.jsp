@@ -56,6 +56,14 @@
 					<c:set var="checkedHdField" value="checked" />
 				</c:otherwise>
 			</c:choose>
+			<c:choose>
+				<c:when test="${message!=null and restrictionuds==null}">
+					<c:set var="checkedRestUdsField" value="" />
+				</c:when>
+				<c:otherwise>
+					<c:set var="checkedRestUdsField" value="checked" />
+				</c:otherwise>
+			</c:choose>
 			
 	    	
 	    	<form action="<c:url value="./myspace_mediaupload"/>" method="post" enctype="multipart/form-data">
@@ -119,6 +127,10 @@
 					<td><input type="checkbox" name="hd" <c:out value="${checkedHdField}"/>> <font class="chpsHd"><fmt:message key="uploadmessage4"/></font> </td>
 				</tr>
 				<tr class="even">
+				    <td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds</td>
+				    <td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/>> <font class="chpsHd"><fmt:message key="uploadmessage6"/></font> </td>
+			   	</tr>
+				<tr class="odd">
 					<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/><b class="boldStar">*</b> : </td>
 					<td><input type="file" name="media" class="field"> </td>
 				</tr>

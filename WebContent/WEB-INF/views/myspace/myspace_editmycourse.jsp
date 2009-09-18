@@ -96,7 +96,11 @@
 			    		<tr class="odd">
 				    		<td title="<fmt:message key="ib_dl"/>"><fmt:message key="Telecharger"/></td>
 				    		<td><input type="checkbox" name="download" ${course.download == true ? 'checked' : ''} ></td>
-			    		</tr>		    	
+			    		</tr>	
+			    		<tr class="even">
+				    		<td>Restriction UDS</td>
+				    		<td><input type="checkbox" name="restrictionuds" ${course.restrictionuds == true ? 'checked' : ''} ></td>
+			    		</tr>	    	
 			    	</table>
 			    	<br>
 			    	<input type="submit" class="valider" name="valider" value="<fmt:message key="Valider"/> ">
