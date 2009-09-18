@@ -83,7 +83,7 @@ public class DatabaseImpl implements IDatabase {
 	public void addCourse(Course c) {
 		
 		Connection cnt = null;
-		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";	
+		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";	
 		PreparedStatement pstmt = null;
 		
 		try {
@@ -156,6 +156,7 @@ public class DatabaseImpl implements IDatabase {
 				pstmt.setNull(18, Types.VARCHAR);
 			
 			pstmt.setBoolean(19, c.isDownload());
+			pstmt.setBoolean(20, c.isRestrictionuds());
 			
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("The course " + c + " has not been added to the database");
@@ -242,7 +243,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
-					rs.getBoolean("download")
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds")
 				));
 			}
 		}
@@ -295,7 +297,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
-					rs.getBoolean("download")
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds")
 				));
 			}
 		}
@@ -325,7 +328,7 @@ public class DatabaseImpl implements IDatabase {
 		try {
 			cnt = datasrc.getConnection();
 			stmt = cnt.createStatement();
-			rs = stmt.executeQuery( "SELECT * From course WHERE genre IS NULL AND visible = true ORDER BY date DESC");
+			rs = stmt.executeQuery( "SELECT * From course WHERE genre IS NULL AND restrictionuds = false AND visible = true ORDER BY date DESC");
 			
 			while(rs.next()) {
 				l.add(new Course(
@@ -347,7 +350,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
-					rs.getBoolean("download")
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds")
 				));
 			}
 		}
@@ -368,24 +372,18 @@ public class DatabaseImpl implements IDatabase {
 	 * @param n the number of courses to return
 	 * @param testKeyWord1 the first key word which identifies a test
 	 * @param testKeyWord2 the second key word which identifies a test
-	 * @param lockMedicine the lock Medicine attribute
-	 * @param buildingMedicineId the building medicine id
 	 * @return the list of courses
 	 */
-	public List<Course> getNLastCourses(int n, String testKeyWord1, String testKeyWord2, Boolean lockMedicine, Integer buildingMedicineId) {
+	public List<Course> getNLastCourses(int n, String testKeyWord1, String testKeyWord2) {
 		
 		Connection cnt = null;
 		
-		String sql = "SELECT * From course WHERE genre IS NULL AND visible = true " +
+		String sql = "SELECT * From course WHERE genre IS NULL AND visible = true AND restrictionuds = false " +
 			"AND INITCAP(title) NOT LIKE '" + testKeyWord1 + "%' ";
 		
 		if( testKeyWord2 != null && ! testKeyWord2.equals(""))
 			sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
-		
-		if(lockMedicine && buildingMedicineId!=null) {
-			sql += "AND ipaddress NOT IN(SELECT ipaddress FROM amphi where buildingid="+buildingMedicineId+") ";
-		}
-		
+				
 		sql += "ORDER BY date DESC, courseid DESC LIMIT " + n;
 		
 		Statement stmt = null;
@@ -417,7 +415,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
-					rs.getBoolean("download")
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds")
 				));
 			}
 		}
@@ -482,7 +481,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
-					rs.getBoolean("download")
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds")
 				));
 			}
 		}
@@ -593,7 +593,8 @@ public class DatabaseImpl implements IDatabase {
 							rs.getBoolean("highquality"),
 							rs.getInt("userid"),
 							rs.getString("adddocname"),
-							rs.getBoolean("download")
+							rs.getBoolean("download"),
+							rs.getBoolean("restrictionuds")
 					));
 				}
 			}
@@ -659,7 +660,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getBoolean("highquality"),
 						rs.getInt("userid"),
 						rs.getString("adddocname"),
-						rs.getBoolean("download")
+						rs.getBoolean("download"),
+						rs.getBoolean("restrictionuds")
 				));
 			}
 		}
@@ -718,7 +720,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getBoolean("highquality"),
 						rs.getInt("userid"),
 						rs.getString("adddocname"),
-						rs.getBoolean("download")
+						rs.getBoolean("download"),
+						rs.getBoolean("restrictionuds")
 				));
 			}
 		}
@@ -773,7 +776,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
-					rs.getBoolean("download")
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds")
 				);
 			}
 			else
@@ -831,7 +835,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
-					rs.getBoolean("download")
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds")
 				);
 			}
 			else
@@ -1064,7 +1069,7 @@ public class DatabaseImpl implements IDatabase {
 		/* Creation of the SQL query string */
 		String sql = "UPDATE course SET date = ? , type = ? , title = ? , description = ? , ";
 		sql += "formation = ? , name = ? , firstname = ? , ipaddress = ? , duration = ? , ";
-		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, mediafolder = ?, highquality = ?, userid = ?, adddocname = ?, download = ? ";
+		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, mediafolder = ?, highquality = ?, userid = ?, adddocname = ?, download = ?, restrictionuds = ? ";
 		sql += "WHERE courseid = ?";
 		
 		PreparedStatement pstmt = null;
@@ -1141,8 +1146,8 @@ public class DatabaseImpl implements IDatabase {
 				pstmt.setNull(17, Types.VARCHAR);
 			
 			pstmt.setBoolean(18, c.isDownload());
-			
-			pstmt.setInt(19, c.getCourseid());
+			pstmt.setBoolean(19, c.isRestrictionuds());
+			pstmt.setInt(20, c.getCourseid());
 			
 			if( pstmt.executeUpdate() == 0 ) {
 				System.out.println("The course " + c + " has not been modified");
@@ -1300,7 +1305,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
-					rs.getBoolean("download")
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds")
 				));
 			}
 		}
@@ -1904,7 +1910,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addAmphi(Amphi a) {
 	
-		String sql = "INSERT INTO amphi(buildingid, name, ipaddress, status, gmapurl, version) values(?,?,?,?,?,?)";
+		String sql = "INSERT INTO amphi(buildingid, name, ipaddress, status, gmapurl, version, restrictionuds) values(?,?,?,?,?,?,?)";
 		PreparedStatement pstmt = null;
 		Connection cnt = null;
 		try {
@@ -1920,6 +1926,8 @@ public class DatabaseImpl implements IDatabase {
 				pstmt.setNull(5, Types.VARCHAR);
 			
 			pstmt.setString(6, a.getVersion());
+			
+			pstmt.setBoolean(7, a.isRestrictionuds());
 			
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("The amphi " + a + " has not been added to the database");
@@ -1948,7 +1956,7 @@ public class DatabaseImpl implements IDatabase {
 		String sql = "SELECT amphi.*, count(course.ipaddress) FROM amphi LEFT OUTER JOIN course " +
 				"ON amphi.ipaddress = course.ipaddress " +
 				"WHERE amphi.buildingid = ? " +
-				"GROUP BY amphi.amphiid, amphi.buildingid, amphi.name, amphi.ipaddress, amphi.status, amphi.gmapurl, amphi.version " +
+				"GROUP BY amphi.amphiid, amphi.buildingid, amphi.name, amphi.ipaddress, amphi.status, amphi.gmapurl, amphi.version, amphi.restrictionuds " +
 				"ORDER BY amphi.amphiid";
 		
 		PreparedStatement pstmt = null;
@@ -1968,7 +1976,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("ipaddress"),
 					rs.getBoolean("status"),
 					rs.getString("gmapurl"),
-					rs.getString("version")
+					rs.getString("version"),
+					rs.getBoolean("restrictionuds")
 				);
 				a.setNumber(rs.getInt("count"));
 				l.add(a);
@@ -2011,7 +2020,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("ipaddress"),
 					rs.getBoolean("status"),
 					rs.getString("gmapurl"),
-					rs.getString("version")
+					rs.getString("version"),
+					rs.getBoolean("restrictionuds")
 				);
 			}
 		}
@@ -2050,7 +2060,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("ipaddress"),
 					rs.getBoolean("status"),
 					rs.getString("gmapurl"),
-					rs.getString("version")
+					rs.getString("version"),
+					rs.getBoolean("restrictionuds")
 				);
 			}
 		}
@@ -2076,7 +2087,7 @@ public class DatabaseImpl implements IDatabase {
 		Connection cnt = null;
 		/* Creation of the SQL query string */
 		String sql = "UPDATE amphi SET buildingid = ?, name = ?, ";
-		sql += "ipaddress = ?, status = ?, gmapurl = ?, version = ? WHERE amphiid = ?";
+		sql += "ipaddress = ?, status = ?, gmapurl = ?, version = ?, restrictionuds = ? WHERE amphiid = ?";
 		
 		PreparedStatement pstmt = null;
 		
@@ -2095,7 +2106,9 @@ public class DatabaseImpl implements IDatabase {
 				pstmt.setNull(5, Types.VARCHAR);
 			
 			pstmt.setString(6, a.getVersion());
-			pstmt.setInt(7, a.getAmphiid());
+			pstmt.setBoolean(7, a.isRestrictionuds());
+			pstmt.setInt(8, a.getAmphiid());
+			
 			
 			if( pstmt.executeUpdate() == 0 ) {
 				System.out.println("The amphi " + a + " has not been modified");
@@ -2452,7 +2465,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
-					rs.getBoolean("download")
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds")
 				));
 			}
 		}	
@@ -2756,7 +2770,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
-					rs.getBoolean("download")
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds")
 				));
 			}
 		}
@@ -2861,7 +2876,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
-					rs.getBoolean("download")
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds")
 				);
 			}
 			else
@@ -2925,7 +2941,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
-					rs.getBoolean("download")
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds")
 				));
 			}
 		}
@@ -2987,7 +3004,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
-					rs.getBoolean("download")
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds")
 				));
 			}
 		}
