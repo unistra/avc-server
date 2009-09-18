@@ -53,18 +53,10 @@
 	    	<div class="pubLinks">
 	    		<div class="divPubCas" style="${borderstyleCas}">
 	    			<a class="linkPubCas" href="./authentication_cas?returnPage=publication"><fmt:message key="udsAccount"/></a>
+	    		</div>	    		
+	    		<div class="divPubFree" style="${borderstyleFree}">
+	    			<a class="linkPubFree" href="./publication?publication_type=serverFree"><fmt:message key="free"/></a>
 	    		</div>
-	    		
-	    		<c:if test="${!lockMedicine}">
-	    			<div class="divPubFree" style="${borderstyleFree}">
-	    				<a class="linkPubFree" href="./publication?publication_type=serverFree"><fmt:message key="free"/></a>
-	    			</div>
-	    		</c:if>
-	    		<c:if test="${lockMedicine}">
-	    			<div class="divPubFreeLock">
-	    				<a class="linkPubFree"><fmt:message key="free"/></a>
-	    			</div>
-	    		</c:if>
 	    	</div>
 	    	<br>
 	    	<div class="divCenter">
@@ -88,6 +80,14 @@
 				</c:when>
 				<c:otherwise>
 					<c:set var="checkedVisbleField" value="checked" />
+				</c:otherwise>
+			</c:choose>
+			<c:choose>
+				<c:when test="${message!=null and restrictionuds==null}">
+					<c:set var="checkedRestUdsField" value="" />
+				</c:when>
+				<c:otherwise>
+					<c:set var="checkedRestUdsField" value="checked" />
 				</c:otherwise>
 			</c:choose>
 		
@@ -168,6 +168,10 @@
 			    	<tr class="even">
 					    <td title="<fmt:message key="ib_visible"/>">Visible</td>
 					    <td><input type="checkbox" name="visible" <c:out value="${checkedVisbleField}"/> <c:out value="${disabledField}"/>></td>
+			   		</tr>
+			   		<tr class="odd">
+					    <td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds</td>
+					    <td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/> <c:out value="${disabledField}"/>></td>
 			   		</tr>
 			    	<tr>
 			    		<td class="chpsObl"><b class="boldStar">*</b>: <fmt:message key="requiredField"/></td>
