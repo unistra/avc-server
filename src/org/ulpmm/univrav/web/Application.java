@@ -166,12 +166,7 @@ public class Application extends HttpServlet {
 	
 	/** Additional document formats **/
 	private static String addDocFormats;
-	
-	/** To lock access of Medicine course and live with UDS account **/
-	private static Boolean lockMedicine;
-	private static Integer buildingMedicineId;
-	private static String disciplineMedicine;
-	
+		
 	/**
 	 * Initialization of the servlet. <br>
 	 *
@@ -266,16 +261,7 @@ public class Application extends HttpServlet {
 			
 			//add doc formats
 			addDocFormats = p.getProperty("addDocFormats");
-			
-			// lock medicine 
-			lockMedicine = Boolean.parseBoolean(p.getProperty("lockMedicine"));
-			
-			// building medicine id
-			buildingMedicineId = !p.getProperty("buildingMedicineId").equals("") ? Integer.parseInt(p.getProperty("buildingMedicineId")) : -1;
-			
-			// name of the medicine discipline
-			disciplineMedicine = p.getProperty("disciplineMedicine");
-							
+										
 			/* Datasource retrieving */
 			
 			InitialContext cxt = new InitialContext();
@@ -297,7 +283,7 @@ public class Application extends HttpServlet {
 					getServletContext().getRealPath("/") + "scripts",
 					ftpFolder, coursesFolder, liveFolder, coursesUrl,
 					defaultMp3File, defaultRmFile, defaultSmilFile, 
-					defaultFlashFile, defaultScreenshotsFolder, comment,lockMedicine,buildingMedicineId
+					defaultFlashFile, defaultScreenshotsFolder, comment
 			);
 			UnivrDaoImpl ud = new UnivrDaoImpl();
 			
@@ -715,7 +701,7 @@ public class Application extends HttpServlet {
 		/* initializes the model */
 		request.setAttribute("teachers", service.getTeachers());
 		request.setAttribute("formations", service.getFormations());
-		request.setAttribute("lastcourses", service.getNLastCourses(lastCourseNumber, testKeyWord2, testKeyWord3,lockMedicine,buildingMedicineId));
+		request.setAttribute("lastcourses", service.getNLastCourses(lastCourseNumber, testKeyWord2, testKeyWord3));
 		request.setAttribute("selectioncourses", service.getNSelectionCourses(selectionCourseNumber, testKeyWord2, testKeyWord3));
 		request.setAttribute("collectioncourses", service.getNFormationCourses(collectionCourseNumber, testKeyWord2, testKeyWord3));
 		request.setAttribute("collectionname", service.getSelection(1)!=null ? service.getSelection(1).getFormationcollection() : "");
@@ -917,16 +903,8 @@ public class Application extends HttpServlet {
 			request.setAttribute("genre", request.getParameter("genre"));
 			request.setAttribute("tags", request.getParameter("tags"));
 			request.setAttribute("visible", request.getParameter("visible"));
+			request.setAttribute("restrictionuds", request.getParameter("restrictionuds"));
 			
-			// to set the discipline into the formulaire
-			if(lockMedicine) {
-				Amphi a = service.getAmphi(request.getRemoteAddr());	
-				if(a!=null && a.getBuildingid() == buildingMedicineId) {
-					request.setAttribute("ue", disciplineMedicine);	
-					request.setAttribute("lockMedicine", lockMedicine);	
-				}
-			}
-
 			//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
 			String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 
@@ -1475,7 +1453,7 @@ public class Application extends HttpServlet {
 		throws ServletException, IOException {
 				
 		String id, title, description, mediapath, media, timing, name, firstname, formation, genre, login, email,tags;
-		boolean visible;
+		boolean visible,restrictionuds;
 		String message, message2, ahref, ahref2;
 		message=message2=ahref=ahref2="";
 		String messageType = "information";
@@ -1507,6 +1485,13 @@ public class Application extends HttpServlet {
 		}
 		else {
 			visible = true;
+		}
+		
+		if(request.getParameter("publication_type")!=null) {
+			restrictionuds = request.getParameter("restrictionuds") != null ? true : false;
+		}
+		else {
+			restrictionuds = true;
 		}
 						
 		/* Verifies that all essential parameters are sent, cancels the upload if not */
@@ -1556,7 +1541,8 @@ public class Application extends HttpServlet {
 							false,
 							user!=null ? user.getUserid() : null,
 							null,
-							true
+							true,
+							restrictionuds
 					);
 					
 					service.addCourse(c, media, tags, getServletContext().getRealPath("/rss"), 
@@ -1695,6 +1681,7 @@ public class Application extends HttpServlet {
 		title = description = name = firstname = date = formation = genre = tags = fileName = "";
 		boolean hq=false;
 		boolean visible=false;
+		boolean restrictionuds=false;
 		String message = "";
 		String messageType = "information";
 		String requestDispatcher = "/WEB-INF/views/message.jsp";
@@ -1772,6 +1759,9 @@ public class Application extends HttpServlet {
 							else if(item.getFieldName().equals("tags")) {
 								tags = item.getString("UTF8");
 							}
+							else if(item.getFieldName().equals("restrictionuds")) {
+								restrictionuds=true;
+							}
 
 						} /* If the element is a file (the last element */
 						else {
@@ -1827,7 +1817,8 @@ public class Application extends HttpServlet {
 										hq,
 										user.getUserid(),
 										null,
-										true
+										true,
+										restrictionuds
 								);
 
 								/* Sends the creation of the course to the service layer */
@@ -1894,6 +1885,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("tags", tags);
 			request.setAttribute("visible", visible!=false ? visible : null);
 			request.setAttribute("hd", hq!=false ? hq : null);
+			request.setAttribute("restrictionuds", restrictionuds!=false ? restrictionuds : null);
 		}
 				
 		/* Displays the result of the upload process */
@@ -1966,25 +1958,19 @@ public class Application extends HttpServlet {
 				c = service.getCourse(courseid, genre);
 			
 
-			//To lock access of Medicine course with UDS account
+			//To lock access of course with UDS account
 			User user = null;
-			boolean amphiMedicine=false;
-			if(lockMedicine) {
-				Amphi a = service.getAmphi(c.getIpaddress());	
-				if(a!=null && a.getBuildingid() == buildingMedicineId) {
-					amphiMedicine = true;
-					String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-					if(casUser!=null) // Authentification CAS	
-						user=service.getUser(casUser); // Gets the user from the session		
-				}
-
+			if(c.isRestrictionuds()) {
+				String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+				if(casUser!=null) // Authentification CAS	
+					user=service.getUser(casUser); // Gets the user from the session		
 			}
 					
 			// if the user is not authenticated, redirection to authentication_cas
-			if(lockMedicine && amphiMedicine && user==null) {
+			if(c.isRestrictionuds() && user==null) {
 				response.sendRedirect("./authentication_cas?returnPage=courseaccess&id="+courseid+"&type="+(type != null ? type : "flash")+(genre !=null ? "&code="+genre:""));
 			}
-			else if(lockMedicine && amphiMedicine && user!=null && !user.isActivate()) {
+			else if(c.isRestrictionuds() && user!=null && !user.isActivate()) {
 				request.setAttribute("messagetype", "error");
 				request.setAttribute("message", "You don't have access to this page");
 				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
@@ -2141,24 +2127,19 @@ public class Application extends HttpServlet {
 		String building = service.getBuildingName(ip);
 		String url = "rtmp://" + flashServerIp + "/live&id=" + ip.replace('.', '_');
 				
-		//To lock access of Medicine course with UDS account
-		User user = null;
-		boolean amphiMedicine=false;
-		if(lockMedicine) {
-			if(a!=null && a.getBuildingid() == buildingMedicineId) {
-				amphiMedicine = true;
-				String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-				if(casUser!=null) // Authentification CAS	
-					user=service.getUser(casUser); // Gets the user from the session		
-			}
-
+		//To lock access of course with UDS account
+		User user = null;		
+		if(a!=null && a.isRestrictionuds()) {
+			String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+			if(casUser!=null) // Authentification CAS	
+				user=service.getUser(casUser); // Gets the user from the session		
 		}
 				
 		// if the user is not authenticated, redirection to authentication_cas
-		if(lockMedicine && amphiMedicine && user==null) {
+		if(a!=null && a.isRestrictionuds() && user==null) {
 			response.sendRedirect("./authentication_cas?returnPage=liveaccess&amphi="+ip);
 		}
-		else if(lockMedicine && amphiMedicine && user!=null && !user.isActivate()) {
+		else if(a!=null && a.isRestrictionuds() && user!=null && !user.isActivate()) {
 			request.setAttribute("messagetype", "error");
 			request.setAttribute("message", "You don't have access to this page");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
@@ -2225,7 +2206,8 @@ public class Application extends HttpServlet {
 			Boolean.parseBoolean(request.getParameter("highquality")),
 			! request.getParameter("userid").equals("0") ? Integer.parseInt(request.getParameter("userid")) : null,
 			! request.getParameter("adddocname").equals("") ? request.getParameter("adddocname") : null,
-			request.getParameter("download") != null ? true : false
+			request.getParameter("download") != null ? true : false,
+			request.getParameter("restrictionuds") != null ? true : false
 		);
 		service.modifyCourse(c);
 		
@@ -2309,7 +2291,8 @@ public class Application extends HttpServlet {
 				request.getParameter("ipaddress"),
 				Boolean.parseBoolean(request.getParameter("status")),
 				request.getParameter("gmapurl").equals("") ? null : request.getParameter("gmapurl"),
-				request.getParameter("version")
+				request.getParameter("version"),
+				request.getParameter("restrictionuds") != null ? true : false
 			);
 			
 			String oldAmphiip = request.getParameter("oldAmphiip");
@@ -2493,7 +2476,8 @@ public class Application extends HttpServlet {
 									false,
 									null,
 									null,
-									true
+									true,
+									false
 							);
 							
 							Univr u = new Univr(courseId, user, group,estab);
