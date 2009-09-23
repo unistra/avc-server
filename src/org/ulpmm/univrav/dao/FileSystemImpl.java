@@ -119,8 +119,7 @@ public class FileSystemImpl implements IFileSystem {
 
 		archiveExtraction(c, courseArchive);
 		setCourseType(c);
-		thumbCheck(c.getMediaFolder());
-		
+				
 		if( c.getType().equals("audio")) {
 			renameFile(c.getMediaFolder(), defaultMp3File, c.getMediasFileName() + ".mp3");
 			mp3Tag(c, c.getMediaFolder(), c.getMediasFileName());
@@ -689,29 +688,7 @@ public class FileSystemImpl implements IFileSystem {
 		}
 	}
 	
-	/**
-	 * Launches a python script which creates the missing screenshots thumbs
-	 * @param mediaFolder the folder which contains the media files of a course
-	 */
-	private static void thumbCheck(String mediaFolder) {
-		try {
-			Process p = r.exec("python thumbCheck.py " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder, null, scriptsFolder); 
-			if( p.waitFor() != 0 ) {
-				System.out.println("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder);
-				throw new DaoException("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder);
-			}
-		}
-		catch(IOException ioe) {
-			System.out.println("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder);
-			ioe.printStackTrace();
-		}
-		catch(InterruptedException ie) {
-			System.out.println("Error while checking the course thumbs in the folder " + coursesFolder + mediaFolder + "/" + defaultScreenshotsFolder);
-			ie.printStackTrace();
-		}
-	}
-	
-		
+			
 	/**
 	 * Adds the id3 tags to the mp3 file
 	 * @param c the course
