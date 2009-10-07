@@ -6,6 +6,8 @@
 	<property name="warName" value="${ant.project.name}" />
 	<property name="build.dir" value="./WebContent/WEB-INF/classes" />
 	<property name="src.dir" value="./src"/>
+	<property name="lib.dir" value="./WebContent/WEB-INF/lib"/>
+	<property name="tomcatlib.dir" value="/usr/share/tomcat6/lib"/>
 	
 	<!-- Création du dossier "classes" et du dossier "war" s'ils n'existent pas -->
 	<target name="prep">
@@ -18,12 +20,21 @@
 		<tstamp/>
 	</target>
 	
+	<path id="compile.classpath"> 
+		<fileset dir="${lib.dir}">
+	    	<include name="*.jar"/>
+	    </fileset>
+	    <fileset dir="${tomcatlib.dir}">
+	        <include name="*.jar"/>
+	    </fileset>
+	</path>
+	
 	<!-- Compilation -->
 	<target name="compile">
 		<echo message="Compilation des sources"/>
 		<javac srcdir="${src.dir}" destdir="${build.dir}" debug="on" deprecation="on">
 		<include name="**/*.java"/>
-		<classpath refid="project.class.path"/>
+		<classpath refid="compile.classpath"/>
 		</javac>
 	</target>
 
