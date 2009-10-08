@@ -1,6 +1,12 @@
-/*
-Warning: You can download this script in order to set style on scrollbars at :
+Flexcroll :
+Free for non-commercial uses
+
+-----------------------------------------------------------------------
+
+You can download "flexcroll" in order to set styles on scrollbars at :
 http://www.hesido.com/web.php?page=customscrollbar
 
-How to install: put "flexcroll.js" in this folder
-*/
+-----------------------------------------------------------------------
+
+Installation :
+put "flexcroll.js" in this folder.
