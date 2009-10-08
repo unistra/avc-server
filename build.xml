@@ -37,6 +37,11 @@
 		<classpath refid="compile.classpath"/>
 		</javac>
 	</target>
+	
+	<!-- Copie des fichiers properties des languages dans les classes du projet -->
+	<copy todir="${build.dir}/org/ulpmm/univrav/language">
+		<fileset dir="${src.dir}/org/ulpmm/univrav/language" includes="*.properties"/>
+	</copy>
 
 	<!-- Création du war -->
 	<target name="makeWar" depends="init,compile" description="compile the source and make a war file" >
