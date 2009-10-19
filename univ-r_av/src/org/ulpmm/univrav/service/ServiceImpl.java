@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FilenameUtils;
@@ -24,8 +25,6 @@ import org.ulpmm.univrav.entities.Tag;
 import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
-
-import sun.misc.BASE64Encoder;
 
 /**
  * Service implementation methods.
@@ -889,6 +888,25 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
+	 * Gets local user by hash code (hash is unique)
+	 * @param hash the hash code
+	 * @return the user
+	 */
+	public User getUserLocalByHash(String hash) {
+		return db.getUserLocalByHash(hash);
+	}
+	
+	/**
+	 * Modify a password for a user
+	 * @param login the login
+	 * @param hash the password
+	 * @param hashtype the password type
+	 */
+	public void modifyUserPassword(String login, String hash, String hashtype) {
+		db.modifyUserPassword(login, hash, hashtype);
+	}
+	
+	/**
 	 * Gets the id of the next user which will be uploaded
 	 * @return the id of the user
 	 */
@@ -1123,18 +1141,57 @@ public class ServiceImpl implements IService {
 	 */
 	public synchronized String encrypt(String plaintext) {
 		
-		MessageDigest md = null;
+		final char[] hexChars = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+    	StringBuilder sb = new StringBuilder();
+   
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA");
+            md.update(plaintext.getBytes(), 0, plaintext.getBytes().length);
+            byte[] hash = md.digest();
+            int msb;
+            int lsb = 0;
+            for (int i = 0; i < hash.length; i++) {
+                msb = ((int)hash[i] & 0x000000FF) / 16;
+                lsb = ((int)hash[i] & 0x000000FF) % 16;
+                sb.append(hexChars[msb]);
+                sb.append(hexChars[lsb]);
+            }
+            
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+        
+        return sb.toString();
+	}
+	
+	/**
+	 * Generate a random password
+	 * @param length the length of the password
+	 * @return a password
+	 */
+	public synchronized String generatePassword(int length)
+	{
+		Random rand = new Random();
+		StringBuffer buffer = new StringBuffer();
+		length = Math.abs( length );
+		int c = 0;
 		
-		try {
-			md = MessageDigest.getInstance("SHA"); 
-			md.update(plaintext.getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} 
+		while( length > 0 ){
+			--length;
+			//minuscule + majuscule + chiffre
+			c = rand.nextInt( 26 * 2 + 10 + 1 );
+			if( c < 26 ) {
+				buffer.append( (char)( 'a' + c ) );
+			}
+			else if( c < 26 * 2 ) {
+				buffer.append( (char)( 'A' + c - 26 ) );
+			}
+			else {
+				buffer.append( (char)( '0' + c - 26 * 2 ) );
+			}
+		}
 		
-		return (new BASE64Encoder()).encode(md.digest()); 
+		return buffer.toString();
 	}
 	
 	/**

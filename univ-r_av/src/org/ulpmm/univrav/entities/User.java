@@ -27,6 +27,17 @@ public class User {
 	/** account activation (for local user) */
 	private boolean activate;
 	
+	private static final String TYPELDAP = "ldap";
+	private static final String TYPELOCAL = "local";
+	
+	public static String getTYPELDAP() {
+		return TYPELDAP;
+	}
+
+	public static String getTYPELOCAL() {
+		return TYPELOCAL;
+	}
+	
 	/**
 	 * Default constructor
 	 */

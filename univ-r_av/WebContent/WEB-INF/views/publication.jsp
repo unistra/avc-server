@@ -83,7 +83,7 @@
 				</c:otherwise>
 			</c:choose>
 			<c:choose>
-				<c:when test="${message!=null and restrictionuds==null}">
+				<c:when test="${(message!=null and restrictionuds==null) or (message==null && publication_type == 'serverFree')}">
 					<c:set var="checkedRestUdsField" value="" />
 				</c:when>
 				<c:otherwise>
@@ -122,6 +122,12 @@
 							</c:otherwise>
 						</c:choose>
 					</tr>
+					</c:if>
+					<c:if test="${publication_type == 'serverFree'}">
+						<tr class="even">
+							<td title="<fmt:message key="ib_email"/>">E-mail : </td>
+							<td><input type="text" name="email" class="${classField}"> </td>
+						</tr>
 					</c:if>
 					<tr class="odd">
 						<td title="<fmt:message key="ib_title"/>"><fmt:message key="title"/><b class="boldStar">*</b> : </td>
@@ -169,12 +175,11 @@
 					    <td title="<fmt:message key="ib_visible"/>">Visible</td>
 					    <td><input type="checkbox" name="visible" <c:out value="${checkedVisbleField}"/> <c:out value="${disabledField}"/>></td>
 			   		</tr>
-			   		<c:if test="${publication_type == 'serverCas'}">
-			   			<tr class="odd">
-					   	 <td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds</td>
-					    	<td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/> <c:out value="${disabledField}"/>><font class="chpsHd"><fmt:message key="uploadmessage6"/></td>
-			   			</tr>
-			   		</c:if>	
+			   		<tr class="odd">
+					  	<td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds</td>
+					   	<td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/> <c:out value="${disabledField}"/>><font class="chpsHd"><fmt:message key="uploadmessage6"/></td>
+			   		</tr>
+			   		
 			    	<tr>
 			    		<td class="chpsObl"><b class="boldStar">*</b>: <fmt:message key="requiredField"/></td>
 			    	</tr>

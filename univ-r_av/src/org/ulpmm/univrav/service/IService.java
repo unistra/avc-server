@@ -526,7 +526,22 @@ public interface IService {
 	 * @return the user
 	 */
 	public User getUser(String login);
-		
+	
+	/**
+	 * Gets local user by hash code (hash is unique)
+	 * @param hash the hash code
+	 * @return the user
+	 */
+	public User getUserLocalByHash(String hash);
+	
+	/**
+	 * Modify a password for a user
+	 * @param login the login
+	 * @param hash the password
+	 * @param hashtype the password type
+	 */
+	public void modifyUserPassword(String login, String hash, String hashtype);
+	
 	/**
 	 * Get user by id 
 	 * @param id the id of the user
@@ -712,6 +727,13 @@ public interface IService {
 	 * @throws UnsupportedEncodingException
 	 */
 	public String encrypt(String plaintext) throws NoSuchAlgorithmException, UnsupportedEncodingException;
+	
+	/**
+	 * Generate a random password
+	 * @param length the length of the password
+	 * @return a password
+	 */
+	public String generatePassword(int length);
 	
 	/**
 	 * Add an additional document to a course

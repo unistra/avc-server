@@ -357,6 +357,21 @@ public interface IDatabase {
 	public User getUser(int id);
 	
 	/**
+	 * Gets local user by hash code (hash is unique)
+	 * @param hash the hash code
+	 * @return the user
+	 */
+	public User getUserLocalByHash(String hash);
+	
+	/**
+	 * Modify a password for a user
+	 * @param login the login
+	 * @param hash the password
+	 * @param hashtype the password type
+	 */
+	public void modifyUserPassword(String login, String hash, String hashtype);
+	
+	/**
 	 * Gets the id of the next user which will be uploaded
 	 * @return the id of the user
 	 */
