@@ -26,13 +26,13 @@
 	
 	<script type="text/javascript" src="../files/jwflvplayer/swfobject.js"></script>
 	<!-- <script type="text/javascript" src="../files/js/ieupdate.js"></script> -->
-	<script type="text/javascript" src="../files/js/recordinterface_flash.js"></script>
+	<!--<script type="text/javascript" src="../files/js/recordinterface_flash.js"></script>
 	<script type="text/javascript">
 		var timecodes = ${slides};
 		var style = "${sessionScope.style}";
 		var slidesurl = "${slidesurl}";
 		var timing = ${timing};
-	</script>
+	</script>-->
 	
 	<meta name="keywords" content="${course.name},${course.title},${course.formation}">
 	
@@ -54,7 +54,7 @@
 	        	           			
 	        	<p id=textHqPlayer><fmt:message key="Highqualityplayer"/></p>
 	        	
-	         	<p id="hqPlayer">Please install flash player</p>
+	        <!-- 	<p id="hqPlayer">Please install flash player</p>
 	            <script type="text/javascript">
 		        var so = new SWFObject('../files/jwflvplayer/player_flv_maxi.swf','flashvideo','1024','576','8'); //1224 776
 		        so.addParam('movie','../files/jwflvplayer/player_flv_maxi.swf');
@@ -80,7 +80,35 @@
 
 		        so.write('hqPlayer');
 		           
-	            </script>
+	            </script>-->
+	            
+	            <script type="text/javascript">
+     				 var flashvars =
+     				 {
+       			     	file:					'${courseurl}', 
+        			 	id:						'flashvideo', 
+       				 	autostart:				'true',
+       				 	//streamer:				'lighttpd',  
+       				 	image:					'../files/img/logo_audio.png'			  
+     				 };
+
+     				 var params =
+     				 {
+       			     	allowfullscreen:		'true', 
+       					allowscriptaccess:		'always'
+     				 };
+
+      				var attributes =
+     				 {
+     				 	id:						'flashvideo', 
+       					name:					'flashvideo'
+     				 };
+
+    				  swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '1024', '576', '9.0.124', false, flashvars, params, attributes);
+    				  
+   				 </script>
+   				 
+   				 <center><div id="playercontainer"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></div></center>
 
  
 			</div>

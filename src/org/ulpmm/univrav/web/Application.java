@@ -399,6 +399,8 @@ public class Application extends HttpServlet {
 			displayHomePage(request, response);
 		else if (page.equals("/authentication_cas")) 
 			authenticationCas(request,response);
+		else if (page.equals("/authentication")) 
+			authentication(request,response);
 		else if (page.equals("/myspace_home")) 
 			displayMyspace(request,response);
 		else if(page.equals("/logout")) 
@@ -719,6 +721,53 @@ public class Application extends HttpServlet {
 	}
 	
 	
+	
+	/**
+	 * Method to authenticate a local user
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void authentication(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+		
+		if(request.getParameter("account")!=null) {
+			
+			String hash = request.getParameter("account");
+			User user = service.getUserLocalByHash(hash);
+						
+			if(user!=null) {
+								
+				// If user cas not connected
+				if(session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER)==null) {
+					
+					// Connection LOCAL
+					session.setAttribute("$userLocalLogin", user.getLogin());
+					session.setAttribute("btnDeco", true);
+					response.sendRedirect("./myspace_home");
+				}
+				else {
+					request.setAttribute("messagetype", "error");
+					request.setAttribute("message", "Disconnect your account uds first");
+					getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+				}
+				
+			}
+			else {
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "You don't have access to this page");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+			}
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Wrong parameters");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+	}
+	
+	
 	/**
 	 * Method to authenticate a cas user
 	 * @param request the request send by the client to the server
@@ -740,6 +789,11 @@ public class Application extends HttpServlet {
 				// If the user is null, create an account
 				if(user==null) {
 					service.addUser(new User(0,casUser,null,null,null,null,null,"ldap",true));
+				}
+				
+				// Disconnect user LOCAL if exist
+				if(session.getAttribute("$userLocalLogin")!=null) {	
+					session.removeAttribute("$userLocalLogin");
 				}
 							
 				session.setAttribute("btnDeco", true);
@@ -788,7 +842,6 @@ public class Application extends HttpServlet {
 	private void displayMyspace(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 				
-		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 		
 		User user = null;
@@ -798,12 +851,16 @@ public class Application extends HttpServlet {
 			user=service.getUser(casUser);
 		}
 		// Authentification local
-		/*else if(session.getAttribute("$userLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLogin").toString());
-		}*/
-			
+		else if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
+		
+		// if the user is not authenticated, redirection to authentication_cas
+		if(user==null) {
+			response.sendRedirect("./authentication_cas?returnPage=myspace");
+		}
 		// if user is present and activate
-		if(user!=null && user.isActivate()) {
+		else if(user.isActivate()) {
 			
 			int start = 0;
 			int pageNumber;
@@ -836,7 +893,6 @@ public class Application extends HttpServlet {
 			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace_home.jsp").forward(request, response);
 		}
 		else {
-			//TODO response.sendRedirect("./authentication");
 			request.setAttribute("messagetype", "error");
 			request.setAttribute("message", "You don't have access to this page");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
@@ -865,19 +921,16 @@ public class Application extends HttpServlet {
 		}
 		
 		// Authentication local
-		/*if(session.getAttribute("$userLogin")!=null) {	
-			session.removeAttribute("$userLogin");
+		if(session.getAttribute("$userLocalLogin")!=null) {	
+			session.removeAttribute("$userLocalLogin");
 			response.sendRedirect("./home");
-		}*/
+		}
 		
 	}
 	
 	
 	private void displayPublicationPage(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {  
-
-		/* The client sends parameters in the ISO8859-15 encoding */
-		//request.setCharacterEncoding("ISO8859-15");
 
 		if(request.getParameter("publication_type")!=null) {
 			request.setAttribute("publication_type", request.getParameter("publication_type"));	
@@ -905,7 +958,6 @@ public class Application extends HttpServlet {
 			request.setAttribute("visible", request.getParameter("visible"));
 			request.setAttribute("restrictionuds", request.getParameter("restrictionuds"));
 			
-			//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
 			String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 
 			User user = null;
@@ -1328,7 +1380,6 @@ public class Application extends HttpServlet {
 	private void validateMyCourse(HttpServletRequest request, HttpServletResponse response, String redirectUrl) 
 	throws ServletException, IOException {	
 						
-		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 		
 		User user = null;
@@ -1338,9 +1389,9 @@ public class Application extends HttpServlet {
 			user=service.getUser(casUser);
 		}
 		// Authentification local
-		/*else if(session.getAttribute("$userLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLogin").toString());
-		}*/
+		else if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
 		
 		if(user!=null && user.isActivate()) {
 
@@ -1362,7 +1413,6 @@ public class Application extends HttpServlet {
 			}
 		}
 		else {
-			//TODO response.sendRedirect("./authentication");
 			request.setAttribute("messagetype", "error");
 			request.setAttribute("message", "You don't have access to this page");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
@@ -1380,7 +1430,6 @@ public class Application extends HttpServlet {
 	private void displayEditMyCourses(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 				
-		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 		
 		User user = null;
@@ -1390,9 +1439,9 @@ public class Application extends HttpServlet {
 			user=service.getUser(casUser);
 		}
 		// Authentification local
-		/*else if(session.getAttribute("$userLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLogin").toString());
-		}*/
+		else if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
 		
 		if(user!=null && user.isActivate()) {
 
@@ -1520,6 +1569,33 @@ public class Application extends HttpServlet {
 					// getting the user
 					user = service.getUser(login);
 				}
+				
+				// Hash email for free user
+				if(request.getParameter("publication_type").equals("serverFree") && email!=null && !email.equals("")) {
+					//  Check if a local user with this email adress exist
+					user = service.getUser(email);
+					if(user==null) {
+						String pass = service.generatePassword(16);
+						String hash = service.encrypt(email + pass);
+						service.addUser(new User(0, email, email, null, null, null, null, User.getTYPELOCAL(), true));
+						service.modifyUserPassword(email, hash, "sha");
+						user = service.getUser(email);
+						
+						// Sending email for the user
+						String emailUserSubject = "Your AVC space";
+						String emailUserMessage = "Dear Customer,\n\nYou can access in your space with the following url. Don't lost this mail.\n"
+						+ serverUrl + "/avc/authentication?account=" + hash
+						+ "\n\nBest Regards,\n\nUniv-r Av Administrator" 
+						+"\n\nPlease, don't answer to this mail, for any question contact us on "+adminEmail1;
+							
+						service.sendMail(emailUserSubject,emailUserMessage,email);
+						
+						System.out.println(email);
+						System.out.println(emailUserSubject);
+						System.out.println(emailUserMessage);
+						
+					}
+				}
 			
 				// Standard course
 				if( id.equals("") || id.equals("(id:no)") || id.equals("None") ) {
@@ -1635,7 +1711,6 @@ public class Application extends HttpServlet {
 
 		String forwardUrl = "/WEB-INF/views/myspace/myspace_uploadpage.jsp";
 		
-		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 		
 		User user = null;
@@ -1645,9 +1720,9 @@ public class Application extends HttpServlet {
 			user=service.getUser(casUser);
 		}
 		// Authentification local
-		/*else if(session.getAttribute("$userLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLogin").toString());
-		}*/
+		else if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
 
 		// Gets the user's login from the session		
 		if(user!=null && user.isActivate()) {
@@ -1692,8 +1767,6 @@ public class Application extends HttpServlet {
 		Date d = new Date();
 		boolean continuer=true;
 
-
-		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 
 		User user = null;
@@ -1703,9 +1776,9 @@ public class Application extends HttpServlet {
 			user=service.getUser(casUser);
 		}
 		// Authentification local
-		/*else if(session.getAttribute("$userLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLogin").toString());
-		}*/
+		else if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
 
 		if(user!=null && user.isActivate()) {
 
@@ -2797,7 +2870,6 @@ public class Application extends HttpServlet {
 	private void myspaceAddDocUpload(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 
-		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 
 		User user = null;
@@ -2807,9 +2879,9 @@ public class Application extends HttpServlet {
 			user=service.getUser(casUser);
 		}
 		// Authentification local
-		/*else if(session.getAttribute("$userLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLogin").toString());
-		}*/
+		else if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
 
 		if(user!=null && user.isActivate()) {
 
@@ -2856,7 +2928,6 @@ public class Application extends HttpServlet {
 	private void myspaceDeleteAddDoc(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 	
-		//TODO A SUPPRIMER QUAND AUTHENT AUTONOME ?????
 		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 
 		User user = null;
@@ -2866,9 +2937,9 @@ public class Application extends HttpServlet {
 			user=service.getUser(casUser);
 		}
 		// Authentification local
-		/*else if(session.getAttribute("$userLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLogin").toString());
-		}*/
+		else if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
 
 		if(user!=null && user.isActivate()) {
 			

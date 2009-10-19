@@ -2277,6 +2277,90 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
+	 * Gets local user by hash code (hash is unique)
+	 * @param hash the hash code
+	 * @return the user
+	 */
+	public User getUserLocalByHash(String hash) {
+		User u = null;
+		Connection cnt = null;
+		String sql = "SELECT * FROM \"user\" WHERE password = ? and type = ?" ;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			pstmt.setString(1, hash);
+			pstmt.setString(2, User.getTYPELOCAL());
+			rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				u = new User(
+					rs.getInt("userid"),
+					rs.getString("login"),
+					rs.getString("email"),
+					rs.getString("firstname"),
+					rs.getString("lastname"),
+					rs.getString("profile"),
+					rs.getString("establishment"),
+					rs.getString("type"),
+					rs.getBoolean("activate")
+					
+				);
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while retrieving the user ");
+			sqle.printStackTrace();
+			throw new DaoException("Error while retrieving the user ");
+		}
+		finally {
+			close(rs,pstmt,cnt);
+		}
+		
+		return u;
+	}
+	
+	/**
+	 * Modify a password for a user
+	 * @param login the login
+	 * @param hash the password
+	 * @param hashtype the password type
+	 */
+	public void modifyUserPassword(String login, String hash, String hashtype) {
+		
+		Connection cnt = null;
+		/* Creation of the SQL query string */
+		String sql = "UPDATE \"user\" SET password = ?, passwordtype = ? ";
+		sql += "WHERE login = ?";
+		
+		PreparedStatement pstmt = null;
+		
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			
+			/* Applies the parameters to the query */
+			pstmt.setString(1, hash);
+			pstmt.setString(2, hashtype);
+			pstmt.setString(3, login);
+						
+			if( pstmt.executeUpdate() == 0 ) {
+				System.out.println("The user " + login + " has not been modified");
+				throw new DaoException("The user " + login + " has not been modified");
+			}
+		}
+		catch( SQLException sqle) {
+			System.out.println("Error while modifying the user " + login);
+			sqle.printStackTrace();
+			throw new DaoException("Error while modifying the user " + login);
+		}
+		finally {
+			close(null,pstmt,cnt);
+		}
+		
+	}
+	
+	/**
 	 * Gets the id of the next user which will be uploaded
 	 * @return the id of the user
 	 */

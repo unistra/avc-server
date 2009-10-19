@@ -56,9 +56,9 @@
 	    	<table class="flashslide">
 	    	<tr>
 				<td id="cellule_flash">
-					<p id="flash">Please install flash player and activate javascript</p>
+					<!-- <p id="flash">Please install flash player and activate javascript</p>
 	            	<script type="text/javascript">
-		            var so = new SWFObject('../files/jwflvplayer/mediaplayer.swf','flashvideo','320','260','8');
+		            var so = new SWFObject('../files/jwflvplayer/player.swf','flashvideo','320','260','8');
 		            so.addParam('allowscriptaccess','always'); 
 		            so.addParam('allowfullscreen','true');
 		            so.addVariable('width','320');
@@ -68,9 +68,38 @@
 		            so.addVariable('autostart','true');
 		            so.addVariable('javascriptid','flashvideo');
 		            so.addVariable('enablejs','true');
+		            so.addVariable('type','lighttpd');
 		            so.write('flash');
-	            	</script>
-	            	
+	            	</script>-->
+	            	    
+	            	<script type="text/javascript">
+     				 var flashvars =
+     				 {
+       			     	file:					'${courseurl}', 
+        			 	id:						'flashvideo', 
+       				 	autostart:				'true',
+       				 	image:					'../files/img/logo_audio.png'
+       				 	//streamer:				'lighttpd'   			  
+     				 };
+
+     				 var params =
+     				 {
+       			     	allowfullscreen:		'true', 
+       					allowscriptaccess:		'always'
+     				 };
+
+      				var attributes =
+     				 {
+     				 	id:						'flashvideo', 
+       					name:					'flashvideo'
+     				 };
+
+    				  swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '320', '260', '9.0.124', false, flashvars, params, attributes);
+    				  
+   				 	</script>
+   				 
+   				 	<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>
+   				 	            	
 	            	<div class="highquality">
 	            		<c:if test="${course.highquality}">
 	            		<c:url var="courseaccess" scope="page" value="./courseaccess">

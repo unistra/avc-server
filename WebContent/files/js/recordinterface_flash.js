@@ -4,32 +4,22 @@ var pageNumber = 1; // current page of the pagination
 var paginationUpdateTime = 10000; // after having clicked on the pagination, the time bar is not updated during this time
 var update = true; // if the time bar has to be updated or not
 var numberPerPage = 10; // number of time points in a page
+var player;
 
-
-/* function to call when the page starts */
-window.onload = function(){
-	// calls the method to update the time bar
+/* function to call when the player is ready */
+function playerReady(obj) {
+	player = document.getElementById(obj['id']);
+	// init the time bar	
 	initTimeBar();
 	updateTimeBar(0);
+	// add time listener
+	player.addModelListener('TIME', 'timeMonitor');
 };
 
-function sendEvent(swf,typ,prm) { 
-	thisMovie(swf).sendEvent(typ,prm); 
-};
-
-function thisMovie(movieName) {
-	if(navigator.appName.indexOf("Microsoft") != -1) {
-	        return window[movieName];
-	} else {
-	        return document[movieName];
-	}
-};
-
-function getUpdate(typ,pr1,pr2,swf) {
-	if(typ == "time") {  
-	    updateTimeBar(pr1);
-	}
-};
+/* Time listener fonction */
+function timeMonitor(obj) {
+	updateTimeBar(obj.position);
+}
 
 /* Updates the time bar with the position of the video */
 /* This function is called every second */
@@ -105,7 +95,7 @@ function getSlideFromTime(time) {
 
 /* Sets the corresponding slide number from a given time */
 function setTimeFromSlide(slide) {
-    sendEvent('flashvideo','scrub', timecodes[slide-1])
+    player.sendEvent('SEEK', timecodes[slide-1]);
 	update = true;
 }
 
@@ -157,8 +147,6 @@ function previousPage() {
 		setTimeout("update=true", paginationUpdateTime);
 		oldSlide = 0;
 		initTimeBar();
-		// updates the page and slide numbers
-		//updatePagination();
 	}
 }
 
@@ -171,8 +159,6 @@ function nextPage() {
 		setTimeout("update=true", paginationUpdateTime);
 		oldSlide = 0;
 		initTimeBar();
-		// updates the page and slide numbers
-		//updatePagination();
 	}
 }
 

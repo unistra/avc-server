@@ -59,72 +59,64 @@ body {
 	background-image: url(../img/uds-logo.png);
 }
 
-/* Clickable zone, link to the ULPMM website */
-/*.ulpmmZone {
-	position: absolute;
-	width : 100px;
-	height: 34px;
-	margin-left:155px;
-	margin-top: 146px;
-	background-image: url(../img/ulpmm-logo.png);
-}*/
-
-/* Clickable zone, link to the ULP website */
-/*.ulpZone {
-	position: absolute;
-	width : 52px;
-	height: 34px;
-	margin-left:255px;
-	margin-top: 146px;
-	background-image: url(../img/ulp-logo.png);
-}*/
-
-/* Div containing the "Styles" link */
-.styles {
-	position: absolute;
-	font-size: 12px;
-	margin-left:890px;
-	margin-top: 80px;
-}
-
 /* Div containing the "logout" link */
 .logout {
 	position: absolute;
 	font-size: 12px;
-	margin-left:870px; /* 870 */
+	width: 150px;
+	text-align:right;
 	margin-top: 5px;
+	margin-left: 800px;
 }
 
 /* Div containing the "Myspace" link */
 .myspace {
 	position: absolute;
 	font-size: 12px;
-	margin-left:880px; /* 870 */
+	width: 150px;
+	text-align:right;
 	margin-top: 55px;
+	margin-left: 800px;
+}
+
+/* Div containing the "Styles" link */
+.styles {
+	position: absolute;
+	font-size: 12px;
+	width: 150px;
+	text-align:right;
+	margin-top: 80px;
+	margin-left: 800px;
 }
 
 /* Div containing the "Languages" link */
 .languages {
 	position: absolute;
 	font-size: 12px;
-	margin-left:890px;
+	width: 150px;
+	text-align:right;
 	margin-top: 105px;
+	margin-left: 800px;
 }
 
 /* Div containing the "Help" link */
 .help {
 	position: absolute;
 	font-size: 12px;
-	margin-left:890px;
+	width: 150px;
+	text-align:right;
 	margin-top: 130px;
+	margin-left: 800px;
 }
 
 /* Div containing the "Downloads" link */
 .download {
 	position: absolute;
 	font-size: 12px;
-	margin-left:840px;
+	width: 150px;
+	text-align:right;
 	margin-top: 155px;
+	margin-left: 800px;
 }
 
 .myspace a, .styles a, .languages a, .download a, .help a {

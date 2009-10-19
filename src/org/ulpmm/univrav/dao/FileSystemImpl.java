@@ -142,6 +142,7 @@ public class FileSystemImpl implements IFileSystem {
 		}
 		else if( c.getType().equals("flash")) {
 			renameFile(c.getMediaFolder(), defaultFlashFile, c.getMediasFileName() + ".flv");
+			injectMetadata(c.getMediaFolder(), c.getMediasFileName(), "flv");
 			rmFlvToMp3(c.getMediaFolder(), c.getMediasFileName(), "flv");
 			mp3Tag(c, c.getMediaFolder(), c.getMediasFileName());
 			setCourseDuration(c, c.getMediaFolder(), c.getMediasFileName());
@@ -206,6 +207,7 @@ public class FileSystemImpl implements IFileSystem {
 			else
 				videoConvert(c.getMediaFolder(), fileName, c.getMediasFileName());
 			
+			injectMetadata(c.getMediaFolder(), c.getMediasFileName(), "flv");
 			rmFlvToMp3(c.getMediaFolder(), c.getMediasFileName(), "flv");
 			mp3Tag(c, c.getMediaFolder(), c.getMediasFileName());
 			setCourseDuration(c, c.getMediaFolder(), c.getMediasFileName());
@@ -806,6 +808,31 @@ public class FileSystemImpl implements IFileSystem {
 		}
 		catch( InterruptedException ie) {
 			System.out.println("Error while renaming the file " + oldFileName);
+			ie.printStackTrace();
+		}
+	}
+	
+	
+	/** 
+	 * Launches a bash script which inject metadata to flv
+	 * @param mediaFolder the folder which contains the media files of a course
+	 * @param mediaFileName the name used by all the media files of a course
+	 * @param mediaFileExtension the extension used by the media file
+	 */
+	private static void injectMetadata( String mediaFolder, String mediaFileName, String mediaFileExtension) {
+		try {
+			Process p = r.exec("bash injectMetadata.sh "  + coursesFolder + mediaFolder + " " + mediaFileName + " " + mediaFileExtension, null, scriptsFolder);
+			if( p.waitFor() != 0 ) {
+				System.out.println("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension);
+				throw new DaoException("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension);
+			}
+		}
+		catch(IOException ioe) {
+			System.out.println("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension);
+			ioe.printStackTrace();
+		}
+		catch(InterruptedException ie) {
+			System.out.println("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension);
 			ie.printStackTrace();
 		}
 	}

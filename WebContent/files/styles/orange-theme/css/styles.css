@@ -60,48 +60,60 @@ body {
 .logout {
 	position: absolute;
 	font-size: 12px;
-	margin-left:870px; /* 870 */
+	width: 150px;
+	text-align:right;
 	margin-top: 5px;
+	margin-left: 800px;
 }
 
 /* Div containing the "Myspace" link */
 .myspace {
 	position: absolute;
 	font-size: 12px;
-	margin-left:880px; /* 870 */
+	width: 150px;
+	text-align:right;
 	margin-top: 55px;
+	margin-left: 800px;
 }
 
 /* Div containing the "Styles" link */
 .styles {
 	position: absolute;
 	font-size: 12px;
-	margin-left:890px; /* 870 */
+	width: 150px;
+	text-align:right;
 	margin-top: 80px;
+	margin-left: 800px;
 }
 
 /* Div containing the "Languages" link */
 .languages {
 	position: absolute;
 	font-size: 12px;
-	margin-left:890px; /* 870 */
+	width: 150px;
+	text-align:right;
 	margin-top: 105px;
+	margin-left: 800px;
 }
 
 /* Div containing the "Help" link */
 .help {
 	position: absolute;
 	font-size: 12px;
-	margin-left:890px; /* 870 */
+	width: 150px;
+	text-align:right;
 	margin-top: 130px;
+	margin-left: 800px;
 }
 
 /* Div containing the "Downloads" link */
 .download {
 	position: absolute;
 	font-size: 12px;
-	margin-left:840px; /* 820 */
+	width: 150px;
+	text-align:right;
 	margin-top: 155px;
+	margin-left: 800px;
 }
 
 .myspace a, .styles a, .languages a, .download a, .help a {
