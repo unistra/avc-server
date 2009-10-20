@@ -2200,7 +2200,10 @@ public class Application extends HttpServlet {
 		Amphi a = service.getAmphi(ip);
 		String amphi = a != null ? a.getName() : ip;
 		String building = service.getBuildingName(ip);
-		String url = "rtmp://" + flashServerIp + "/live&id=" + ip.replace('.', '_');
+		//String url = "rtmp://" + flashServerIp + "/live&id=" + ip.replace('.', '_');
+		
+		String streamerUrl = "rtmp://" + flashServerIp + "/live";
+		String fileUrl = ip.replace('.', '_');
 				
 		//To lock access of course with UDS account
 		User user = null;		
@@ -2221,11 +2224,11 @@ public class Application extends HttpServlet {
 		}
 		else {
 
-			request.setAttribute("type", "video");	
 			request.setAttribute("amphi", amphi);
 			request.setAttribute("building", building);
 			request.setAttribute("ip", ip);
-			request.setAttribute("url", url);
+			request.setAttribute("streamerUrl", streamerUrl);
+			request.setAttribute("fileUrl", fileUrl);
 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/liveinterface.jsp").forward(request, response);
 
