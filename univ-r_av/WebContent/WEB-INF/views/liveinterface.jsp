@@ -39,47 +39,35 @@
 			<iframe id="DiaFrame" name="DiaFrame" scrolling="no" src="./iframe_liveslide?ip=${ip}"></iframe>
 			
 			<br><br>
-			
-			<c:choose>
-				<c:when test="${type == 'audio'}">
-					
-					<p id="flash">This text will be replaced</p>
-		            <script type="text/javascript">
-			            var so = new SWFObject('../files/jwflvplayer/mediaplayer.swf','flashvideo','320','20','8');
-			            so.addParam('allowscriptaccess','always');
-			            so.addParam('allowfullscreen','true');
-			            so.addVariable('width','320');
-			            so.addVariable('height','20');
-			            so.addVariable('file','${url}');
-			            so.addVariable("image","../files/img/logo_audio.png");
-			            so.addVariable('autostart','true');
-			            so.addVariable('javascriptid','flashvideo');
-			            so.addVariable('enablejs','true');
-			            so.write('flash');
-		            </script>
-					
-				</c:when>
-				<c:when test="${type == 'video'}">
-									
-					<p id="flash">This text will be replaced</p>
-		            <script type="text/javascript">
-			            var so = new SWFObject('../files/jwflvplayer/mediaplayer.swf','flashvideo','320','260','8');
-			            so.addParam('allowscriptaccess','always');
-			            so.addParam('allowfullscreen','true');
-			            so.addVariable('width','320');
-			            so.addVariable('height','260');
-			            so.addVariable('file','${url}');
-			            so.addVariable("image","../files/img/logo_audio.png");
-			            so.addVariable('autostart','true');
-			            so.addVariable('javascriptid','flashvideo');
-			            so.addVariable('enablejs','true');
-			            so.write('flash');
-		            </script>
-					
-				</c:when>
-			</c:choose> 
+						
+		    	<script type="text/javascript">
+     				 var flashvars =
+     				 {
+     					file:					'${fileUrl}', 
+            			id:						'flashvideo', 
+           				autostart:				'true',
+           				image:					'../files/img/logo_audio.png',
+           				streamer:				'${streamerUrl}',
+           				type:					'rtmp' 	  
+     				 };
 
+     				 var params =
+     				 {
+       			     	allowfullscreen:		'true', 
+       					allowscriptaccess:		'always'
+     				 };
 
+      				var attributes =
+     				 {
+     				 	id:						'flashvideo', 
+       					name:					'flashvideo'
+     				 };
+
+    				  swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '320', '260', '9.0.124', false, flashvars, params, attributes);
+    				  
+   				 </script>
+   				 
+   				 <p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>
     	</div>
 	    	
 	    <div class="footer">
