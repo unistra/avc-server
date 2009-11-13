@@ -1,0 +1,30 @@
+/*  Div containing the "Live" button */
+.live {
+	background-image: url(../img/menu_off.png);
+}
+
+/*  Div containing the "Recorded" button */
+.recorded {
+	background-image: url(../img/menu_off.png);
+}
+
+/* Clickable zone, link to the "Live" page */
+.liveZone, .recordedZone {
+	color: #FFFFFF;
+}
+
+.message {
+	width: 700px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	margin-top: 100px;
+}
+
+.information, .error {
+	font-size: 18px;
+}
+
+.error {
+	color: red;
+}

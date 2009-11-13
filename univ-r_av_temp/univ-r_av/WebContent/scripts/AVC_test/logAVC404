@@ -1,0 +1,11 @@
+--15:30:01--  http://audiovideocours.u-strasbg.fr/avc/home
+           => `home'
+Résolution de audiovideocours.u-strasbg.fr... 130.79.188.107
+Connexion vers audiovideocours.u-strasbg.fr|130.79.188.107|:80...connecté.
+requête HTTP transmise, en attente de la réponse...200 OK
+Longueur: non spécifié [text/html]
+
+    0K .......... .......... .......... .......... .......       2.33 MB/s
+
+15:30:01 (2.33 MB/s) - « home » sauvegardé [48210]
+
