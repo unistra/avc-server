@@ -1,0 +1,354 @@
+#!/usr/bin/perl
+
+# ogg2mp3
+#
+# based on (most of):
+#
+# mp32ogg
+# Author: Nathan Walp <faceprint@faceprint.com>
+# This software released under the terms of the Artistic License
+# <http://www.opensource.org/licenses/artistic-license.html>
+#
+# and (the name and small bits of):
+#
+# ogg2mp3
+# Author: David Ljung Madison <DaveSource.com>
+# http://marginalhacks.com/
+# License: http://MarginalHacks.com/License
+#
+#
+# Inversion of mp32ogg was done by Mark Draheim <rickscafe.casablanca@gmx.net>
+# as always with a helping hand from guidod
+#
+# 0.4 ogginfo fix thanks to Chris Dance
+# 0.5 cli options thanks to Henry Gomersall 
+#
+# ********** This is the last release done by me **************
+# If anyone likes to maintain ogg2mp3, feel free to do so.
+# All my code in ogg2mp3 is from now on released under the GPL,
+# see http://www.fsf.org/licensing/licenses/gpl.html
+# full text http://www.fsf.org/licensing/licenses/gpl.txt
+# *************** Have fun ************************************
+
+my $version = "v0.5";
+
+# TODO: use Ogg::Vorbis::Header::PurePerl when it becomes usable
+# TODO: strictify the thing
+# use strict;
+use File::Find ();
+use File::stat;
+use File::Basename;
+use Getopt::Long;
+use String::ShellQuote;
+
+print "\n";
+print " ------------------------------------------------------------------- \n";
+print "  ogg2mp3 $version\n";
+print "    based on mp32ogg (c) 2000-2002 Nathan Walp\n";
+print "    inverted and adapted by Mark Draheim\n";
+print "  This code is now released under the General Public License v2.\n";
+print "  I will no longer maintain the script and will not accept patches.\n";
+print "  Thanks to all who took an interest. Have fun!\n";
+print " ------------------------------------------------------------------- \n\n";
+
+my $MP3ENC  = "lame";
+#my $MP3ENC  = "/usr/bin/lame";
+#my $MP3INFO = "/usr/bin/mp3_check";
+my $OGGINFO = "/usr/bin/ogginfo";
+my $OGG123  = "/usr/bin/ogg123";
+
+# check presence of executables
+#stat($MP3ENC) or die "Error: $MP3ENC not present!\n";
+stat($OGGINFO) or die "Error: $OGGINFO not present!\n";
+stat($OGG123) or die "Error: $OGG123 not present!\n";
+
+# list of lame's allowed values
+my $frequency_l = " 32 44.1 48 ";
+my $bitrate_l   = " 32 40 48 56 64 80 96 112 128 160 192 224 256 320 ";
+my $quality_l = " 0 1 2 3 4 5 6 7 8 9 ";
+
+# build genre hash
+my %genres;
+open(GENRES, "$MP3ENC --genre-list|") or die "Couldn't get genre list with $MP3ENC --genre-list\n";
+while(<GENRES>) {
+    chomp;
+    next if /^\s*$/;
+    # lowercase names are keys, ID number is value
+    $genres{lc($2)} = $1 if /^\s*(\d*)\s(.*)$/;
+}
+close(GENRES);
+
+
+# TODO; add overrides for lame settings, eg change sampling freq
+# right now we inherit ogg settings or fallback to common settings
+GetOptions("help|?",\&showhelp,
+		"delete", 
+		"rename=s", 
+		"lowercase",
+		"no-replace",
+		"bitrate=s",
+		"quality=s",
+		"verbose",
+		"<>", \&checkfile);
+
+sub showhelp() {
+	print "Usage: $0 [options] dir1 dir2 file1 file2 ...\n\n";
+	print "Options:\n";
+	print "--delete                 Delete files after converting\n";
+	print "--rename=format          Instead of simply replacing the .ogg with\n";
+	print "                         .mp3 for the output file, produce output \n";
+	print "                         filenames in this format, replacing %a, %t\n";
+	print "                         and %l with artist, title, and album name\n";
+	print "                         for the track\n";
+	print "--bitrate=bitrate        Ask lame to use defined bitrate\n";
+	print "--quality=quality        Ask lame to use defined quality (0-9)\n";
+	print "--lowercase              Force lowercase filenames when using --rename\n";
+	print "--verbose		Verbose output\n";
+	print "--help                   Display this help message\n";
+	exit;
+}
+
+
+sub checkfile() {
+	my $file = shift(@_);
+	if(-d $file) {
+		File::Find::find(\&findfunc, $file);
+	}
+	elsif (-f $file) {
+		&ConvertFile($file);
+	}
+}
+
+sub findfunc() {
+	my $file = $_;
+	($name,$dir,$ext) = fileparse($file,'\.ogg');
+	if((/\.ogg/,$ext) && (-f $file)) {
+		&checkfile($file);
+	}
+}
+
+sub ConvertFile() {
+	my $oggfile = shift(@_);
+	my $delete = $opt_delete;
+	my $filename = $opt_rename;
+	my $bitrate = $opt_bitrate;
+	my $quality = $opt_quality;
+	my $lowercase = $opt_lowercase;
+	my $noreplace = $opt_no_replace;
+	my $verbose = $opt_verbose;
+
+	$_ = $filename;
+	
+	# two hashes; title tags use "=" delimiter, spec tags use ":" delimiter
+	open(TAGS, "$OGGINFO \Q$oggfile\E |") or die "Error: Couldn't run ogginfo $oggfile\n";
+	my %oggtags;
+	my %oggrates;
+	while(<TAGS>) {
+	    chomp;
+	    next if /^\s*$/;
+	    # get title tags
+	    if (/^\s*(\S+)=(.*)$/) {
+            $oggtags{lc($1)} = $2;
+        }
+	    # grab channels, freq and bitrate
+	    # right now we're only using the fixed values and we strip daft ,000000
+	    if (/^\s*(Channels|Rate|Nominal bitrate):\s*(\d*).*$/i) {
+            $oggrates{lc($1)} = $2;
+        }
+	}
+	close(TAGS);
+	
+	# default to joint stereo for encoding
+	# change to stereo for bitrates >=160
+	my $channels = "j";
+	if ($oggrates{channels} == 1) {
+		# mono
+		$channels = "m";
+	}
+	
+	# bitrate
+	# Do bitrate stuff. Grab from command line if available.
+	# Also, add stereo channels for higher bitrates
+	if(($bitrate eq "") || !($bitrate_l =~ / $bitrate /)){
+	    $bitrate = ($oggrates{"nominal bitrate"});
+	    # nice fallback quality default
+	    if($verbose) {
+	        print "No bitrate set - Attempting to extract bitrate from ogg data...\n";
+	    	print "Bitrate $bitrate found\n";
+	    }
+	}
+	if(($quality eq "") || !($quality_l =~ / $quality /)){
+	    # nice fallback quality default
+	    $quality = 5;
+	    if($verbose) {
+	        print "No quality set - Falling back to quality 5\n";
+	        print "Info: lower values mean higher quality.\n";
+	    }
+	}
+	if($bitrate_l =~ / $bitrate /) {
+	   if($bitrate >= 256) {
+	      $channels = "s";
+	   } elsif($bitrate >= 192) {
+	      $channels = "s";
+	   } elsif($bitrate >= 160) {
+	      $channels = "s";
+	   }
+	} else {
+	   # fallback defaults
+	   $bitrate = 128;
+	   print "Warning: Bitrate $bitrate is invalid\n";
+	   print "Warning: Falling back to default: 128 kbps...\n";
+	}
+	
+	# sampling frequency
+	# ogg returns Hz, lame wants kHz	
+	my $frequency = ($oggrates{rate})/1000;
+	# check against allowed values
+	if (!($frequency_l =~ / $frequency /)) {
+	    print "Warning: Sampling frequency $frequency kHz is not a legal value for Lame MPEG1!\n";
+	    print "Warning: Falling back to default 44.1 kHz...\n";
+	    $frequency = "";
+	}
+	if (!$frequency) {
+		# fallback default
+		$frequency = "44.1";	
+	}
+	
+	if($filename eq "" ||
+		((/\%a/) && $oggtags{artist} eq "") ||
+		((/\%t/) && $oggtags{title} eq "") ||
+		((/\%l/) && $oggtags{album} eq "") ){
+
+		if($filename ne "") {
+			print "Warning: Not enough ID3 info to rename!\n";
+			print "Warning: Reverting to old filename...\n";
+		}
+		($filename,$dirname,$ext) = fileparse($oggfile,'\.ogg');
+	}
+	else {
+		$filename =~ s/\%a/$oggtags{artist}/g;
+		$filename =~ s/\%t/$oggtags{title}/g;
+		$filename =~ s/\%l/$oggtags{album}/g;
+		if($lowercase) {
+			$filename = lc($filename);
+		}
+		if(!$noreplace) {
+			$filename =~ s/[\[\]\(\)\{\}!\@#\$\%^&\*\~ ]/_/g;
+			$filename =~ s/[\'\"]//g;
+		}
+		($name, $dir, $ext) = fileparse($filename, '.mp3');
+		$filename = "$dir$name";
+		$dirname = dirname($oggfile);
+	}
+
+	$mp3outputfile = "$filename.mp3";
+	$newdir = dirname($mp3outputfile);
+
+	# until i find a way to make perl's mkdir work like mkdir -p...
+	if (! -d $newdir) {
+	    system("mkdir -p $newdir");
+	}
+
+	my $infostring = "";
+	
+	print "Converting $oggfile to MP3...\n";
+	if (!$verbose) {
+	    print "This may take some time depending on your hardware and encoding options,\n";
+	    print "use --verbose to see what's going on,\n";
+	    print "Please wait...\n\n";
+	}
+	# set verbose to quiet unless verbose is set
+	my $decquiet = "-q";
+	my $encquiet = "--quiet";
+	if ($verbose) {
+		$decquiet = "";
+		$encquiet = "";
+		print "\n   Freq: $frequency kHz\n";
+		print "Bitrate: $bitrate kbps\tQuality Level: $quality\n";
+		print " Artist: $oggtags{artist}\n";
+		print "  Album: $oggtags{album}\n";
+	        print "  Title: $oggtags{title}\n";
+	        print "   Year: $oggtags{date}\n";
+	        print "  Genre: $oggtags{genre}\n";
+		print "  Track: $oggtags{tracknumber}\n\n";
+	}
+
+	if($oggtags{artist} ne "") {
+		$infostring .= " --ta " . shell_quote($oggtags{artist});
+	}
+	if($oggtags{album} ne "") {
+		$infostring .= " --tl " . shell_quote($oggtags{album});
+	}
+	if($oggtags{title} ne "") {
+		$infostring .= " --tt " . shell_quote($oggtags{title});
+	}
+	if($oggtags{tracknumber} ne "") {
+		$infostring .= " --tn " . shell_quote($oggtags{tracknumber});
+	}
+	if($oggtags{date} ne "") {
+	   	$infostring .= " --ty " . shell_quote($oggtags{date});
+	}
+	if($oggtags{genre} ne "") {
+		# need to lowecase ogg tag for match
+		my $genretag = lc($oggtags{genre});
+		# ogg has spaces in genres underscored, removing them
+		$genretag =~ s/_/ /g;
+		# lookup converted string in genre hash, get ID number
+		$genretag = $genres{$genretag};
+		# damn, those crazy lame guys use 0 as ID, thanks a bundle
+		if ($genretag || ($genretag == 0)) {
+	   	    $infostring .= " --tg " . shell_quote($genretag);
+		}
+	}
+#	if($oggtags->{comment} ne "") {
+#		$infostring .= " --comment " . shell_quote("COMMENT=$oggtags->{comment}");
+#	}
+	
+	$infostring .= " --tc " . shell_quote("ogg had $oggrates{'nominal bitrate'} kbps $oggrates{rate} Hz");
+		
+	
+	$mp3outputfile_escaped = shell_quote($mp3outputfile);
+	$oggfile_escaped = shell_quote($oggfile);
+	# this took me some time to figure
+	# note that byte order is swapped by lame via -x option
+	# TODO: somebody please tell me how to supress the "Assuming bla bla" output without devnull
+	$result = system("$OGG123 $decquiet -d raw -f - $oggfile_escaped | $MP3ENC $encquiet -r -x -q $quality -b $bitrate -s $frequency -m $channels $infostring - $mp3outputfile_escaped");
+
+	# TODO: find some widely used mp3 checker
+	# disabled the checking due to lack of checker
+	if(!$result) {
+#	   open(CHECK,"$MP3INFO $mp3outputfile_escaped |");
+#	   while(<CHECK>)
+#	   {
+#	      if($_ eq "file_truncated=true\n")
+#	      {
+#		 warn "Conversion failed ($mp3outputfile truncated).\n";
+#		 close CHECK;
+#		 return;
+#	      }
+#	      elsif($_ eq "header_integrity=fail\n")
+#	      {
+#		 warn "Conversion failed ($mp3outputfile header integrity check failed).\n";
+#		 close CHECK;
+#		 return;
+#	      }
+#	      elsif($_ eq "stream_integrity=fail\n")
+#	      {
+#		 warn "Conversion failed ($mp3outputfile header integrity check failed).\n";
+#		 close CHECK;
+#		 return;
+#	      }
+#	   }
+#	   close CHECK;
+	   print "$mp3outputfile done!\n\n";
+	   if($delete) {
+	      unlink($oggfile);
+	   }
+
+	}
+	else {
+	   warn "Conversion failed ($MP3ENC returned $result).\n";
+	}
+}
+
+

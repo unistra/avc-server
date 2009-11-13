@@ -1,0 +1,35 @@
+/*  Div containing the "Live" button */
+.live {
+	background-image: url(../img/menu_off.gif);
+}
+
+/*  Div containing the "Recorded" button */
+.recorded {
+	background-image: url(../img/menu_off.gif);
+}
+
+/* Div containing the images div */
+.liveImage, .recordedImage, .rssImage {
+	margin-left: 45px;
+}
+
+/* Div containing the images div */
+.searchImage {
+	background-image: url(../img/search.gif);
+}
+
+.tagImage {
+	background-image: url(../img/tags.gif);
+}
+
+.liveImage {
+	background-image: url(../img/live.gif);
+}
+
+.recordedImage {
+	background-image: url(../img/recorded.gif);
+}
+
+.rssImage {
+	background-image: url(../img/rss.gif);
+}

@@ -1,0 +1,13 @@
+.thick_line {
+	width: 480px;
+	overflow: hidden;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+
+.thick_img {
+	float: left;
+	margin: 5px;
+	padding: 5px;
+}
