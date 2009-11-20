@@ -1571,7 +1571,7 @@ public class Application extends HttpServlet {
 				}
 				
 				// Hash email for free user
-				if(request.getParameter("publication_type").equals("serverFree") && email!=null && !email.equals("")) {
+				if(request.getParameter("publication_type")!=null && request.getParameter("publication_type").equals("serverFree") && email!=null && !email.equals("")) {
 					//  Check if a local user with this email adress exist
 					user = service.getUser(email);
 					if(user==null) {
