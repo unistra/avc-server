@@ -26,9 +26,8 @@ public interface IFileSystem {
 	 * Creates a course from an uploaded audio or video media file
 	 * @param c the course to create
 	 * @param mediaFile the media file of the course to create
-	 * @param hq High Quality
 	 */
-	public void mediaUpload(Course c, FileItem mediaFile,boolean hq);
+	public void mediaUpload(Course c, FileItem mediaFile);
 	
 	/**
 	 * Reads the timecodes csv file and creates the timecodes list

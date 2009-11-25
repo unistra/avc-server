@@ -96,7 +96,6 @@ public interface IService {
 	 * @param rssImageUrl the URL of the RSS image files
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
-	 * @param hq High Quality
 	 * @param rssCategory the category of the RSS file
 	 * @param itunesAuthor The itunes author
 	 * @param itunesSubtitle The itunes subtitle
@@ -107,14 +106,15 @@ public interface IService {
 	 */
 	public void mediaUpload( Course c, FileItem mediaFile, String tags , String rssFolderPath, 
 		String rssName, String rssTitle, String rssDescription, String serverUrl, 
-		String rssImageUrl, String recordedInterfaceUrl, String language,boolean hq, String rssCategory, String itunesAuthor,
+		String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
 		String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords);
 	
 	/**
 	 * Gets a list of all the courses (no-Univr)
+	 * @param onlyvisible true to get only visible courses
 	 * @return the list of courses
 	 */
-	public List<Course> getAllCourses();
+	public List<Course> getAllCourses(boolean onlyvisible);
 	
 	/**
 	 * Gets a list of all the Univ-R courses
@@ -578,9 +578,10 @@ public interface IService {
 	 * @param u the user of the course
 	 * @param number the number of courses
 	 * @param start the start number of courses
+	 * @param onlyvisible true to get only visible courses
 	 * @return the list of course
 	 */
-	public List<Course> getCoursesByUser(User u, Integer number, Integer start);
+	public List<Course> getCoursesByUser(User u, Integer number, Integer start, boolean onlyvisible);
 	
 	/**
 	 * Gets the total number of courses

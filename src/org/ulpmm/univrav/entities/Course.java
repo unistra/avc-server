@@ -2,6 +2,8 @@ package org.ulpmm.univrav.entities;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class for the Course entity
@@ -55,10 +57,7 @@ public class Course {
 	
 	/** Folder which contains all media of the course */
 	private String mediaFolder;
-	
-	/** the high quality indicator */
-	private boolean highquality;
-	
+		
 	/** the user id */
 	private Integer userid;
 	
@@ -70,6 +69,19 @@ public class Course {
 	
 	/** to protect course access with UDS account **/
 	private boolean restrictionuds;
+	
+	/** media type **/
+	private int mediatype;
+	
+	/** media type available **/
+	public static final int typeFlash = 1;
+	public static final int typeMp3 = 2;
+	public static final int typeOgg = 4;
+	public static final int typePdf = 8;
+	public static final int typeZip = 16;
+	public static final int typeVideoslide = 32;
+	public static final int typeAdddoc = 64;
+	public static final int typeHq = 128;
 	
 	/**
 	 * Default constructor
@@ -94,12 +106,13 @@ public class Course {
 	 * @param consultations number of consultations
 	 * @param timing the course's timing
 	 * @param mediaFolder Folder which contains all media of the course
-	 * @param highquality the course's high quality indicator
 	 * @param userid the high quality indicator
 	 * @param adddocname additional document name
+	 * @param download the download parameter
 	 * @param restrictionuds the restriction uds
+	 * @param mediatype media type
 	 */
-	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, boolean highquality, Integer userid, String adddocname, boolean download, boolean restrictionuds) {
+	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, Integer userid, String adddocname, boolean download, boolean restrictionuds, int mediatype) {
 		this.courseid = courseid;
 		this.date = date;
 		this.type = type;
@@ -115,11 +128,11 @@ public class Course {
 		this.consultations = consultations;
 		this.timing = timing;
 		this.mediaFolder = mediaFolder;
-		this.highquality=highquality;
 		this.userid=userid;
 		this.adddocname=adddocname;
 		this.download=download;
 		this.restrictionuds=restrictionuds;
+		this.mediatype=mediatype;
 	}
 	
 	
@@ -350,22 +363,6 @@ public class Course {
 	public void setTiming(String timing) {
 		this.timing = timing;
 	}
-
-	/**
-	 * Gets the high quality indicator
-	 * @return high quality indicator
-	 */
-	public boolean isHighquality() {
-		return highquality;
-	}
-
-	/**
-	 * Sets the high quality indicator
-	 * @param highquality high quality indicator
-	 */
-	public void setHighquality(boolean highquality) {
-		this.highquality = highquality;
-	}
 	
 	/**
 	 * Gets the user's id
@@ -501,5 +498,55 @@ public class Course {
 	 */
 	public void setRestrictionuds(boolean restrictionuds) {
 		this.restrictionuds = restrictionuds;
+	}
+
+	/**
+	 * Gets media type 
+	 * @return mediatype media type
+	 */
+	public int getmediatype() {
+		return mediatype;
+	}
+
+	/**
+	 * Sets the media type
+	 * @param mediatype media type
+	 */
+	public void setmediatype(int mediatype) {
+		this.mediatype = mediatype;
+	}
+	
+	/**
+	 * Check the media availability
+	 * @param type media type(mp3,ogg,...)
+	 * @return true if the media is available
+	 */
+	public boolean isAvailable(String type) {			
+		if(type == null || type.equals("flash")) return ((typeFlash & mediatype) > 0);
+		else if(type.equals("mp3")) return ((typeMp3 & mediatype) > 0);
+		else if(type.equals("ogg")) return ((typeOgg & mediatype) > 0);
+		else if(type.equals("pdf")) return ((typePdf & mediatype) > 0);
+		else if(type.equals("zip")) return ((typeZip & mediatype) > 0);
+		else if(type.equals("videoslide")) return ((typeVideoslide & mediatype) > 0);
+		else if(type.equals("adddoc")) return ((typeAdddoc & mediatype) > 0);
+		else if(type.equals("hq")) return ((typeHq & mediatype) > 0);
+		else return false;
+	}
+	
+	/**
+	 * Gets medias availables
+	 * @return lst list of medias
+	 */
+	public List<String> getMedias() {
+		List<String> lst = new ArrayList<String>();
+		if ((typeFlash & mediatype) > 0) lst.add("flash"); 
+		if ((typeMp3 & mediatype) > 0) lst.add("mp3");
+		if ((typeOgg & mediatype) > 0) lst.add("ogg");
+		if ((typePdf & mediatype) > 0) lst.add("pdf") ;
+		if ((typeZip & mediatype) > 0) lst.add("zip") ;
+		if ((typeVideoslide & mediatype) > 0) lst.add("videoslide") ;
+		if ((typeAdddoc & mediatype) > 0) lst.add("adddoc") ;
+		if ((typeHq & mediatype) > 0) lst.add("hq") ;		
+		return lst;
 	}
 }

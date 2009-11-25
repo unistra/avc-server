@@ -1,6 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
@@ -45,9 +46,9 @@
 			    	<input type="hidden" name="consultations" value="${course.consultations}">
 			    	<input type="hidden" name="timing" value="${course.timing}">
 			    	<input type="hidden" name="mediaFolder" value="${course.mediaFolder}">
-			    	<input type="hidden" name="highquality" value="${course.highquality}">
 			    	<input type="hidden" name="userid" value="${course.userid}">
 			    	<input type="hidden" name="adddocname" value="${course.adddocname}">
+			    	<input type="hidden" name="mediatype" value="${course.mediatype}">
 			    					    		
 			    	<table>
 			    		<tr class="tableheader">
@@ -98,7 +99,7 @@
 				    		<td><input type="checkbox" name="download" ${course.download == true ? 'checked' : ''} ></td>
 			    		</tr>	
 			    		<tr class="even">
-				    		<td>Restriction UDS</td>
+				    		<td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds</td>
 				    		<td><input type="checkbox" name="restrictionuds" ${course.restrictionuds == true ? 'checked' : ''} ></td>
 			    		</tr>	    	
 			    	</table>
@@ -109,7 +110,7 @@
 		    	<br><br>
 		    			    			    	
 		    <c:choose>
-		    	<c:when test="${course.adddocname == null}">
+		    	<c:when test="${!fn:contains(mediaLst, 'adddoc') && course.adddocname == null}">
 		    		<form action="<c:url value="./myspace_adddocupload?courseid=${course.courseid}"/>" method="post" enctype="multipart/form-data">
 						<input type="hidden" name="courseid" value="${course.courseid}">
 						<input type="hidden" name="returnUrl" value="/avc/myspace_editmycourse?id=${course.courseid}">

@@ -1,6 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
@@ -40,6 +41,7 @@
 		    	<c:import url="./links.jsp" />
 	    	</div>
 	    	
+	        	
 	    	<div class="editform">
 		    	<form method="POST" action="<c:url value="${posturl}"/>" class="subeditform" name="subeditform">
 			    	<table>
@@ -106,11 +108,6 @@
 				    		<td>MediaFolder</td>
 				    		<td><input type="hidden" name="mediaFolder" value="${course.mediaFolder}">${course.mediaFolder}</td>
 			    		</tr>
-			    		<tr class="even">
-				    		<td>High Quality</td>
-				    	<!--<td><input type="checkbox" name="highquality" ${course.highquality == true ? 'checked' : ''}></td>-->
-			    			<td><input type="hidden" name="highquality" value="${course.highquality}">${course.highquality}</td>
-			    		</tr>
 			    		<tr class="odd">
 				    		<td>UserId</td>
 				    		<td><input type="hidden" name="userid" value="${course.userid}">${course.userid}</td>
@@ -131,15 +128,26 @@
 				    		<td>Restriction Uds</td>
 				    		<td><input type="checkbox" name="restrictionuds" ${course.restrictionuds == true ? 'checked' : ''} ></td>
 			    		</tr>
+			    		<tr class="even">
+			    			<td>MediaType</td>
+				    		<td><input type="text" name="mediatype" value="${course.mediatype}" class="field"></td>
+			    		</tr>
 			    	</table>
 			    	<br>
 			    	<input type="submit" class="valider" name="valider" value="<fmt:message key="Valider"/>">			    	
 		    	</form>
 		    	
-		    	<br><br>
-		    			    			    	
+		    </div>
+		    	
+		    <br>
+		    <p><fmt:message key="editmessage3"/></p> 
+			<br>
+			<br>
+		    	
+		    <div class="editform">
+		    		    			    	
 		    <c:choose>
-		    	<c:when test="${course.adddocname == null}">
+		    	<c:when test="${!fn:contains(mediaLst, 'adddoc') && course.adddocname == null}">
 		    		<form action="<c:url value="./admin_adddocupload"/>" method="post" enctype="multipart/form-data">
 						<input type="hidden" name="courseid" value="${course.courseid}">
 						<input type="hidden" name="returnUrl" value="/avc/admin_editcourse?id=${course.courseid}">

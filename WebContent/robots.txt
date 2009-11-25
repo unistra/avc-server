@@ -1,5 +1,4 @@
 User-agent: *
-Crawl-delay: 10
 Disallow: /coursv2
 Disallow: /avc/courses
 Disallow: /avc/thick
@@ -30,5 +29,4 @@ Disallow: /*.mov$
 Disallow: /*.mov
 Disallow: /*.mpg$
 Disallow: /*.mpg
-Request-rate: 1/5
 Sitemap: http://audiovideocours.u-strasbg.fr/sitemap.xml

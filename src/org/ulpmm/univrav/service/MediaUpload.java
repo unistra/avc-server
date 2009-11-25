@@ -62,9 +62,6 @@ public class MediaUpload extends Thread {
 	
 	/** the language */
 	private String language;
-
-	/** the high quality indicator **/
-	private boolean hq;
 	
 	/** The itunes author */
 	private String itunesAuthor;
@@ -97,7 +94,6 @@ public class MediaUpload extends Thread {
 	 * @param rssImageUrl the url of the rss image
 	 * @param recordedInterfaceUrl the url of the recorded interface
 	 * @param language the language
-	 * @param hq the high quality indicator
 	 * @param rssCategory the category of the RSS file
 	 * @param itunesAuthor The itunes author
 	 * @param itunesSubtitle The itunes subtitle
@@ -109,7 +105,7 @@ public class MediaUpload extends Thread {
 	public MediaUpload(IDatabase db, IFileSystem fs, Course c, FileItem mediaFile, String tags,
 			IService service, String rssFolderPath, String rssName, String rssTitle, 
 			String rssDescription, String serverUrl, String rssImageUrl, 
-			String recordedInterfaceUrl, String language,boolean hq, String rssCategory, String itunesAuthor,
+			String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
 			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		
 		super();
@@ -127,7 +123,6 @@ public class MediaUpload extends Thread {
 		this.rssImageUrl = rssImageUrl;
 		this.recordedInterfaceUrl = recordedInterfaceUrl;
 		this.language = language;
-		this.hq=hq;
 		this.rssCategory = rssCategory;
 		this.itunesAuthor = itunesAuthor;
 		this.itunesCategory = itunesCategory;
@@ -141,7 +136,7 @@ public class MediaUpload extends Thread {
 	 * The process to create a course inside a thread
 	 */
 	public void run() {
-		fs.mediaUpload(c, mediaFile,hq);
+		fs.mediaUpload(c, mediaFile);
 		db.addCourse(c);
 		
 		// Adding tags

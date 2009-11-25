@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="dt" uri="/WEB-INF/taglibs-datetime.tld" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
@@ -56,22 +57,7 @@
 	    	<table class="flashslide">
 	    	<tr>
 				<td id="cellule_flash">
-					<!-- <p id="flash">Please install flash player and activate javascript</p>
-	            	<script type="text/javascript">
-		            var so = new SWFObject('../files/jwflvplayer/player.swf','flashvideo','320','260','8');
-		            so.addParam('allowscriptaccess','always'); 
-		            so.addParam('allowfullscreen','true');
-		            so.addVariable('width','320');
-		            so.addVariable('height','260');
-		            so.addVariable('file','${courseurl}');
-		            so.addVariable("image","../files/img/logo_audio.png");
-		            so.addVariable('autostart','true');
-		            so.addVariable('javascriptid','flashvideo');
-		            so.addVariable('enablejs','true');
-		            so.addVariable('type','lighttpd');
-		            so.write('flash');
-	            	</script>-->
-	            	    
+						            	    
 	            	<script type="text/javascript">
      				 var flashvars =
      				 {
@@ -101,12 +87,12 @@
    				 	<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>
    				 	            	
 	            	<div class="highquality">
-	            		<c:if test="${course.highquality}">
-	            		<c:url var="courseaccess" scope="page" value="./courseaccess">
-							<c:param name="id" value="${course.courseid}"/>
-							<c:param name="type" value="hq"/>
-						</c:url>
-						<a href="<c:out value="${courseaccess}" />"><fmt:message key="Highquality"/></a>	
+	            		<c:if test="${fn:contains(mediaLst, 'hq')}">
+	            			<c:url var="courseaccess" scope="page" value="./courseaccess">
+								<c:param name="id" value="${course.courseid}"/>
+								<c:param name="type" value="hq"/>
+							</c:url>
+							<a href="<c:out value="${courseaccess}" />"><fmt:message key="Highquality"/></a>	
 						</c:if>
 					</div>
 	                                   
@@ -169,55 +155,64 @@
 						<table>
 						<tr>
 						<td class="tdalign">
-							<b id=type><fmt:message key="Telecharger"/>:&nbsp;</b>
-						</td>
-					
-						<!-- SMIL -->
-						<td class="tdalign">
-							<c:url var="courseaccess" scope="page" value="./courseaccess">
-								<c:param name="id" value="${course.courseid}"/>
-								<c:param name="type" value="smil"/>
-							</c:url>
-							<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/smile.png" alt="smil"></a>
-							<b id=type>smil</b>
-						</td>
-						
-						<!-- OGG -->
-						<td class="tdalign">	
-							<c:url var="courseaccess" scope="page" value="./courseaccess">
-								<c:param name="id" value="${course.courseid}"/>
-								<c:param name="type" value="ogg"/>
-							</c:url>
-							<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/ogg_v2.png" alt="ogg"></a>	
-							<b id=type>ogg</b>
-						</td>
-						
-						<td class="tdalign">
-							<c:url var="courseaccess" scope="page" value="./courseaccess">
-								<c:param name="id" value="${course.courseid}"/>
-								<c:param name="type" value="mp3"/>
-							</c:url>
-							<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/mp3_v2.png" alt="mp3"></a>
-							<b id=type>mp3</b>
+							<b id="type"><fmt:message key="Telecharger"/>:&nbsp;</b>
 						</td>
 							
-						<td class="tdalign">		
-							<c:url var="courseaccess" scope="page" value="./courseaccess">
-								<c:param name="id" value="${course.courseid}"/>
-								<c:param name="type" value="zip"/>
-							</c:url>
-							<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/winzip3.png" alt="zip"></a>
-							<b id=type>zip</b>
-						</td>
+						<!-- VIDEOSLIDE -->
+						 <c:if test="${fn:contains(mediaLst, 'videoslide')}">
+							<td class="tdalign">	
+								<c:url var="courseaccess" scope="page" value="./courseaccess">
+									<c:param name="id" value="${course.courseid}"/>
+									<c:param name="type" value="videoslide"/>
+								</c:url>
+								<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/videoslide.png" alt="vs"></a><br><b id="type">mp4</b>
+							</td>
+						</c:if>
+											
+						<!-- OGG -->
+						<c:if test="${fn:contains(mediaLst, 'ogg')}">
+							<td class="tdalign">	
+								<c:url var="courseaccess" scope="page" value="./courseaccess">
+									<c:param name="id" value="${course.courseid}"/>
+									<c:param name="type" value="ogg"/>
+								</c:url>
+								<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/ogg_v2.png" alt="ogg"></a><br><b id="type">ogg</b>	
+							</td>
+						</c:if>
 						
-						<td class="tdalign">
-							<c:url var="courseaccess" scope="page" value="./courseaccess">
-								<c:param name="id" value="${course.courseid}"/>
-								<c:param name="type" value="pdf"/>
-							</c:url>
-							<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/acrobat.png" alt="pdf"></a>
-							<b id=type>pdf</b>
-						</td>
+						<!-- MP3 -->
+						<c:if test="${fn:contains(mediaLst, 'mp3')}">
+							<td class="tdalign">
+								<c:url var="courseaccess" scope="page" value="./courseaccess">
+									<c:param name="id" value="${course.courseid}"/>
+									<c:param name="type" value="mp3"/>
+								</c:url>
+								<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/mp3_v2.png" alt="mp3"></a><br><b id="type">mp3</b>
+							</td>
+						</c:if>
+							
+						<!-- ZIP -->	
+						<c:if test="${fn:contains(mediaLst, 'zip')}">
+							<td class="tdalign">		
+								<c:url var="courseaccess" scope="page" value="./courseaccess">
+									<c:param name="id" value="${course.courseid}"/>
+									<c:param name="type" value="zip"/>
+								</c:url>
+								<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/winzip3.png" alt="zip"></a><br><b id="type">zip</b>
+							</td>
+						</c:if>
+						
+						<!-- PDF -->
+						<c:if test="${fn:contains(mediaLst, 'pdf')}">
+							<td class="tdalign">
+								<c:url var="courseaccess" scope="page" value="./courseaccess">
+									<c:param name="id" value="${course.courseid}"/>
+									<c:param name="type" value="pdf"/>
+								</c:url>
+								<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/acrobat.png" alt="pdf"></a><br><b id="type">pdf</b>
+							</td>
+						</c:if>
+							
 						</tr>						
 						</table>
 						</div>
@@ -227,7 +222,7 @@
 					
 					<div class="info">
 					
-					<c:if test="${course.adddocname !=null}">
+					<c:if test="${fn:contains(mediaLst, 'adddoc') && course.adddocname !=null}">
 						<c:url var="courseaccess" scope="page" value="./courseaccess">
 								<c:param name="id" value="${course.courseid}"/>
 								<c:param name="type" value="adddoc"/>
