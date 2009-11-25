@@ -199,12 +199,6 @@ a:hover .otherThumb, a:hover .currentThumb {
 	background-repeat:no-repeat;
 }
 
-.smil {	
-	text-align:center;
-	margin-left:auto;
-	margin-right:auto;
-}
-
 /* Div with its content hidden */
 .hidden {
 	display: none;

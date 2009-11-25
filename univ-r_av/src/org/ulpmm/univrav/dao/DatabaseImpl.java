@@ -142,21 +142,21 @@ public class DatabaseImpl implements IDatabase {
 				pstmt.setString(15, c.getMediaFolder());
 			else
 				pstmt.setNull(15, Types.VARCHAR);
-			
-			pstmt.setBoolean(16, c.isHighquality());
-			
+						
 			if(c.getUserid() !=null)
-				pstmt.setInt(17, c.getUserid());
+				pstmt.setInt(16, c.getUserid());
 			else
-				pstmt.setNull(17, Types.INTEGER);
+				pstmt.setNull(16, Types.INTEGER);
 			
 			if( c.getAdddocname() != null)
-				pstmt.setString(18, c.getAdddocname());
+				pstmt.setString(17, c.getAdddocname());
 			else
-				pstmt.setNull(18, Types.VARCHAR);
+				pstmt.setNull(17, Types.VARCHAR);
 			
-			pstmt.setBoolean(19, c.isDownload());
-			pstmt.setBoolean(20, c.isRestrictionuds());
+			pstmt.setBoolean(18, c.isDownload());
+			pstmt.setBoolean(19, c.isRestrictionuds());
+			
+			pstmt.setInt(20, c.getmediatype());
 			
 			if( pstmt.executeUpdate() == 0) {
 				System.out.println("The course " + c + " has not been added to the database");
@@ -208,21 +208,28 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Gets a list of all the courses (no-Univr)
+	 * @param onlyvisible true to get only visible courses
 	 * @return the list of courses
 	 */
-	public List<Course> getAllCourses() {
+	public List<Course> getAllCourses(boolean onlyvisible) {
 		
 		Connection cnt = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<Course> l = new ArrayList<Course>();
+		String sql = null;
 		
 		try {
 			cnt = datasrc.getConnection();
 			stmt = cnt.createStatement();
-			rs = stmt.executeQuery( "SELECT * From course WHERE courseid NOT IN " +
-			"( SELECT courseid FROM univr ) ORDER BY date DESC");
+			sql = "SELECT * From course WHERE courseid NOT IN " +"( SELECT courseid FROM univr ) ";
 			
+			if(onlyvisible)
+				sql += "AND visible=true ";
+				
+			sql += "ORDER BY date DESC";		
+			rs = stmt.executeQuery(sql);
+							
 			while(rs.next()) {
 				l.add(new Course(
 					rs.getInt("courseid"),
@@ -240,11 +247,11 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds")
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype")
 				));
 			}
 		}
@@ -294,11 +301,11 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds")
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype")
 				));
 			}
 		}
@@ -347,11 +354,11 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds")
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype")
 				));
 			}
 		}
@@ -412,11 +419,11 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds")
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype")
 				));
 			}
 		}
@@ -478,11 +485,11 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds")
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype")
 				));
 			}
 		}
@@ -590,11 +597,11 @@ public class DatabaseImpl implements IDatabase {
 							rs.getInt("consultations"),
 							rs.getString("timing"),
 							rs.getString("mediafolder"),
-							rs.getBoolean("highquality"),
 							rs.getInt("userid"),
 							rs.getString("adddocname"),
 							rs.getBoolean("download"),
-							rs.getBoolean("restrictionuds")
+							rs.getBoolean("restrictionuds"),
+							rs.getInt("mediatype")
 					));
 				}
 			}
@@ -657,11 +664,11 @@ public class DatabaseImpl implements IDatabase {
 						rs.getInt("consultations"),
 						rs.getString("timing"),
 						rs.getString("mediafolder"),
-						rs.getBoolean("highquality"),
 						rs.getInt("userid"),
 						rs.getString("adddocname"),
 						rs.getBoolean("download"),
-						rs.getBoolean("restrictionuds")
+						rs.getBoolean("restrictionuds"),
+						rs.getInt("mediatype")
 				));
 			}
 		}
@@ -717,11 +724,11 @@ public class DatabaseImpl implements IDatabase {
 						rs.getInt("consultations"),
 						rs.getString("timing"),
 						rs.getString("mediafolder"),
-						rs.getBoolean("highquality"),
 						rs.getInt("userid"),
 						rs.getString("adddocname"),
 						rs.getBoolean("download"),
-						rs.getBoolean("restrictionuds")
+						rs.getBoolean("restrictionuds"),
+						rs.getInt("mediatype")
 				));
 			}
 		}
@@ -773,11 +780,11 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds")
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype")
 				);
 			}
 			else
@@ -832,11 +839,11 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds")
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype")
 				);
 			}
 			else
@@ -1069,7 +1076,7 @@ public class DatabaseImpl implements IDatabase {
 		/* Creation of the SQL query string */
 		String sql = "UPDATE course SET date = ? , type = ? , title = ? , description = ? , ";
 		sql += "formation = ? , name = ? , firstname = ? , ipaddress = ? , duration = ? , ";
-		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, mediafolder = ?, highquality = ?, userid = ?, adddocname = ?, download = ?, restrictionuds = ? ";
+		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, mediafolder = ?, userid = ?, adddocname = ?, download = ?, restrictionuds = ?, mediatype = ? ";
 		sql += "WHERE courseid = ?";
 		
 		PreparedStatement pstmt = null;
@@ -1132,21 +1139,20 @@ public class DatabaseImpl implements IDatabase {
 				pstmt.setString(14, c.getMediaFolder());
 			else
 				pstmt.setNull(14, Types.VARCHAR);
-			
-			pstmt.setBoolean(15, c.isHighquality());
-			
+						
 			if(c.getUserid() !=null && c.getUserid() !=0)
-				pstmt.setInt(16, c.getUserid());
+				pstmt.setInt(15, c.getUserid());
 			else
-				pstmt.setNull(16, Types.INTEGER);
+				pstmt.setNull(15, Types.INTEGER);
 						
 			if( c.getAdddocname() != null)
-				pstmt.setString(17, c.getAdddocname());
+				pstmt.setString(16, c.getAdddocname());
 			else
-				pstmt.setNull(17, Types.VARCHAR);
+				pstmt.setNull(16, Types.VARCHAR);
 			
-			pstmt.setBoolean(18, c.isDownload());
-			pstmt.setBoolean(19, c.isRestrictionuds());
+			pstmt.setBoolean(17, c.isDownload());
+			pstmt.setBoolean(18, c.isRestrictionuds());
+			pstmt.setInt(19, c.getmediatype());
 			pstmt.setInt(20, c.getCourseid());
 			
 			if( pstmt.executeUpdate() == 0 ) {
@@ -1302,11 +1308,11 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds")
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype")
 				));
 			}
 		}
@@ -2510,17 +2516,23 @@ public class DatabaseImpl implements IDatabase {
 	 * @param u the user of the course
 	 * @param number the number of courses
 	 * @param start the start number of courses
+	 * @param onlyvisible true to get only visible courses
 	 * @return the list of course
 	 */
-	public List<Course> getCoursesByUser(User u, Integer number, Integer start) {
+	public List<Course> getCoursesByUser(User u, Integer number, Integer start, boolean onlyvisible) {
 		
 		List<Course> l = new ArrayList<Course>();
 		Connection cnt = null;
-	
-		String sql = "SELECT * FROM course WHERE userid = ? ORDER BY date DESC, courseid ";
-		if(number!=null && start!=null) {
+		String sql = "SELECT * FROM course WHERE userid = ? ";
+		
+		if(onlyvisible)
+			sql+="AND visible=true ";
+		
+		sql+="ORDER BY date DESC, courseid ";		
+		
+		if(number!=null && start!=null)
 			sql = sql + "DESC LIMIT " + number + " OFFSET " + start;
-		}
+		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
@@ -2546,11 +2558,11 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds")
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype")
 				));
 			}
 		}	
@@ -2851,11 +2863,11 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds")
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype")
 				));
 			}
 		}
@@ -2957,11 +2969,11 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds")
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype")
 				);
 			}
 			else
@@ -3022,11 +3034,11 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds")
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype")
 				));
 			}
 		}
@@ -3085,11 +3097,11 @@ public class DatabaseImpl implements IDatabase {
 					rs.getInt("consultations"),
 					rs.getString("timing"),
 					rs.getString("mediafolder"),
-					rs.getBoolean("highquality"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds")
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype")
 				));
 			}
 		}

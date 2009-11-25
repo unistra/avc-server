@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Started on 2009-10-01 09:01:08 CEST
+-- Started on 2009-11-17 16:21:35 CET
 
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = off;
@@ -73,11 +73,11 @@ CREATE TABLE course (
     consultations integer DEFAULT 0,
     timing character varying DEFAULT 'n-1'::character varying,
     mediafolder character varying,
-    highquality boolean,
     userid integer,
     adddocname character varying,
     download boolean DEFAULT true NOT NULL,
-    restrictionuds boolean DEFAULT false NOT NULL
+    restrictionuds boolean DEFAULT false NOT NULL,
+    mediatype integer
 );
 
 
@@ -596,7 +596,7 @@ GRANT ALL ON TABLE "user" TO sqluser;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "user" TO PUBLIC;
 
 
--- Completed on 2009-10-01 09:01:08 CEST
+-- Completed on 2009-11-17 16:21:35 CET
 
 --
 -- PostgreSQL database dump complete

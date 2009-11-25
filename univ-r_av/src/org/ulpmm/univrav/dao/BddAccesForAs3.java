@@ -136,11 +136,11 @@ public class BddAccesForAs3 {
 			  st.close();
 			  cnt.close();
 			  	  
-			  String adresseCoursSmil = "http://univ-rav.u-strasbg.fr/coursv2/" + mediafolder + "/timecode.csv";
+			  String urltimecode = "http://univ-rav.u-strasbg.fr/coursv2/" + mediafolder + "/timecode.csv";
 			  String tablo[] = new String[200];
 			
 			  // Définir l'URL pointant sur le fichier
-			  URL u = new URL(adresseCoursSmil);
+			  URL u = new URL(urltimecode);
 			  // Lire le flux d'entrée (InputStream) lié au fichier
 			  InputStream is = u.openStream();
 			  // En faire un flux de données 

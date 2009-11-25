@@ -86,10 +86,6 @@ public class Application extends HttpServlet {
 	
 	/** Default MP3 filename in the archive sent by the client */
 	private static String defaultMp3File;
-	/** Default RM filename in the archive sent by the client */
-	private static String defaultRmFile;
-	/** Default SMIL filename in the archive sent by the client */
-	private static String defaultSmilFile;
 	/** Default Flash filename in the archive sent by the client */
 	private static String defaultFlashFile;
 	/** Default screenshots folder in the archive sent by the client */
@@ -166,6 +162,9 @@ public class Application extends HttpServlet {
 	
 	/** Additional document formats **/
 	private static String addDocFormats;
+	
+	/** Link for support (help page) */
+	private static String supportLink;
 		
 	/**
 	 * Initialization of the servlet. <br>
@@ -201,8 +200,6 @@ public class Application extends HttpServlet {
 			
 			// Default media filenames in the archive sent by the client
 			defaultMp3File = p.getProperty("defaultMp3File");
-			defaultRmFile = p.getProperty("defaultRmFile");
-			defaultSmilFile = p.getProperty("defaultSmilFile");
 			defaultFlashFile = p.getProperty("defaultFlashFile");
 			defaultScreenshotsFolder = p.getProperty("defaultScreenshotsFolder");
 			
@@ -261,6 +258,9 @@ public class Application extends HttpServlet {
 			
 			//add doc formats
 			addDocFormats = p.getProperty("addDocFormats");
+			
+			// Link for support (help page)
+			supportLink = p.getProperty("supportLink");
 										
 			/* Datasource retrieving */
 			
@@ -282,8 +282,7 @@ public class Application extends HttpServlet {
 			FileSystemImpl fs = new FileSystemImpl(
 					getServletContext().getRealPath("/") + "scripts",
 					ftpFolder, coursesFolder, liveFolder, coursesUrl,
-					defaultMp3File, defaultRmFile, defaultSmilFile, 
-					defaultFlashFile, defaultScreenshotsFolder, comment
+					defaultMp3File, defaultFlashFile, defaultScreenshotsFolder, comment
 			);
 			UnivrDaoImpl ud = new UnivrDaoImpl();
 			
@@ -444,6 +443,7 @@ public class Application extends HttpServlet {
 		else if( page.equals("/help")) {
 			/* Saves the page for the style selection thickbox return */
 			session.setAttribute("previousPage", "/help");
+			request.setAttribute("supportLink", supportLink);
 			getServletContext().getRequestDispatcher("/WEB-INF/views/help.jsp").forward(request, response);
 		}
 		else if( page.equals("/contactUs")) {
@@ -493,7 +493,7 @@ public class Application extends HttpServlet {
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_home.jsp").forward(request, response);
 		}
 		else if( page.equals("/admin_courses")) {
-			List<Course> courses = service.getAllCourses();
+			List<Course> courses = service.getAllCourses(false);
 			request.setAttribute("courses",courses);
 			request.setAttribute("number", courses.size());
 			request.setAttribute("viewurl", "./admin_courses");
@@ -876,7 +876,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("page", pageNumber);
 			request.setAttribute("teachers", service.getTeachers());
 			request.setAttribute("formations", service.getFormations());
-			request.setAttribute("courses", service.getCoursesByUser(user,recordedCourseNumber,start));
+			request.setAttribute("courses", service.getCoursesByUser(user,recordedCourseNumber,start,false));
 			request.setAttribute("items", service.getCourseNumber(user));
 			request.setAttribute("number", recordedCourseNumber);
 			request.setAttribute("resultPage", "myspace_home");
@@ -1500,7 +1500,7 @@ public class Application extends HttpServlet {
 	 */
 	private void addCourse(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
-				
+						
 		String id, title, description, mediapath, media, timing, name, firstname, formation, genre, login, email,tags;
 		boolean visible,restrictionuds;
 		String message, message2, ahref, ahref2;
@@ -1589,11 +1589,7 @@ public class Application extends HttpServlet {
 						+"\n\nPlease, don't answer to this mail, for any question contact us on "+adminEmail1;
 							
 						service.sendMail(emailUserSubject,emailUserMessage,email);
-						
-						System.out.println(email);
-						System.out.println(emailUserSubject);
-						System.out.println(emailUserMessage);
-						
+											
 					}
 				}
 			
@@ -1616,11 +1612,11 @@ public class Application extends HttpServlet {
 							0,
 							timing,
 							null, // The media folder can't be set yet
-							false,
 							user!=null ? user.getUserid() : null,
 							null,
 							true,
-							restrictionuds
+							restrictionuds,
+							Course.typeFlash+Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide	
 					);
 					
 					service.addCourse(c, media, tags, getServletContext().getRealPath("/rss"), 
@@ -1663,11 +1659,11 @@ public class Application extends HttpServlet {
 					// Sending email for admins
 					String emailAdminSubject = "a new course on Univr-AV";
 					String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" is published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nUniv-r Av Administrator" ;
-					if(!adminEmail1.equals(""))
+					if(adminEmail1!=null && !adminEmail1.equals(""))
 						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
-					if(!adminEmail2.equals(""))
+					if(adminEmail2!=null && !adminEmail2.equals(""))
 						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail2);
-					if(!adminEmail3.equals(""))
+					if(adminEmail3!=null && !adminEmail3.equals(""))
 						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail3);
 				}
 				
@@ -1869,14 +1865,16 @@ public class Application extends HttpServlet {
 								requestDispatcher="/avc/myspace_upload";
 							}
 							else {
-
+								
 								String clientIP = request.getRemoteAddr();
 								String timing = "n-1";
-
+								String type = (extension.equals("mp3") || extension.equals("ogg")) ? "audio" : "video";
+								int mediaType = Course.typeFlash+Course.typeMp3+Course.typeOgg+((hq&&type.equals("video"))?Course.typeHq:0)+(type.equals("video")?Course.typeZip:0);
+																								
 								Course c = new Course(
 										service.getNextCoursId(),
 										new Timestamp(new Date().getTime()),
-										null, // The type can't be set yet
+										type,
 										title.equals("") ? null : title,
 										description.equals("") ? null : description,
 										formation.equals("") ? null : formation,
@@ -1889,17 +1887,17 @@ public class Application extends HttpServlet {
 										0,
 										timing,
 										null, // The media folder can't be set yet
-										hq,
 										user.getUserid(),
 										null,
 										true,
-										restrictionuds
+										restrictionuds,
+										mediaType
 								);
 
 								/* Sends the creation of the course to the service layer */
 								service.mediaUpload(c, item, tags, getServletContext().getRealPath("/rss"), 
 										rssName, rssTitle, rssDescription, serverUrl, 
-										rssImageUrl, recordedInterfaceUrl, language,hq, rssCategory, itunesAuthor,
+										rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor,
 										itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 
 								// Sending email for the user
@@ -2070,73 +2068,57 @@ public class Application extends HttpServlet {
 
 					service.incrementConsultations(c);
 
-					if( type == null || type.equals("flash")) {
-						/* redirection to the FlvPlay JS interface */
-						String courseExtension = "";
-						if( c.getType().equals("audio"))
-							courseExtension = ".mp3";
-						else if( c.getType().equals("video"))
-							courseExtension = ".flv";
+					// Check the media availability
+					if(c.isAvailable(type)) {
+						
+						if( type == null || type.equals("flash")) {
+							/* redirection to the FlvPlay JS interface */
+							String courseExtension = "";
+							if( c.getType().equals("audio"))
+								courseExtension = ".mp3";
+							else if( c.getType().equals("video"))
+								courseExtension = ".flv";
 
-						request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + courseExtension);
-						request.setAttribute("slidesurl", slidesurl);
-						request.setAttribute("course", c);
-						List<Slide> slides = service.getSlides(c.getCourseid());
-						request.setAttribute("slides", slides);
-						Amphi a = service.getAmphi(c.getIpaddress());
-						String amphi = a != null ? a.getName() : "";
-						String building = service.getBuildingName(c.getIpaddress());
-						request.setAttribute("amphi", amphi);
-						request.setAttribute("building", building);
-						if( c.getTiming().equals("n-1"))
-							request.setAttribute("timing", 1);
-						else
-							request.setAttribute("timing", 0);
+							request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + courseExtension);
+							request.setAttribute("slidesurl", slidesurl);
+							request.setAttribute("course", c);
+							List<Slide> slides = service.getSlides(c.getCourseid());
+							request.setAttribute("slides", slides);
+							Amphi a = service.getAmphi(c.getIpaddress());
+							String amphi = a != null ? a.getName() : "";
+							String building = service.getBuildingName(c.getIpaddress());
+							request.setAttribute("amphi", amphi);
+							request.setAttribute("building", building);
+							if( c.getTiming().equals("n-1"))
+								request.setAttribute("timing", 1);
+							else
+								request.setAttribute("timing", 0);
 
-						request.setAttribute("serverUrl",serverUrl);
-						request.setAttribute("tags", service.getTagsByCourse(c));
+							request.setAttribute("serverUrl",serverUrl);
+							request.setAttribute("tags", service.getTagsByCourse(c));
+							request.setAttribute("rssfiles", service.getRssCourseFileList(c));
+							request.setAttribute("mediaLst", c.getMedias());
+							
+							/* displays the .jsp view */
+							getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
+						}
+						// High Quality
+						else if( type.equals("hq")) {
+							request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".mp4");
+							request.setAttribute("course", c);					
+							Amphi a = service.getAmphi(c.getIpaddress());
+							String amphi = a != null ? a.getName() : "";
+							String building = service.getBuildingName(c.getIpaddress());
+							request.setAttribute("amphi", amphi);
+							request.setAttribute("building", building);
+							request.setAttribute("serverUrl",serverUrl);
 
-						request.setAttribute("rssfiles", service.getRssCourseFileList(c));
+							/* Displays the view */
+							getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_hq.jsp").forward(request, response);
 
-						/* displays the .jsp view */
-						getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
-					}
-					else if( type.equals("real")) {
-						/* redirection to the SMIL interface */
-						request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".smil");
-						request.setAttribute("slidesurl", slidesurl);
-						List<Slide> slides = service.getSlides(c.getCourseid());
-						request.setAttribute("slides", slides);
-						Amphi a = service.getAmphi(c.getIpaddress());
-						String amphi = a != null ? a.getName() : "";
-						String building = service.getBuildingName(c.getIpaddress());
-						request.setAttribute("amphi", amphi);
-						request.setAttribute("building", building);
-						if( c.getTiming().equals("n-1"))
-							request.setAttribute("timing", 1);
-						else
-							request.setAttribute("timing", 0);
-
-						/* Displays the view */
-						getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_smil.jsp").forward(request, response);
-					}
-					// High Quality
-					else if( type.equals("hq")) {
-						request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".mp4");
-						request.setAttribute("course", c);					
-						Amphi a = service.getAmphi(c.getIpaddress());
-						String amphi = a != null ? a.getName() : "";
-						String building = service.getBuildingName(c.getIpaddress());
-						request.setAttribute("amphi", amphi);
-						request.setAttribute("building", building);
-						request.setAttribute("serverUrl",serverUrl);
-
-						/* Displays the view */
-						getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_hq.jsp").forward(request, response);
-
-					}
-					// TODO Full Flash
-					/*else if(type.equals("fullflash")) {
+						}
+						// TODO Full Flash
+						/*else if(type.equals("fullflash")) {
 
 					request.setAttribute("idcours",c.getCourseid());
 
@@ -2144,37 +2126,47 @@ public class Application extends HttpServlet {
 					getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_fullflash.jsp").forward(request, response);
 
 				}*/
-					else if(c.isDownload() & (type.equals("smil") ||type.equals("mp3") || type.equals("ogg") || type.equals("zip") || type.equals("pdf"))) {
-						String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
+						else if(c.isDownload() & (type.equals("mp3") || type.equals("ogg") || type.equals("zip") || type.equals("pdf"))) {
+							String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
 
-						/* Initializes the headers */
-						response.setContentType("application/x-download");
-						response.setHeader("Content-Disposition", "attachment; filename=" + c.getMediasFileName() + "." + type);
+							/* Initializes the headers */
+							response.setContentType("application/x-download");
+							response.setHeader("Content-Disposition", "attachment; filename=" + c.getMediasFileName() + "." + type);
 
-						/* Sends the file */
-						OutputStream out = response.getOutputStream();
-						service.returnFile(filename, out);
+							/* Sends the file */
+							OutputStream out = response.getOutputStream();
+							service.returnFile(filename, out);
+						}
+						else if(c.isDownload() & (type.equals("videoslide"))) {
+							String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "_videoslide.mp4";
 
-						/*String previousPage = (String) request.getSession().getAttribute("previousPage");
-					if( previousPage == null)
-						previousPage = "/home";
-					response.sendRedirect("." + previousPage);*/
+							/* Initializes the headers */
+							response.setContentType("application/x-download");
+							response.setHeader("Content-Disposition", "attachment; filename=" + c.getMediasFileName() + "_videoslide.mp4");
+
+							/* Sends the file */
+							OutputStream out = response.getOutputStream();
+							service.returnFile(filename, out);
+						}
+						else if(type.equals("adddoc")) {
+							String filename = coursesFolder + c.getMediaFolder() +"/additional_docs/" + c.getAdddocname();
+
+							/* Initializes the headers */
+							response.setContentType("application/x-download");
+							response.setHeader("Content-Disposition", "attachment; filename=" + c.getAdddocname());
+
+							/* Sends the file */
+							OutputStream out = response.getOutputStream();
+							service.returnFile(filename, out);
+						}
 					}
-					else if(type.equals("adddoc")) {
-						String filename = coursesFolder + c.getMediaFolder() +"/additional_docs/" + c.getAdddocname();
-
-						/* Initializes the headers */
-						response.setContentType("application/x-download");
-						response.setHeader("Content-Disposition", "attachment; filename=" + c.getAdddocname());
-
-						/* Sends the file */
-						OutputStream out = response.getOutputStream();
-						service.returnFile(filename, out);
-
+					else {
+						ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+						request.setAttribute("messagetype", "error");
+						request.setAttribute("message", bundle.getString("wrongAccessCode"));
+						getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 					}
-
 				}
-
 			}
 		}
 		catch(DaoException de) {
@@ -2281,11 +2273,11 @@ public class Application extends HttpServlet {
 			Integer.parseInt(request.getParameter("consultations")),
 			! request.getParameter("timing").equals("") ? request.getParameter("timing") : null,
 			! request.getParameter("mediaFolder").equals("") ? request.getParameter("mediaFolder") : null,
-			Boolean.parseBoolean(request.getParameter("highquality")),
 			! request.getParameter("userid").equals("0") ? Integer.parseInt(request.getParameter("userid")) : null,
 			! request.getParameter("adddocname").equals("") ? request.getParameter("adddocname") : null,
 			request.getParameter("download") != null ? true : false,
-			request.getParameter("restrictionuds") != null ? true : false
+			request.getParameter("restrictionuds") != null ? true : false,
+			Integer.parseInt(request.getParameter("mediatype"))
 		);
 		service.modifyCourse(c);
 		
@@ -2307,8 +2299,7 @@ public class Application extends HttpServlet {
 		}
 		
 		/* Generation of the RSS files */
-		if( c.getGenre() == null)
-			service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+		service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		response.sendRedirect(response.encodeRedirectURL(redirectUrl));
 	}
 	
@@ -2551,11 +2542,11 @@ public class Application extends HttpServlet {
 									0,
 									null, // The timing can't be set yet
 									null, // The media folder can't be set yet
-									false,
 									null,
 									null,
 									true,
-									false
+									false,
+									Course.typeFlash+Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide
 							);
 							
 							Univr u = new Univr(courseId, user, group,estab);

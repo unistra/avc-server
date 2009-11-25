@@ -180,7 +180,6 @@ public class ServiceImpl implements IService {
 	 * @param rssImageUrl the URL of the RSS image files
 	 * @param recordedInterfaceUrl the URL of the recorded interface
 	 * @param language the language of the RSS files
-	 * @param hq High Quality
 	 * @param rssCategory the category of the RSS file
 	 * @param itunesAuthor The itunes author
 	 * @param itunesSubtitle The itunes subtitle
@@ -191,22 +190,23 @@ public class ServiceImpl implements IService {
 	 */
 	public synchronized void mediaUpload( Course c, FileItem mediaFile, String tags , String rssFolderPath, 
 		String rssName, String rssTitle, String rssDescription, String serverUrl, 
-		String rssImageUrl, String recordedInterfaceUrl, String language,boolean hq, String rssCategory, String itunesAuthor,
+		String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
 		String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		
 		MediaUpload mu = new MediaUpload(db, fs, c, mediaFile, tags,
 				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
-				rssImageUrl, recordedInterfaceUrl, language,hq, rssCategory, itunesAuthor,
+				rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor,
 				itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		mu.start();
 	}
 	
 	/**
-	 * Gets a list of all the courses (non-Univr)
+	 * Gets a list of all the courses (no-Univr)
+	 * @param onlyvisible true to get only visible courses
 	 * @return the list of courses
 	 */
-	public List<Course> getAllCourses() {
-		return db.getAllCourses();
+	public List<Course> getAllCourses(boolean onlyvisible) {
+		return db.getAllCourses(onlyvisible);
 	}
 	
 	/**
@@ -602,7 +602,7 @@ public class ServiceImpl implements IService {
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language,String rssCategory, String itunesAuthor,
 			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		// For all courses 
-		List<Course> courses = db.getAllCourses();
+		List<Course> courses = db.getAllCourses(true);
 		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
 		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
@@ -627,7 +627,7 @@ public class ServiceImpl implements IService {
 		//For the login
 		List<User> users = db.getAllUsers();
 		for(User u : users) {
-			courses = db.getCoursesByUser(u, null, null);	
+			courses = db.getCoursesByUser(u, null, null, true);	
 			rssPath = rssFolderPath + "/" + cleanFileName("lgn_" + u.getLogin()) + ".xml";
 			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+"lgn_"+u.getLogin(), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
 		}
@@ -658,7 +658,7 @@ public class ServiceImpl implements IService {
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language,String rssCategory, String itunesAuthor,
 			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		// For all courses
-		List<Course> courses = db.getAllCourses();
+		List<Course> courses = db.getAllCourses(true);
 		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
 		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
 		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
@@ -681,7 +681,7 @@ public class ServiceImpl implements IService {
 		//For the login
 		if(c.getUserid()!=null && c.getUserid()!=0) {
 			User u = db.getUser(c.getUserid());
-			courses = db.getCoursesByUser(u, null, null);
+			courses = db.getCoursesByUser(u, null, null, true);
 			rssPath = rssFolderPath + "/" + cleanFileName("lgn_" + u.getLogin()) + ".xml";
 			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+"lgn_"+u.getLogin(), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
 		}
@@ -943,10 +943,11 @@ public class ServiceImpl implements IService {
 	 * @param u the user of the course
 	 * @param number the number of courses
 	 * @param start the start number of courses
+	 * @param onlyvisible true to get only visible courses
 	 * @return the list of course
 	 */
-	public List<Course> getCoursesByUser(User u,Integer number,Integer start) {
-		return db.getCoursesByUser(u,number,start);
+	public List<Course> getCoursesByUser(User u, Integer number, Integer start, boolean onlyvisible) {
+		return db.getCoursesByUser(u,number,start,onlyvisible);
 	}
 	
 	/**
@@ -1201,7 +1202,9 @@ public class ServiceImpl implements IService {
 	 */
 	public void addAdditionalDoc(Course c, FileItem docFile) {
 		fs.addAdditionalDoc(c.getMediaFolder(),docFile);
-		c.setAdddocname(FilenameUtils.getName(docFile.getName()));		
+		c.setAdddocname(FilenameUtils.getName(docFile.getName()));	
+		if(!c.isAvailable("adddoc"))
+			c.setmediatype(c.getmediatype()+Course.typeAdddoc);
 		db.modifyCourse(c);
 	}
 	
@@ -1212,6 +1215,8 @@ public class ServiceImpl implements IService {
 	public void deleteAdditionalDoc(Course c) {
 		fs.deleteAdditionalDoc(c.getMediaFolder(),c.getAdddocname());
 		c.setAdddocname(null);
+		if(c.isAvailable("adddoc"))
+			c.setmediatype(c.getmediatype()-Course.typeAdddoc);
 		db.modifyCourse(c);
 	}
 

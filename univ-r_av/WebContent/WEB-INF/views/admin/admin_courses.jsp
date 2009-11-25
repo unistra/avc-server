@@ -57,9 +57,6 @@
 					<input type="checkbox" disabled="disabled" ${courses.visible == true ? 'checked' : '' } />
 				</display:column>
 				<display:column property="consultations" title="views" sortable="true" />
-				<display:column title="high quality" sortable="true">
-					<input type="checkbox" disabled="disabled" ${courses.highquality == true ? 'checked' : '' } />
-				</display:column>
 				<display:column property="userid" title="user id" sortable="true" />
 				<display:column>
 					<a href="<c:url value="${editurl}?id=${courses.courseid}" />">Edit</a>

@@ -110,10 +110,6 @@
 	</login-config>
 	<!-- roles used in the application -->
 	<security-role>
-		<description>Univ-R AV media upload</description>
-		<role-name>mediaupload</role-name>
-	</security-role>
-	<security-role>
 		<description>Univ-R AV administrators</description>
 		<role-name>ulpmm</role-name>
 	</security-role>

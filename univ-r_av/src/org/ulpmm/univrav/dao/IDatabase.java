@@ -35,9 +35,10 @@ public interface IDatabase {
 	
 	/**
 	 * Gets a list of all the courses (no-Univr)
+	 * @param onlyvisible true to get only visible courses
 	 * @return the list of courses
 	 */
-	public List<Course> getAllCourses();
+	public List<Course> getAllCourses(boolean onlyvisible);
 	
 	/**
 	 * Gets a list of all the Univ-R courses
@@ -400,9 +401,10 @@ public interface IDatabase {
 	 * @param u the user of the course
 	 * @param number the number of courses
 	 * @param start the start number of courses
+	 * @param onlyvisible true to get only visible courses
 	 * @return the list of course
 	 */
-	public List<Course> getCoursesByUser(User u, Integer number, Integer start);
+	public List<Course> getCoursesByUser(User u, Integer number, Integer start, boolean onlyvisible);
 	
 	/**
 	 * Gets the total number of courses

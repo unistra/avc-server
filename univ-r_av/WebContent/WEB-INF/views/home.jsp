@@ -36,7 +36,7 @@
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
 	<script type='text/javascript' src="../files/js/flexcroll.js"></script>
 		
-	<meta name="keywords" content="SMIL, cours audio, cours video, cours live, cours en direct, synchronisation de médias, audiocours, videocours">
+	<meta name="keywords" content="flash, cours audio, cours video, cours live, cours en direct, synchronisation de médias, audiocours, videocours">
 	
   </head>
   

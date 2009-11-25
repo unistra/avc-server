@@ -59,7 +59,7 @@
 					
 					<div class="helpLinks2">
 						<ul>
-							<li><a href="http://support.unistra.fr"><fmt:message key="supportLink"/></a></li>
+							<li><a href="${supportLink}"><fmt:message key="supportLink"/></a></li>
 							<li><a href="./contactUs"><fmt:message key="contactUs"/></a></li>
 						</ul>
 					</div>
@@ -73,7 +73,7 @@
 			    	<div class="leftCol">
 			    		
 			    		<h3><a id="browsers"></a>Navigateurs conseill&eacute;s</h3>
-						<p>Firefox 3.0 (Linux, MacOSX, Windows), IE7 (Windows), with Javascript</p>
+						<p>Firefox 3.0 (Linux, MacOSX, Windows), IE7 (Windows), avec Javascript</p>
 						
 						<h3><a id="accueil"></a>Accueil</h3>
 						<h5>Pr&eacute;sentation</h5>
@@ -112,9 +112,8 @@
 						<h5>Pr&eacute;sentation</h5>
 						<p>Pour acc&eacute;der &agrave; votre espace personnel, cliquez sur "Mon espace" et entrez votre login et mot de passe ENT.</p>
 			    		<p>Vous aurez alors la possibilit&eacute; :<br>
-			    		- d'enregistrer ou de modifier votre e-mail pour recevoir les notifications de r&eacute;ception de vos cours (bouton "modifier mon e-mail")<br>
-			    		- de visualiser vos cours qui sont ratach&eacute;s &agrave; votre login ENT (voir la liste)<br>
-			    		- d'&eacute;diter vos cours afin de modifier le titre, la description, la visibilit&eacute;, etc... (lien "Editer")<br>
+			    		- de visualiser vos cours qui sont ratach&eacute;s &agrave; votre login (voir la liste)<br>
+			    		- d'&eacute;diter vos cours afin d'en modifier les informations (titre, description, visibilit&eacute;, etc...) ou d'y ajouter un document compl&eacute;mentaire (lien "Editer")<br>
 			    		- de d&eacute;poser directement un fichier audio ou vid&eacute;o (bouton "d&eacute;poser un fichier")</p>
 			    		<p>Enfin, pour quitter votre espace, il vous suffit d'appuyer sur "D&eacute;connexion".</p>
 			    		<a class="link" href="../files/img/help/myspace.png">Screenshot</a>
@@ -137,8 +136,8 @@
 			    		<a class="link" href="../files/img/help/pub1.png">Screenshot</a>
 			    		
 			    		<p>Deux possibilit&eacute;s s'offrent &agrave; vous:</p>
-			    		<p>1) Compte UDS: En vous connectant avec votre compte ENT, votre enregistrement sera associ&eacute; &agrave; votre compte. Ainsi, vous aurez par la suite acc&egrave;s aux fonctionnalit&eacute;s de « mon espace » pour &eacute;diter votre enregistrement par exemple (modifier le titre, la visibilit&eacute;, la description, les tags, ...)</p>
-			    		<p>2) Libre: En choisissant l'option libre, vous pouvez envoyer un enregistrement sans avoir de compte UDS. N&eacute;anmoins, vous n'aurez pas acc&egrave;s aux fonctionnalit&eacute;s de « mon espace ». Vous ne pourrez donc plus &eacute;diter votre cours par exemple.</p>
+			    		<p>1) Compte UDS: En vous connectant avec votre compte ENT, votre enregistrement sera associ&eacute; &agrave; votre compte. Ainsi, vous aurez par la suite acc&egrave;s aux fonctionnalit&eacute;s de « mon espace » pour &eacute;diter votre enregistrement (modifier le titre, la visibilit&eacute;, la description, les tags, ...) ou d&eacute;poser une vid&eacute;o sans passer par le client.</p>
+			    		<p>2) Libre: En choisissant l'option libre, vous pouvez envoyer un enregistrement sans avoir de compte UDS. Pour acc&eacute;der aux fonctionnalit&eacute;s de « mon espace », il suffit de renseigner le champs E-mail dans le formulaire. Vous recevrez alors un mail contenant une « URL compte » qui vous permettra de g&eacute;rer vos cours envoy&eacute;s avec cette m&ecirc;me adresse mail. Attention, il faut bien remettre la m&ecirc;me adresse mail (y compris majuscules/minuscules) pour chaque cours car une adresse mail = 1 compte.</p>
 			    		<p>Apr&egrave;s avoir choisi l'une des deux options, vous devez remplir le formulaire. Les champs « Titre » et « Nom Auteur » sont obligatoires.</p>
 			    		<a class="link" href="../files/img/help/pub2.png">Screenshot</a>
 			    					    		
@@ -163,6 +162,7 @@
 						<a class="link" href="../files/img/help/Tags.png">Screenshot</a>
 						<h5>Listings des Cours</h5>
 						<p>Les cours sont disponibles en mode flash en cliquant sur l'onglet « Enregistr&eacute; ».</p>	
+						<p>Les cours repr&eacute;sent&eacute;s avec un cadenas gris sont prot&eacute;g&eacute;s par un code d'acc&egrave;s, et les cours repr&eacute;sent&eacute;s avec un cadenas rouge ne sont accessibles que pour les utilisateurs inscrits &agrave; l'UDS (compte ENT).</p>
 						<p><b>Clic sur l'ic&ocirc;ne &agrave; gauche ou sur l'ic&ocirc;ne sous l'intitul&eacute; 'flash' :</b><br>
 						Mode en ligne. N&eacute;cessite la pr&eacute;sence de Flash Player sur votre machine. 
 						C'est le mode recommand&eacute; pour la visualisation des cours.</p>		
@@ -178,21 +178,9 @@
 						Les tags associ&eacute;s au cours sont &eacute;galement cliquables et permettent d'afficher l'ensemble des cours correspondant au tag s&eacute;lectionn&eacute;.<br>
 						On y trouve les informations concernant le cours, un acc&egrave;s direct aux 
 						t&eacute;l&eacute;chargement des diff&eacute;rents m&eacute;dias le composant, et un permalien.</p>	
-						<p><b>Clic sur les ic&ocirc;nes sous les intitul&eacute;s 'smil', 'ogg', 'mp3', 'zip', ou 'pdf':</b><br>
-						Ces modes permettent d'avoir un acc&egrave;s direct aux fichiers des m&eacute;dias. 
-						Dans le cas du choix du m&eacute;dia Smil, Vous pouvez utiliser n'importe quel logiciel capable de supporter Smil tel que RealPlayer.</p>
-						<p>Le fichier Smil est lu dans le lecteur Reaplayer qui se charge de diffuser les diapositives et 
-						l'enregistrement audio du cours. Il est &eacute;galement possible de d&eacute;placer le curseur pour se positionner 
-						&agrave; un endroit particulier du cours.</p>
-						<a class="link" href="../files/img/help/Diff_layout_smil.png">Screenshot</a>
-						<p>Les miniatures sont cliquables et permettent de positionner automatiquement le lecteur &agrave; l'endroit de diffusion de la diapo.<br>
-						Les diapositives sont cliquables et ouvrent un popup contenant la diapositive dans son format 
-						d'origine pour une meilleure lecture. Cela met cependant la lecture du Smil en pause.<br>
-						On y trouve les informations concernant le cours, un acc&egrave;s direct aux 
-						t&eacute;l&eacute;chargement des diff&eacute;rents m&eacute;dias le composant.</p>	
-						<p><span class="underline">NB :</span> Dans le cas d'un cours vid&eacute;o smil, la vid&eacute;o est 
-						diffus&eacute;e dans la partie droite. Cette vid&eacute;o est cliquable pour &ecirc;tre diffus&eacute;e dans son format d'origine. La lecture du smil est mise en pause.</p>
-					
+						<p><b>Clic sur les ic&ocirc;nes sous les intitul&eacute;s 'ogg', 'mp3', 'zip', ou 'pdf':</b><br>
+						Ces modes permettent d'avoir un acc&egrave;s direct aux fichiers des m&eacute;dias. </p>
+						
 					    <h3><a id="podcasting"></a>Podcasting et flux RSS</h3>
 						<h5>Abonnement &agrave; un flux RSS</h5>
 						<p>Tous les cours sont disponibles au t&eacute;l&eacute;chargement via le site, en cliquant sur l'un des 
@@ -217,15 +205,6 @@
 						<h3><a id="downloads"></a>T&eacute;l&eacute;chargement des logiciels et plugins</h3>
 						<h5>Adobe Flash Player</h5>
 						<p><a href="http://get.adobe.com/fr/flashplayer/">Flash_allplatforms</a></p>
-						<h5>Realplayer</h5>
-						<p><b>Linux</b> :<br>
-						Utilisez votre gestionnaire de paquets.<br>
-						S'il n'est pas pr&eacute;sent, vous pouvez l'obtenir ici :&nbsp;<a href="http://www.real.com/linux/">RealPlayer_Linux</a></p>
-						<p><b>MacOSX :</b><br>
-						<a href="http://www.apple.com/downloads/macosx/internet_utilities/realplayer.html">RealPlayer_MacOSX</a></p>
-						<p><b>Windows :</b><br>
-						<a href="http://france.real.com/freeplayer_r1p.html">RealPlayer_Windows</a><br>
-						<a href="http://www.free-codecs.com/download/Real_Alternative.htm">RealAlternative</a></p>
 			    	</div>
 		    	</div>
 		    	
