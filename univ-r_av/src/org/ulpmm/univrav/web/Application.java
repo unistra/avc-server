@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 import javax.naming.InitialContext;
+import javax.naming.directory.DirContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -37,6 +38,7 @@ import org.apache.commons.lang.WordUtils;
 import org.ulpmm.univrav.dao.DaoException;
 import org.ulpmm.univrav.dao.DatabaseImpl;
 import org.ulpmm.univrav.dao.FileSystemImpl;
+import org.ulpmm.univrav.dao.LdapAccessImpl;
 import org.ulpmm.univrav.dao.UnivrDaoImpl;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
@@ -48,6 +50,7 @@ import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
 import org.ulpmm.univrav.service.ServiceImpl;
+
 
 /**
  * The servlet of the application.
@@ -166,6 +169,13 @@ public class Application extends HttpServlet {
 	/** Link for support (help page) */
 	private static String supportLink;
 		
+	/** Ldap base dn */
+	private static String ldapBaseDn;
+
+	/** ldap search filter */
+	private static String ldapSearchFilter;
+	
+		
 	/**
 	 * Initialization of the servlet. <br>
 	 *
@@ -261,6 +271,10 @@ public class Application extends HttpServlet {
 			
 			// Link for support (help page)
 			supportLink = p.getProperty("supportLink");
+			
+			/* ldap properties */
+			ldapBaseDn = p.getProperty("ldapBaseDn");
+			ldapSearchFilter = p.getProperty("ldapSearchFilter");
 										
 			/* Datasource retrieving */
 			
@@ -274,8 +288,16 @@ public class Application extends HttpServlet {
 			if ( ds == null ) {
 			   throw new Exception("Data source not found!");
 			}
+				
+			DirContext dc=null;
+			try {
+				dc = (DirContext) cxt.lookup("java:comp/env/ldap/ox"); 
+			}
+			catch (Exception e) {
+				 e.printStackTrace();
+			}
 			
-			
+					
 			/* Creates the instances of the data access layer */
 			
 			DatabaseImpl db = new DatabaseImpl(ds);
@@ -285,6 +307,12 @@ public class Application extends HttpServlet {
 					defaultMp3File, defaultFlashFile, defaultScreenshotsFolder, comment
 			);
 			UnivrDaoImpl ud = new UnivrDaoImpl();
+			LdapAccessImpl ldap = new LdapAccessImpl(
+					dc,
+					ldapBaseDn,
+					ldapSearchFilter
+			);
+		
 			
 			
 			/* Links the data access layer to the service layer */
@@ -292,6 +320,7 @@ public class Application extends HttpServlet {
 			service.setDb(db);
 			service.setFs(fs);
 			service.setUd(ud);
+			service.setLdap(ldap);
 			
 			
 			/* Creation of the RSS files */
@@ -786,9 +815,39 @@ public class Application extends HttpServlet {
 			// or we get the user from the database
 				User user = service.getUser(casUser);
 				
+				// Gets user's infos from the ldap
+				List<String> userInfos = null;		
+				try { userInfos= service.getLdapUserInfos(casUser);} catch (Exception e) { e.printStackTrace(); }
+								
 				// If the user is null, create an account
 				if(user==null) {
-					service.addUser(new User(0,casUser,null,null,null,null,null,"ldap",true));
+
+					if (userInfos!=null && !userInfos.isEmpty())
+						service.addUser(new User(0,casUser,userInfos.get(0),userInfos.get(1),userInfos.get(2),userInfos.get(3),userInfos.get(4),"ldap",true));
+					else 
+						service.addUser(new User(0,casUser,null,null,null,null,null,"ldap",true));
+				}
+				else {
+					if (userInfos!=null && !userInfos.isEmpty()) {
+						
+						String email = userInfos.get(0);
+						String firstname = userInfos.get(1);
+						String lastname = userInfos.get(2);
+						String profile = userInfos.get(3);
+						String establishment = userInfos.get(4);
+						
+						// Check values between ldap and database. Modify user if necessary.
+						if(user.getEmail()==null || !user.getEmail().equals(email) || user.getFirstname()==null || !user.getFirstname().equals(firstname) || 
+								user.getLastname()==null || !user.getLastname().equals(lastname) || user.getProfile()==null || !user.getProfile().equals(profile) ||
+								user.getEstablishment()==null ||!user.getEstablishment().equals(establishment)) {
+							user.setEmail(email);
+							user.setFirstname(firstname);
+							user.setLastname(lastname);
+							user.setProfile(profile);
+							user.setEstablishment(establishment);
+							service.modifyUser(user);
+						}
+					}
 				}
 				
 				// Disconnect user LOCAL if exist
@@ -1101,6 +1160,8 @@ public class Application extends HttpServlet {
 		request.setAttribute("nbrTeachersRss",service.getTeachers().size());
 		// Rss Files
 		request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName));
+		// Server Url
+		request.setAttribute("serverUrl", serverUrl);
 				
 		/* Displays the view */ 
 		getServletContext().getRequestDispatcher("/WEB-INF/views/rss.jsp").forward(request, response);
@@ -1837,7 +1898,7 @@ public class Application extends HttpServlet {
 						} /* If the element is a file (the last element */
 						else {
 							fileName = item.getName();
-							String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()) : "";
+							String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()).toLowerCase() : "";
 							
 							// Test the form
 							if(fileName==null || fileName.equals("")) {
@@ -1846,7 +1907,7 @@ public class Application extends HttpServlet {
 								requestDispatcher="/avc/myspace_upload";								
 							}
 							/* Checks the extension of the item to have a supported file format */
-							else if( !extension.equals("mp3") && !extension.equals("ogg") && !extension.equals("avi") && !extension.equals("divx") 
+							else if( !extension.equals("mp3") && !extension.equals("ogg") && !extension.equals("wav") && !extension.equals("wma") && !extension.equals("avi") && !extension.equals("divx") 
 									&& !extension.equals("rm") && !extension.equals("rv") && !extension.equals("mp4") && !extension.equals("mpg") 
 									&& !extension.equals("mpeg") && !extension.equals("mov") && !extension.equals("wmv") && !extension.equals("mkv") && !extension.equals("flv") ) {
 
@@ -1868,7 +1929,7 @@ public class Application extends HttpServlet {
 								
 								String clientIP = request.getRemoteAddr();
 								String timing = "n-1";
-								String type = (extension.equals("mp3") || extension.equals("ogg")) ? "audio" : "video";
+								String type = (extension.equals("mp3") || extension.equals("ogg") || extension.equals("wav") || extension.equals("wma")) ? "audio" : "video";
 								int mediaType = Course.typeFlash+Course.typeMp3+Course.typeOgg+((hq&&type.equals("video"))?Course.typeHq:0)+(type.equals("video")?Course.typeZip:0);
 																								
 								Course c = new Course(

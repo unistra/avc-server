@@ -748,6 +748,13 @@ public interface IService {
 	 * @param c the course
 	 */
 	public void deleteAdditionalDoc(Course c);
+	
+	/**
+	 * Gets user's parameters from the ldap
+	 * @param login user's login
+	 * @throws Exception 
+	 */
+	public List<String> getLdapUserInfos(String login) throws Exception;
 
 
 }

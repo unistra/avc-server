@@ -15,6 +15,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FilenameUtils;
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
+import org.ulpmm.univrav.dao.ILdapAccess;
 import org.ulpmm.univrav.dao.IUnivrDao;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
@@ -42,6 +43,9 @@ public class ServiceImpl implements IService {
 	
 	/** UnivrDao interface */
 	private IUnivrDao ud;
+	
+	/** Ldap interface */
+	private ILdapAccess ldap;
 	
 	/**
 	 * Gets the database interface
@@ -89,6 +93,22 @@ public class ServiceImpl implements IService {
 	 */
 	public void setUd(IUnivrDao ud) {
 		this.ud = ud;
+	}
+	
+	/**
+	 * Gets the ldap access interface
+	 * @return the ldap access interface
+	 */
+	public ILdapAccess getLdap() {
+		return ldap;
+	}
+
+	/**
+	 * Sets the ldap access interface
+	 * @param ldap the ldap to set
+	 */
+	public void setLdap(ILdapAccess ldap) {
+		this.ldap = ldap;
 	}
 
 	/**
@@ -1218,6 +1238,15 @@ public class ServiceImpl implements IService {
 		if(c.isAvailable("adddoc"))
 			c.setmediatype(c.getmediatype()-Course.typeAdddoc);
 		db.modifyCourse(c);
+	}
+	
+	/**
+	 * Gets user's parameters from the ldap
+	 * @param login user's login
+	 * @throws Exception 
+	 */
+	public List<String> getLdapUserInfos(String login) throws Exception {
+		return ldap.getLdapUserInfos(login);
 	}
 
 }
