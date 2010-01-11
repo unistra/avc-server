@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="pt" uri="/WEB-INF/pagination-taglib.tld" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
@@ -43,17 +44,21 @@
 	    		<c:import url="include/banner.jsp" />
 	     	</div>
 	   
-	   		</br>
+	   		<br>
 	   		
 	   		<div  class="aboUnivr">
-	     		<c:forEach var="rssfile" varStatus="status2" items="${rssfiles}" begin="0" end="0">
+	     		<c:forEach var="rssfile" varStatus="status2" items="${rssfiles}" begin="0" end="0">	     		
 	     		<p> 
-	     		<fmt:message key="AbonnementAudiovidecours"/> <a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/styles/${sessionScope.style}/img/rss_abo.png" alt="rss_icon"></a> </td>
+	     		<fmt:message key="AbonnementAudiovidecours"/>
+	     		<a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/rss_abo.png" alt="rss_icon"></a>
+				
+				<c:url value="itpc://${fn:substringAfter(serverUrl,\"://\")}/${fn:substringAfter(rssfile.value,\"../\")}" var="variableURL"></c:url>
+				<a href="${variableURL}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/itunes_abo.png" alt="itunes_icon"></a>
 				</p>
 				</c:forEach>
 			</div>
 	
-			</br>
+			<br>
 	     	
 	     	<div class="line">
 	     		<div class="rss">
@@ -62,14 +67,18 @@
 	     				<tr class="tableheader">
 				    		<th><fmt:message key="NomRss"/></th>
 				    		<th><fmt:message key="LienRss"/></th>
+				    		<th>itunes</th>
 				    	</tr>
 				    	
 				    	<c:set var="class" value="row1" />
 	     		     
 	     				<c:forEach var="rssfile" varStatus="status2" items="${rssfiles}" begin="1" end="${nbrTeachersRss}">
 	     				<tr class="${class}">
-							<td> <p>${rssfile.key}<p> </td>
-							<td> <a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/styles/${sessionScope.style}/img/rss_abo.png" alt="rss_icon"></a> </td>
+							<td><p>${rssfile.key}<p></td>
+							<td><a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/rss_abo.png" alt="rss_icon"></a></td>
+							
+							<c:url value="itpc://${fn:substringAfter(serverUrl,\"://\")}/${fn:substringAfter(rssfile.value,\"../\")}" var="variableURL"></c:url>
+							<td><a href="${variableURL}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/itunes_abo.png" alt="itunes_icon"></a></td>
 						</tr>
 						
 						<c:choose>
@@ -91,14 +100,18 @@
 	     				<tr class="tableheader">
 				    		<th><fmt:message key="Formation"/></th>
 				    		<th><fmt:message key="LienRss"/></th>
+				    		<th>itunes</th>
 				    	</tr>
 	     		     
 	     		   <c:set var="class" value="row1" />
 	     		     
 	     				<c:forEach var="rssfile" varStatus="status2" items="${rssfiles}" begin="${nbrTeachersRss+1}">
 	     				<tr class="${class}">
-							<td> <p>${rssfile.key}<p> </td>
-							<td> <a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/styles/${sessionScope.style}/img/rss_abo.png" alt="rss_icon"></a> </td>
+							<td><p>${rssfile.key}<p></td>
+							<td><a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/rss_abo.png" alt="rss_icon"></a></td>
+							
+							<c:url value="itpc://${fn:substringAfter(serverUrl,\"://\")}/${fn:substringAfter(rssfile.value,\"../\")}" var="variableURL"></c:url>
+							<td><a href="${variableURL}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/itunes_abo.png" alt="itunes_icon"></a></td>
 						</tr>
 						
 						<c:choose>

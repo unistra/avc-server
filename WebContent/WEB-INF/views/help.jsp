@@ -124,8 +124,8 @@
 			    		<a class="link" href="../files/img/help/editcourse.png">Screenshot</a>
 			    		<h5>D&eacute;poser un fichier</h5>
 			    		<p>Pour d&eacute;poser un fichier, il vous suffit de cliquer sur le bouton « D&eacute;poser un fichier », de remplir le formulaire et de valider.</p>
-			    		<p>Les formats vid&eacute;o suivants sont pris en charge: Avi, Mov, Mp4, Rm, Rv, Mkv,Divx, Mpg, Wmv, Flv.<br>
-			    		Les formats audio suivants sont pris en charge: Mp3, Ogg.</p>
+			    		<p>Les formats vid&eacute;o suivants sont pris en charge: avi, mov, mp4, mkv, divx, mpg, wmv, flv.<br>
+			    		Les formats audio suivants sont pris en charge: mp3, wma, wav, ogg.</p>
 			    		<p>L'upload d&eacute;pend de la taille de votre fichier et de votre vitesse d'envoi. Cela peut &ecirc;tre assez long. Soyez patient, ne fermez pas la page "envoi en cours" avant d'avoir re&ccedil;u le message de succ&egrave;s ou d'&eacute;chec.</p>
 			    		<p>L'option Haute-D&eacute;finition vous permet d'uploader une vid&eacute;o haute-d&eacute;finition. Attention, cette option augmente consid&eacute;rablement le temps de traitement de votre vid&eacute;o. En effet, le traitement d'une vid&eacute;o en mode Haute-D&eacute;finition dure 3 heures pour 1 heure de film.</p>
 			    		<a class="link" href="../files/img/help/upload.png">Screenshot</a>

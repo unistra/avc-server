@@ -57,7 +57,7 @@
 		</td>
 		<td> 	    				
 			<b><c:out value="${course.title}"/></b> <br>
-			<b></b>par <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>
+			par <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>
 		</td>
 			
 	<!-- Defines the class of the next row of the table -->

@@ -1,6 +1,6 @@
 #!/bin/bash
-#$1 repertoire du cours
-#$2 id du cours
+#$1 course directory
+#$2 course id
 
 cd $1
 mkdir workingVS
