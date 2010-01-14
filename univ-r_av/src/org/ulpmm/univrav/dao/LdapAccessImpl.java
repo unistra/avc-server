@@ -1,11 +1,13 @@
 package org.ulpmm.univrav.dao;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
@@ -17,48 +19,67 @@ import javax.naming.directory.SearchResult;
  */
 public class LdapAccessImpl implements ILdapAccess {
 	
-	/** The context directory */
-	private DirContext ctxtDir;
 	/** the base dn*/
 	private String LDAP_BASE_DN;
 	/** the search filter */
 	private String LDAP_SEARCH_FILTER;
+	/** Ldap environment */
+	private Hashtable<?,?> env;
 	
 	
 	/**
 	 * Initialize parameters
-	 * @param dc the context directory
+	 * @param env ldap environment
 	 * @param LDAP_BASE_DN the base dn
 	 * @param LDAP_SEARCH_FILTER the search filter
 	 */
-	public LdapAccessImpl(DirContext dc, String LDAP_BASE_DN, String LDAP_SEARCH_FILTER) {
+	public LdapAccessImpl(Hashtable<?,?> env, String LDAP_BASE_DN, String LDAP_SEARCH_FILTER) {
+		this.env=env;
 		this.LDAP_BASE_DN = LDAP_BASE_DN;
 		this.LDAP_SEARCH_FILTER = LDAP_SEARCH_FILTER;	
-		this.ctxtDir=dc;
 	}
 	
 		
 	/**
 	 * Search something in the LDAP
 	 * @param login user's login
-	 * @throws NamingException 
 	 */
-	public SearchResult searchInLdap(String login) throws NamingException {
-
+	public SearchResult searchInLdap(String login) {
+		
 		SearchResult entry = null;
-			
-		// Check the connection
-		if(ctxtDir!=null) {
+		DirContext ctxtDir = null;
+		NamingEnumeration<SearchResult> answer = null;
+		
+		if(env!=null) {
 
-			SearchControls searchCtls = new SearchControls();
-			searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-			NamingEnumeration<SearchResult> answer = ctxtDir.search(LDAP_BASE_DN, "(&("+LDAP_SEARCH_FILTER+"="+login+"))", searchCtls);
+			try {
+				//open ldap connection
+				ctxtDir = (DirContext) new InitialDirContext(env);
 
-			// We take the first entry because login is unique
-			if (answer.hasMore()) {
-				entry = (SearchResult) answer.next();
-			} 
+				// Check the connection
+				if(ctxtDir!=null) {
 
+					SearchControls searchCtls = new SearchControls();
+					searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+					answer = ctxtDir.search(LDAP_BASE_DN, "(&("+LDAP_SEARCH_FILTER+"="+login+"))", searchCtls);
+
+					// We take the first entry because login is unique
+					if (answer.hasMore()) {
+						entry = (SearchResult) answer.next();
+					} 
+				}
+			}
+			catch(NamingException e) {
+				e.printStackTrace();
+			}
+			finally {
+				try {
+					answer.close();
+					ctxtDir.close();
+				} catch (NamingException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 		return entry;
@@ -68,12 +89,12 @@ public class LdapAccessImpl implements ILdapAccess {
 	/**
 	 * Gets user's parameters from the ldap
 	 * @param login user's login
-	 * @throws Exception 
 	 */
-	public List<String> getLdapUserInfos(String login) throws Exception {
+	public List<String> getLdapUserInfos(String login){
 
 		List<String> userInfos = null;
 
+		try {
 			// LDAP Search user infos
 			SearchResult searchResult = searchInLdap(login);
 
@@ -91,9 +112,12 @@ public class LdapAccessImpl implements ILdapAccess {
 				userInfos.add(lastname!=null ? lastname : "");
 				userInfos.add(profile!=null ? profile : "");
 				userInfos.add(establishment!=null ? establishment : "");			
+			}
+		}
+		catch(NamingException e) {
+			e.printStackTrace();
 		}
 
 		return userInfos;
-
 	}
 }
