@@ -7,13 +7,13 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/casclient.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/standard.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/taglibs-datetime.jar"/>
-	<classpathentry kind="var" path="TOMCAT_HOME/lib/commons-fileupload-1.2.1.jar"/>
-	<classpathentry kind="var" path="TOMCAT_HOME/lib/commons-io-1.4.jar"/>
+	<classpathentry kind="var" path="TOMCAT_HOME/lib/commons-fileupload.jar"/>
+	<classpathentry kind="var" path="TOMCAT_HOME/lib/commons-io.jar"/>
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/el-api.jar"/>
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/jasper.jar"/>
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/jsp-api.jar"/>
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/servlet-api.jar"/>
-	<classpathentry kind="var" path="TOMCAT_HOME/lib/commons-lang-2.3.jar"/>
+	<classpathentry kind="var" path="TOMCAT_HOME/lib/commons-lang.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jstl.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/displaytag-1.2.jar"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
