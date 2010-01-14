@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -289,12 +290,24 @@ public class Application extends HttpServlet {
 			   throw new Exception("Data source not found!");
 			}
 				
+			/* Ldap environment retrieving */
+			
 			DirContext dc=null;
+			Hashtable<?,?> env = null;
 			try {
 				dc = (DirContext) cxt.lookup("java:comp/env/ldap/ox"); 
+				env = dc.getEnvironment();
 			}
 			catch (Exception e) {
 				 e.printStackTrace();
+			}
+			finally {
+				try {
+					dc.close();
+				}
+				catch (Exception e) {
+					 e.printStackTrace();
+				}	
 			}
 			
 					
@@ -308,7 +321,7 @@ public class Application extends HttpServlet {
 			);
 			UnivrDaoImpl ud = new UnivrDaoImpl();
 			LdapAccessImpl ldap = new LdapAccessImpl(
-					dc,
+					env,
 					ldapBaseDn,
 					ldapSearchFilter
 			);
