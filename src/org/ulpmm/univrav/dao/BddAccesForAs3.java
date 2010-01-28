@@ -13,6 +13,8 @@ import java.util.Hashtable;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
+
 /**
  * Database access for AS3 (Full flash)
  * Not used for the moment
@@ -23,6 +25,9 @@ public class BddAccesForAs3 {
 	 
 	  /** The pgsql access for the database connection */
 	  private DataSource datasrc;
+	  
+	  /** Logger log4j */
+	  private static final Logger logger = Logger.getLogger(BddAccesForAs3.class);
 		  
 	  /**
 	   * Constructor for database connection
@@ -44,12 +49,12 @@ public class BddAccesForAs3 {
 			  
 		  }
 		  catch (ClassNotFoundException e) {
-			  e.printStackTrace();
+			  logger.error("Data source AS3 error",e);
 		  }
 		  catch (SQLException e) {
-			  e.printStackTrace();
+			  logger.error("Data source AS3 error",e);
 		  } catch (Exception e) {
-			e.printStackTrace();
+			  logger.error("Data source AS3 error",e);
 		}
 	  }
 	 
@@ -106,7 +111,7 @@ public class BddAccesForAs3 {
 			  cnt.close();
 		  }
 		  catch (SQLException se) {
-			  System.err.println(se.getMessage());
+			  logger.error("Xml AS3 error",se);
 		  }
 		  
 		  
@@ -165,7 +170,7 @@ public class BddAccesForAs3 {
 			  }
 		  }
 		  catch(Exception e) {
-			  System.err.println(e.getMessage());
+			  logger.error("Timecode AS3 error",e);
 		  }  
 		  return stringTimeCode;
 	  }

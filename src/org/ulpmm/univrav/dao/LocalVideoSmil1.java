@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
 import org.ulpmm.univrav.entities.Course;
 
 /**
@@ -33,6 +34,9 @@ public class LocalVideoSmil1 implements ISmil {
 	
 	/** the list of timecodes */
 	private ArrayList<String> timecodes;
+	
+	/** Logger log4j */
+	private static final Logger logger = Logger.getLogger(LocalVideoSmil1.class);
 	
 	/**
 	 * LocalVideoSmil1's constructor
@@ -155,8 +159,7 @@ public class LocalVideoSmil1 implements ISmil {
 			pw.close();
 		}
 		catch( IOException ioe) {
-			System.out.println("Error while writing the smil file");
-			ioe.printStackTrace();
+			logger.error("Error while writing the smil file",ioe);
 		}	
 	}
 	

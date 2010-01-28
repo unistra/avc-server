@@ -391,7 +391,7 @@ public class ServiceImpl implements IService {
 	 */
 	public void deleteTests(String testKeyWord) {
 		List<String> mediaFolders = db.getTestsMediaFolders(testKeyWord);
-		System.out.println(mediaFolders);
+		
 		for( String mediaFolder : mediaFolders) {
 			db.deleteTag(db.getCourseByMediafolder(mediaFolder).getCourseid());
 		}

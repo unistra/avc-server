@@ -32,6 +32,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.log4j.Logger;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Tag;
 import org.w3c.dom.Document;
@@ -71,6 +72,9 @@ public class FileSystemImpl implements IFileSystem {
 	
 	/** Copyright comment */
 	private static String comment;
+	
+	/** Logger log4j */
+	private static final Logger logger = Logger.getLogger(FileSystemImpl.class);
 		
 	/**
 	 * Constructor for file system
@@ -209,8 +213,7 @@ public class FileSystemImpl implements IFileSystem {
 			in.close();
 		}
 		catch(IOException ioe) {
-			System.out.println("Impossible to load the timecodes file");
-			ioe.printStackTrace();
+			logger.warn("Impossible to load the timecodes file",ioe);
 		}
 		return timecodes;
 	}
@@ -224,15 +227,13 @@ public class FileSystemImpl implements IFileSystem {
 			try {
 				Process p = r.exec("rm -Rf " + coursesFolder + mediaFolder);
 				if( p.waitFor() != 0)
-					System.out.println("the course folder " + mediaFolder + " mediaFolder has not been deleted");
+					logger.error("the course folder " + mediaFolder + " mediaFolder has not been deleted");
 			}
 			catch(IOException ioe) {
-				System.out.println("Impossible to delete the course folder");
-				ioe.printStackTrace();
+				logger.error("Impossible to delete the course folder");
 			}
 			catch(InterruptedException ie) {
-				System.out.println("Impossible to delete the course folder");
-				ie.printStackTrace();
+				logger.error("Impossible to delete the course folder");
 			}
 		}
 	}
@@ -282,8 +283,7 @@ public class FileSystemImpl implements IFileSystem {
 			}
 		}
 		catch( Exception e) {
-			System.out.println("Error while sending the file " + filename + " to the client");
-			e.printStackTrace();
+			logger.error("Error while sending the file " + filename + " to the client",e);
 		}
 		finally {
 			if (in != null) {
@@ -291,7 +291,7 @@ public class FileSystemImpl implements IFileSystem {
 					in.close(  );
 				}
 				catch( IOException ioe) {
-					ioe.printStackTrace();
+					logger.error("close error",ioe);
 				}
 			}
 		}
@@ -325,8 +325,7 @@ public class FileSystemImpl implements IFileSystem {
 			client.close();
 		}
 		catch( IOException ioe) {
-			System.out.println("Error while sending the message to the client");
-			ioe.printStackTrace();
+			logger.error("Error while sending the message to the client",ioe);
 		}
 		
 		return answer;
@@ -551,8 +550,7 @@ public class FileSystemImpl implements IFileSystem {
 			svgXml(document, filePath);
 		}
 		catch( ParserConfigurationException pce) {
-			System.out.println("Error while creating the RSS file " + filePath);
-			pce.printStackTrace();
+			logger.error("Error while creating the RSS file " + filePath,pce);
 		}
 	}
 	
@@ -568,7 +566,7 @@ public class FileSystemImpl implements IFileSystem {
 			/* Execution of the df program */
 			Process p = r.exec("df -m");
 			if( p.waitFor() != 0) {
-				System.out.println("Error while getting disk space info");
+				logger.error("Error while getting disk space info");
 				throw new DaoException("Error while getting disk space info");
 			}
 			
@@ -579,8 +577,7 @@ public class FileSystemImpl implements IFileSystem {
 				result+= "\n" + text ;
 		}
 		catch( Exception e ) {
-			System.out.println("Error while getting disk space info");
-			e.printStackTrace();
+			logger.error("Error while getting disk space info",e);
 		}
 		
 		return result;
@@ -608,13 +605,13 @@ public class FileSystemImpl implements IFileSystem {
 						/* Zip extracting */
 						Process p = r.exec("unzip " + ftpFolder + courseArchive, null, new File(coursesFolder));
 						if( p.waitFor() != 0) {
-							System.out.println("The course archive " + courseArchive + " has not been extracted");
+							logger.error("The course archive " + courseArchive + " has not been extracted");
 		        			throw new DaoException("The course archive " + courseArchive + " has not been extracted");
 						}
 		        		/* Renaming of the extracted folder to have a unique one */
 		        		p = r.exec("mv " + tmpMediaFolder + " " + mediaFolder, null, new File(coursesFolder));
 		        		if( p.waitFor() != 0) {
-		        			System.out.println("The course archive " + courseArchive + " has not been renamed");
+		        			logger.error("The course archive " + courseArchive + " has not been renamed");
 		        			throw new DaoException("The course archive " + courseArchive + " has not been renamed");
 		        		}
 					}
@@ -622,33 +619,31 @@ public class FileSystemImpl implements IFileSystem {
 						/* Tar extracting */
 						Process p = r.exec("tar xf " + ftpFolder + courseArchive, null, new File(coursesFolder));
 						if( p.waitFor() != 0) {
-							System.out.println("The course archive " + courseArchive + " has not been extracted");
+							logger.error("The course archive " + courseArchive + " has not been extracted");
 		        			throw new DaoException("The course archive " + courseArchive + " has not been extracted");
 						}
 						/* Renaming of the extracted folder to have a unique one */
 						p = r.exec("mv " + tmpMediaFolder + " " + mediaFolder, null, new File(coursesFolder));
 						if( p.waitFor() != 0) {
-							System.out.println("The course archive " + courseArchive + " has not been renamed");
+							logger.error("The course archive " + courseArchive + " has not been renamed");
 		        			throw new DaoException("The course archive " + courseArchive + " has not been renamed");
 						}
 					}
 				}
 				catch (IOException ioe) {
-					System.out.println("Error while extracting the course archive");
-					ioe.printStackTrace();
+					logger.error("Error while extracting the course archive",ioe);
 				}
 				catch (InterruptedException ie) {
-					System.out.println("Error while extracting the course archive");
-					ie.printStackTrace();
+					logger.error("Error while extracting the course archive",ie);
 				}
 			}
 			else {
-				System.out.println("The course folder " + mediaFolder + " already exists");
+				logger.error("The course folder " + mediaFolder + " already exists");
 				throw new DaoException("The course folder " + mediaFolder + " already exists" );
 			}
 		}
 		else {
-			System.out.println("Incorrect archive file to extract: " + courseArchive );
+			logger.error("Incorrect archive file to extract: " + courseArchive );
 			throw new DaoException("Incorrect archive file to extract: " + courseArchive );
 		}
 	}
@@ -664,7 +659,7 @@ public class FileSystemImpl implements IFileSystem {
 		else if(new File(coursesFolder + c.getMediaFolder() + "/" + defaultFlashFile).exists())
 			c.setType("video");
 		else {
-			System.out.println("No course media file found in the " + coursesFolder + c.getMediaFolder() + " folder");
+			logger.error("No course media file found in the " + coursesFolder + c.getMediaFolder() + " folder");
 			throw new DaoException("No course media file found in the " + coursesFolder + c.getMediaFolder() + " folder");
 		}
 	}
@@ -704,17 +699,15 @@ public class FileSystemImpl implements IFileSystem {
 
 			Process p = r.exec(command.toArray(new String[command.size()]), null, new File(coursesFolder + mediaFolder));
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while adding the tags to the mp3 file " + mediaFileName + ".mp3");
+				logger.error("Error while adding the tags to the mp3 file " + mediaFileName + ".mp3");
 				throw new DaoException("Error while adding the tags to the mp3 file " + mediaFileName + ".mp3");
 			}
 		}
 		catch( IOException ioe) {
-			System.out.println("Error while adding the tags to the mp3 file " + mediaFileName + ".mp3");
-			ioe.printStackTrace();
+			logger.error("Error while adding the tags to the mp3 file " + mediaFileName + ".mp3",ioe);
 		}
 		catch( InterruptedException ie) {
-			System.out.println("Error while adding the tags to the mp3 file " + mediaFileName + ".mp3");
-			ie.printStackTrace();
+			logger.error("Error while adding the tags to the mp3 file " + mediaFileName + ".mp3",ie);
 		}
 	}
 	
@@ -755,17 +748,15 @@ public class FileSystemImpl implements IFileSystem {
 
 			Process p = r.exec(command.toArray(new String[command.size()]), null, new File(coursesFolder + mediaFolder));
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while adding the tags to the ogg file " + mediaFileName + ".ogg");
+				logger.error("Error while adding the tags to the ogg file " + mediaFileName + ".ogg");
 				throw new DaoException("Error while adding the tags to the ogg file " + mediaFileName + ".ogg");
 			}
 		}
 		catch( IOException ioe) {
-			System.out.println("Error while adding the tags to the ogg file " + mediaFileName + ".ogg");
-			ioe.printStackTrace();
+			logger.error("Error while adding the tags to the ogg file " + mediaFileName + ".ogg",ioe);
 		}
 		catch( InterruptedException ie) {
-			System.out.println("Error while adding the tags to the ogg file " + mediaFileName + ".ogg");
-			ie.printStackTrace();
+			logger.error("Error while adding the tags to the ogg file " + mediaFileName + ".ogg",ie);
 		}
 	}
 	
@@ -779,16 +770,14 @@ public class FileSystemImpl implements IFileSystem {
 		try {
 			Process p = r.exec(new String[]{"mv",oldFileName,newFileName}, null, new File(coursesFolder + mediaFolder));
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while renaming the file " + oldFileName);
+				logger.error("Error while renaming the file " + oldFileName);
 				throw new DaoException("Error while renaming the file " + oldFileName);
 			}
 		} catch (IOException ioe) {
-			System.out.println("Error while renaming the file " + oldFileName);
-			ioe.printStackTrace();
+			logger.error("Error while renaming the file " + oldFileName,ioe);
 		}
 		catch( InterruptedException ie) {
-			System.out.println("Error while renaming the file " + oldFileName);
-			ie.printStackTrace();
+			logger.error("Error while renaming the file " + oldFileName,ie);
 		}
 	}
 	
@@ -803,17 +792,15 @@ public class FileSystemImpl implements IFileSystem {
 		try {
 			Process p = r.exec("bash injectMetadata.sh "  + coursesFolder + mediaFolder + " " + mediaFileName + " " + mediaFileExtension, null, scriptsFolder);
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension);
+				logger.error("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension);
 				throw new DaoException("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension);
 			}
 		}
 		catch(IOException ioe) {
-			System.out.println("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension);
-			ioe.printStackTrace();
+			logger.error("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension,ioe);
 		}
 		catch(InterruptedException ie) {
-			System.out.println("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension);
-			ie.printStackTrace();
+			logger.error("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension,ie);
 		}
 	}
 	
@@ -827,17 +814,15 @@ public class FileSystemImpl implements IFileSystem {
 		try {
 			Process p = r.exec("bash convertAll2Mp3.sh "  + coursesFolder + mediaFolder + " " + mediaFileName + " " + mediaFileExtension, null, scriptsFolder);
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while converting the file " + mediaFileName + "." + mediaFileExtension + " to mp3");
+				logger.error("Error while converting the file " + mediaFileName + "." + mediaFileExtension + " to mp3");
 				throw new DaoException("Error while converting file " + mediaFileName + "." + mediaFileExtension + " to mp3");
 			}
 		}
 		catch(IOException ioe) {
-			System.out.println("Error while converting file " + mediaFileName + "." + mediaFileExtension + " to mp3");
-			ioe.printStackTrace();
+			logger.error("Error while converting file " + mediaFileName + "." + mediaFileExtension + " to mp3",ioe);
 		}
 		catch(InterruptedException ie) {
-			System.out.println("Error while converting file " + mediaFileName + "." + mediaFileExtension + " to mp3");
-			ie.printStackTrace();
+			logger.error("Error while converting file " + mediaFileName + "." + mediaFileExtension + " to mp3",ie);
 		}
 	}
 	
@@ -853,7 +838,7 @@ public class FileSystemImpl implements IFileSystem {
 		try {
 			Process p = r.exec("mp3info -p %S " +  mediaFileName + ".mp3", null, new File(coursesFolder + mediaFolder));
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while getting the length of the file " + mediaFileName + ".mp3");
+				logger.error("Error while getting the length of the file " + mediaFileName + ".mp3");
 				throw new DaoException("Error while getting the length of the file " + mediaFileName + ".mp3");
 			}
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -861,16 +846,13 @@ public class FileSystemImpl implements IFileSystem {
 			c.setDuration(duration);
 			
 		} catch (IOException e) {
-			System.out.println("Error while getting the length of the file " + mediaFileName + ".mp3");
-			e.printStackTrace();
+			logger.error("Error while getting the length of the file " + mediaFileName + ".mp3",e);
 		}
 		catch (NumberFormatException nfe) {
-			System.out.println("Error while getting the length of the file " + mediaFileName + ".mp3");
-			nfe.printStackTrace();
+			logger.error("Error while getting the length of the file " + mediaFileName + ".mp3",nfe);
 		}
 		catch( InterruptedException ie) {
-			System.out.println("Error while getting the length of the file " + mediaFileName + ".mp3");
-			ie.printStackTrace();
+			logger.error("Error while getting the length of the file " + mediaFileName + ".mp3",ie);
 		}
 	}
 	
@@ -883,16 +865,14 @@ public class FileSystemImpl implements IFileSystem {
 		try {
 			Process p = r.exec("mp32ogg " + mediaFileName + ".mp3", null, new File(coursesFolder + mediaFolder));
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while converting the mp3 file " + mediaFileName + ".mp3 to ogg");
+				logger.error("Error while converting the mp3 file " + mediaFileName + ".mp3 to ogg");
 				throw new DaoException("Error while converting the mp3 file " + mediaFileName + ".mp3 to ogg");
 			}
 		} catch (IOException ioe) {
-			System.out.println("Error while converting the mp3 file " + mediaFileName + ".mp3 to ogg");
-			ioe.printStackTrace();
+			logger.error("Error while converting the mp3 file " + mediaFileName + ".mp3 to ogg",ioe);
 		}
 		catch( InterruptedException ie) {
-			System.out.println("Error while converting the mp3 file " + mediaFileName + ".mp3 to ogg");
-			ie.printStackTrace();
+			logger.error("Error while converting the mp3 file " + mediaFileName + ".mp3 to ogg",ie);
 		}
 	}
 	
@@ -905,16 +885,14 @@ public class FileSystemImpl implements IFileSystem {
 		try {
 			Process p = r.exec("bash videoslide.sh " + coursesFolder + mediaFolder + " " + mediaFileName, null, scriptsFolder);
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while creating the videoslide of " + mediaFileName);
+				logger.error("Error while creating the videoslide of " + mediaFileName);
 				throw new DaoException("Error while creating the videoslide of " + mediaFileName);
 			}
 		} catch (IOException ioe) {
-			System.out.println("Error while creating the videoslide of " + mediaFileName);
-			ioe.printStackTrace();
+			logger.error("Error while creating the videoslide of " + mediaFileName,ioe);
 		}
 		catch( InterruptedException ie) {
-			System.out.println("Error while creating the videoslide of " + mediaFileName);
-			ie.printStackTrace();
+			logger.error("Error while creating the videoslide of " + mediaFileName,ie);
 		}
 	}
 	
@@ -927,17 +905,15 @@ public class FileSystemImpl implements IFileSystem {
 		try {
 			Process p = r.exec("python CreatePDF.py " + coursesFolder + mediaFolder + " " + mediaFileName, null, scriptsFolder); 
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while creating the pdf file " + mediaFileName + ".pdf");
+				logger.error("Error while creating the pdf file " + mediaFileName + ".pdf");
 				throw new DaoException("Error while creating the pdf file " + mediaFileName + ".pdf");
 			}
 		}
 		catch(IOException ioe) {
-			System.out.println("Error while creating the pdf file " + mediaFileName + ".pdf");
-			ioe.printStackTrace();
+			logger.error("Error while creating the pdf file " + mediaFileName + ".pdf",ioe);
 		}
 		catch(InterruptedException ie) {
-			System.out.println("Error while creating the pdf file " + mediaFileName + ".pdf");
-			ie.printStackTrace();
+			logger.error("Error while creating the pdf file " + mediaFileName + ".pdf",ie);
 		}
 	}
 		
@@ -979,17 +955,15 @@ public class FileSystemImpl implements IFileSystem {
 		try {
 			Process p = r.exec(command, null, new File(coursesFolder + mediaFolder));
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while creating the zip file " + mediaFileName + ".zip");
+				logger.error("Error while creating the zip file " + mediaFileName + ".zip");
 				throw new DaoException("Error while creating the zip file " + mediaFileName + ".zip");
 			}
 			
 		} catch (IOException ioe) {
-			System.out.println("Error while creating the zip file " + mediaFileName + ".zip");
-			ioe.printStackTrace();
+			logger.error("Error while creating the zip file " + mediaFileName + ".zip",ioe);
 		}
 		catch(InterruptedException ie) {
-			System.out.println("Error while creating the zip file " + mediaFileName + ".zip");
-			ie.printStackTrace();
+			logger.error("Error while creating the zip file " + mediaFileName + ".zip",ie);
 		}
 	}
 	
@@ -1018,7 +992,7 @@ public class FileSystemImpl implements IFileSystem {
 	        
         }
         catch(Exception e){
-        	e.printStackTrace();
+        	logger.error("save xml error",e);
         }
 	}
 	
@@ -1053,8 +1027,7 @@ public class FileSystemImpl implements IFileSystem {
 			mediaFile.write(new File(mediaFolder, fileName));
 		}
 		catch( Exception e) {
-			System.out.println("Error while writing the media file " + fileName);
-			e.printStackTrace();
+			logger.error("Error while writing the media file " + fileName,e);
 		}
 	}
 	
@@ -1077,17 +1050,15 @@ public class FileSystemImpl implements IFileSystem {
 			while( entree.readLine() != null );
 			
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while converting the file " + inputFileName + " to flv");
+				logger.error("Error while converting the file " + inputFileName + " to flv");
 				throw new DaoException("Error while converting the file " + inputFileName + " to flv");
 			}
 		}
 		catch(IOException ioe) {
-			System.out.println("Error while converting the file " + inputFileName + " to flv");
-			ioe.printStackTrace();
+			logger.error("Error while converting the file " + inputFileName + " to flv",ioe);
 		}
 		catch(InterruptedException ie) {
-			System.out.println("Error while converting the file " + inputFileName + " to flv");
-			ie.printStackTrace();
+			logger.error("Error while converting the file " + inputFileName + " to flv",ie);
 		}
 	}
 	
@@ -1110,17 +1081,15 @@ public class FileSystemImpl implements IFileSystem {
 			while( entree.readLine() != null );
 			
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while converting the file " + inputFileName + " to mp4");
+				logger.error("Error while converting the file " + inputFileName + " to mp4");
 				throw new DaoException("Error while converting the file " + inputFileName + " to mp4");
 			}
 		}
 		catch(IOException ioe) {
-			System.out.println("Error while converting the file " + inputFileName + " to mp4");
-			ioe.printStackTrace();
+			logger.error("Error while converting the file " + inputFileName + " to mp4",ioe);
 		}
 		catch(InterruptedException ie) {
-			System.out.println("Error while converting the file " + inputFileName + " to mp4");
-			ie.printStackTrace();
+			logger.error("Error while converting the file " + inputFileName + " to mp4",ie);
 		}
 	}
 		
@@ -1138,17 +1107,15 @@ public class FileSystemImpl implements IFileSystem {
 			Process p = r.exec(command_array, null, scriptsFolder);
 						
 			if( p.waitFor() != 0 ) {
-				System.out.println("Error while send the mail to " + email);
+				logger.error("Error while send the mail to " + email);
 				throw new DaoException("Error while send the mail to " + email);
 			}
 		}
 		catch(IOException ioe) {
-			System.out.println("Error while send the mail to " + email);
-			ioe.printStackTrace();
+			logger.error("Error while send the mail to " + email,ioe);
 		}
 		catch(InterruptedException ie) {
-			System.out.println("Error while send the mail to " + email);
-			ie.printStackTrace();
+			logger.error("Error while send the mail to " + email,ie);
 		}
 		
 	}
@@ -1178,8 +1145,7 @@ public class FileSystemImpl implements IFileSystem {
 			docFile.write(new File(docFolder, fileName));
 		}
 		catch( Exception e) {
-			System.out.println("Error while writing the doc file " + fileName);
-			e.printStackTrace();
+			logger.error("Error while writing the doc file " + fileName,e);
 		}		
 	}
 	

@@ -8,6 +8,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.apache.log4j.Logger;
+
 /**
  * Custom Tag to display a list with a pagination bar in a jsp page
  * @author Laurent Kieffer
@@ -35,6 +37,9 @@ public class PaginationTag extends TagSupport {
 	
 	/** The name of the bundle to search the corresponding language properties files */
 	private static final String BUNDLE_NAME = "org.ulpmm.univrav.language.messages";
+	
+	/** Logger log4j */
+	private static final Logger logger = Logger.getLogger(PaginationTag.class);
 
 	/**
 	 * Displays the pagination bar
@@ -97,7 +102,7 @@ public class PaginationTag extends TagSupport {
 			
 		}
 		catch(IOException ioe){
-			ioe.printStackTrace();
+			logger.error("Error IO",ioe);
 		}
 		
 		return SKIP_BODY;

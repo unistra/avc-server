@@ -11,6 +11,8 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.apache.log4j.Logger;
+
 /**
  * Service implementation methods for LdapAccess.
  * 
@@ -25,6 +27,9 @@ public class LdapAccessImpl implements ILdapAccess {
 	private String LDAP_SEARCH_FILTER;
 	/** Ldap environment */
 	private Hashtable<?,?> env;
+	
+	/** Logger log4j */
+	private static final Logger logger = Logger.getLogger(LdapAccessImpl.class);
 	
 	
 	/**
@@ -70,14 +75,14 @@ public class LdapAccessImpl implements ILdapAccess {
 				}
 			}
 			catch(NamingException e) {
-				e.printStackTrace();
+				logger.error("Ldap search error",e);
 			}
 			finally {
 				try {
 					answer.close();
 					ctxtDir.close();
 				} catch (NamingException e) {
-					e.printStackTrace();
+					logger.error("Ldap close error",e);
 				}
 			}
 		}
@@ -115,7 +120,7 @@ public class LdapAccessImpl implements ILdapAccess {
 			}
 		}
 		catch(NamingException e) {
-			e.printStackTrace();
+			logger.error("Ldap search error",e);
 		}
 
 		return userInfos;

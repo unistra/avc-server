@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.ulpmm.univr.cmsapi.Cours;
 import org.ulpmm.univr.cmsapi.Group;
 import org.ulpmm.univr.cmsapi.User;
@@ -18,6 +19,9 @@ import org.ulpmm.univr.cmsapi.User;
  *
  */
 public class UnivrDaoImpl implements IUnivrDao {
+	
+	/** Logger log4j */
+	private static final Logger logger = Logger.getLogger(UnivrDaoImpl.class);
 
 	/**
 	 * Verifies if a user is logged on Univ-R
@@ -56,8 +60,7 @@ public class UnivrDaoImpl implements IUnivrDao {
 			infos = u.getUserInfos();
 		}
 		catch( Exception e) {
-			System.out.println("Error while retrieving the information about the user");
-			e.printStackTrace();
+			logger.error("Error while retrieving the information about the user",e);
 		}
 		
 		return infos;
@@ -77,8 +80,7 @@ public class UnivrDaoImpl implements IUnivrDao {
 			g = new Group(groupCode,estab);
 		}
 		catch(Exception e) {
-			System.out.println("Error while retrieving the group");
-			e.printStackTrace();
+			logger.error("Error while retrieving the group",e);
 		}
 		
 		return g.getGroupName();
