@@ -36,6 +36,8 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.apache.commons.lang.WordUtils;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.ulpmm.univrav.dao.DaoException;
 import org.ulpmm.univrav.dao.DatabaseImpl;
 import org.ulpmm.univrav.dao.FileSystemImpl;
@@ -169,12 +171,19 @@ public class Application extends HttpServlet {
 	
 	/** Link for support (help page) */
 	private static String supportLink;
+	
+	/** Link for support (help page) */
+	private static String trainingLink;
 		
 	/** Ldap base dn */
 	private static String ldapBaseDn;
 
 	/** ldap search filter */
 	private static String ldapSearchFilter;
+	
+	
+	/** Logger log4j */
+	private static final Logger logger = Logger.getLogger(Application.class);
 	
 		
 	/**
@@ -183,8 +192,12 @@ public class Application extends HttpServlet {
 	 * @throws ServletException if an error occurs
 	 */
 	public void init() throws ServletException {
+				
+		/* Initialize Log4j */		
+		PropertyConfigurator.configure(getServletContext().getRealPath("/conf") + "/log4j.properties");
+				
+		logger.info("Univ-R AV : init method called");
 		
-		System.out.println("Univ-R AV : init method called");
 		
 		/* Gets an instance of the service layer */	
 		service = new ServiceImpl();
@@ -272,6 +285,7 @@ public class Application extends HttpServlet {
 			
 			// Link for support (help page)
 			supportLink = p.getProperty("supportLink");
+			trainingLink = p.getProperty("trainingLink");
 			
 			/* ldap properties */
 			ldapBaseDn = p.getProperty("ldapBaseDn");
@@ -299,14 +313,14 @@ public class Application extends HttpServlet {
 				env = dc.getEnvironment();
 			}
 			catch (Exception e) {
-				 e.printStackTrace();
+				logger.warn("Ldap not found!",e);
 			}
 			finally {
 				try {
 					dc.close();
 				}
 				catch (Exception e) {
-					 e.printStackTrace();
+					logger.warn("Close Ldap error",e);
 				}	
 			}
 			
@@ -342,16 +356,15 @@ public class Application extends HttpServlet {
 			
 		}
 		catch( IOException e) {
-			System.out.println("Impossible to find the configuration file");
-			e.printStackTrace();
+			logger.fatal("Impossible to find the configuration file",e);
 			destroy();
 		}
 		catch( DaoException de) {
-			de.printStackTrace();
+			logger.fatal("Database error",de);
 			destroy();
 		}
 		catch( Exception e) {
-			e.printStackTrace();
+			logger.fatal("Servlet exception",e);
 			destroy();
 		}
 	}
@@ -486,6 +499,7 @@ public class Application extends HttpServlet {
 			/* Saves the page for the style selection thickbox return */
 			session.setAttribute("previousPage", "/help");
 			request.setAttribute("supportLink", supportLink);
+			request.setAttribute("trainingLink", trainingLink);
 			getServletContext().getRequestDispatcher("/WEB-INF/views/help.jsp").forward(request, response);
 		}
 		else if( page.equals("/contactUs")) {
@@ -830,7 +844,7 @@ public class Application extends HttpServlet {
 				
 				// Gets user's infos from the ldap
 				List<String> userInfos = null;		
-				try { userInfos= service.getLdapUserInfos(casUser);} catch (Exception e) { e.printStackTrace(); }
+				try { userInfos= service.getLdapUserInfos(casUser);} catch (Exception e) { logger.warn("Ldap user error",e); }
 								
 				// If the user is null, create an account
 				if(user==null) {
@@ -1724,15 +1738,15 @@ public class Application extends HttpServlet {
 					service.sendMail(emailUserSubject,emailUserMessage,email);
 				}
 				// If the user is not anonymous and his email is present and different of email
-				if(user!=null && user.getEmail()!=null && !user.getEmail().equals("") && !user.getEmail().equals(email)) {
-					service.sendMail(emailUserSubject,emailUserMessage,user.getEmail());
-				}
+			//	if(user!=null && user.getEmail()!=null && !user.getEmail().equals("") && !user.getEmail().equals(email)) {
+			//		service.sendMail(emailUserSubject,emailUserMessage,user.getEmail());
+			//	}
 								
 				// If course is present in the recorded page
 				if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 					// Sending email for admins
 					String emailAdminSubject = "a new course on Univr-AV";
-					String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" is published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nUniv-r Av Administrator" ;
+					String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (email!=null ? "\n\nEmail:"+email : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nUniv-r Av Administrator" ;
 					if(adminEmail1!=null && !adminEmail1.equals(""))
 						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
 					if(adminEmail2!=null && !adminEmail2.equals(""))
@@ -1878,7 +1892,7 @@ public class Application extends HttpServlet {
 									d = sdf.parse(date);					        	
 								}
 								catch( ParseException pe) {
-									pe.printStackTrace();
+									logger.error("Parse date error",pe);
 								}
 								finally {
 									cal.setTime(d);
@@ -1991,7 +2005,7 @@ public class Application extends HttpServlet {
 								if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 									// Sending email for admins
 									String emailAdminSubject = "a new file on Univr-AV";
-									String emailAdminMessage = "Dear Admin,\n\nA file named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nUniv-r Av Administrator" ;
+									String emailAdminMessage = "Dear Admin,\n\nA file named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (user!=null && user.getEmail()!=null ? "\n\nEmail:"+user.getEmail() : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nUniv-r Av Administrator" ;
 									if(!adminEmail1.equals(""))
 										service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
 									if(!adminEmail2.equals(""))
@@ -2631,7 +2645,6 @@ public class Application extends HttpServlet {
 							messageType = "error";
 							message = "Error: The client already recording ";
 							message += clientResponse;
-							System.out.println(clientResponse);
 						}
 					}
 					else {
@@ -2642,27 +2655,20 @@ public class Application extends HttpServlet {
 				catch( NumberFormatException nfe) {
 					messageType = "error";
 					message = "Error: Wrong parameters";
-					System.out.println("Wrong parameters !");
-					System.out.println( nfe.toString());
 				}
 				catch( Exception e ) {
 					messageType = "error";
 					message = "Error: client connection problems";
-					System.out.println("client connection problems");
-					System.out.println( e.toString() );
-					e.printStackTrace();
 				}
 			}
 			else {
 				messageType = "error";
 				message = "Error: Amphi unknown";
-				System.out.println("amphi unknown !");
 			}
 		}
 		else {
 			messageType = "error";
 			message = "Error: Wrong parameters";
-			System.out.println("Wrong parameters");
 		}
 		
 		request.setAttribute("messagetype", messageType);
@@ -2754,14 +2760,12 @@ public class Application extends HttpServlet {
 				}
 			}
 			catch( NumberFormatException nfe) {
-				nfe.printStackTrace();
 				message = "Error: wrong parameters (number format)";
 				request.setAttribute("messagetype", "error");
 				request.setAttribute("message", message);
 				forwardUrl = "/WEB-INF/views/message.jsp";
 			}
 			catch( DaoException de) {
-				de.printStackTrace();
 				message = "Error: course " + id + " unknown";
 				request.setAttribute("messagetype", "error");
 				request.setAttribute("message", message);

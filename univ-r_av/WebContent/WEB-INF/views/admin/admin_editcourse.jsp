@@ -110,7 +110,7 @@
 			    		</tr>
 			    		<tr class="odd">
 				    		<td>UserId</td>
-				    		<td><input type="hidden" name="userid" value="${course.userid}">${course.userid}</td>
+				    		<td><input type="text" name="userid" value="${course.userid}" class="field"></td>
 			    		</tr>
 			    		<tr class="even">
 				    		<td>Tags</td>

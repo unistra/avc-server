@@ -11,7 +11,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import javax.sql.DataSource;
+
+import org.apache.log4j.Logger;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
@@ -33,6 +36,9 @@ public class DatabaseImpl implements IDatabase {
 	/** The datasource for the database connection */
 	private DataSource datasrc;
 	
+	/** Logger log4j */
+	private static final Logger logger = Logger.getLogger(DatabaseImpl.class);
+	
 	/**
 	 * Constructor for database connection
 	 * @param ds the datasources
@@ -52,16 +58,14 @@ public class DatabaseImpl implements IDatabase {
 			try {
 				rs.close();
 			} catch (SQLException e) {
-				System.out.println("Error while close the resultset");
-				e.printStackTrace();
+				logger.error("Error while close the resultset",e);
 			}
 		}
 		if (ps != null) {
 			try {
 				ps.close();
 			} catch (SQLException e) {
-				System.out.println("Error while close the statement");
-				e.printStackTrace();
+				logger.error("Error while close the statement",e);
 			}
 		}
 		if( cnt != null) {
@@ -70,8 +74,7 @@ public class DatabaseImpl implements IDatabase {
 					cnt.close();
 			}
 			catch( SQLException sqle) {
-				System.out.println("The database disconnection has failed");
-				sqle.printStackTrace();
+				logger.error("The database disconnection has failed",sqle);
 			}
 		}
 	}
@@ -159,13 +162,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setInt(20, c.getmediatype());
 			
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("The course " + c + " has not been added to the database");
+				logger.error("The course " + c + " has not been added to the database");
 				throw new DaoException("The course " + c + " has not been added to the database");
 			}
 		}
 		catch(SQLException sqle){
-			System.out.println("Error while adding the new Course " + c);
-			sqle.printStackTrace();
+			logger.error("Error while adding the new Course " + c,sqle);
 			throw new DaoException("Error while adding the new Course " + c);
 		}
 		finally {
@@ -192,13 +194,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setString(4, u.getEstablishment());
 			
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("The Univr course " + u + " has not been added to the database");
+				logger.error("The Univr course " + u + " has not been added to the database");
 				throw new DaoException("The Univr course " + u + " has not been added to the database");
 			}
 		}
 		catch(SQLException sqle){
-			System.out.println("Error while adding the new Univr course " + u);
-			sqle.printStackTrace();
+			logger.error("Error while adding the new Univr course " + u,sqle);
 			throw new DaoException("Error while adding the new Univr course " + u);
 		}
 		finally {
@@ -256,8 +257,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the courses list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the courses list",sqle);
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
@@ -310,8 +310,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the courses list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the courses list",sqle);
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally{
@@ -363,8 +362,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the courses list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the courses list",sqle);
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
@@ -428,8 +426,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the courses list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the courses list",sqle);
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
@@ -494,8 +491,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the courses list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the courses list",sqle);
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
@@ -606,8 +602,7 @@ public class DatabaseImpl implements IDatabase {
 				}
 			}
 			catch( SQLException sqle) {
-				System.out.println("Error while retrieving the courses list");
-				sqle.printStackTrace();
+				logger.error("Error while retrieving the courses list",sqle);
 				throw new DaoException("Error while retrieving the courses list");
 			}
 			finally {
@@ -673,8 +668,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the courses list for the author " + author);
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the courses list for the author " + author,sqle);
 			throw new DaoException("Error while retrieving the courses list for the author " + author);
 		}
 		finally {
@@ -733,8 +727,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the courses list for the formation " + formation);
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the courses list for the formation " + formation,sqle);
 			throw new DaoException("Error while retrieving the courses list for the formation " + formation);
 		}
 		finally {
@@ -791,8 +784,7 @@ public class DatabaseImpl implements IDatabase {
 				throw new DaoException("Course " + courseId + " not found");
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the course " + courseId);
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the course " + courseId,sqle);
 			throw new DaoException("Error while retrieving the course " + courseId);
 		}
 		finally {
@@ -850,8 +842,7 @@ public class DatabaseImpl implements IDatabase {
 				throw new DaoException("Course " + courseId + " not found with this genre");
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the course " + courseId);
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the course " + courseId,sqle);
 			throw new DaoException("Error while retrieving the course " + courseId);
 		}
 		finally {
@@ -891,8 +882,7 @@ public class DatabaseImpl implements IDatabase {
 				number = rs.getInt("count");
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the course number");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the course number",sqle);
 			throw new DaoException("Error while retrieving the course number");
 		}
 		finally {
@@ -924,8 +914,7 @@ public class DatabaseImpl implements IDatabase {
 				number = rs.getInt("count");
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the course number");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the course number",sqle);
 			throw new DaoException("Error while retrieving the course number");
 		}
 		finally {
@@ -1011,8 +1000,7 @@ public class DatabaseImpl implements IDatabase {
 					number = rs.getInt("count");
 			}
 			catch( SQLException sqle) {
-				System.out.println("Error while retrieving the buildings list");
-				sqle.printStackTrace();
+				logger.error("Error while retrieving the buildings list",sqle);
 				throw new DaoException("Error while retrieving the buildings list");
 			}
 			finally {
@@ -1055,8 +1043,7 @@ public class DatabaseImpl implements IDatabase {
 				throw new DaoException("Univr course " + courseId + " not found");
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the Univr course " + courseId);
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the Univr course " + courseId,sqle);
 			throw new DaoException("Error while retrieving the Univr course " + courseId);
 		}
 		finally {
@@ -1156,13 +1143,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setInt(20, c.getCourseid());
 			
 			if( pstmt.executeUpdate() == 0 ) {
-				System.out.println("The course " + c + " has not been modified");
+				logger.error("The course " + c + " has not been modified");
 				throw new DaoException("The course " + c + " has not been modified");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while modifying the course " + c);
-			sqle.printStackTrace();
+			logger.error("Error while modifying the course " + c,sqle);
 			throw new DaoException("Error while modifying the course " + c);
 		}
 		finally {
@@ -1185,13 +1171,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseId);
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("the course " + courseId + " has not been deleted");
+				logger.error("the course " + courseId + " has not been deleted");
 				throw new DaoException("the course " + courseId + " has not been deleted");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while deleting the course " + courseId);
-			sqle.printStackTrace();
+			logger.error("Error while deleting the course " + courseId,sqle);
 			throw new DaoException("Error while deleting the course " + courseId);
 		}
 		finally {
@@ -1213,13 +1198,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseId);
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("the course " + courseId + " has not been deleted");
+				logger.error("the course " + courseId + " has not been deleted");
 				throw new DaoException("the course " + courseId + " has not been deleted");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while deleting the course " + courseId);
-			sqle.printStackTrace();
+			logger.error("Error while deleting the course " + courseId);
 			throw new DaoException("Error while deleting the course " + courseId);
 		}
 		finally {
@@ -1249,8 +1233,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the media folders list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the media folders list",sqle);
 			throw new DaoException("Error while retrieving the media folders list");
 		}
 		finally {
@@ -1317,8 +1300,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the courses list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the courses list",sqle);
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
@@ -1356,8 +1338,7 @@ public class DatabaseImpl implements IDatabase {
 				number = rs.getInt("count");
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the course number");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the course number",sqle);
 			throw new DaoException("Error while retrieving the course number");
 		}
 		finally {
@@ -1385,8 +1366,7 @@ public class DatabaseImpl implements IDatabase {
 				stmt.executeUpdate(sql);
 			}
 			catch( SQLException sqle) {
-				System.out.println("Error while deleting the tests");
-				sqle.printStackTrace();
+				logger.error("Error while deleting the tests",sqle);
 				throw new DaoException("Error while deleting the tests");
 			}
 			finally {
@@ -1417,8 +1397,7 @@ public class DatabaseImpl implements IDatabase {
 				stmt.executeUpdate(sql);
 			}
 			catch( SQLException sqle) {
-				System.out.println("Error while hiding the tests");
-				sqle.printStackTrace();
+				logger.error("Error while hiding the tests",sqle);
 				throw new DaoException("Error while hiding the tests");
 			}
 			finally {
@@ -1444,13 +1423,12 @@ public class DatabaseImpl implements IDatabase {
 			if( rs.next() ) 
 				id = rs.getInt("nextval");
 			else {
-				System.out.println("The next course Id hasn't been retrieved");
+				logger.error("The next course Id hasn't been retrieved");
 				throw new DaoException("The next course Id hasn't been retrieved");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the next course Id");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the next course Id",sqle);
 			throw new DaoException("Error while retrieving the next course Id");
 		}
 		finally {
@@ -1479,8 +1457,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the teachers list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the teachers list",sqle);
 			throw new DaoException("Error while retrieving the teachers list");
 		}
 		finally {
@@ -1515,8 +1492,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the teachers list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the teachers list",sqle);
 			throw new DaoException("Error while retrieving the teachers list");
 		}
 		finally {
@@ -1562,8 +1538,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the teacher full name");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the teacher full name",sqle);
 			throw new DaoException("Error while retrieving the teacher full name");
 		}
 		finally {
@@ -1593,8 +1568,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the formations list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the formations list",sqle);
 			throw new DaoException("Error while retrieving the formations list");
 		}
 		finally {
@@ -1622,13 +1596,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setInt(1, consultations);
 			pstmt.setInt(2, c.getCourseid());
 			if( pstmt.executeUpdate() == 0 ) {
-				System.out.println("The consultations have not been incremented");
+				logger.error("The consultations have not been incremented");
 				throw new DaoException("The consultations have not been incremented");
 			}
 		}
 		catch(SQLException sqle){
-			System.out.println("Error while incrementing the consultations");
-			sqle.printStackTrace();
+			logger.error("Error while incrementing the consultations",sqle);
 			throw new DaoException("Error while incrementing the consultations");
 		}
 		finally {
@@ -1652,13 +1625,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setInt(1, s.getCourseid());
 			pstmt.setInt(2, s.getSlidetime());
 			if( pstmt.executeUpdate() == 0 ) {
-				System.out.println("The slide has not been added");
+				logger.error("The slide has not been added");
 				throw new DaoException("The slide has not been added");
 			}
 		}
 		catch(SQLException sqle){
-			System.out.println("Error while adding the Slide");
-			sqle.printStackTrace();
+			logger.error("Error while adding the Slide",sqle);
 			throw new DaoException("Error while adding the Slide");
 		}
 		finally {
@@ -1693,8 +1665,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the slides list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the slides list",sqle);
 			throw new DaoException("Error while retrieving the slides list");
 		}
 		finally {
@@ -1720,13 +1691,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setString(2, b.getImageFile());
 			
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("The building " + b + " has not been added to the database");
+				logger.error("The building " + b + " has not been added to the database");
 				throw new DaoException("The building " + b + " has not been added to the database");
 			}
 		}
 		catch(SQLException sqle){
-			System.out.println("Error while adding the new Building " + b);
-			sqle.printStackTrace();
+			logger.error("Error while adding the new Building " + b,sqle);
 			throw new DaoException("Error while adding the new Building " + b);
 		}
 		finally {
@@ -1761,8 +1731,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the buildings list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the buildings list",sqle);
 			throw new DaoException("Error while retrieving the buildings list");
 		}
 		finally {
@@ -1800,8 +1769,7 @@ public class DatabaseImpl implements IDatabase {
 				throw new DaoException("Building " + buildingId + " not found");
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the building " + buildingId);
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the building " + buildingId,sqle);
 			throw new DaoException("Error while retrieving the building " + buildingId);
 		}
 		finally {
@@ -1833,8 +1801,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the building of amphi " + amphiIp);
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the building of amphi " + amphiIp,sqle);
 			throw new DaoException("Error while retrieving the building of amphi " + amphiIp);
 		}
 		finally {
@@ -1867,13 +1834,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setInt(3, b.getBuildingid());
 			
 			if( pstmt.executeUpdate() == 0 ) {
-				System.out.println("The building " + b + " has not been modified");
+				logger.error("The building " + b + " has not been modified");
 				throw new DaoException("The building " + b + " has not been modified");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while modifying the building " + b);
-			sqle.printStackTrace();
+			logger.error("Error while modifying the building " + b,sqle);
 			throw new DaoException("Error while modifying the building " + b);
 		}
 		finally {
@@ -1896,13 +1862,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, buildingId);
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("the building " + buildingId + " has not been deleted");
+				logger.error("the building " + buildingId + " has not been deleted");
 				throw new DaoException("the building " + buildingId + " has not been deleted");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while deleting the course " + buildingId);
-			sqle.printStackTrace();
+			logger.error("Error while deleting the course " + buildingId,sqle);
 			throw new DaoException("Error while deleting the course " + buildingId);
 		}
 		finally {
@@ -1936,13 +1901,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setBoolean(7, a.isRestrictionuds());
 			
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("The amphi " + a + " has not been added to the database");
+				logger.error("The amphi " + a + " has not been added to the database");
 				throw new DaoException("The amphi " + a + " has not been added to the database");
 			}
 		}
 		catch(SQLException sqle){
-			System.out.println("Error while adding the new amphi " + a);
-			sqle.printStackTrace();
+			logger.error("Error while adding the new amphi " + a,sqle);
 			throw new DaoException("Error while adding the new amphi " + a);
 		}
 		finally {
@@ -1990,8 +1954,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the amphis list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the amphis list",sqle);
 			throw new DaoException("Error while retrieving the amphis list");
 		}
 		finally {
@@ -2032,8 +1995,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the amphi " + amphiId);
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the amphi " + amphiId,sqle);
 		}
 		finally {
 			close(rs,pstmt,cnt);
@@ -2072,8 +2034,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the amphi " + ip);
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the amphi " + ip,sqle);
 			throw new DaoException("Error while retrieving the amphi " + ip);
 		}
 		finally {
@@ -2117,7 +2078,7 @@ public class DatabaseImpl implements IDatabase {
 			
 			
 			if( pstmt.executeUpdate() == 0 ) {
-				System.out.println("The amphi " + a + " has not been modified");
+				logger.error("The amphi " + a + " has not been modified");
 				throw new DaoException("The amphi " + a + " has not been modified");
 			}
 			
@@ -2129,8 +2090,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while modifying the amphi " + a);
-			sqle.printStackTrace();
+			logger.error("Error while modifying the amphi " + a,sqle);
 			throw new DaoException("Error while modifying the amphi " + a);
 		}
 		finally {
@@ -2152,13 +2112,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, amphiId);
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("the amphi " + amphiId + " has not been deleted");
+				logger.error("the amphi " + amphiId + " has not been deleted");
 				throw new DaoException("the amphi " + amphiId + " has not been deleted");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while deleting the amphi " + amphiId);
-			sqle.printStackTrace();
+			logger.error("Error while deleting the amphi " + amphiId,sqle);
 			throw new DaoException("Error while deleting the amphi " + amphiId);
 		}
 		finally {
@@ -2182,13 +2141,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setBoolean(1, status);
 			pstmt.setString(2, ip);
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("The status of the amphi has not been changed");
+				logger.error("The status of the amphi has not been changed");
 				throw new DaoException("The status of the amphi has not been changed");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while updating the status of the amphi " + ip);
-			sqle.printStackTrace();
+			logger.error("Error while updating the status of the amphi " + ip,sqle);
 			throw new DaoException("Error while updating the status of the amphi " + ip);
 		}
 		finally {
@@ -2228,8 +2186,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the user " + login);
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the user " + login,sqle);
 			throw new DaoException("Error while retrieving the user " + login);
 		}
 		finally {
@@ -2271,8 +2228,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the user " + id);
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the user " + id,sqle);
 			throw new DaoException("Error while retrieving the user " + id);
 		}
 		finally {
@@ -2315,8 +2271,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the user ");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the user",sqle);
 			throw new DaoException("Error while retrieving the user ");
 		}
 		finally {
@@ -2351,13 +2306,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setString(3, login);
 						
 			if( pstmt.executeUpdate() == 0 ) {
-				System.out.println("The user " + login + " has not been modified");
+				logger.error("The user " + login + " has not been modified");
 				throw new DaoException("The user " + login + " has not been modified");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while modifying the user " + login);
-			sqle.printStackTrace();
+			logger.error("Error while modifying the user " + login,sqle);
 			throw new DaoException("Error while modifying the user " + login);
 		}
 		finally {
@@ -2383,13 +2337,12 @@ public class DatabaseImpl implements IDatabase {
 			if( rs.next() ) 
 				id = rs.getInt("nextval");
 			else {
-				System.out.println("The next user Id hasn't been retrieved");
+				logger.error("The next user Id hasn't been retrieved");
 				throw new DaoException("The next user Id hasn't been retrieved");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the next user Id");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the next user Id",sqle);
 			throw new DaoException("Error while retrieving the next user Id");
 		}
 		finally {
@@ -2422,13 +2375,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setBoolean(8, u.isActivate());
 			
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("The User " + u + " has not been added to the database");
+				logger.error("The User " + u + " has not been added to the database");
 				throw new DaoException("The User " + u + " has not been added to the database");
 			}
 		}
 		catch(SQLException sqle){
-			System.out.println("Error while adding the new user " + u);
-			sqle.printStackTrace();
+			logger.error("Error while adding the new user " + u,sqle);
 			throw new DaoException("Error while adding the new user " + u);
 		}
 		finally {
@@ -2467,13 +2419,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setInt(10, u.getUserid());
 						
 			if( pstmt.executeUpdate() == 0 ) {
-				System.out.println("The user " + u + " has not been modified");
+				logger.error("The user " + u + " has not been modified");
 				throw new DaoException("The user " + u + " has not been modified");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while modifying the user " + u);
-			sqle.printStackTrace();
+			logger.error("Error while modifying the user " + u,sqle);
 			throw new DaoException("Error while modifying the user " + u);
 		}
 		finally {
@@ -2497,13 +2448,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, userid);
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("the user " + userid + " has not been deleted");
+				logger.error("the user " + userid + " has not been deleted");
 				throw new DaoException("the user " + userid + " has not been deleted");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while deleting the user " + userid);
-			sqle.printStackTrace();
+			logger.error("Error while deleting the user " + userid,sqle);
 			throw new DaoException("Error while deleting the user " + userid);
 		}
 		finally {
@@ -2567,8 +2517,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}	
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the course with user " + u.getUserid());
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the course with user " + u.getUserid(),sqle);
 			throw new DaoException("Error while retrieving the course with user " + u.getUserid());
 		}
 		finally {
@@ -2599,8 +2548,7 @@ public class DatabaseImpl implements IDatabase {
 				number = rs.getInt("count");
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the course number");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the course number",sqle);
 			throw new DaoException("Error while retrieving the course number");
 		}
 		finally {
@@ -2643,8 +2591,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}	
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the list of users");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the list of users",sqle);
 			throw new DaoException("Error while retrieving the list of users");
 		}
 		finally {
@@ -2672,13 +2619,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setInt(2, t.getCourseid());
 			
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("The tag " + t + " has not been added to the database");
+				logger.error("The tag " + t + " has not been added to the database");
 				throw new DaoException("The tag " + t + " has not been added to the database");
 			}
 		}
 		catch(SQLException sqle){
-			System.out.println("Error while adding the new tag " + t);
-			sqle.printStackTrace();
+			logger.error("Error while adding the new tag " + t,sqle);
 			throw new DaoException("Error while adding the new tag " + t);
 		}
 		finally {
@@ -2702,8 +2648,7 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.executeUpdate();
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while deleting tags of course " + courseid);
-			sqle.printStackTrace();
+			logger.error("Error while deleting tags of course " + courseid,sqle);
 			throw new DaoException("Error while deleting tags of course " + courseid);
 		}
 		finally {
@@ -2737,8 +2682,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the tags list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the tags list",sqle);
 			throw new DaoException("Error while retrieving the tags list");
 		}
 		finally {
@@ -2769,8 +2713,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the tags list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the tags list",sqle);
 			throw new DaoException("Error while retrieving the tags list");
 		}
 		finally {
@@ -2801,8 +2744,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the tags list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the tags list",sqle);
 			throw new DaoException("Error while retrieving the tags list");
 		}
 		finally {
@@ -2872,8 +2814,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the courses list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the courses list",sqle);
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
@@ -2921,8 +2862,7 @@ public class DatabaseImpl implements IDatabase {
 					number = rs.getInt("count");
 			}
 			catch( SQLException sqle) {
-				System.out.println("Error while retrieving the course number");
-				sqle.printStackTrace();
+				logger.error("Error while retrieving the course number",sqle);
 				throw new DaoException("Error while retrieving the course number");
 			}
 			finally {
@@ -2980,8 +2920,7 @@ public class DatabaseImpl implements IDatabase {
 				throw new DaoException("Course " + mediafolder + " not found");
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the course " + mediafolder);
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the course " + mediafolder,sqle);
 			throw new DaoException("Error while retrieving the course " + mediafolder);
 		}
 		finally {
@@ -3043,8 +2982,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the courses list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the courses list",sqle);
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
@@ -3106,8 +3044,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the courses list");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the courses list",sqle);
 			throw new DaoException("Error while retrieving the courses list");
 		}
 		finally {
@@ -3145,8 +3082,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}	
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the list of selections");
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the list of selections",sqle);
 			throw new DaoException("Error while retrieving the list of selections");
 		}
 		finally {
@@ -3181,8 +3117,7 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while retrieving the selection " + position);
-			sqle.printStackTrace();
+			logger.error("Error while retrieving the selection " + position,sqle);
 			throw new DaoException("Error while retrieving the selection " + position);
 		}
 		finally {
@@ -3211,13 +3146,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setString(2, s.getFormationcollection());
 			
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("The Selection " + s + " has not been added to the database");
+				logger.error("The Selection " + s + " has not been added to the database");
 				throw new DaoException("The Selection " + s + " has not been added to the database");
 			}
 		}
 		catch(SQLException sqle){
-			System.out.println("Error while adding the new selection " + s);
-			sqle.printStackTrace();
+			logger.error("Error while adding the new selection " + s,sqle);
 			throw new DaoException("Error while adding the new selection " + s);
 		}
 		finally {
@@ -3248,13 +3182,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setInt(4, s.getPosition());
 						
 			if( pstmt.executeUpdate() == 0 ) {
-				System.out.println("The selection " + s + " has not been modified");
+				logger.error("The selection " + s + " has not been modified");
 				throw new DaoException("The selection " + s + " has not been modified");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while modifying the selection " + s);
-			sqle.printStackTrace();
+			logger.error("Error while modifying the selection " + s,sqle);
 			throw new DaoException("Error while modifying the selection " + s);
 		}
 		finally {
@@ -3277,13 +3210,12 @@ public class DatabaseImpl implements IDatabase {
 			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, position);
 			if( pstmt.executeUpdate() == 0) {
-				System.out.println("the selection " + position + " has not been deleted");
+				logger.error("the selection " + position + " has not been deleted");
 				throw new DaoException("the selection " + position + " has not been deleted");
 			}
 		}
 		catch( SQLException sqle) {
-			System.out.println("Error while deleting the selection " + position);
-			sqle.printStackTrace();
+			logger.error("Error while deleting the selection " + position,sqle);
 			throw new DaoException("Error while deleting the selection " + position);
 		}
 		finally {

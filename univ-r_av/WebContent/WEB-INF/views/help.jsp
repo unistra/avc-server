@@ -59,6 +59,7 @@
 					
 					<div class="helpLinks2">
 						<ul>
+							<li><a href="${trainingLink}"><fmt:message key="trainingLink"/></a></li>
 							<li><a href="${supportLink}"><fmt:message key="supportLink"/></a></li>
 							<li><a href="./contactUs"><fmt:message key="contactUs"/></a></li>
 						</ul>
