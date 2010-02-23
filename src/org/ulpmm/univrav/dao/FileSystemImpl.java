@@ -444,7 +444,7 @@ public class FileSystemImpl implements IFileSystem {
 	        itExplicit.setTextContent("no");
 	        channel.appendChild(itExplicit);
 	        
-	        // Recherche de cours et création d'un item pour chaque cours
+	        // Recherche de cours et création de 2 items pour chaque cours : un audio et un videoslide
 			for( Course course : courses) {
 				
 				if( course.getTitle() != null) {
@@ -452,6 +452,7 @@ public class FileSystemImpl implements IFileSystem {
 			    	Date d = course.getDate();
 			    	SimpleDateFormat sdf = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
 		        
+			    	// Audio item
 			        Element item = document.createElement("item");
 			        channel.appendChild(item);
 			        
@@ -497,13 +498,6 @@ public class FileSystemImpl implements IFileSystem {
 			        		coursEnclosure.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".mp3")));
 			        		item.appendChild(coursEnclosure);
 			        	}
-			        	if(course.isAvailable("videoslide")) {
-			        		Element coursEnclosure5 = document.createElement("enclosure");
-			        		coursEnclosure5.setAttribute("url",courseMediaUrl + "_videoslide.mp4");
-			        		coursEnclosure5.setAttribute("type","video/mp4");
-			        		coursEnclosure5.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + "_videoslide.mp4")));
-			        		item.appendChild(coursEnclosure5);
-			        	}
 			        	if(course.isAvailable("ogg")) {			        		
 			        		Element coursEnclosure2 = document.createElement("enclosure");
 			        		coursEnclosure2.setAttribute("url",courseMediaUrl + ".ogg");
@@ -542,6 +536,54 @@ public class FileSystemImpl implements IFileSystem {
 			        itItemKeywords.setTextContent(itunesKeywords + tags);
 			        item.appendChild(itItemKeywords);
 			        
+			        
+			        // VIDEOSLIDE ITEM
+			        if(course.isAvailable("videoslide")) {
+			        	Element item2 = document.createElement("item");
+			        	channel.appendChild(item2);
+
+			        	Element coursGuid2 = document.createElement("guid");
+			        	coursGuid2.setTextContent(rssName + "_" + course.getCourseid() + "_vs");
+			        	coursGuid2.setAttribute("isPermaLink","false");
+			        	item2.appendChild(coursGuid2);
+
+			        	Element coursTitle2 = document.createElement("title");
+			        	coursTitle2.setTextContent("Videoslide - " + course.getTitle());
+			        	item2.appendChild(coursTitle2);
+
+			        	Element coursDescription2 = document.createElement("description");
+			        	coursDescription2.setTextContent(coursDescription.getTextContent());
+			        	item2.appendChild(coursDescription2);
+			        	
+			        	Element coursCategory2 = document.createElement("category");
+			        	coursCategory2.setTextContent(coursCategory.getTextContent());
+			        	item2.appendChild(coursCategory2);
+			        	
+			        	Element coursLink2 = document.createElement("link");
+			        	coursLink2.setTextContent(recordedInterfaceUrl + "?id=" + course.getCourseid() + "&type=videoslide");
+			        	item2.appendChild(coursLink2);
+			        	
+			        	Element coursPubDate2 = document.createElement("pubDate");
+			        	coursPubDate2.setTextContent(coursPubDate.getTextContent());
+			        	item2.appendChild(coursPubDate2);
+			        	
+			        	if(course.getGenre()==null && !course.isRestrictionuds()) {
+			        		Element coursEnclosure5 = document.createElement("enclosure");
+			        		coursEnclosure5.setAttribute("url",courseMediaUrl + "_videoslide.mp4");
+			        		coursEnclosure5.setAttribute("type","video/mp4");
+			        		coursEnclosure5.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + "_videoslide.mp4")));
+			        		item2.appendChild(coursEnclosure5);
+			        	}
+
+			        	Element itDuration2 = document.createElement("itunes:duration");
+			        	itDuration2.setTextContent(itDuration.getTextContent());
+			        	item2.appendChild(itDuration2);
+			        	
+			        	Element itItemKeywords2 = document.createElement("itunes:keywords");
+			        	itItemKeywords2.setTextContent(itItemKeywords.getTextContent());
+			        	item2.appendChild(itItemKeywords2);
+			        	
+			        }
 				}
 			}
 		        
@@ -564,7 +606,7 @@ public class FileSystemImpl implements IFileSystem {
 		
 		try {
 			/* Execution of the df program */
-			Process p = r.exec("df -m");
+			Process p = r.exec("df -h");
 			if( p.waitFor() != 0) {
 				logger.error("Error while getting disk space info");
 				throw new DaoException("Error while getting disk space info");
