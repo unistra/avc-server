@@ -46,7 +46,7 @@
 	    	<div class="diskspace">
 	    	
 	    		<div class="infos">
-	    			<h2>Disk space information (MB)</h2>
+	    			<h2>Disk space information</h2>
 	    			<pre id="pre">
 	    				<c:out value="${diskspaceinfo}" />
 	    			</pre>

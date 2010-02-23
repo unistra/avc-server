@@ -2187,6 +2187,18 @@ public class Application extends HttpServlet {
 							request.setAttribute("rssfiles", service.getRssCourseFileList(c));
 							request.setAttribute("mediaLst", c.getMedias());
 							
+							// Sets embed objects
+							if(c.isDownload() && !c.isRestrictionuds() && c.getGenre()==null) {
+								if(c.isAvailable("videoslide"))
+									request.setAttribute("embedvs", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='640' height='480' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+"_videoslide.mp4'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='640' height='480' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+"_videoslide.mp4' /></object>");
+								if(c.isAvailable("mp3"))
+									request.setAttribute("embedaudio", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='320' height='20' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp3'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='320' height='20' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp3' /></object>");
+								if(c.getType().equals("video"))
+									request.setAttribute("embedvideo", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='320' height='240' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".flv'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='320' height='240' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".flv' /></object>");
+								if(c.isAvailable("hq"))
+									request.setAttribute("embedhq", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='1024' height='576' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp4'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='1024' height='576' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp4' /></object>");
+							}
+							
 							/* displays the .jsp view */
 							getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_flash.jsp").forward(request, response);
 						}
