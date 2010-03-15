@@ -656,14 +656,7 @@ public interface IService {
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(List<String> tags,String testKeyWord1, String testKeyWord2, String testKeyWord3);
-	
-	/**
-	 * Gets a restricted list of courses
-	 * @param mediafolder the folder of the media
-	 * @return the course
-	 */
-	public Course getCourseByMediafolder(String mediafolder);
-	
+		
 	/**
 	 * Get the list of ahref for the tag cloud
 	 * @param listTag the list of tag

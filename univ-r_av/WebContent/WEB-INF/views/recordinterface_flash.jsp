@@ -92,7 +92,7 @@
 								<c:param name="id" value="${course.courseid}"/>
 								<c:param name="type" value="hq"/>
 							</c:url>
-							<a href="<c:out value="${courseaccess}" />"><fmt:message key="Highquality"/></a>	
+							<a href="<c:out value="${courseaccess}" />"><b><fmt:message key="Highquality"/></b></a>	
 						</c:if>
 					</div>
 	                                   

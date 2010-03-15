@@ -140,26 +140,21 @@ public class DatabaseImpl implements IDatabase {
 				pstmt.setString(14, c.getTiming());
 			else
 				pstmt.setNull(14, Types.VARCHAR);
-			
-			if( c.getMediaFolder() != null)
-				pstmt.setString(15, c.getMediaFolder());
-			else
-				pstmt.setNull(15, Types.VARCHAR);
-						
+									
 			if(c.getUserid() !=null)
-				pstmt.setInt(16, c.getUserid());
+				pstmt.setInt(15, c.getUserid());
 			else
-				pstmt.setNull(16, Types.INTEGER);
+				pstmt.setNull(15, Types.INTEGER);
 			
 			if( c.getAdddocname() != null)
-				pstmt.setString(17, c.getAdddocname());
+				pstmt.setString(16, c.getAdddocname());
 			else
-				pstmt.setNull(17, Types.VARCHAR);
+				pstmt.setNull(16, Types.VARCHAR);
 			
-			pstmt.setBoolean(18, c.isDownload());
-			pstmt.setBoolean(19, c.isRestrictionuds());
-			
-			pstmt.setInt(20, c.getmediatype());
+			pstmt.setBoolean(17, c.isDownload());
+			pstmt.setBoolean(18, c.isRestrictionuds());
+			pstmt.setInt(19, c.getmediatype());
+			pstmt.setShort(20, c.getVolume());
 			
 			if( pstmt.executeUpdate() == 0) {
 				logger.error("The course " + c + " has not been added to the database");
@@ -247,12 +242,12 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediafolder"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype")
+					rs.getInt("mediatype"),
+					rs.getShort("volume")
 				));
 			}
 		}
@@ -300,12 +295,12 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediafolder"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype")
+					rs.getInt("mediatype"),
+					rs.getShort("volume")
 				));
 			}
 		}
@@ -352,12 +347,12 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediafolder"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype")
+					rs.getInt("mediatype"),
+					rs.getShort("volume")
 				));
 			}
 		}
@@ -416,12 +411,12 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediafolder"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype")
+					rs.getInt("mediatype"),
+					rs.getShort("volume")
 				));
 			}
 		}
@@ -481,12 +476,12 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediafolder"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype")
+					rs.getInt("mediatype"),
+					rs.getShort("volume")
 				));
 			}
 		}
@@ -592,12 +587,12 @@ public class DatabaseImpl implements IDatabase {
 							rs.getBoolean("visible"),
 							rs.getInt("consultations"),
 							rs.getString("timing"),
-							rs.getString("mediafolder"),
 							rs.getInt("userid"),
 							rs.getString("adddocname"),
 							rs.getBoolean("download"),
 							rs.getBoolean("restrictionuds"),
-							rs.getInt("mediatype")
+							rs.getInt("mediatype"),
+							rs.getShort("volume")
 					));
 				}
 			}
@@ -658,12 +653,12 @@ public class DatabaseImpl implements IDatabase {
 						rs.getBoolean("visible"),
 						rs.getInt("consultations"),
 						rs.getString("timing"),
-						rs.getString("mediafolder"),
 						rs.getInt("userid"),
 						rs.getString("adddocname"),
 						rs.getBoolean("download"),
 						rs.getBoolean("restrictionuds"),
-						rs.getInt("mediatype")
+						rs.getInt("mediatype"),
+						rs.getShort("volume")
 				));
 			}
 		}
@@ -717,12 +712,12 @@ public class DatabaseImpl implements IDatabase {
 						rs.getBoolean("visible"),
 						rs.getInt("consultations"),
 						rs.getString("timing"),
-						rs.getString("mediafolder"),
 						rs.getInt("userid"),
 						rs.getString("adddocname"),
 						rs.getBoolean("download"),
 						rs.getBoolean("restrictionuds"),
-						rs.getInt("mediatype")
+						rs.getInt("mediatype"),
+						rs.getShort("volume")
 				));
 			}
 		}
@@ -772,12 +767,12 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediafolder"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype")
+					rs.getInt("mediatype"),
+					rs.getShort("volume")
 				);
 			}
 			else
@@ -830,12 +825,12 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediafolder"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype")
+					rs.getInt("mediatype"),
+					rs.getShort("volume")
 				);
 			}
 			else
@@ -1063,7 +1058,7 @@ public class DatabaseImpl implements IDatabase {
 		/* Creation of the SQL query string */
 		String sql = "UPDATE course SET date = ? , type = ? , title = ? , description = ? , ";
 		sql += "formation = ? , name = ? , firstname = ? , ipaddress = ? , duration = ? , ";
-		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, mediafolder = ?, userid = ?, adddocname = ?, download = ?, restrictionuds = ?, mediatype = ? ";
+		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, userid = ?, adddocname = ?, download = ?, restrictionuds = ?, mediatype = ?, volume = ? ";
 		sql += "WHERE courseid = ?";
 		
 		PreparedStatement pstmt = null;
@@ -1121,26 +1116,23 @@ public class DatabaseImpl implements IDatabase {
 				pstmt.setString(13, c.getTiming());
 			else
 				pstmt.setNull(13, Types.VARCHAR);
-			
-			if( c.getMediaFolder() != null)
-				pstmt.setString(14, c.getMediaFolder());
-			else
-				pstmt.setNull(14, Types.VARCHAR);
-						
+									
 			if(c.getUserid() !=null && c.getUserid() !=0)
-				pstmt.setInt(15, c.getUserid());
+				pstmt.setInt(14, c.getUserid());
 			else
-				pstmt.setNull(15, Types.INTEGER);
+				pstmt.setNull(14, Types.INTEGER);
 						
 			if( c.getAdddocname() != null)
-				pstmt.setString(16, c.getAdddocname());
+				pstmt.setString(15, c.getAdddocname());
 			else
-				pstmt.setNull(16, Types.VARCHAR);
+				pstmt.setNull(15, Types.VARCHAR);
 			
-			pstmt.setBoolean(17, c.isDownload());
-			pstmt.setBoolean(18, c.isRestrictionuds());
-			pstmt.setInt(19, c.getmediatype());
+			pstmt.setBoolean(16, c.isDownload());
+			pstmt.setBoolean(17, c.isRestrictionuds());
+			pstmt.setInt(18, c.getmediatype());
+			pstmt.setShort(19, c.getVolume());
 			pstmt.setInt(20, c.getCourseid());
+			
 			
 			if( pstmt.executeUpdate() == 0 ) {
 				logger.error("The course " + c + " has not been modified");
@@ -1212,25 +1204,46 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
-	 * Gets the list of the media folders of the test courses
+	 * Gets the list of the test courses to delete
 	 * @param testKeyWord the key word which identifies a test
-	 * @return the list of media folders
+	 * @return the list of test courses 
 	 */
-	public List<String> getTestsMediaFolders(String testKeyWord) {
+	public List<Course> getTestsToDelete(String testKeyWord) {
 		
 		Connection cnt = null;
 		Statement stmt = null;
 		ResultSet rs = null;
-		List<String> l = new ArrayList<String>();
+		List<Course> l = new ArrayList<Course>();
 		
 		try {
 			cnt = datasrc.getConnection();
 			stmt = cnt.createStatement();
-			rs = stmt.executeQuery("SELECT mediafolder FROM course WHERE initcap(genre) = '" + testKeyWord + "'");
-						
+			rs = stmt.executeQuery("SELECT * FROM course WHERE initcap(genre) = '" + testKeyWord + "'");
+							
 			while(rs.next()) {
-				l.add(rs.getString("mediafolder"));
-			}
+				l.add(new Course(
+					rs.getInt("courseid"),
+					rs.getTimestamp("date"),
+					rs.getString("type"),
+					rs.getString("title"),
+					rs.getString("description"),
+					rs.getString("formation"),
+					rs.getString("name"),
+					rs.getString("firstname"),
+					rs.getString("ipaddress"),
+					rs.getInt("duration"),
+					rs.getString("genre"),
+					rs.getBoolean("visible"),
+					rs.getInt("consultations"),
+					rs.getString("timing"),
+					rs.getInt("userid"),
+					rs.getString("adddocname"),
+					rs.getBoolean("download"),
+					rs.getBoolean("restrictionuds"),
+					rs.getInt("mediatype"),
+					rs.getShort("volume")
+				));
+			}			
 		}
 		catch( SQLException sqle) {
 			logger.error("Error while retrieving the media folders list",sqle);
@@ -1290,12 +1303,12 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediafolder"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype")
+					rs.getInt("mediatype"),
+					rs.getShort("volume")
 				));
 			}
 		}
@@ -2507,12 +2520,12 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediafolder"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype")
+					rs.getInt("mediatype"),
+					rs.getShort("volume")
 				));
 			}
 		}	
@@ -2737,7 +2750,7 @@ public class DatabaseImpl implements IDatabase {
 		try {
 			cnt = datasrc.getConnection();
 			stmt = cnt.createStatement();
-			rs = stmt.executeQuery( "select tag, count(*) from tag group by tag order by 2 desc,tag limit 20");
+			rs = stmt.executeQuery( "select tag, count(*) from tag group by tag order by 2 desc,tag limit 15");
 			
 			while(rs.next()) {
 				l.add(rs.getString("tag").toLowerCase());
@@ -2804,12 +2817,12 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediafolder"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype")
+					rs.getInt("mediatype"),
+					rs.getShort("volume")
 				));
 			}
 		}
@@ -2875,61 +2888,7 @@ public class DatabaseImpl implements IDatabase {
 		return number;
 	}
 	
-	
-	/**
-	 * Gets a restricted list of courses
-	 * @param mediafolder the folder of the media
-	 * @return the course
-	 */
-	public Course getCourseByMediafolder(String mediafolder) {
-								
-		Course c = null;
-		Connection cnt = null;
-		String sql = "SELECT * From course WHERE mediafolder= '" + mediafolder + "'";
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			cnt = datasrc.getConnection();
-			pstmt = cnt.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-			if( rs.next() ) {
-				c = new Course(
-					rs.getInt("courseid"),
-					rs.getTimestamp("date"),
-					rs.getString("type"),
-					rs.getString("title"),
-					rs.getString("description"),
-					rs.getString("formation"),
-					rs.getString("name"),
-					rs.getString("firstname"),
-					rs.getString("ipaddress"),
-					rs.getInt("duration"),
-					rs.getString("genre"),
-					rs.getBoolean("visible"),
-					rs.getInt("consultations"),
-					rs.getString("timing"),
-					rs.getString("mediafolder"),
-					rs.getInt("userid"),
-					rs.getString("adddocname"),
-					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype")
-				);
-			}
-			else
-				throw new DaoException("Course " + mediafolder + " not found");
-		}
-		catch( SQLException sqle) {
-			logger.error("Error while retrieving the course " + mediafolder,sqle);
-			throw new DaoException("Error while retrieving the course " + mediafolder);
-		}
-		finally {
-			close(rs,pstmt,cnt);
-		}
 		
-		return c;
-	}
-	
 	/**
 	 * Gets a list of the n selection courses
 	 * @param n the number of courses to return
@@ -2972,12 +2931,12 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediafolder"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype")
+					rs.getInt("mediatype"),
+					rs.getShort("volume")
 				));
 			}
 		}
@@ -3034,12 +2993,12 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("visible"),
 					rs.getInt("consultations"),
 					rs.getString("timing"),
-					rs.getString("mediafolder"),
 					rs.getInt("userid"),
 					rs.getString("adddocname"),
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype")
+					rs.getInt("mediatype"),
+					rs.getShort("volume")
 				));
 			}
 		}

@@ -105,10 +105,6 @@
 				    		<td><input type="hidden" name="timing" value="${course.timing}">${course.timing}</td>
 			    		</tr>
 			    		<tr class="odd">
-				    		<td>MediaFolder</td>
-				    		<td><input type="hidden" name="mediaFolder" value="${course.mediaFolder}">${course.mediaFolder}</td>
-			    		</tr>
-			    		<tr class="odd">
 				    		<td>UserId</td>
 				    		<td><input type="text" name="userid" value="${course.userid}" class="field"></td>
 			    		</tr>
@@ -131,6 +127,10 @@
 			    		<tr class="even">
 			    			<td>MediaType</td>
 				    		<td><input type="text" name="mediatype" value="${course.mediatype}" class="field"></td>
+			    		</tr>
+			    		<tr class="odd">
+				    		<td>Volume</td>
+				    		<td><input type="hidden" name="volume" value="${course.volume}">${course.volume}</td>
 			    		</tr>
 			    	</table>
 			    	<br>

@@ -164,11 +164,11 @@ public interface IDatabase {
 	public void deleteUnivr(int courseId);
 	
 	/**
-	 * Gets the list of the media folders of the test courses
+	 * Gets the list of the test courses to delete
 	 * @param testKeyWord the key word which identifies a test
-	 * @return the list of media folders
+	 * @return the list of test courses 
 	 */
-	public List<String> getTestsMediaFolders(String testKeyWord);
+	public List<Course> getTestsToDelete(String testKeyWord);
 	
 	/**
 	 * Gets a restricted list of test courses
@@ -471,14 +471,7 @@ public interface IDatabase {
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(List<String> tag,String testKeyWord1, String testKeyWord2, String testKeyWord3);
-	
-	/**
-	 * Gets a restricted list of courses
-	 * @param mediafolder the folder of the media
-	 * @return the course
-	 */
-	public Course getCourseByMediafolder(String mediafolder);
-	
+		
 	/**
 	 * Gets a list of the n selection courses
 	 * @param n the number of courses to return
