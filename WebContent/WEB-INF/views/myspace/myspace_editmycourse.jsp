@@ -45,7 +45,7 @@
 			    	<input type="hidden" name="type" value="${course.type}">
 			    	<input type="hidden" name="consultations" value="${course.consultations}">
 			    	<input type="hidden" name="timing" value="${course.timing}">
-			    	<input type="hidden" name="mediaFolder" value="${course.mediaFolder}">
+			    	<input type="hidden" name="volume" value="${course.volume}">
 			    	<input type="hidden" name="userid" value="${course.userid}">
 			    	<input type="hidden" name="adddocname" value="${course.adddocname}">
 			    	<input type="hidden" name="mediatype" value="${course.mediatype}">

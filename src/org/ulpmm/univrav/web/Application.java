@@ -181,6 +181,8 @@ public class Application extends HttpServlet {
 	/** ldap search filter */
 	private static String ldapSearchFilter;
 	
+	/** volume number for filesystem **/
+	private static Short volume;	
 	
 	/** Logger log4j */
 	private static final Logger logger = Logger.getLogger(Application.class);
@@ -290,6 +292,7 @@ public class Application extends HttpServlet {
 			/* ldap properties */
 			ldapBaseDn = p.getProperty("ldapBaseDn");
 			ldapSearchFilter = p.getProperty("ldapSearchFilter");
+			
 										
 			/* Datasource retrieving */
 			
@@ -324,6 +327,14 @@ public class Application extends HttpServlet {
 				}	
 			}
 			
+			/* volume number for filesystem from tomcat context */
+			try {
+				volume = (Short) cxt.lookup("java:/comp/env/volume");
+			}
+			catch (Exception e) {
+				logger.warn("Volume not found! Set 1 by default",e);
+				volume = 1;
+			}
 					
 			/* Creates the instances of the data access layer */
 			
@@ -1699,12 +1710,12 @@ public class Application extends HttpServlet {
 							visible,
 							0,
 							timing,
-							null, // The media folder can't be set yet
 							user!=null ? user.getUserid() : null,
 							null,
 							true,
 							restrictionuds,
-							Course.typeFlash+Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide	
+							Course.typeFlash+Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide,
+							volume
 					);
 					
 					service.addCourse(c, media, tags, getServletContext().getRealPath("/rss"), 
@@ -1974,12 +1985,12 @@ public class Application extends HttpServlet {
 										visible,
 										0,
 										timing,
-										null, // The media folder can't be set yet
 										user.getUserid(),
 										null,
 										true,
 										restrictionuds,
-										mediaType
+										mediaType,
+										volume
 								);
 
 								/* Sends the creation of the course to the service layer */
@@ -2253,7 +2264,7 @@ public class Application extends HttpServlet {
 
 							/* Initializes the headers */
 							response.setContentType("application/x-download");
-							response.setHeader("Content-Disposition", "attachment; filename=" + c.getAdddocname());
+							response.setHeader("Content-Disposition", "attachment; filename=\"" + c.getAdddocname()+"\"");
 
 							/* Sends the file */
 							OutputStream out = response.getOutputStream();
@@ -2372,12 +2383,12 @@ public class Application extends HttpServlet {
 			request.getParameter("visible") != null ? true : false,
 			Integer.parseInt(request.getParameter("consultations")),
 			! request.getParameter("timing").equals("") ? request.getParameter("timing") : null,
-			! request.getParameter("mediaFolder").equals("") ? request.getParameter("mediaFolder") : null,
 			! request.getParameter("userid").equals("0") ? Integer.parseInt(request.getParameter("userid")) : null,
 			! request.getParameter("adddocname").equals("") ? request.getParameter("adddocname") : null,
 			request.getParameter("download") != null ? true : false,
 			request.getParameter("restrictionuds") != null ? true : false,
-			Integer.parseInt(request.getParameter("mediatype"))
+			Integer.parseInt(request.getParameter("mediatype")),
+			Short.parseShort(request.getParameter("volume"))
 		);
 		service.modifyCourse(c);
 		
@@ -2641,12 +2652,12 @@ public class Application extends HttpServlet {
 									false,
 									0,
 									null, // The timing can't be set yet
-									null, // The media folder can't be set yet
 									null,
 									null,
 									true,
 									false,
-									Course.typeFlash+Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide
+									Course.typeFlash+Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide,
+									volume
 							);
 							
 							Univr u = new Univr(courseId, user, group,estab);

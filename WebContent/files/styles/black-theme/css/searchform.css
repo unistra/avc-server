@@ -100,7 +100,7 @@
 
 /* TAG CLOUD */
 #tagcloud {							
-	width: 250px;
+	width: 260px;
 	height:65px;
 	text-align: right;
 	margin-left: 50px;
@@ -114,11 +114,11 @@
 	background-color:#B3B3B3;
 	color:#FFFFFF;
 }
-#tag1,#tag2,#tag3,#tag4,#tag5,#tag6,#tag7,#tag8  {
+#tag1,#tag2,#tag3,#tag4,#tag5 {
 	font-size: 12px;
 	font-weight: bold;
 }
 
-#tag9,#tag10,#tag11,#tag12,#tag13,#tag14,#tag15,#tag16,#tag17,#tag18,#tag19,#tag20 {
+#tag6,#tag7,#tag8,#tag9,#tag10,#tag11,#tag12,#tag13,#tag14,#tag15,#tag16,#tag17,#tag18,#tag19,#tag20 {
 	font-size: 12px;
 }

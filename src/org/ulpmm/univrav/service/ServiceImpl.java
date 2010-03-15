@@ -390,14 +390,20 @@ public class ServiceImpl implements IService {
 	 * @param testKeyWord the key word which identifies a test
 	 */
 	public void deleteTests(String testKeyWord) {
-		List<String> mediaFolders = db.getTestsMediaFolders(testKeyWord);
+		// Gets tests to delete
+		List<Course> tests = db.getTestsToDelete(testKeyWord);
 		
-		for( String mediaFolder : mediaFolders) {
-			db.deleteTag(db.getCourseByMediafolder(mediaFolder).getCourseid());
+		// delete tags
+		for( Course c : tests) {
+			db.deleteTag(c.getCourseid());
 		}
+				
+		// delete tests in database
 		db.deleteTests(testKeyWord);
-		for( String mediaFolder : mediaFolders) {
-			fs.deleteCourse(mediaFolder);
+					
+		// delete course in file system
+		for( Course c : tests) {
+			fs.deleteCourse(c.getMediaFolder());
 		}
 	}
 	
@@ -1063,16 +1069,7 @@ public class ServiceImpl implements IService {
 	public int getCourseNumber(List<String> tags,String testKeyWord1, String testKeyWord2, String testKeyWord3) {
 		return db.getCourseNumber(tags, testKeyWord1, testKeyWord2, testKeyWord3);
 	}
-	
-	/**
-	 * Gets a restricted list of courses
-	 * @param mediafolder the folder of the media
-	 * @return the course
-	 */
-	public Course getCourseByMediafolder(String mediafolder) {
-		return db.getCourseByMediafolder(mediafolder);
-	}
-	
+		
 	/**
 	 * Get the list of ahref for the tag cloud
 	 * @param listTag the list of tag
@@ -1083,7 +1080,7 @@ public class ServiceImpl implements IService {
 		List<String> nouvelleList = new ArrayList<String>();
 		
 		for(int i=0;i<listTag.size();i++) {
-			nouvelleList.add("<a href=\"./tags?tags="+listTag.get(i)+"\" id=\"tag"+(i+1)+"\">"+(listTag.get(i).length()<20 ? listTag.get(i) : listTag.get(i).substring(0, 20)+"...")+"</a>&nbsp;&nbsp;");
+			nouvelleList.add("<a href=\"./tags?tags="+listTag.get(i)+"\" id=\"tag"+(i+1)+"\">"+(listTag.get(i).length()<=12 ? listTag.get(i) : listTag.get(i).substring(0, 12)+"...")+"</a>&nbsp;&nbsp;");
 		}
 		Collections.sort(nouvelleList);
 		

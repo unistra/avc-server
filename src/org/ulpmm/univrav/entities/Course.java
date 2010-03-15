@@ -54,10 +54,7 @@ public class Course {
 	
 	/** the course's timing */
 	private String timing;
-	
-	/** Folder which contains all media of the course */
-	private String mediaFolder;
-		
+			
 	/** the user id */
 	private Integer userid;
 	
@@ -83,6 +80,12 @@ public class Course {
 	public static final int typeAdddoc = 64;
 	public static final int typeHq = 128;
 	
+	/** volume (filesystem) */
+	private short volume;
+	
+	/** the mediaFolder. It's not a database column. It's used because it's convenient */
+	private String mediafolder;
+	
 	/**
 	 * Default constructor
 	 */
@@ -105,14 +108,14 @@ public class Course {
 	 * @param visible the course's visibility
 	 * @param consultations number of consultations
 	 * @param timing the course's timing
-	 * @param mediaFolder Folder which contains all media of the course
 	 * @param userid the high quality indicator
 	 * @param adddocname additional document name
 	 * @param download the download parameter
 	 * @param restrictionuds the restriction uds
 	 * @param mediatype media type
+	 * @param volume
 	 */
-	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, String mediaFolder, Integer userid, String adddocname, boolean download, boolean restrictionuds, int mediatype) {
+	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, Integer userid, String adddocname, boolean download, boolean restrictionuds, int mediatype, short volume) {
 		this.courseid = courseid;
 		this.date = date;
 		this.type = type;
@@ -127,12 +130,13 @@ public class Course {
 		this.visible = visible;
 		this.consultations = consultations;
 		this.timing = timing;
-		this.mediaFolder = mediaFolder;
 		this.userid=userid;
 		this.adddocname=adddocname;
 		this.download=download;
 		this.restrictionuds=restrictionuds;
 		this.mediatype=mediatype;
+		this.volume=volume;
+		this.mediafolder=FindMediaFolder();
 	}
 	
 	
@@ -308,14 +312,7 @@ public class Course {
 		return mediasFileName;
 	}
 	
-	/**
-	 * Gets the media folder
-	 * @return the mediaFolder
-	 */
-	public String getMediaFolder() {
-		return mediaFolder;
-	}
-
+	
 	/**
 	 * Sets the course's type
 	 * @param type the type to set
@@ -332,14 +329,7 @@ public class Course {
 		this.duration = duration;
 	}
 
-	/**
-	 * Sets the mediafolder
-	 * @param mediaFolder the mediaFolder to set
-	 */
-	public void setMediaFolder(String mediaFolder) {
-		this.mediaFolder = mediaFolder;
-	}
-
+	
 	/**
 	 * Sets the date
 	 * @param date the date to set
@@ -549,4 +539,48 @@ public class Course {
 		if ((typeHq & mediatype) > 0) lst.add("hq") ;		
 		return lst;
 	}
+
+	/**
+	 * Gets the volume (filesystem)
+	 * @return volume the volume
+	 */
+	public short getVolume() {
+		return volume;
+	}
+
+	/**
+	 * Gets the volume (filesystem)
+	 * @param volume the volume
+	 */
+	public void setVolume(short volume) {
+		this.volume = volume;
+	}
+	
+	/**
+	 * Find the media folder for constructor
+	 * @return the media folder
+	 */
+	private String FindMediaFolder() {
+		//TODO A FAIRE EN UTILISANT LE VOLUME ET LID DU COURS
+		String mediafolder = "";
+		String idformat = String.format("%08d", this.courseid);
+				
+		if(idformat.length()<=8)
+			mediafolder = this.volume+"/"+idformat.substring(0, 2)+"/"+idformat.substring(2, 4)+ "/"+idformat.substring(4, 6)+"/"+idformat.substring(6, 8);
+		else 
+			mediafolder = this.volume + "/" + this.courseid;
+			
+		return mediafolder;
+	}
+
+	/**
+	 * Gets the mediafolder
+	 * @return the mediafolder
+	 */
+	public String getMediaFolder() {
+		return mediafolder;
+	}
+	
+	
+	
 }

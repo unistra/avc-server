@@ -16,11 +16,10 @@ import java.net.SocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,6 +30,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 import org.ulpmm.univrav.entities.Course;
@@ -636,41 +636,39 @@ public class FileSystemImpl implements IFileSystem {
 		if( courseArchive.length() > 3) {
 			extension = courseArchive.substring(courseArchive.length()-4, courseArchive.length());
 			String tmpMediaFolder = courseArchive.substring(0,courseArchive.lastIndexOf(".")); //uncompressed media folder
-			String mediaFolder = tmpMediaFolder + "-" + c.getCourseid(); // new (renamed) media folder
-			c.setMediaFolder(mediaFolder);
+			String mf=c.getMediaFolder();
 			
-			if( ! new File(coursesFolder + mediaFolder).exists()) {	
-				try {
+			//TODO Create all folders			
+			File mediaFolder = new File(coursesFolder, mf.substring(0,mf.lastIndexOf('/')));
+			mediaFolder.mkdirs();
+			
+			// Don't extract if the course already exists
+			if( ! new File(coursesFolder + mf).exists()) {
+				try {					
 					/* Archive extraction according to its type to the courses folder */
-					if( extension.equals(".zip")){
-					
+					if(extension.equals(".zip")){			
 						/* Zip extracting */
-						Process p = r.exec("unzip " + ftpFolder + courseArchive, null, new File(coursesFolder));
+						Process p = r.exec("unzip -u " + ftpFolder + courseArchive, null, mediaFolder);
 						if( p.waitFor() != 0) {
 							logger.error("The course archive " + courseArchive + " has not been extracted");
 		        			throw new DaoException("The course archive " + courseArchive + " has not been extracted");
 						}
-		        		/* Renaming of the extracted folder to have a unique one */
-		        		p = r.exec("mv " + tmpMediaFolder + " " + mediaFolder, null, new File(coursesFolder));
-		        		if( p.waitFor() != 0) {
-		        			logger.error("The course archive " + courseArchive + " has not been renamed");
-		        			throw new DaoException("The course archive " + courseArchive + " has not been renamed");
-		        		}
 					}
-					else {			
+					else {								
 						/* Tar extracting */
-						Process p = r.exec("tar xf " + ftpFolder + courseArchive, null, new File(coursesFolder));
+						Process p = r.exec("tar xf " + ftpFolder + courseArchive, null, mediaFolder);
 						if( p.waitFor() != 0) {
 							logger.error("The course archive " + courseArchive + " has not been extracted");
 		        			throw new DaoException("The course archive " + courseArchive + " has not been extracted");
 						}
-						/* Renaming of the extracted folder to have a unique one */
-						p = r.exec("mv " + tmpMediaFolder + " " + mediaFolder, null, new File(coursesFolder));
-						if( p.waitFor() != 0) {
-							logger.error("The course archive " + courseArchive + " has not been renamed");
-		        			throw new DaoException("The course archive " + courseArchive + " has not been renamed");
-						}
 					}
+						
+	        		/* Renaming of the extracted folder to have a unique one */
+					Process p = r.exec("mv " + tmpMediaFolder + " " + mf.substring(mf.lastIndexOf('/')+1), null, mediaFolder);
+	        		if( p.waitFor() != 0) {
+	        			logger.error("The course archive " + courseArchive + " has not been renamed");
+	        			throw new DaoException("The course archive " + courseArchive + " has not been renamed");
+	        		}
 				}
 				catch (IOException ioe) {
 					logger.error("Error while extracting the course archive",ioe);
@@ -1055,16 +1053,10 @@ public class FileSystemImpl implements IFileSystem {
 	 * @param fileName the file name
 	 */
 	private static void mediaFolderCreation( Course c, FileItem mediaFile, String fileName) {
-		Calendar cal = new GregorianCalendar();
-		cal.setTimeInMillis(c.getDate().getTime());
-		String mediaFolderName = "mu-" + cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) 
-			+ "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.HOUR_OF_DAY) 
-			+ "h-" + cal.get(Calendar.MINUTE) + "m-" + cal.get(Calendar.SECOND) + "s-" + c.getCourseid();
-		
-		File mediaFolder = new File(coursesFolder, mediaFolderName);
-		mediaFolder.mkdir();
-		c.setMediaFolder(mediaFolderName);
-		
+						
+		File mediaFolder = new File(coursesFolder, c.getMediaFolder());
+		mediaFolder.mkdirs();
+				
 		try {
 			mediaFile.write(new File(mediaFolder, fileName));
 		}
