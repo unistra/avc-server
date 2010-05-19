@@ -18,11 +18,11 @@ import org.apache.log4j.Logger;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Job;
 import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Tag;
 import org.ulpmm.univrav.entities.Teacher;
-import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
 
 /**
@@ -169,41 +169,9 @@ public class DatabaseImpl implements IDatabase {
 			close(null,pstmt,cnt);
 		}
 	}
-	
-	/**
-	 * Adds a new Univ-R course
-	 * @param u the Univ-R course
-	 */
-	public void addUnivr(Univr u) {
 		
-		Connection cnt = null;
-		String sql = "INSERT INTO univr values(?,?,?,?)";
-		PreparedStatement pstmt =null;
-		
-		try {
-			cnt = datasrc.getConnection();
-			pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, u.getCourseid());
-			pstmt.setInt(2, u.getUid());
-			pstmt.setInt(3, u.getGroupCode());
-			pstmt.setString(4, u.getEstablishment());
-			
-			if( pstmt.executeUpdate() == 0) {
-				logger.error("The Univr course " + u + " has not been added to the database");
-				throw new DaoException("The Univr course " + u + " has not been added to the database");
-			}
-		}
-		catch(SQLException sqle){
-			logger.error("Error while adding the new Univr course " + u,sqle);
-			throw new DaoException("Error while adding the new Univr course " + u);
-		}
-		finally {
-			close(null,pstmt,cnt);
-		}
-	}
-	
 	/**
-	 * Gets a list of all the courses (no-Univr)
+	 * Gets a list of all the courses
 	 * @param onlyvisible true to get only visible courses
 	 * @return the list of courses
 	 */
@@ -218,10 +186,10 @@ public class DatabaseImpl implements IDatabase {
 		try {
 			cnt = datasrc.getConnection();
 			stmt = cnt.createStatement();
-			sql = "SELECT * From course WHERE courseid NOT IN " +"( SELECT courseid FROM univr ) ";
+			sql = "SELECT * From course ";
 			
 			if(onlyvisible)
-				sql += "AND visible=true ";
+				sql += "WHERE visible=true ";
 				
 			sql += "ORDER BY date DESC";		
 			rs = stmt.executeQuery(sql);
@@ -261,60 +229,7 @@ public class DatabaseImpl implements IDatabase {
 		
 		return l;
 	}
-	
-	/**
-	 * Gets a list of all the Univ-R courses
-	 * @return the list of Univ-R courses
-	 */
-	public List<Course> getUnivrCourses() {
 		
-		Connection cnt = null;
-		ResultSet rs = null;
-		Statement stmt = null;
-		List<Course> l = new ArrayList<Course>();
-		
-		try {
-			cnt = datasrc.getConnection();
-			stmt = cnt.createStatement();
-			rs = stmt.executeQuery( "SELECT * From course WHERE courseid IN " +
-			"( SELECT courseid FROM univr ) ORDER BY date DESC");
-			
-			while(rs.next()) {
-				l.add(new Course(
-					rs.getInt("courseid"),
-					rs.getTimestamp("date"),
-					rs.getString("type"),
-					rs.getString("title"),
-					rs.getString("description"),
-					rs.getString("formation"),
-					rs.getString("name"),
-					rs.getString("firstname"),
-					rs.getString("ipaddress"),
-					rs.getInt("duration"),
-					rs.getString("genre"),
-					rs.getBoolean("visible"),
-					rs.getInt("consultations"),
-					rs.getString("timing"),
-					rs.getInt("userid"),
-					rs.getString("adddocname"),
-					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype"),
-					rs.getShort("volume")
-				));
-			}
-		}
-		catch( SQLException sqle) {
-			logger.error("Error while retrieving the courses list",sqle);
-			throw new DaoException("Error while retrieving the courses list");
-		}
-		finally{
-			close(rs,stmt,cnt);
-		}
-		
-		return l;
-	}
-	
 	/**
 	 * Gets a list of all the courses without access code
 	 * @return the list of courses
@@ -1009,46 +924,6 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
-	 * Gets a Univr course by providing its id
-	 * @param courseId the id of the Univr course
-	 * @return the Univr object
-	 */
-	public Univr getUnivr(int courseId) {
-		Univr u = null;
-		Connection cnt = null;
-		String sql = "SELECT * FROM univr WHERE courseid = ?";
-		
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		
-		try {
-			cnt = datasrc.getConnection();
-			pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, courseId);
-			rs = pstmt.executeQuery();
-			if( rs.next() ) {
-				u = new Univr(
-					rs.getInt("courseid"),
-					rs.getInt("uid"),
-					rs.getInt("groupcode"),
-					rs.getString("establishment")
-				);
-			}
-			else
-				throw new DaoException("Univr course " + courseId + " not found");
-		}
-		catch( SQLException sqle) {
-			logger.error("Error while retrieving the Univr course " + courseId,sqle);
-			throw new DaoException("Error while retrieving the Univr course " + courseId);
-		}
-		finally {
-			close(rs,pstmt,cnt);
-		}
-		
-		return u;
-	}
-	
-	/**
 	 * Modifies a course
 	 * @param c the course to modify
 	 */
@@ -1150,6 +1025,79 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	/**
+	 * Modifies the mediatype of course
+	 * @param courseid the course id 
+	 * @param mediatype the mediatype
+	 */
+	public void modifyCourseMediatype(int courseid, int mediatype) {
+				
+		/* Creation of the SQL query string */
+		String sql = "UPDATE course SET mediatype = ? ";
+		sql += "WHERE courseid = ?";
+		
+		PreparedStatement pstmt = null;
+		Connection cnt = null;
+		
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			
+			/* Applies the parameters to the query */
+			pstmt.setInt(1, mediatype);
+			pstmt.setInt(2, courseid);
+			
+			
+			if( pstmt.executeUpdate() == 0 ) {
+				logger.error("The mediatype of course " + courseid + " has not been modified");
+				throw new DaoException("The mediacourse " + courseid + " has not been modified");
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while modifying the mediatype of course " + courseid,sqle);
+			throw new DaoException("Error while modifying the mediatype course " + courseid);
+		}
+		finally {
+			close(null,pstmt,cnt);
+		}
+		
+	}
+	
+	
+	/**
+	 * Gets the mediatype of the course
+	 * @param courseid the courseid
+	 * @return the mediatype of the course
+	 */
+	public int getMediaType(int courseid) {
+		Connection cnt = null;
+		String sql = "SELECT mediatype FROM course WHERE courseid = ?";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int mediatype;
+		
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, courseid);
+			rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				mediatype = rs.getInt("mediatype");
+			}
+			else
+				throw new DaoException("Mediatype of course " + courseid + " not found");
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the mediatype of course " + courseid,sqle);
+			throw new DaoException("Error while retrieving the mediatype of course " + courseid);
+		}
+		finally {
+			close(rs,pstmt,cnt);
+		}
+		
+		return mediatype;
+	}
+	
+	/**
 	 * Deletes a course by providing its id
 	 * @param courseId the id of the course
 	 */
@@ -1175,34 +1123,7 @@ public class DatabaseImpl implements IDatabase {
 			close(null,pstmt,cnt);
 		}
 	}
-	
-	/**
-	 * Deletes a univr by providing its id
-	 * @param courseId the id of the course
-	 */
-	public void deleteUnivr(int courseId) {
-	
-		Connection cnt = null;
-		String sql = "DELETE FROM univr WHERE courseid = ?";
-		PreparedStatement pstmt = null;
-		try {
-			cnt = datasrc.getConnection();
-			pstmt = cnt.prepareStatement(sql);
-			pstmt.setInt(1, courseId);
-			if( pstmt.executeUpdate() == 0) {
-				logger.error("the course " + courseId + " has not been deleted");
-				throw new DaoException("the course " + courseId + " has not been deleted");
-			}
-		}
-		catch( SQLException sqle) {
-			logger.error("Error while deleting the course " + courseId);
-			throw new DaoException("Error while deleting the course " + courseId);
-		}
-		finally {
-			close(null,pstmt,cnt);
-		}
-	}
-	
+		
 	/**
 	 * Gets the list of the test courses to delete
 	 * @param testKeyWord the key word which identifies a test
@@ -3180,6 +3101,234 @@ public class DatabaseImpl implements IDatabase {
 		finally {
 			close(null,pstmt,cnt);
 		}
+	}
+	
+	/**
+	 * Gets the list of all jobs
+	 * @return the list of jobs
+	 */
+	public List<Job> getAllJobs() {
+		
+		List<Job> l = new ArrayList<Job>();
+		Connection cnt = null;
+		
+		String sql = "SELECT * FROM job order by jobid desc";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				l.add( new Job(
+					rs.getInt("jobid"),
+					rs.getInt("courseid"),
+					rs.getString("status"),
+					rs.getInt("mediatype"),
+					rs.getString("coursetype"),
+					rs.getString("mediapath"),
+					rs.getString("extension")
+				));
+			}
+		}	
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the list of jobs",sqle);
+			throw new DaoException("Error while retrieving the list of jobs");
+		}
+		finally {
+			close(rs,pstmt,cnt);
+		}
+		
+		return l;
+	}
+	
+	/**
+	 * Adds a new job
+	 * @param j the job
+	 */
+	public void addJob(Job j) {
+		
+		String sql = "INSERT INTO job(jobid,courseid,status,mediatype,coursetype,mediapath,extension) values(?,?,?,?,?,?,?)";
+		PreparedStatement pstmt = null;
+		Connection cnt = null;
+		
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, j.getJobid());
+			pstmt.setInt(2, j.getCourseid());
+			pstmt.setString(3, j.getStatus());
+			pstmt.setInt(4, j.getMediatype());
+			pstmt.setString(5, j.getCoursetype());
+			pstmt.setString(6, j.getMediapath());
+			pstmt.setString(7, j.getExtension());
+			
+			if( pstmt.executeUpdate() == 0) {
+				logger.error("The job " + j + " has not been added to the database");
+				throw new DaoException("The job " + j + " has not been added to the database");
+			}
+		}
+		catch(SQLException sqle){
+			logger.error("Error while adding the new job " + j,sqle);
+			throw new DaoException("Error while adding the new job " + j);
+		}
+		finally {
+			close(null,pstmt,cnt);
+		}
+	}
+	
+	
+	/**
+	 * Modify a job
+	 * @param j the job
+	 */
+	public void modifyJob(Job j) {
+		
+		Connection cnt = null;
+		/* Creation of the SQL query string */
+		String sql = "UPDATE job SET jobid = ?, courseid = ?, status = ?, mediatype = ?, coursetype = ?, mediapath = ?, extension = ? ";
+		sql += "WHERE jobid = ?";
+		
+		PreparedStatement pstmt = null;
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			
+			/* Applies the parameters to the query */
+			pstmt.setInt(1, j.getJobid());
+			pstmt.setInt(2, j.getCourseid());
+			pstmt.setString(3, j.getStatus());
+			pstmt.setInt(4, j.getMediatype());
+			pstmt.setString(5, j.getCoursetype());
+			pstmt.setString(6, j.getMediapath());
+			pstmt.setString(7, j.getExtension());
+			pstmt.setInt(8, j.getJobid());
+						
+			if( pstmt.executeUpdate() == 0 ) {
+				logger.error("The job " + j + " has not been modified");
+				throw new DaoException("The job " + j + " has not been modified");
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while modifying the job " + j,sqle);
+			throw new DaoException("Error while modifying the job " + j);
+		}
+		finally {
+			close(null,pstmt,cnt);
+		}
+		
+	}
+	
+	/**
+	 * Gets the id of the next job which will be uploaded
+	 * @return the id of the job
+	 */
+	public int getNextJobId() {
+		int id = 0 ;
+		ResultSet rs = null;
+		Statement stmt = null;
+		Connection cnt = null;
+		try {
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery("SELECT nextval('job_jobid_seq')");
+			
+			if( rs.next() ) 
+				id = rs.getInt("nextval");
+			else {
+				logger.error("The next job Id hasn't been retrieved");
+				throw new DaoException("The next job Id hasn't been retrieved");
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the next job Id",sqle);
+			throw new DaoException("Error while retrieving the job user Id");
+		}
+		finally {
+			close(rs,stmt,cnt);
+		}
+		
+		return id;
+	}
+	
+	
+	/**
+	 * Modify the job status
+	 * @param courseid course id
+	 * @param status job status
+	 */
+	public void modifyJobStatus(int courseid,String status) {
+		
+		Connection cnt = null;
+		/* Creation of the SQL query string */
+		String sql = "UPDATE job SET status = ? ";
+		sql += "WHERE courseid = ?";
+		
+		PreparedStatement pstmt = null;
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			
+			/* Applies the parameters to the query */
+			pstmt.setString(1, status);
+			pstmt.setInt(2, courseid);
+			
+						
+			if( pstmt.executeUpdate() == 0 ) {
+				logger.error("The job for course " + courseid + " has not been modified");
+				throw new DaoException("The job for course " + courseid + " has not been modified");
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while modifying the job for course " + courseid,sqle);
+			throw new DaoException("Error while modifying the job for course " + courseid);
+		}
+		finally {
+			close(null,pstmt,cnt);
+		}
+		
+	}
+	
+	
+	/**
+	 * Get job by courseid 
+	 * @param courseid the courseid of the job
+	 * @return the job
+	 */
+	public Job getJob(int courseid) {
+		Job s = null;
+		Connection cnt = null;
+		String sql = "SELECT * FROM job WHERE courseid = ?";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, courseid);
+			rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				s = new Job(
+					rs.getInt("jobid"),
+					rs.getInt("courseid"),
+					rs.getString("status"),
+					rs.getInt("mediatype"),
+					rs.getString("coursetype"),
+					rs.getString("mediapath"),
+					rs.getString("extension")
+				);
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the job for course " + courseid,sqle);
+			throw new DaoException("Error while retrieving the job for course " + courseid);
+		}
+		finally {
+			close(rs,pstmt,cnt);
+		}
+		
+		return s;
 	}
 	
 }

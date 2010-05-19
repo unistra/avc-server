@@ -5,15 +5,16 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
+
 import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Job;
 import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Tag;
 import org.ulpmm.univrav.entities.Teacher;
-import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
 
 /**
@@ -44,45 +45,14 @@ public interface IService {
 	 * @param itunesImage The itunes image
 	 * @param itunesCategory The itunes category
 	 * @param itunesKeywords The itunes keywords
+	 * @param sepEnc true if medias encodage is separated
+	 * @param coursesFolder the courses folder
 	 */
 	public void addCourse(Course c, String courseArchive, String tags, String rssFolderPath, 
 			String rssName, String rssTitle, String rssDescription, String serverUrl, 
 			String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
-			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords);
-	
-	/**
-	 * Adds a new course from Univ-R
-	 * @param c the course to add
-	 * @param u the Univ-R infos
-	 */
-	public void addUnivrCourse(Course c, Univr u);
-	
-	/**
-	 * Completes a Univr course
-	 * @param c the course to complete
-	 * @param u the Univr course to complete
-	 * @param courseArchive the archive file of the course to complete
-	 * @param rssFolderPath the path of the folder to store the RSS files
-	 * @param rssName the filename of the general RSS file
-	 * @param rssTitle the title of the RSS files
-	 * @param rssDescription the description of the RSS files
-	 * @param serverUrl the URL of the application on the server
-	 * @param rssImageUrl the URL of the RSS image files
-	 * @param recordedInterfaceUrl the URL of the recorded interface
-	 * @param language the language of the RSS files
-	 * @param rssCategory the category of the RSS file
-	 * @param itunesAuthor The itunes author
-	 * @param itunesSubtitle The itunes subtitle
-	 * @param itunesSummary The itunes summary
-	 * @param itunesImage The itunes image
-	 * @param itunesCategory The itunes category
-	 * @param itunesKeywords The itunes keywords
-	 */
-	public void completeUnivrCourse(Course c, Univr u, String courseArchive , String rssFolderPath, 
-			String rssName, String rssTitle, String rssDescription, String serverUrl, 
-			String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
-			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords);
-	
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords, boolean sepEnc, String coursesFolder);
+		
 	/**
 	 * Creates a course from an uploaded audio or video media file
 	 * @param c the course to create
@@ -103,25 +73,21 @@ public interface IService {
 	 * @param itunesImage The itunes image
 	 * @param itunesCategory The itunes category
 	 * @param itunesKeywords The itunes keywords
+	 * @param sepEnc true if medias encodage is separated
+	 * @param coursesFolder the courses folder
 	 */
 	public void mediaUpload( Course c, FileItem mediaFile, String tags , String rssFolderPath, 
 		String rssName, String rssTitle, String rssDescription, String serverUrl, 
 		String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
-		String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords);
+		String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords, boolean sepEnc, String coursesFolder);
 	
 	/**
-	 * Gets a list of all the courses (no-Univr)
+	 * Gets a list of all the courses
 	 * @param onlyvisible true to get only visible courses
 	 * @return the list of courses
 	 */
 	public List<Course> getAllCourses(boolean onlyvisible);
-	
-	/**
-	 * Gets a list of all the Univ-R courses
-	 * @return the list of Univ-R courses
-	 */
-	public List<Course> getUnivrCourses();
-	
+		
 	/**
 	 * Gets a list of the n last courses
 	 * @param n the number of courses to return
@@ -193,14 +159,7 @@ public interface IService {
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(HashMap<String, String> params,String testKeyWord1, String testKeyWord2, String testKeyWord3);
-	
-	/**
-	 * Gets a Univr course by providing its id
-	 * @param courseId the id of the Univr course
-	 * @return the Univr object
-	 */
-	public Univr getUnivr(int courseId);
-	
+		
 	/**
 	 * Modifies a course
 	 * @param c the course to modify
@@ -208,18 +167,25 @@ public interface IService {
 	public void modifyCourse(Course c);
 	
 	/**
+	 * Modifies the mediatype of course
+	 * @param courseid the course id 
+	 * @param mediatype the mediatype
+	 */
+	public void modifyCourseMediatype(int courseid, int mediatype);
+	
+	/**
+	 * Gets the mediatype of the course
+	 * @param courseid the courseid
+	 * @return the mediatype of the course
+	 */
+	public int getMediaType(int courseid);
+	
+	/**
 	 * Deletes a course by providing its id and media Folder
 	 * @param courseId the id of the course to delete
 	 * @param mediaFolder the folder of the course to delete
 	 */
 	public void deleteCourse(int courseId, String mediaFolder);
-	
-	/**
-	 * Deletes a unvir by providing its id
-	 * @param courseId the id of the course to delete
-	 */
-	public void deleteUnivr(int courseId);
-	
 	
 	
 	/**
@@ -462,57 +428,7 @@ public interface IService {
 	 * @return the string containing the info
 	 */
 	public String getDiskSpaceInfo();
-	
-	/**
-	 * Verifies if a user is logged on Univ-R
-	 * @param uid the uid of the user
-	 * @param uuid Univ-R session identifier
-	 * @param estab the establishment
-	 * @return true if the user is logged on Univ-R
-	 */
-	public boolean isUserAuth(int uid, String uuid, String estab);
-	
-	/**
-	 * Gets information about an user
-	 * @param uid the uid of the user
-	 * @param estab the establishment
-	 * @return the information about the user
-	 */
-	public HashMap<String, String> getUserInfos(int uid, String estab);
-	
-	/**
-	 * Gets information about an user
-	 * @param login the login of the user
-	 * @param estab the establishment
-	 * @return the information about the user
-	 */
-	public HashMap<String, String> getUserInfos(String login, String estab);
-	
-	/**
-	 * Gets the group name of a group
-	 * @param groupCode the code of the group
-	 * @param estab the establishment
-	 * @return the group name
-	 */
-	public String getGroupName(int groupCode, String estab);
-	
-	/**
-	 * Publishes a course on Univ-R
-	 * @param courseId the id of the course to publish
-	 * @param groupCode the code of the group which will have access to the course
-	 * @param estab the establishment
-	 */
-	public void publishCourse(int courseId, int groupCode, String estab);
-	
-	/**
-	 * Checks if a user has access to a course
-	 * @param uid the uid of the user
-	 * @param courseId the course
-	 * @param estab the establishment
-	 * @return true if the user has access to the course
-	 */
-	public boolean hasAccessToCourse(int uid, int courseId,String estab);
-	
+		
 	/**
 	 * Function which removes the undesirable characters of a String and the useless spaces at the end
 	 * @param string the string to clean
@@ -748,6 +664,32 @@ public interface IService {
 	 * @throws Exception 
 	 */
 	public List<String> getLdapUserInfos(String login) throws Exception;
+	
+	/**
+	 * Modify the job status
+	 * @param courseid course id
+	 * @param status job status
+	 */
+	public void modifyJobStatus(int courseid,String status);
+	
+	/**
+	 * Get job by courseid 
+	 * @param courseid the courseid of the job
+	 * @return the job
+	 */
+	public Job getJob(int courseid);
+	
+	/**
+	 * Gets the list of all jobs
+	 * @return the list of jobs
+	 */
+	public List<Job> getAllJobs();
+	
+	/**
+	 * Create a job
+	 * @param c the course
+	 */
+	public void createJob(Course c, int mediatype, String type, String extension, String coursesFolder);
 
 
 }

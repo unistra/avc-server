@@ -561,7 +561,6 @@ public class Course {
 	 * @return the media folder
 	 */
 	private String FindMediaFolder() {
-		//TODO A FAIRE EN UTILISANT LE VOLUME ET LID DU COURS
 		String mediafolder = "";
 		String idformat = String.format("%08d", this.courseid);
 				

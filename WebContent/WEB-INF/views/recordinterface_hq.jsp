@@ -54,41 +54,14 @@
 	        	           			
 	        	<p id=textHqPlayer><fmt:message key="Highqualityplayer"/></p>
 	        	
-	        <!-- 	<p id="hqPlayer">Please install flash player</p>
-	            <script type="text/javascript">
-		        var so = new SWFObject('../files/jwflvplayer/player_flv_maxi.swf','flashvideo','1024','576','8'); //1224 776
-		        so.addParam('movie','../files/jwflvplayer/player_flv_maxi.swf');
-		        so.addParam('allowFullScreen','true');
-		        so.addVariable('flv','${courseurl}');
-		        so.addVariable('autoplay','0');
-		        so.addVariable('autoload','1');
-		        so.addVariable('showfullscreen','1');
-		        so.addVariable('showvolume','1');
-		        so.addVariable('showstop','1');
-		        so.addVariable('showtime','1');
-		        so.addVariable('showloading','always');
-		        so.addVariable('showplayer','autohide');
-				so.addVariable('title', '<fmt:message key="Auteur :"/>  ${course.name}\n'+
-										'<fmt:message key="Formation :"/>  ${course.formation}\n' +
-										'<fmt:message key="Titre :"/> ${course.title}\n' +
-										'<fmt:message key="Sujet :"/> ${course.description}\n' +
-										'<fmt:message key="Date :"/> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format>\n' +
-										'<fmt:message key="Type :"/> ${course.type}\n' +
-										'<fmt:message key="Dur&eacute;e :"/> ${course.durationString}\n' +
-										'<fmt:message key="Consultations :"/> ${course.consultations}\n'
-									);
-
-		        so.write('hqPlayer');
-		           
-	            </script>-->
-	            
+	        	            
 	            <script type="text/javascript">
      				 var flashvars =
      				 {
        			     	file:					'${courseurl}', 
         			 	id:						'flashvideo', 
        				 	autostart:				'true',
-       				 	//streamer:				'lighttpd',  
+       				 	type:					'lighttpd',  
        				 	image:					'../files/img/logo_audio.png'			  
      				 };
 

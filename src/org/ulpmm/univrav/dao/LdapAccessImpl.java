@@ -108,7 +108,7 @@ public class LdapAccessImpl implements ILdapAccess {
 				String email = searchResult.getAttributes().get("mail").get().toString();
 				String firstname = searchResult.getAttributes().get("givenName").get().toString();
 				String lastname = searchResult.getAttributes().get("sn").get().toString();
-				String profile = searchResult.getAttributes().get("eduPersonAffiliation").get().toString();
+				String profile = searchResult.getAttributes().get("eduPersonPrimaryAffiliation").get().toString();
 				String establishment = searchResult.getAttributes().get("supannetablissement").get().toString();
 
 				userInfos = new ArrayList<String>();

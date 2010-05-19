@@ -139,7 +139,7 @@ public class LocalAudioSmil1 implements ISmil {
 			pw.close();
 			
 			/* creates the .txt description file */
-			File descriptionFile = new File(absoluteMediaFolder + "description.txt");
+		/*	File descriptionFile = new File(absoluteMediaFolder + "description.txt");
 			descriptionFile.createNewFile();
 			pw = new PrintWriter( new OutputStreamWriter( new FileOutputStream( descriptionFile), "ISO8859-15"));
 			pw.println("Author: " +  (c.getName() != null ? c.getName() + ( c.getFirstname() != null ? " " + c.getFirstname() : "") : "-"));
@@ -149,7 +149,8 @@ public class LocalAudioSmil1 implements ISmil {
 			pw.println("Date: " + c.getDateString());
 			pw.println("Type: " + c.getType());
 			pw.println("Duration: " + c.getDurationString());
-			pw.close();
+			pw.println("Comment: " + comment);
+			pw.close();*/
 			
 		}
 		catch( IOException ioe) {

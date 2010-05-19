@@ -57,17 +57,33 @@
 	    	<table class="flashslide">
 	    	<tr>
 				<td id="cellule_flash">
-						            	    
+				
+					<c:if test="${course.type!='video'}">
+						<script type="text/javascript">
+     				 		var flashvars =
+     						 {
+       			     			file:					'${courseurl}', 
+        			 			id:						'flashvideo', 
+       				 			autostart:				'true',
+       				 			image:					'../files/img/logo_audio.png' 			  
+     				 		};
+     					</script>
+					</c:if>
+					<c:if test="${course.type=='video'}">
+						<script type="text/javascript">
+     				 		var flashvars =
+     						 {
+       			     			file:					'${courseurl}', 
+        			 			id:						'flashvideo', 
+       				 			autostart:				'true',
+       				 			image:					'../files/img/logo_audio.png',
+           				 		type:					'lighttpd'			  
+     				 		};
+     					</script>
+					</c:if>
+					          	    
 	            	<script type="text/javascript">
-     				 var flashvars =
-     				 {
-       			     	file:					'${courseurl}', 
-        			 	id:						'flashvideo', 
-       				 	autostart:				'true',
-       				 	image:					'../files/img/logo_audio.png'
-       				 	//streamer:				'lighttpd'   			  
-     				 };
-
+     				 
      				 var params =
      				 {
        			     	allowfullscreen:		'true', 
@@ -176,6 +192,13 @@
 						<td class="tdalign">
 							<b id="type"><fmt:message key="Telecharger"/>:&nbsp;</b>
 						</td>
+						
+						<!-- FLASH ONLY -->
+						 <c:if test="${course.mediatype == 1}">
+							<td class="tdalign">	
+								<b id="type"><fmt:message key="processing"/></b>
+							</td>
+						</c:if>
 							
 						<!-- VIDEOSLIDE -->
 						 <c:if test="${fn:contains(mediaLst, 'videoslide')}">
