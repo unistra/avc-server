@@ -23,11 +23,41 @@ public interface IFileSystem {
 	public void addCourse(Course c, String courseArchive);
 	
 	/**
+	 * Creates all course media files on the file system
+	 * @param c the course to create
+	 */
+	public void generateCourseMedias(Course c);
+	
+	/**
+	 * Create the file description.txt
+	 * @param c the course
+	 */
+	public void createDescriptionFile(Course c);
+	
+	/**
+	 * Create the jobs file for medias encodage
+	 * @param c the course
+	 * @param mediatype media type to encode
+	 * @param type CA,CV,MUA ou MUV
+	 * @param extension extension of the file for MU
+	 */
+	//public void createJobsFile(Course c, int mediatype, String type, String extension);
+	
+	/**
 	 * Creates a course from an uploaded audio or video media file
 	 * @param c the course to create
 	 * @param mediaFile the media file of the course to create
+	 * @param filename the filename
+	 * @param extension the extension
 	 */
-	public void mediaUpload(Course c, FileItem mediaFile);
+	public void mediaUpload(Course c, FileItem mediaFile, String fileName, String extension);
+	
+	/**
+	 * Creates all media upload media files on the file system
+	 * @param c the media upload to create
+	 * @param extension the original extension of the media
+	 */
+	public void generateMediaUploadMedias(Course c, String extension);
 	
 	/**
 	 * Reads the timecodes csv file and creates the timecodes list

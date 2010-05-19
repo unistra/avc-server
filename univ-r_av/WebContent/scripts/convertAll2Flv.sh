@@ -1,47 +1,16 @@
 #!/bin/bash
-# Script which converts a video file into .flv format
+# Script which converts a video file into .mp4 format
 # First argument: the video folder
 # Second argument: the input video filename (with extension)
 # Third argument: the output video name (without extension)
+# Four argument: the script to calculate padding
+
+# Calculate padding
+donnees=`bash $4 $1 $2 320 240`
+L=`echo $donnees | cut -d: -f1`
+H=`echo $donnees | cut -d: -f2`
+PL=`echo $donnees | cut -d: -f3`
+PHB=`echo $donnees | cut -d: -f4`
 
 cd $1
-#Verification of Microsoft ASF file
-file "$2" > type.txt
-TYPE=$(cat type.txt | sed s/"$2: "//)
-rm type.txt
-
-# Padding calculation
-mplayer -nosound -frames 0 -vo null -ss 03:00:00 -really-quiet -identify "$2" | grep ID_VIDEO_HEIGHT= > lh.txt
-HAUTEUR=$(cat lh.txt | sed s/ID_VIDEO_HEIGHT=//)
-mplayer -nosound -frames 0 -vo null -ss 03:00:00 -really-quiet -identify "$2" | grep ID_VIDEO_WIDTH= > lh.txt
-LARGEUR=$(cat lh.txt | sed s/ID_VIDEO_WIDTH=//)
-HCALC=$(echo $((320*($HAUTEUR)/($LARGEUR))))
-PAD=$(echo $(((240-($HCALC))/2)))
-RESTE=$(echo $(($PAD % 2)))
-rm lh.txt
-if (( $RESTE != 0 ))
-then
-	PADF=$(echo $(($PAD + 1)))
-else
-        PADF=$(echo $(($PAD)))
-fi
-
-#Apply conversion
-if [ "$TYPE" = "Microsoft ASF" ]
-	then
-	if (( $PADF > 0 ))
-	then
-        	/usr/bin/ffmpeg -i "$2" -ac 2 -ar 44100 -b 400000 -s 320x$HCALC -padbottom $PADFWMV -padtop $PADFWMV -y "$3".flv
-	else
-        	/usr/bin/ffmpeg -i "$2" -ac 2 -ar 44100 -b 400000 -s 320x$HCALC -y "$3".flv
-	fi
-else
-	/usr/bin/mencoder "$2" -quiet -oac lavc -ovc lavc -lavcopts acodec=mp2:abitrate=64  -vf scale=320:-3 -o TTmp.avi
-	if (( $PADF > 0 ))
-	then
-        	/usr/bin/ffmpeg -i TTmp.avi -ac 2 -ar 44100 -b 400000 -padbottom $PADF -padtop $PADF -y "$3".flv
-	else
-        	/usr/bin/ffmpeg -i TTmp.avi -ac 2 -ar 44100 -b 400000 -y "$3".flv
-	fi
-	rm TTmp.avi
-fi
+nice -n 9 /usr/bin/ffmpeg -i "$2" -ac 2 -ar 44100 -b 400000 -s "$L"x"$H" -padleft $PL -padright $PL -padtop $PHB -padbottom $PHB -aspect 4:3 -y "$3".flv

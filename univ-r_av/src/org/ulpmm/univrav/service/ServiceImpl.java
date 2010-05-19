@@ -16,15 +16,14 @@ import org.apache.commons.io.FilenameUtils;
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.dao.ILdapAccess;
-import org.ulpmm.univrav.dao.IUnivrDao;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Job;
 import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Tag;
 import org.ulpmm.univrav.entities.Teacher;
-import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
 
 /**
@@ -40,10 +39,7 @@ public class ServiceImpl implements IService {
 	
 	/** File system interface */
 	private IFileSystem fs;
-	
-	/** UnivrDao interface */
-	private IUnivrDao ud;
-	
+		
 	/** Ldap interface */
 	private ILdapAccess ldap;
 	
@@ -77,22 +73,6 @@ public class ServiceImpl implements IService {
 	 */
 	public void setFs(IFileSystem fs) {
 		this.fs = fs;
-	}
-
-	/**
-	 * Gets the univr dao interface
-	 * @return the univr dao interface
-	 */
-	public IUnivrDao getUd() {
-		return ud;
-	}
-
-	/**
-	 * Sets the univr dao interface
-	 * @param ud the ud to set
-	 */
-	public void setUd(IUnivrDao ud) {
-		this.ud = ud;
 	}
 	
 	/**
@@ -131,62 +111,21 @@ public class ServiceImpl implements IService {
 	 * @param itunesImage The itunes image
 	 * @param itunesCategory The itunes category
 	 * @param itunesKeywords The itunes keywords
+	 * @param sepEnc true if medias encodage is separated
+	 * @param coursesFolder the courses folder
 	 */
 	public synchronized void addCourse(Course c, String courseArchive, String tags, String rssFolderPath, 
 			String rssName, String rssTitle, String rssDescription, String serverUrl, 
 			String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
-			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords,boolean sepEnc,String coursesFolder) {
 		
 		CourseAddition ca = new CourseAddition(db, fs, c, courseArchive, tags,
 				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
 				rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor,
-				itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+				itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords,sepEnc,coursesFolder);
 		ca.start();
 	}
-	
-	/**
-	 * Adds a new course from Univ-R
-	 * @param c the course to add
-	 * @param u the Univ-R infos
-	 */
-	public synchronized void addUnivrCourse(Course c, Univr u) {
-		db.addCourse(c);
-		db.addUnivr(u);
-	}
-	
-	/**
-	 * Completes a Univr course
-	 * @param c the course to complete
-	 * @param u the Univr course to complete
-	 * @param courseArchive the archive file of the course to complete
-	 * @param rssFolderPath the path of the folder to store the RSS files
-	 * @param rssName the filename of the general RSS file
-	 * @param rssTitle the title of the RSS files
-	 * @param rssDescription the description of the RSS files
-	 * @param serverUrl the URL of the application on the server
-	 * @param rssImageUrl the URL of the RSS image files
-	 * @param recordedInterfaceUrl the URL of the recorded interface
-	 * @param language the language of the RSS files
-	 * @param rssCategory the category of the RSS file
-	 * @param itunesAuthor The itunes author
-	 * @param itunesSubtitle The itunes subtitle
-	 * @param itunesSummary The itunes summary
-	 * @param itunesImage The itunes image
-	 * @param itunesCategory The itunes category
-	 * @param itunesKeywords The itunes keywords
-	 */
-	public synchronized void completeUnivrCourse(Course c, Univr u, String courseArchive , String rssFolderPath, 
-			String rssName, String rssTitle, String rssDescription, String serverUrl, 
-			String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
-			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		
-		UnivrCourseCompletion ucc = new UnivrCourseCompletion(db, fs, ud, c, u, courseArchive,
-				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
-				rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor,
-				itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
-		ucc.start();
-	}
-	
 	/**
 	 * Creates a course from an uploaded audio or video media file
 	 * @param c the course to create
@@ -207,36 +146,30 @@ public class ServiceImpl implements IService {
 	 * @param itunesImage The itunes image
 	 * @param itunesCategory The itunes category
 	 * @param itunesKeywords The itunes keywords
+	 * @param sepEnc true if medias encodage is separated
+	 * @param coursesFolder the courses folder
 	 */
 	public synchronized void mediaUpload( Course c, FileItem mediaFile, String tags , String rssFolderPath, 
 		String rssName, String rssTitle, String rssDescription, String serverUrl, 
 		String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
-		String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
+		String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords, boolean sepEnc,String coursesFolder) {
 		
 		MediaUpload mu = new MediaUpload(db, fs, c, mediaFile, tags,
 				this, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, 
 				rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor,
-				itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+				itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords,sepEnc,coursesFolder);
 		mu.start();
 	}
 	
 	/**
-	 * Gets a list of all the courses (no-Univr)
+	 * Gets a list of all the courses
 	 * @param onlyvisible true to get only visible courses
 	 * @return the list of courses
 	 */
 	public List<Course> getAllCourses(boolean onlyvisible) {
 		return db.getAllCourses(onlyvisible);
 	}
-	
-	/**
-	 * Gets a list of all the Univ-R courses
-	 * @return the list of Univ-R courses
-	 */
-	public List<Course> getUnivrCourses() {
-		return db.getUnivrCourses();
-	}
-	
+		
 	/**
 	 * Gets a list of the n last courses
 	 * @param n the number of courses to return
@@ -324,22 +257,31 @@ public class ServiceImpl implements IService {
 	public int getCourseNumber(HashMap<String, String> params,String testKeyWord1, String testKeyWord2, String testKeyWord3) {
 		return db.getCourseNumber(params,testKeyWord1, testKeyWord2, testKeyWord3);
 	}
-	
-	/**
-	 * Gets a Univr course by providing its id
-	 * @param courseId the id of the Univr course
-	 * @return the Univr object
-	 */
-	public Univr getUnivr(int courseId) {
-		return db.getUnivr(courseId);
-	}
-	
+		
 	/**
 	 * Modifies a course
 	 * @param c the course to modify
 	 */
 	public synchronized void modifyCourse(Course c) {
 		db.modifyCourse(c);
+	}
+	
+	/**
+	 * Modifies the mediatype of course
+	 * @param courseid the course id 
+	 * @param mediatype the mediatype
+	 */
+	public void modifyCourseMediatype(int courseid, int mediatype) {
+		db.modifyCourseMediatype(courseid, mediatype);
+	}
+	
+	/**
+	 * Gets the mediatype of the course
+	 * @param courseid the courseid
+	 * @return the mediatype of the course
+	 */
+	public int getMediaType(int courseid) {
+		return db.getMediaType(courseid);
 	}
 	
 	/**
@@ -352,14 +294,6 @@ public class ServiceImpl implements IService {
 		fs.deleteCourse(mediaFolder);
 	}
 	
-	/**
-	 * Deletes a univr by providing its id
-	 * @param courseId the id of the course to delete
-	 */
-	public synchronized void deleteUnivr(int courseId) {
-		db.deleteUnivr(courseId);
-	}
-		
 	
 	/**
 	 * Gets a restricted list of test courses
@@ -783,69 +717,7 @@ public class ServiceImpl implements IService {
 	public String getDiskSpaceInfo() {
 		return fs.getDiskSpaceInfo();
 	}
-	
-	/**
-	 * Verifies if a user is logged on Univ-R
-	 * @param uid the uid of the user
-	 * @param uuid Univ-R session identifier
-	 * @param estab the establishment
-	 * @return true if the user is logged on Univ-R
-	 */
-	public boolean isUserAuth(int uid, String uuid, String estab) {
-		return ud.isUserAuth(uid, uuid, estab);
-	}
-	
-	/**
-	 * Gets information about an user
-	 * @param uid the uid of the user
-	 * @param estab the establishment
-	 * @return the information about the user
-	 */
-	public HashMap<String, String> getUserInfos(int uid, String estab) {
-		return ud.getUserInfos(uid,estab);
-	}
-	
-	/**
-	 * Gets information about an user
-	 * @param login the login of the user
-	 * @param estab the establishment
-	 * @return the information about the user
-	 */
-	public HashMap<String, String> getUserInfos(String login,String estab) {
-		return ud.getUserInfos(login,estab);
-	}
-	
-	/**
-	 * Gets the group name of a group
-	 * @param groupCode the code of the group
-	 * @param estab the establishment
-	 * @return the group name
-	 */
-	public String getGroupName(int groupCode,String estab) {
-		return ud.getGroupName(groupCode,estab);
-	}
-	
-	/**
-	 * Publishes a course on Univ-R
-	 * @param courseId the id of the course to publish
-	 * @param groupCode the code of the group which will have access to the course
-	 * @param estab the establishment
-	 */
-	public void publishCourse(int courseId, int groupCode,String estab) {
-		ud.publishCourse(courseId, groupCode,estab);
-	}
-	
-	/**
-	 * Checks if a user has access to a course
-	 * @param uid the uid of the user
-	 * @param courseId the course
-	 * @param estab the establishment
-	 * @return true if the user has access to the course
-	 */
-	public boolean hasAccessToCourse(int uid, int courseId,String estab) {
-		return ud.hasAccessToCourse(uid, courseId,estab);
-	}
-	
+		
 	/**
 	 * Function which removes the undesirable characters of a String and the useless spaces at the end
 	 * @param string the string to clean
@@ -1244,6 +1116,52 @@ public class ServiceImpl implements IService {
 	 */
 	public List<String> getLdapUserInfos(String login) throws Exception {
 		return ldap.getLdapUserInfos(login);
+	}
+	
+	/**
+	 * Modify the job status
+	 * @param courseid course id
+	 * @param status job status
+	 */
+	public void modifyJobStatus(int courseid,String status) {
+		db.modifyJobStatus(courseid, status);
+	}
+	
+	/**
+	 * Get job by courseid 
+	 * @param courseid the courseid of the job
+	 * @return the job
+	 */
+	public Job getJob(int courseid) {
+		return db.getJob(courseid);
+	}
+	
+	/**
+	 * Gets the list of all jobs
+	 * @return the list of jobs
+	 */
+	public List<Job> getAllJobs() {
+		return db.getAllJobs();
+	}
+	
+	/**
+	 * Create a job
+	 * @param c the course
+	 */
+	public void createJob(Course c, int mediatype, String type, String extension, String coursesFolder) {
+		
+		Job j = new Job(
+				db.getNextJobId(),
+				c.getCourseid(),
+				"waiting",
+				mediatype,
+				type,
+				coursesFolder+c.getMediaFolder(),
+				extension
+				
+		);
+		
+		db.addJob(j);
 	}
 
 }

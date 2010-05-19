@@ -6,11 +6,11 @@ import java.util.List;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Job;
 import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Tag;
 import org.ulpmm.univrav.entities.Teacher;
-import org.ulpmm.univrav.entities.Univr;
 import org.ulpmm.univrav.entities.User;
 
 /**
@@ -26,26 +26,14 @@ public interface IDatabase {
 	 * @param c the course to add
 	 */
 	public void addCourse(Course c);
-	
+		
 	/**
-	 * Adds a new Univ-R course
-	 * @param u the Univ-R course
-	 */
-	public void addUnivr(Univr u);
-	
-	/**
-	 * Gets a list of all the courses (no-Univr)
+	 * Gets a list of all the courses
 	 * @param onlyvisible true to get only visible courses
 	 * @return the list of courses
 	 */
 	public List<Course> getAllCourses(boolean onlyvisible);
-	
-	/**
-	 * Gets a list of all the Univ-R courses
-	 * @return the list of Univ-R courses
-	 */
-	public List<Course> getUnivrCourses();
-	
+		
 	/**
 	 * Gets a list of all the courses without access code
 	 * @return the list of courses
@@ -137,14 +125,7 @@ public interface IDatabase {
 	 * @return the number of courses
 	 */
 	public int getCourseNumber(HashMap<String, String> params,String testKeyWord1, String testKeyWord2, String testKeyWord3);
-	
-	/**
-	 * Gets a Univr course by providing its id
-	 * @param courseId the id of the Univr course
-	 * @return the Univr object
-	 */
-	public Univr getUnivr(int courseId);
-	
+		
 	/**
 	 * Modifies a course
 	 * @param c the course to modify
@@ -152,17 +133,25 @@ public interface IDatabase {
 	public void modifyCourse(Course c);
 	
 	/**
+	 * Modifies the mediatype of course
+	 * @param courseid the course id 
+	 * @param mediatype the mediatype
+	 */
+	public void modifyCourseMediatype(int courseid, int mediatype);
+	
+	/**
+	 * Gets the mediatype of the course
+	 * @param courseid the courseid
+	 * @return the mediatype of the course
+	 */
+	public int getMediaType(int courseid);
+	
+	/**
 	 * Deletes a course by providing its id
 	 * @param courseId the id of the course
 	 */
 	public void deleteCourse(int courseId);
-	
-	/**
-	 * Deletes a univr by providing its id
-	 * @param courseId the id of the course
-	 */
-	public void deleteUnivr(int courseId);
-	
+		
 	/**
 	 * Gets the list of the test courses to delete
 	 * @param testKeyWord the key word which identifies a test
@@ -520,5 +509,43 @@ public interface IDatabase {
 	 * @param position the position of the selection
 	 */
 	public void deleteSelection(int position);
+	
+	/**
+	 * Gets the list of all jobs
+	 * @return the list of jobs
+	 */
+	public List<Job> getAllJobs();
+	
+	/**
+	 * Adds a new job
+	 * @param j the job
+	 */
+	public void addJob(Job j);
+	
+	/**
+	 * Modify a job
+	 * @param j the job
+	 */
+	public void modifyJob(Job j);
+	
+	/**
+	 * Gets the id of the next job which will be uploaded
+	 * @return the id of the job
+	 */
+	public int getNextJobId();
+	
+	/**
+	 * Modify the job status
+	 * @param courseid course id
+	 * @param status job status
+	 */
+	public void modifyJobStatus(int courseid,String status);
+	
+	/**
+	 * Get job by courseid 
+	 * @param courseid the courseid of the job
+	 * @return the job
+	 */
+	public Job getJob(int courseid);
 
 }

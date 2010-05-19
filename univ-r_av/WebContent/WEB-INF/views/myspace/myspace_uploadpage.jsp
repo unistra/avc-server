@@ -122,15 +122,15 @@
 				    <td title="<fmt:message key="ib_visible"/>">Visible</td>
 				    <td><input type="checkbox" name="visible" <c:out value="${checkedVisbleField}"/>></td>
 			   	</tr>
-				<tr class="odd">
+				<!--<tr class="odd">
 					<td title="<fmt:message key="ib_hq"/>"><fmt:message key="hd"/> : </td>
 					<td><input type="checkbox" name="hd" <c:out value="${checkedHdField}"/>> <font class="chpsHd"><fmt:message key="uploadmessage4"/></font> </td>
-				</tr>
-				<tr class="even">
+				</tr>-->
+				<tr class="odd">
 				    <td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds</td>
 				    <td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/>> <font class="chpsHd"><fmt:message key="uploadmessage6"/></font> </td>
 			   	</tr>
-				<tr class="odd">
+				<tr class="even">
 					<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/><b class="boldStar">*</b> : </td>
 					<td><input type="file" name="media" class="field"> </td>
 				</tr>

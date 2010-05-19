@@ -75,6 +75,10 @@ public class MediaUpload extends Thread {
 	private String itunesCategory;
 	/** The itunes keywords */
 	private String itunesKeywords;
+	/** true if medias encodage is separated */
+	private boolean sepEnc;
+	/** the course folder */
+	private String coursesFolder;
 	
 
 	/**
@@ -101,12 +105,14 @@ public class MediaUpload extends Thread {
 	 * @param itunesImage The itunes image
 	 * @param itunesCategory The itunes category
 	 * @param itunesKeywords The itunes keywords
+	 * @param sepEnc true if medias encodage is separated
+	 * @param coursesFolder the courses folder
 	 */
 	public MediaUpload(IDatabase db, IFileSystem fs, Course c, FileItem mediaFile, String tags,
 			IService service, String rssFolderPath, String rssName, String rssTitle, 
 			String rssDescription, String serverUrl, String rssImageUrl, 
 			String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
-			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords, boolean sepEnc,String coursesFolder) {
 		
 		super();
 		this.db = db;
@@ -130,13 +136,26 @@ public class MediaUpload extends Thread {
 		this.itunesKeywords = itunesKeywords;
 		this.itunesSubtitle = itunesSubtitle;
 		this.itunesSummary = itunesSummary;
+		this.sepEnc = sepEnc;
+		this.coursesFolder = coursesFolder;
 	}
 
 	/**
 	 * The process to create a course inside a thread
 	 */
 	public void run() {
-		fs.mediaUpload(c, mediaFile);
+		
+		String fileName = mediaFile.getName();
+		/* Used to fix full path problem with IE */
+		if( fileName.indexOf("\\") != -1 ) {
+			fileName = fileName.substring(fileName.lastIndexOf("\\") + 1,fileName.length());
+			mediaFile.setFieldName(fileName);
+		}
+		String extension = fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()).toLowerCase();
+		
+		// Create flash course in filesystem
+		fs.mediaUpload(c, mediaFile, fileName, extension);
+		// add course into database for direct flash access
 		db.addCourse(c);
 		
 		// Adding tags
@@ -160,9 +179,27 @@ public class MediaUpload extends Thread {
 			token = null;
 		}
 				
-		/* Generation of the RSS files */
-		if( c.getGenre() == null)
-			service.generateRss(c, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+		int mediatype = Course.typeFlash+Course.typeMp3+Course.typeOgg+((c.getType().equals("video"))?Course.typeHq:0)+(c.getType().equals("video")?Course.typeZip:0);
+		
+		// If medias encodage isnt separated
+		if(!sepEnc) {
+
+			// Generate all medias (can be long)
+			fs.generateMediaUploadMedias(c,extension);
+
+			// Modify mediatype
+			// Gets the mediatype from database (if an upload document has been added during the medias generation)
+			c.setmediatype(mediatype);
+			db.modifyCourseMediatype(c.getCourseid(),mediatype);
+
+			/* Generation of the RSS files */
+			if( c.getGenre() == null)
+				service.generateRss(c, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+		}
+		else {
+			String type = c.getType().equals("video") ? "MUV" : "MUA";
+			service.createJob(c,mediatype,type,extension,coursesFolder);
+		}
 	}
 	
 	

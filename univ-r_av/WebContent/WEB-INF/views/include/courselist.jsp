@@ -38,84 +38,42 @@
 			</c:when>
 		</c:choose>
 
-	<c:choose>
-			<c:when test="${course.genre == null}">
-				<c:url var="courseaccess" scope="page" value="./courseaccess">
-					<c:param name="id" value="${course.courseid}"/>
-					<c:param name="type" value="flash"/>
-				</c:url>		
-				<tr class="${class}" onclick="document.location.href='${courseaccess}'" style="cursor:pointer">
-				</c:when>
-			<c:otherwise>
-				<c:url var="courseaccess" scope="page" value="./thick_codeform">
-					<c:param name="id" value="${course.courseid}"/>
-					<c:param name="type" value="flash"/>
-					<c:param name="width" value="250"/>
-					<c:param name="height" value="120"/>
-				</c:url>
-				<tr class="${class}" onclick="dotb('', '${courseaccess}?width=250&height=120');return false;" style="cursor:pointer">
-		</c:otherwise>
-	</c:choose>
+	
+		<c:url var="courseaccess" scope="page" value="./courseaccess">
+			<c:param name="id" value="${course.courseid}"/>
+			<c:param name="type" value="flash"/>
+		</c:url>		
+		<tr class="${class}" onclick="document.location.href='${courseaccess}'" style="cursor:pointer">
+				
 
 <!-- Note: If javascript isn't activated, you can access to the course with the ahref on the img -->		
-		<c:choose>
-			<c:when test="${course.genre == null}">
-				<td>
-				<script type="text/javascript">
-					document.write('<img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video">');
-				</script>
-				<noscript>
-					<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a>
-				</noscript>
-				</td>
-				<td> 	    				
-					<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br>
-					<b><fmt:message key="Auteur :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>			
-				</td>
-				<td>
-					<b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br>
-					<b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br>
-				</td>
-				<td nowrap="nowrap">
-					<fmt:message key="dateFormat" var="dateFormat" />
-					<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
-					<b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br>
-				</td>
-				<td nowrap="nowrap">
-					<b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br>
-					<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
-				</td>
-				
-			</c:when>
-			<c:otherwise>
-				<td>
-				<script type="text/javascript">
-					document.write('<img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video">');
-				</script>
-				<noscript>
-					<a href="<c:out value="${courseaccess}" />" title="<fmt:message key="Acc&egrave;s au cours"/>" class="thickbox"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a>
-				</noscript>
-				</td>
-				<td> 	    				
-					<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br>
-					<b><fmt:message key="Auteur :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>			
-				</td>
-				<td>
-					<b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br>
-					<b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br>
-				</td>
-				<td nowrap="nowrap">
-					<fmt:message key="dateFormat" var="dateFormat" />
-					<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
-					<b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br>
-				</td>
-				<td nowrap="nowrap">
-					<b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br>
-					<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
-				</td>
-			</c:otherwise>
-		</c:choose>
-		
+	
+		<td>
+		<script type="text/javascript">
+			document.write('<img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video">');
+		</script>
+		<noscript>
+			<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a>
+		</noscript>
+		</td>
+		<td> 	    				
+			<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br>
+			<b><fmt:message key="Auteur :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>			
+		</td>
+		<td>
+			<b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br>
+			<b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br>
+		</td>
+		<td nowrap="nowrap">
+			<fmt:message key="dateFormat" var="dateFormat" />
+			<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
+			<b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br>
+		</td>
+		<td nowrap="nowrap">
+			<b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br>
+			<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
+		</td>
+								
 		</tr>
 		
 	<!-- Defines the class of the next row of the table -->

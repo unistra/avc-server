@@ -146,17 +146,18 @@ public class LocalVideoSmil1 implements ISmil {
 			pw.close();
 			
 			/* creates the .txt description file */
-			File descriptionFile = new File(absoluteMediaFolder + "description.txt");
+			/*File descriptionFile = new File(absoluteMediaFolder + "description.txt");
 			descriptionFile.createNewFile();
 			pw = new PrintWriter( new OutputStreamWriter( new FileOutputStream( descriptionFile), "ISO8859-15"));
-			pw.println("Teacher: " +  (c.getName() != null ? c.getName() + ( c.getFirstname() != null ? " " + c.getFirstname() : "") : "-"));
+			pw.println("Author: " +  (c.getName() != null ? c.getName() + ( c.getFirstname() != null ? " " + c.getFirstname() : "") : "-"));
 			pw.println("Formation: " +  (c.getFormation() != null ? c.getFormation() : "-"));
 			pw.println("Title: " +  (c.getTitle() != null ? c.getTitle() : "-"));
 			pw.println("Subject: " +  (c.getDescription() != null ? c.getDescription() : "-"));
 			pw.println("Date: " + c.getDateString());
 			pw.println("Type: " + c.getType());
 			pw.println("Duration: " + c.getDurationString());
-			pw.close();
+			pw.println("Comment: " + comment);
+			pw.close();*/
 		}
 		catch( IOException ioe) {
 			logger.error("Error while writing the smil file",ioe);

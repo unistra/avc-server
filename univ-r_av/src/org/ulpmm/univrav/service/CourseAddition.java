@@ -75,7 +75,10 @@ public class CourseAddition extends Thread {
 	private String itunesCategory;
 	/** The itunes keywords */
 	private String itunesKeywords;
-	
+	/** true if medias encodage is separated */
+	private boolean sepEnc;
+	/** the course folder */
+	private String coursesFolder;
 
 	/**
 	 * CourseAddition's constructor
@@ -101,12 +104,14 @@ public class CourseAddition extends Thread {
 	 * @param itunesImage The itunes image
 	 * @param itunesCategory The itunes category
 	 * @param itunesKeywords The itunes keywords
+	 * @param sepEnc true if medias encodage is separated
+	 * @param coursesFolder the courses folder
 	 */
 	public CourseAddition(IDatabase db, IFileSystem fs, Course c, String courseArchive, String tags,
 			IService service, String rssFolderPath, String rssName, String rssTitle, 
 			String rssDescription, String serverUrl, String rssImageUrl, 
 			String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
-			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords, boolean sepEnc, String coursesFolder) {
 		
 		super();
 		this.db = db;
@@ -130,16 +135,21 @@ public class CourseAddition extends Thread {
 		this.itunesKeywords = itunesKeywords;
 		this.itunesSubtitle = itunesSubtitle;
 		this.itunesSummary = itunesSummary;
+		this.sepEnc = sepEnc;
+		this.coursesFolder = coursesFolder;
 	}
 
 	/**
 	 * The process to create a course inside a thread
 	 */
 	public void run() {
+		// Create flash course in filesystem
 		fs.addCourse(c, courseArchive);
+		// add course into database for direct flash access
 		db.addCourse(c);
-		ArrayList<String> list = fs.getTimecodes(c.getMediaFolder());
 		
+		// Adding slides
+		ArrayList<String> list = fs.getTimecodes(c.getMediaFolder());
 		int time;
 		/* Determines if the times of the slides must be changed or not */
 		if( c.getTiming().equals("n") ) {
@@ -174,10 +184,34 @@ public class CourseAddition extends Thread {
 			st = null;
 			token = null;
 		}
+				
 		
-		/* Generation of the RSS files */
-		if( c.getGenre() == null)
-			service.generateRss(c, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+		// If medias encodage isnt separated
+		if(!sepEnc) {
+
+			// Generate all medias (can be long)
+			fs.generateCourseMedias(c);
+
+			// Modify mediatype
+			// Gets the mediatype from database (if an upload document has been added during the medias generation)
+			int mediatype = db.getMediaType(c.getCourseid())+Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide;
+			c.setmediatype(mediatype);
+			db.modifyCourseMediatype(c.getCourseid(),mediatype);
+
+			/* Generation of the RSS files */
+			if( c.getGenre() == null)
+				service.generateRss(c, rssFolderPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+		}
+		else {			
+			if(c.getType().equals("video")) {
+			//	fs.createJobsFile(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide,"CV","flv");
+				service.createJob(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide,"CV","flv",coursesFolder);
+			}
+			else {
+			//	fs.createJobsFile(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide,"CA","mp3");
+				service.createJob(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide,"CA","mp3",coursesFolder);
+			}
+		}
 	}
 	
 	
