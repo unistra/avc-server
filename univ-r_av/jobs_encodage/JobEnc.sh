@@ -1,6 +1,7 @@
 #!/bin/bash
 # $1 le chemin du répertoire contenant les scripts d'encodage
 PTHSCR=$1
+SRVURL="http://audiovideocours.u-strasbg.fr"
 
 # script pour lancer les tâches d'encodage
 # Lire le fichier job et récupérer la première ligne en mode "waiting"
@@ -136,6 +137,6 @@ bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $ORI$CourseID.$Extension $CourseID $
 esac
 
 # Maj du mediatype sur le serveur avc
-wget --spider "http://peda-laemmer-pc2.u-strasbg.fr/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType"
+wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType"
 
 fi
