@@ -1,5 +1,6 @@
 package org.ulpmm.univrav.dao;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,6 +15,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -378,7 +380,8 @@ public class FileSystemImpl implements IFileSystem {
 		InputStream in = null;
 		try {
 			URL url = new URL(filename);
-			in=url.openStream();
+			URLConnection urlConnection = url.openConnection();
+			in=new BufferedInputStream(urlConnection.getInputStream());
 			//in = new BufferedInputStream(new FileInputStream(filename));
 			byte[  ] buf = new byte[4 * 1024];  // 4K buffer
 			int bytesRead;
