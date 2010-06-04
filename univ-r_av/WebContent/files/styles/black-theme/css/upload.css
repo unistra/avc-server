@@ -45,11 +45,11 @@ th a {
 
 /* Classes to alternate the color of the rows of the courses table */
 .odd {
-	background-color: #404040;
+	background-color: #000000;
 }
 
 .even {
-	background-color: #000000;
+	background-color: #404040;
 }
 
 

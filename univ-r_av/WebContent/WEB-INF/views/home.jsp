@@ -109,7 +109,7 @@
 				<table cellspacing="0" class="tableHome">
 					<tr class="tableheader">
 						<c:url var="permaformation" scope="page" value="${serverUrl}/avc/courses">
-							<c:param name="formation" value="${collectionname}"/>
+							<c:param name="formation" value="${collectioncode}"/>
 						</c:url>	
 						<th colspan="3" id="courses"><fmt:message key="collection"/>: <a href="${permaformation}"><b class="titleColl">${collectionname}</b></a></th>
 					</tr>

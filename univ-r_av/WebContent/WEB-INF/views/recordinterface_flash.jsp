@@ -40,7 +40,7 @@
 		var timing = ${timing};
 	</script>
 	
-	<meta name="keywords" content="${course.name},${course.title},${course.formation}">
+	<meta name="keywords" content="${course.name},${course.title},${formationfullname}">
 	<META NAME=”robots” CONTENT=”nofollow”>
 
   </head>
@@ -123,7 +123,7 @@
 							<a href="javascript:switchDetails('info')"><fmt:message key="[+] plus de détails"/></a>
 						</div>	   				
 						<div id="infocoldetails" class="hidden">
-							<b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br>
+							<b><fmt:message key="Formation :"/> </b> <c:out value="${formationfullname}" /> <br>
 							<b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br>
 							<fmt:message key="dateFormat" var="dateFormat" />
 							<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
@@ -252,6 +252,17 @@
 									<c:param name="type" value="pdf"/>
 								</c:url>
 								<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/acrobat.png" alt="pdf"></a><br><b id="type">pdf</b>
+							</td>
+						</c:if>
+						
+						<!-- VIDEO -->
+						 <c:if test="${fn:contains(mediaLst, 'hq')}">
+							<td class="tdalign">	
+								<c:url var="courseaccess" scope="page" value="./courseaccess">
+									<c:param name="id" value="${course.courseid}"/>
+									<c:param name="type" value="video"/>
+								</c:url>
+								<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/videodl.png" alt="video"></a><br><b id="type">video</b>
 							</td>
 						</c:if>
 							

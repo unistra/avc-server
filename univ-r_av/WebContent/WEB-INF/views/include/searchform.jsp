@@ -34,14 +34,26 @@
 			</c:forEach>
 		</select>
 		<br>
-		<label><fmt:message key="Formation"/></label>
-		<select class="field" name="formation" title="<fmt:message key="Formation"/>">
+		<label><fmt:message key="level"/></label>
+		<select class="field" name="level"title="<fmt:message key="level"/>">
 			<option value="*"><fmt:message key="Tous"/></option>
-			<c:forEach var="formation" items="${formations}">
-				<c:if test="${formationSelected == formation}">
+			<c:forEach var="levels" items="${levels}">
+				<c:if test="${levelSelected == levels.code}">
 					<c:set var="selected" value="selected" />
 				</c:if>
-				<option value="${formation}" ${selected} >${formation}</option>
+				<option value="${levels.code}" ${selected}>${levels.name}</option>
+				<c:remove var="selected"/>
+			</c:forEach>
+		</select>
+		<br>
+		<label><fmt:message key="component"/></label>
+		<select class="field" name="discipline" title="<fmt:message key="component"/>">
+			<option value="*"><fmt:message key="Tous"/></option>
+			<c:forEach var="discipline" items="${disciplines}">
+				<c:if test="${discSelected == discipline.codecomp}">
+					<c:set var="selected" value="selected" />
+				</c:if>
+				<option value="${discipline.codecomp}" ${selected} >${discipline.namecomp}</option>
 				<c:remove var="selected"/>
 			</c:forEach>
 		</select>

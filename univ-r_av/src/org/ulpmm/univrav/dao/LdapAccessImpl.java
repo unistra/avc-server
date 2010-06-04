@@ -110,13 +110,15 @@ public class LdapAccessImpl implements ILdapAccess {
 				String lastname = searchResult.getAttributes().get("sn").get().toString();
 				String profile = searchResult.getAttributes().get("eduPersonPrimaryAffiliation").get().toString();
 				String establishment = searchResult.getAttributes().get("supannetablissement").get().toString();
-
+				String etpPrimaryCode = searchResult.getAttributes().get("udsPrimaryEtpCode")!=null ? searchResult.getAttributes().get("udsPrimaryEtpCode").get().toString() : "";
+				
 				userInfos = new ArrayList<String>();
 				userInfos.add(email!=null ? email : "");
 				userInfos.add(firstname!=null ? firstname : "");
 				userInfos.add(lastname!=null ? lastname : "");
 				userInfos.add(profile!=null ? profile : "");
-				userInfos.add(establishment!=null ? establishment : "");			
+				userInfos.add(establishment!=null ? establishment : "");	
+				userInfos.add(etpPrimaryCode!=null ? etpPrimaryCode : "");
 			}
 		}
 		catch(NamingException e) {

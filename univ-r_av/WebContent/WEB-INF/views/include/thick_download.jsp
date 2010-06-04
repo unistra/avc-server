@@ -11,10 +11,10 @@
 	</head>
 	<body>
 		<br>
-			<a href="http://ulpmm-projets.u-strasbg.fr/projets/videocours/wiki/DownloadAudiovideocours"><fmt:message key="clientLink"/></a>
+			<a href="http://audiovideocours.u-strasbg.fr/releases/download_client.html"><fmt:message key="clientLink"/></a>
 			<p><fmt:message key="clientDescription"/></p>
 			<br><br>
-			<a href="http://ulpmm-projets.u-strasbg.fr/projets/videocours"><fmt:message key="tracLink"/></a>
+			<a href="http://sourcesup.cru.fr/projects/audiovideocours"><fmt:message key="tracLink"/></a>
 			<p><fmt:message key="tracDescription"/></p>
 	</body>
 </html>

@@ -1,30 +1,51 @@
 package org.ulpmm.univrav.service;
 
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
-
+import java.util.Map.Entry;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.dao.ILdapAccess;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Discipline;
 import org.ulpmm.univrav.entities.Job;
+import org.ulpmm.univrav.entities.Level;
 import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Tag;
 import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.User;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Service implementation methods.
@@ -42,6 +63,9 @@ public class ServiceImpl implements IService {
 		
 	/** Ldap interface */
 	private ILdapAccess ldap;
+	
+	/** Logger log4j */
+	private static final Logger logger = Logger.getLogger(ServiceImpl.class);
 	
 	/**
 	 * Gets the database interface
@@ -89,6 +113,15 @@ public class ServiceImpl implements IService {
 	 */
 	public void setLdap(ILdapAccess ldap) {
 		this.ldap = ldap;
+	}
+	
+	/**
+	 * Get the full name of formation. Matching with level and discipline tables.
+	 * @param formation the course formation codes
+	 * @return the full name of formation
+	 */
+	public String getFormationFullName(String formation) {
+		return db.getFormationFullName(formation);
 	}
 
 	/**
@@ -164,10 +197,12 @@ public class ServiceImpl implements IService {
 	/**
 	 * Gets a list of all the courses
 	 * @param onlyvisible true to get only visible courses
+	 * @param formationfullname show full name of formation with discipline and level table
+	 * @param limit limit number of courses
 	 * @return the list of courses
 	 */
-	public List<Course> getAllCourses(boolean onlyvisible) {
-		return db.getAllCourses(onlyvisible);
+	public List<Course> getAllCourses(boolean onlyvisible, boolean formationfullname, Integer limit) {
+		return db.getAllCourses(onlyvisible,formationfullname,limit);
 	}
 		
 	/**
@@ -271,7 +306,7 @@ public class ServiceImpl implements IService {
 	 * @param courseid the course id 
 	 * @param mediatype the mediatype
 	 */
-	public void modifyCourseMediatype(int courseid, int mediatype) {
+	public synchronized void modifyCourseMediatype(int courseid, int mediatype) {
 		db.modifyCourseMediatype(courseid, mediatype);
 	}
 	
@@ -323,7 +358,7 @@ public class ServiceImpl implements IService {
 	 * Deletes the test courses (courses with genre 'Suppression')
 	 * @param testKeyWord the key word which identifies a test
 	 */
-	public void deleteTests(String testKeyWord) {
+	public synchronized void deleteTests(String testKeyWord) {
 		// Gets tests to delete
 		List<Course> tests = db.getTestsToDelete(testKeyWord);
 		
@@ -491,7 +526,7 @@ public class ServiceImpl implements IService {
 	 * @param a the amphi to modify
 	 * @param oldAmphiip the old Ip address of this amphi
 	 */
-	public void modifyAmphi(Amphi a, String oldAmphiip) {
+	public synchronized void modifyAmphi(Amphi a, String oldAmphiip) {
 		db.modifyAmphi(a, oldAmphiip);
 	}
 
@@ -500,7 +535,7 @@ public class ServiceImpl implements IService {
 	 * @param ip the IP address of the amphi
 	 * @param status the status od the live in the amphi
 	 */
-	public void setAmphiStatus(String ip, boolean status) {
+	public synchronized void setAmphiStatus(String ip, boolean status) {
 		db.setAmphiStatus(ip, status);
 	}
 	
@@ -562,26 +597,28 @@ public class ServiceImpl implements IService {
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language,String rssCategory, String itunesAuthor,
 			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		// For all courses 
-		List<Course> courses = db.getAllCourses(true);
+		List<Course> courses = db.getAllCourses(true,true,20);
 		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
-		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
-		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
+		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		
 		
 		// For the teachers
 		List<String> teachers = db.getTeachers();
 		for( String teacher : teachers) {
-			courses = db.getCoursesByAuthor(teacher);
+			courses = db.getCoursesByAuthor(teacher,20);
 			rssPath = rssFolderPath + "/" + cleanFileName(teacher) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+teacher, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+teacher, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		}
 				
 		// For the formation
 		List<String> formations = db.getFormations();
+		String formFullName = null;
 		for( String formation : formations) {
-			courses = db.getCoursesByFormation(formation);
+			courses = db.getCoursesByFormation(formation,20);
 			rssPath = rssFolderPath + "/" + cleanFileName(formation) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+formation, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
+			formFullName = getFormationFullName(formation);
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+(formFullName!=null ? formFullName : formation), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		}
 		
 		//For the login
@@ -589,7 +626,7 @@ public class ServiceImpl implements IService {
 		for(User u : users) {
 			courses = db.getCoursesByUser(u, null, null, true);	
 			rssPath = rssFolderPath + "/" + cleanFileName("lgn_" + u.getLogin()) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+"lgn_"+u.getLogin(), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+"lgn_"+u.getLogin(), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		}
 		
 		
@@ -618,24 +655,25 @@ public class ServiceImpl implements IService {
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language,String rssCategory, String itunesAuthor,
 			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		// For all courses
-		List<Course> courses = db.getAllCourses(true);
+		List<Course> courses = db.getAllCourses(true,true,20);
 		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
-		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
-		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
+		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 				
 		// For the teacher
 		if( ! (c.getName() == null && c.getFirstname() == null)) {
 			String teacher = db.getTeacherFullName(c.getName(), c.getFirstname());
-			courses = db.getCoursesByAuthor(teacher);
+			courses = db.getCoursesByAuthor(teacher,20);
 			rssPath = rssFolderPath + "/" + cleanFileName(teacher) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+teacher, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+teacher, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		}
 		
 		//For the formation
 		if(c.getFormation()!=null) {
-			courses = db.getCoursesByFormation(c.getFormation());
+			courses = db.getCoursesByFormation(c.getFormation(),20);
 			rssPath = rssFolderPath + "/" + cleanFileName(c.getFormation()) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+c.getFormation(), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
+			String formFullName = getFormationFullName(c.getFormation());
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+(formFullName!=null ? formFullName : c.getFormation()), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		}
 		
 		//For the login
@@ -643,7 +681,7 @@ public class ServiceImpl implements IService {
 			User u = db.getUser(c.getUserid());
 			courses = db.getCoursesByUser(u, null, null, true);
 			rssPath = rssFolderPath + "/" + cleanFileName("lgn_" + u.getLogin()) + ".xml";
-			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+"lgn_"+u.getLogin(), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, db);
+			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+"lgn_"+u.getLogin(), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		}
 		
 	}
@@ -652,26 +690,32 @@ public class ServiceImpl implements IService {
 	 * Gets the list of RSS files
 	 * @param rssTitle the title of the general RSS file
 	 * @param rssName the name of the general RSS file
+	 * @param onlygeneral to get only the general RSS
 	 * @return the hashMap of the RSS titles and files
 	 */
-	public HashMap<String, String> getRssFileList( String rssTitle, String rssName) {
+	public HashMap<String, String> getRssFileList( String rssTitle, String rssName, boolean onlygeneral) {
 		LinkedHashMap<String, String> rss = new LinkedHashMap<String, String>();
 		rss.put(rssTitle, "../rss/" + rssName + ".xml");
 		
-		List<String> teachers = db.getTeachers();
-		for( String teacher : teachers) {
-			rss.put(
-				teacher,
-				"../rss/" + cleanFileName(teacher) + ".xml"
-			);
-		}
-		
-		List<String> formations = db.getFormations();
-		for( String formation : formations) {
-			rss.put(
-				formation,
-				"../rss/" + cleanFileName(formation) + ".xml"
-			);
+		if(!onlygeneral) {
+
+			List<String> teachers = db.getTeachers();
+			for( String teacher : teachers) {
+				rss.put(
+						teacher,
+						"../rss/" + cleanFileName(teacher) + ".xml"
+				);
+			}
+
+			List<String> formations = db.getFormations();
+			String formFullName=null;
+			for( String formation : formations) {
+				formFullName = getFormationFullName(formation);
+				rss.put(
+						formFullName!=null ? formFullName : formation,
+								"../rss/" + cleanFileName(formation) + ".xml"
+				);
+			}
 		}
 		
 		return rss;
@@ -692,8 +736,10 @@ public class ServiceImpl implements IService {
 				rss.put(teacher,"../rss/" + cleanFileName(teacher) + ".xml");
 			}
 
+			String showform=null;
 			if(c.getFormation()!=null && !c.getFormation().equals(""))
-				rss.put(c.getFormation(),"../rss/" + cleanFileName(c.getFormation()) + ".xml");
+				showform = getFormationFullName(c.getFormation());
+				rss.put(showform!=null ? showform : c.getFormation(),"../rss/" + cleanFileName(c.getFormation()) + ".xml");
 		}
 		return rss;
 	}
@@ -800,7 +846,7 @@ public class ServiceImpl implements IService {
 	 * @param hash the password
 	 * @param hashtype the password type
 	 */
-	public void modifyUserPassword(String login, String hash, String hashtype) {
+	public synchronized void modifyUserPassword(String login, String hash, String hashtype) {
 		db.modifyUserPassword(login, hash, hashtype);
 	}
 	
@@ -1010,7 +1056,7 @@ public class ServiceImpl implements IService {
 	 * Modify a selection
 	 * @param s Selection
 	 */
-	public void modifySelection(Selection s) {
+	public synchronized void modifySelection(Selection s) {
 		db.modifySelection(s);
 	}
 	
@@ -1018,7 +1064,7 @@ public class ServiceImpl implements IService {
 	 * Deletes a selection by providing its id
 	 * @param position the position of the selection
 	 */
-	public void deleteSelection(int position) {
+	public synchronized void deleteSelection(int position) {
 		db.deleteSelection(position);
 	}
 	
@@ -1089,7 +1135,7 @@ public class ServiceImpl implements IService {
 	 * @param c the course
 	 * @param docFile the fileitem of the document
 	 */
-	public void addAdditionalDoc(Course c, FileItem docFile) {
+	public synchronized void addAdditionalDoc(Course c, FileItem docFile) {
 		fs.addAdditionalDoc(c.getMediaFolder(),docFile);
 		c.setAdddocname(FilenameUtils.getName(docFile.getName()));	
 		if(!c.isAvailable("adddoc"))
@@ -1101,7 +1147,7 @@ public class ServiceImpl implements IService {
 	 * Delete an additional document of a course
 	 * @param c the course
 	 */
-	public void deleteAdditionalDoc(Course c) {
+	public synchronized void deleteAdditionalDoc(Course c) {
 		fs.deleteAdditionalDoc(c.getMediaFolder(),c.getAdddocname());
 		c.setAdddocname(null);
 		if(c.isAvailable("adddoc"))
@@ -1123,7 +1169,7 @@ public class ServiceImpl implements IService {
 	 * @param courseid course id
 	 * @param status job status
 	 */
-	public void modifyJobStatus(int courseid,String status) {
+	public synchronized void modifyJobStatus(int courseid,String status) {
 		db.modifyJobStatus(courseid, status);
 	}
 	
@@ -1148,7 +1194,7 @@ public class ServiceImpl implements IService {
 	 * Create a job
 	 * @param c the course
 	 */
-	public void createJob(Course c, int mediatype, String type, String extension, String coursesFolder) {
+	public synchronized void createJob(Course c, int mediatype, String type, String extension, String coursesFolder) {
 		
 		Job j = new Job(
 				db.getNextJobId(),
@@ -1156,12 +1202,421 @@ public class ServiceImpl implements IService {
 				"waiting",
 				mediatype,
 				type,
-				coursesFolder+c.getMediaFolder(),
+				c.getMediaFolder(),
 				extension
 				
 		);
 		
 		db.addJob(j);
 	}
+	
+	/**
+	 * Gets the list of all discipline
+	 * @return the list of discipline
+	 */
+	public List<Discipline> getAllDiscipline() {
+		return db.getAllDiscipline();
+	}
+	
+	/**
+	 * Adds a new discipline
+	 * @param d the discipline
+	 */
+	public synchronized void addDiscipline(Discipline d) {
+		db.addDiscipline(d);
+	}
+	
+	/**
+	 * Modify a discipline
+	 * @param d the discipline
+	 */
+	public synchronized void modifyDiscipline(Discipline d) {
+		db.modifyDiscipline(d);
+	}
+	
+	/**
+	 * Get discipline by id 
+	 * @param id the id of the discipline
+	 * @return the discipline
+	 */
+	public Discipline getDiscipline(int id) {
+		return db.getDiscipline(id);
+	}
+	
+	/**
+	 * Deletes a discipline by providing its id
+	 * @param disciplineid the id of the discipline
+	 */
+	public void deleteDiscipline(int disciplineid) {
+		db.deleteDiscipline(disciplineid);
+	}
+	
+	/**
+	 * Gets the list of all levels
+	 * @return the list of levels
+	 */
+	public List<Level> getAllLevels() {
+		return db.getAllLevels();
+	}
+	
+	/**
+	 * Gets the level code by formation
+	 * @param formation the formation
+	 * @return the level code
+	 */
+	public String getLevelCodeByFormation(String formation) {
+		if(formation!=null && formation.indexOf("-")!=-1)
+			return formation.substring(formation.indexOf("-")+1);
+		else
+			return "";
+	}
+	
+	
+	/**
+	 * Gets the component code by formation
+	 * @param formation the formation
+	 * @return the component code
+	 */
+	public String getComponentCodeByFormation(String formation) {
+		if(formation!=null && formation.indexOf("-")!=-1)
+			return formation.substring(0,formation.indexOf("-"));
+		else 
+			return "";
+	}
+	
+	
+	/**
+	 * Gets the formation by level code and component code
+	 * @param levelcode the level code
+	 * @param compcode the component code
+	 * @return the formation
+	 */
+	public String getFormationByCodes(String levelcode, String compcode) {
+
+		String formation;
+
+		// Generate pseudo code etp for formation
+		if(levelcode!=null && !levelcode.equals("") && compcode!=null && !compcode.equals("")) {
+			formation=compcode+"-"+levelcode;
+		}
+		// for old client
+		else {
+			//FORMATION DANS AUTRE AUTRE
+			formation="00-O0";
+		}
+		
+		return formation;
+
+	}
+	
+	/**
+	 * Return the result of find tracks function
+	 * 
+	 * @param params all parameters
+	 * @return a list of course
+	 */
+	public List<Course> getTracks(HashMap<String, String> params) {
+		return db.getTracks(params);
+	}
+	
+	/**
+	 * Create xml for find tracks function
+	 * @param courses list of courses
+	 * @param serverUrl the url server for url course access
+	 * @param showErrorMsg true if show error xml msg
+	 * @return results
+	 */
+	public String generateXmlTracks( List<Course> courses, String serverUrl, boolean showErrorMsg) {
+		
+		String results=null;
+		
+		try {		
+			// Création d'un nouveau DOM
+	        DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
+	        DocumentBuilder constructeur = fabrique.newDocumentBuilder();
+	        Document document = constructeur.newDocument();
+	        
+	        // Propriétés du DOM
+	        document.setXmlVersion("1.0");
+	        document.setXmlStandalone(false);
+	        
+	        // Création de l'arborescence du DOM
+	        Element elRacine = document.createElement("ask");
+	        
+	        if(showErrorMsg) {
+	        	elRacine.setAttribute("track", "fail");
+	        	
+	        	Element elTotal = document.createElement("err");
+	        	elTotal.setTextContent("Parameters must be: dateRange=yyyymmdd-yyyymmdd or all, idRange=x-y, authorLogin=login, authorName=name, authorFirstname=firstname, component=CODE, level=CODE, tags=tag1+tag2+...,datatype=xml or json");
+	        	elRacine.appendChild(elTotal);
+
+	        }
+	        else {
+	        	elRacine.setAttribute("track", "ok");
+
+	        	Element elTotal = document.createElement("totalResultsCount");
+	        	elTotal.setTextContent(String.valueOf(courses.size()));
+	        	elRacine.appendChild(elTotal);
+
+	        	Element elCourses = document.createElement("courses");
+	        	elRacine.appendChild(elCourses);
+
+	        	// Listing des cours
+	        	for( Course course : courses) {
+
+	        		if( course.getTitle() != null) {
+	        			// Conversion de la date dans le bon format	
+	        			Date d = course.getDate();
+	        			SimpleDateFormat sdf = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
+
+	        			// item
+	        			Element item = document.createElement("course");
+	        			elCourses.appendChild(item);
+
+	        			// Course param
+	        			Element elId = document.createElement("id");
+	        			elId.setTextContent(String.valueOf(course.getCourseid()));
+	        			item.appendChild(elId);
+	        			
+	        			Element elUrl = document.createElement("url");
+	        			elUrl.setTextContent(serverUrl+"/avc/courseaccess?id="+course.getCourseid());
+	        			item.appendChild(elUrl);
+
+	        			Element elDate = document.createElement("date");
+	        			elDate.setTextContent(sdf.format(d));
+	        			item.appendChild(elDate);
+
+	        			Element elTitle = document.createElement("title");
+	        			elTitle.setTextContent(course.getTitle());
+	        			item.appendChild(elTitle);
+	        			
+	        			Element elDesc = document.createElement("description");
+	        			elDesc.setTextContent(course.getDescription());
+	        			item.appendChild(elDesc);
+
+	        			Element elForm = document.createElement("formation");
+	        			elForm.setTextContent(course.getFormation());
+	        			item.appendChild(elForm);
+	        			
+	        			Element elName= document.createElement("name");
+	        			elName.setTextContent(course.getName());
+	        			item.appendChild(elName);
+	        			
+	        			Element elFirstname= document.createElement("firstname");
+	        			elFirstname.setTextContent(course.getFirstname());
+	        			item.appendChild(elFirstname);
+	        			        			
+	        			Element elUser= document.createElement("login");
+	        			User user = db.getUser(course.getUserid());
+	        			elUser.setTextContent(user!=null ? user.getLogin() : null);
+	        			item.appendChild(elUser);
+	        				        			
+	        			Element elResCode= document.createElement("resCode");
+	        			elResCode.setTextContent(course.getGenre()!=null ? "true" : "false");
+	        			item.appendChild(elResCode);
+
+	        			Element elResUds= document.createElement("resUds");
+	        			elResUds.setTextContent(course.isRestrictionuds() ? "true" : "false");
+	        			item.appendChild(elResUds);
+	        			
+	        			Element elResDownload= document.createElement("download");
+	        			elResDownload.setTextContent(course.isDownload() ? "true" : "false");
+	        			item.appendChild(elResDownload);
+	        			
+	        			Element elDuration= document.createElement("duration");
+	        			elDuration.setTextContent(course.getDurationString());
+	        			item.appendChild(elDuration);
+	        			
+	        			Element elConsults= document.createElement("consultations");
+	        			elConsults.setTextContent(String.valueOf(course.getConsultations()));
+	        			item.appendChild(elConsults);
+	        				        			
+	        			Element elType = document.createElement("type");
+	        			elType.setTextContent(course.getType());
+	        			item.appendChild(elType);
+	        			
+	        			Element elMediatype= document.createElement("mediatype");
+	        			elMediatype.setTextContent(String.valueOf(course.getmediatype()));
+	        			item.appendChild(elMediatype);
+	        			
+	        			Element elTags= document.createElement("tags");
+	        			String tags="";
+	        			List<Tag> listTags = db.getTagsByCourse(course);
+	        			for(int i=0;i<listTags.size();i++) 
+	        					tags=i==0 ? listTags.get(i).getTag() : tags + "+" + listTags.get(i).getTag();
+	        			elTags.setTextContent(tags);
+	        			item.appendChild(elTags);	        			
+	        		}
+	        	}
+	        }
+		        
+			document.appendChild(elRacine);
+						
+			  // Create DOM source
+	        Source source = new DOMSource(document);       
+	        
+	        StringWriter xmlout = new StringWriter();
+	        Result resultat = new StreamResult(xmlout);
+	        
+	        // Transformer configuration
+	        TransformerFactory transFac = TransformerFactory.newInstance();
+	        Transformer transformer = transFac.newTransformer();
+	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+	        
+	        // Transformation into xml file
+	        transformer.transform(source, resultat);
+	        	        
+	        results = xmlout.toString();	        
+		}
+		catch( ParserConfigurationException pce) {
+			logger.error("Error while creating the XML",pce);
+		}
+		 catch (TransformerConfigurationException e) {
+			 logger.error("Error while creating the XML",e);
+		} catch (TransformerException e) {
+			logger.error("Error while creating the XML",e);
+		} 
+				
+		return results;
+	}
+	
+	/**
+	 * Return the result of find stats function
+	 * 
+	 * @param params all parameters
+	 * @return a list of stats
+	 */
+	public HashMap<String, Integer> getStats(HashMap<String, String> params) {
+		return db.getStats(params);
+	}
+	
+	/**
+	 * Create xml for find stats function
+	 * @param stats list of stats
+	 * @param serverUrl the url server for url course access
+	 * @param showErrorMsg true if show error xml msg
+	 * @return results
+	 */
+	public String generateXmlStats( HashMap<String, Integer> stats, String serverUrl, boolean showErrorMsg) {
+		
+		String results=null;
+		
+		try {		
+			// Création d'un nouveau DOM
+	        DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
+	        DocumentBuilder constructeur = fabrique.newDocumentBuilder();
+	        Document document = constructeur.newDocument();
+	        
+	        // Propriétés du DOM
+	        document.setXmlVersion("1.0");
+	        document.setXmlStandalone(false);
+	        
+	        // Création de l'arborescence du DOM
+	        Element elRacine = document.createElement("ask");
+	        
+	        if(showErrorMsg) {
+	        	elRacine.setAttribute("stat", "fail");
+	        	
+	        	Element elTotal = document.createElement("err");
+	        	elTotal.setTextContent("Parameters must be: dateRange=yyyymmdd-yyyymmdd or all, component=CODE, level=CODE, domain=CODE, account=UDS, FREE or STUDENT, weekday=1-7(Sunday is 1), datatype=xml or json");
+	        	elRacine.appendChild(elTotal);
+
+	        }
+	        else {
+	        	elRacine.setAttribute("stat", "ok");
+
+	        	// item
+	        	Element elStats = document.createElement("stat");
+	        	elRacine.appendChild(elStats);
+	        	
+	        	        	
+	        	for (Entry<String, Integer> currentEntry : stats.entrySet()) {
+	        		String id = currentEntry.getKey();
+	        		Integer value = currentEntry.getValue();
+	        			        		
+	        		if(id.equals("nbduration")) {
+	        			String res = "";
+	        			int durationHour = value / 3600;
+	        			int durationMinute = (value % 3600) / 60 ;
+	        			int durationSecond = ((value % 3600) % 60) ;
+	        			res += durationHour > 0 ? durationHour + "h" : "";
+	        	    	res += durationHour > 0 || durationMinute > 0 ? durationMinute + "min" : "";
+	        	    	res += durationSecond + "sec";
+	        	    	Element el = document.createElement(id);
+	        	    	el.setTextContent(res);
+	        	    	elStats.appendChild(el);
+	        		}
+	        		else {        		
+	        			Element el = document.createElement(id);
+	        			el.setTextContent(String.valueOf(value));
+	        			elStats.appendChild(el);
+	        		}
+        			
+	        	}
+	        	
+	        }
+		        
+			document.appendChild(elRacine);
+						
+			  // Create DOM source
+	        Source source = new DOMSource(document);       
+	        
+	        StringWriter xmlout = new StringWriter();
+	        Result resultat = new StreamResult(xmlout);
+	        
+	        // Transformer configuration
+	        TransformerFactory transFac = TransformerFactory.newInstance();
+	        Transformer transformer = transFac.newTransformer();
+	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+	        
+	        // Transformation into xml file
+	        transformer.transform(source, resultat);
+	        	        
+	        results = xmlout.toString();	        
+		}
+		catch( ParserConfigurationException pce) {
+			logger.error("Error while creating the XML",pce);
+		}
+		 catch (TransformerConfigurationException e) {
+			 logger.error("Error while creating the XML",e);
+		} catch (TransformerException e) {
+			logger.error("Error while creating the XML",e);
+		} 
+				
+		return results;
+	}
+
+	/*
+	private void xml2csv(String source) {
+		//TODO Convert XML to CSV for stats and tracks
+		try {
+
+			XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+			inputFactory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
+			inputFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.TRUE);
+
+			InputStream read = new ByteArrayInputStream(source.getBytes());
+			XMLStreamReader reader = inputFactory.createXMLStreamReader(read);
+			while (reader.hasNext()) {
+				int event = reader.next();
+				System.out.println("event:"+event);
+				if (event == XMLStreamConstants.CHARACTERS)
+					System.out.println(reader.getText());
+				else if (event == XMLStreamConstants.ENTITY_REFERENCE) {
+					System.out.println("en: " + reader.getLocalName());
+					System.out.println("er: " + reader.getText());
+				}
+				
+				
+			}
+
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}*/
 
 }

@@ -78,7 +78,10 @@
 				    		<td>Activate</td>
 				    		<td><input type="checkbox" name="activate" ${user.activate == true ? 'checked' : ''} ></td>
 			    		</tr>
-			    		
+			    		<tr class="even">
+				    		<td>Etp</td>
+				    		<td><input type="text" name="etp" value="${user.etp}" class="field"></td>
+			    		</tr>
 			    	</table>
 			    	<br>
 			    	<input type="hidden" name="action" value="${action}">

@@ -2,6 +2,7 @@
 # $1 le chemin du répertoire contenant les scripts d'encodage
 PTHSCR=$1
 SRVURL="http://audiovideocours.u-strasbg.fr"
+CRSMNTPNT="/audiovideocours/cours/" #point de montage des cours sur le systeme
 
 # script pour lancer les tâches d'encodage
 # Lire le fichier job et récupérer la première ligne en mode "waiting"
@@ -14,6 +15,7 @@ JobState=`echo $ligne | cut -d: -f2`
 MediaType=`echo $ligne | cut -d: -f3`
 JobType=`echo $ligne | cut -d: -f4`
 MediaFolder=`echo $ligne | cut -d: -f5`
+MediaFolder="$CRSMNTPNT$MediaFolder"
 Extension=`echo $ligne | cut -d: -f6`
 
 #Extraction des Metadonnées
