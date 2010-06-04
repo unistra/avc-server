@@ -179,7 +179,7 @@ public class MediaUpload extends Thread {
 			token = null;
 		}
 				
-		int mediatype = Course.typeFlash+Course.typeMp3+Course.typeOgg+((c.getType().equals("video"))?Course.typeHq:0)+(c.getType().equals("video")?Course.typeZip:0);
+		int mediatype = Course.typeFlash+Course.typeMp3+Course.typeOgg+((c.getType().equals("video"))?Course.typeHq:0);
 		
 		// If medias encodage isnt separated
 		if(!sepEnc) {

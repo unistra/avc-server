@@ -26,6 +26,8 @@ public class User {
 	private String type;
 	/** account activation (for local user) */
 	private boolean activate;
+	/** etp code for students **/
+	private String etp;
 	
 	private static final String TYPELDAP = "ldap";
 	private static final String TYPELOCAL = "local";
@@ -46,12 +48,19 @@ public class User {
 	/**
 	 * User's constructor
 	 * 
-	 * @param userid the user's id
-	 * @param login the user's login
-	 * @param email the user's email address
+	 * @param userid the user id
+	 * @param login the user login
+	 * @param email the user email
+	 * @param firstname the user firstname
+	 * @param lastname the user lastname
+	 * @param profile the user profile
+	 * @param establishment the user establisment
+	 * @param type the user type
+	 * @param activate account activation
+	 * @param etp etp code for student
 	 */
 	public User(int userid,String login, String email,String firstname, String lastname,String profile,
-			String establishment,String type,boolean activate) {
+			String establishment,String type,boolean activate,String etp) {
 		this.userid=userid;
 		this.login=login;
 		this.email=email;
@@ -61,6 +70,7 @@ public class User {
 		this.establishment=establishment;
 		this.type=type;
 		this.activate=activate;
+		this.etp=etp;
 	}
 
 	/**
@@ -205,5 +215,23 @@ public class User {
 	 */
 	public void setActivate(boolean activate) {
 		this.activate = activate;
+	}
+
+	/**
+	 * Gets the etp code
+	 * @return etp code
+	 */
+	public String getEtp() {
+		return etp;
+	}
+
+	/**
+	 * Sets the etp code
+	 * @param etp etp code
+	 */
+	public void setEtp(String etp) {
+		this.etp = etp;
 	}	
+	
+	
 }

@@ -520,6 +520,7 @@ public class Course {
 		else if(type.equals("videoslide")) return ((typeVideoslide & mediatype) > 0);
 		else if(type.equals("adddoc")) return ((typeAdddoc & mediatype) > 0);
 		else if(type.equals("hq")) return ((typeHq & mediatype) > 0);
+		else if(type.equals("video")) return ((typeHq & mediatype) > 0);
 		else return false;
 	}
 	

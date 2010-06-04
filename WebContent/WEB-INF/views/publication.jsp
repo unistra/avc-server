@@ -90,6 +90,14 @@
 					<c:set var="checkedRestUdsField" value="checked" />
 				</c:otherwise>
 			</c:choose>
+			<c:choose>
+				<c:when test="${(message!=null and permission!=null)}">
+					<c:set var="checkedPermField" value="checked" />
+				</c:when>
+				<c:otherwise>
+					<c:set var="checkedPermField" value="" />
+				</c:otherwise>
+			</c:choose>
 		
 			<!-- FORMULAIRE -->
 	    	<form action="<c:url value="./publication_validatepublication"/>" method="POST">
@@ -159,25 +167,64 @@
 							</c:otherwise>
 						</c:choose>
 					</tr>
+					
+					<!--				
 					<tr class="odd">
 						<td title="<fmt:message key="ib_form"/>"><fmt:message key="ue"/> : </td>
 						<td><input type="text" name="ue" class="${classField}" <c:out value="${disabledField}"/> value="${ue}"> </td>
+					</tr>-->
+									
+					<tr class="odd">
+						<td title="<fmt:message key="ib_level"/>"><fmt:message key="level"/><b class="boldStar">*</b> : </td>
+						<td>
+							<select name="level">
+								<option value=""></option>
+								<c:forEach var="levels" items="${levels}">
+									<c:if test="${levelSelected == levels.code}">
+										<c:set var="selected" value="selected" />
+									</c:if>
+									<option value="${levels.code}" ${selected}>${levels.name}</option>
+									<c:remove var="selected"/>
+								</c:forEach>
+							</select>
+						</td>
 					</tr>
+								
 					<tr class="even">
+						<td title="<fmt:message key="ib_form"/>"><fmt:message key="component"/><b class="boldStar">*</b> : </td>
+						<td>
+							<select name="component">
+								<option value=""></option>
+								<c:forEach var="discipline" items="${disciplines}">
+									<c:if test="${discSelected == discipline.codecomp}">
+										<c:set var="selected" value="selected" />
+									</c:if>
+									<option value="${discipline.codecomp}" ${selected}>${discipline.namecomp}</option>
+									<c:remove var="selected"/>
+								</c:forEach>
+							</select>
+						</td>
+					</tr>
+					
+					<tr class="odd">
 						<td title="<fmt:message key="ib_code"/>"><fmt:message key="Code d'acc&egrave;s"/> : </td>
 						<td><input type="text" name="genre" class="${classField}" <c:out value="${disabledField}"/> value="${genre }"></td>
 					</tr>				
-					<tr class="odd">
-				    	<td title="<fmt:message key="ib_tags"/>">Tags</td>
+					<tr class="even">
+				    	<td title="<fmt:message key="ib_tags"/>">Tags : </td>
 				  	  <td><input type="text" name="tags" class="${classField}" <c:out value="${disabledField}"/> value="${tags }"></td>
 			    	</tr>
-			    	<tr class="even">
-					    <td title="<fmt:message key="ib_visible"/>">Visible</td>
+			    	<tr class="odd">
+					    <td title="<fmt:message key="ib_visible"/>">Visible : </td>
 					    <td><input type="checkbox" name="visible" <c:out value="${checkedVisbleField}"/> <c:out value="${disabledField}"/>></td>
 			   		</tr>
+			   		<tr class="even">
+					  	<td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds : </td>
+					   	<td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/> <c:out value="${disabledField}"/>><font class="chpsHd"><fmt:message key="uploadmessage6"/></font></td>
+			   		</tr>
 			   		<tr class="odd">
-					  	<td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds</td>
-					   	<td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/> <c:out value="${disabledField}"/>><font class="chpsHd"><fmt:message key="uploadmessage6"/></td>
+					  	<td title="<fmt:message key="ib_permission"/>"><fmt:message key="permission"/><b class="boldStar">*</b> : </td>
+					   	<td><input type="checkbox" name="permission" <c:out value="${checkedPermField}"/> <c:out value="${disabledField}"/>><font class="chpsHd"><fmt:message key="uploadmessage7"/></font></td>
 			   		</tr>
 			   		
 			    	<tr>

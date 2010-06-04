@@ -1,5 +1,11 @@
 package org.ulpmm.univrav.entities;
 
+/**
+ * Class for job entity
+ * 
+ * @author morgan
+ *
+ */
 public class Job {
 	
 	/** the job id*/

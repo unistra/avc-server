@@ -78,6 +78,11 @@
 			<url-pattern>/avc/admin_adddocupload</url-pattern>
 			<url-pattern>/avc/admin_deleteadddoc</url-pattern>
 			<url-pattern>/avc/admin_jobs</url-pattern>
+			<url-pattern>/avc/admin_disciplines</url-pattern>
+			<url-pattern>/avc/admin_adddiscipline</url-pattern>
+			<url-pattern>/avc/admin_validatediscipline</url-pattern>
+			<url-pattern>/avc/admin_editdiscipline</url-pattern>
+			<url-pattern>/avc/admin_deletediscipline</url-pattern>
 			<http-method>GET</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>

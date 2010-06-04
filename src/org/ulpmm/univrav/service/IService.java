@@ -10,7 +10,9 @@ import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Discipline;
 import org.ulpmm.univrav.entities.Job;
+import org.ulpmm.univrav.entities.Level;
 import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Tag;
@@ -24,6 +26,13 @@ import org.ulpmm.univrav.entities.User;
  *
  */
 public interface IService {
+	
+	/**
+	 * Get the full name of formation. Matching with level and discipline tables.
+	 * @param formation the course formation codes
+	 * @return the full name of formation
+	 */
+	public String getFormationFullName(String formation);
 	
 	/**
 	 * Adds a new course
@@ -84,9 +93,11 @@ public interface IService {
 	/**
 	 * Gets a list of all the courses
 	 * @param onlyvisible true to get only visible courses
+	 * @param formationfullname show full name of formation with discipline and level table
+	 * @param limit limit number of courses
 	 * @return the list of courses
 	 */
-	public List<Course> getAllCourses(boolean onlyvisible);
+	public List<Course> getAllCourses(boolean onlyvisible, boolean formationfullname, Integer limit);
 		
 	/**
 	 * Gets a list of the n last courses
@@ -690,6 +701,98 @@ public interface IService {
 	 * @param c the course
 	 */
 	public void createJob(Course c, int mediatype, String type, String extension, String coursesFolder);
+	
+	/**
+	 * Gets the list of all discipline
+	 * @return the list of discipline
+	 */
+	public List<Discipline> getAllDiscipline();
 
-
+	/**
+	 * Adds a new discipline
+	 * @param d the discipline
+	 */
+	public void addDiscipline(Discipline d);
+	
+	/**
+	 * Modify a discipline
+	 * @param d the discipline
+	 */
+	public void modifyDiscipline(Discipline d);
+	
+	/**
+	 * Get discipline by id 
+	 * @param id the id of the discipline
+	 * @return the discipline
+	 */
+	public Discipline getDiscipline(int id);
+	
+	/**
+	 * Deletes a discipline by providing its id
+	 * @param disciplineid the id of the discipline
+	 */
+	public void deleteDiscipline(int disciplineid);
+	
+	/**
+	 * Gets the list of all levels
+	 * @return the list of levels
+	 */
+	public List<Level> getAllLevels();
+		
+	/**
+	 * Gets the level code by formation
+	 * @param formation the formation
+	 * @return the level code
+	 */
+	public String getLevelCodeByFormation(String formation);
+	
+	
+	/**
+	 * Gets the formation by level code and component code
+	 * @param levelcode the level code
+	 * @param compcode the component code
+	 * @return the formation
+	 */
+	public String getFormationByCodes(String levelcode, String compcode);
+	
+	/**
+	 * Gets the component code by formation
+	 * @param formation the formation
+	 * @return the component code
+	 */
+	public String getComponentCodeByFormation(String formation);
+	
+	/**
+	 * Return the result of find tracks function
+	 * 
+	 * @param params all parameters
+	 * @return a list of course
+	 */
+	public List<Course> getTracks(HashMap<String, String> params);
+	
+	/**
+	 * Create xml for find tracks function
+	 * @param courses list of courses
+	 * @param serverUrl the url server for url course access
+	 * @param showErrorMsg true if show error xml msg
+	 * @return results
+	 */
+	public String generateXmlTracks( List<Course> courses, String serverUrl, boolean showErrorMsg);
+	
+	/**
+	 * Return the result of find stats function
+	 * 
+	 * @param params all parameters
+	 * @return a list of stats
+	 */
+	public HashMap<String, Integer> getStats(HashMap<String, String> params);
+	
+	/**
+	 * Create xml for find stats function
+	 * @param stats list of stats
+	 * @param serverUrl the url server for url course access
+	 * @param showErrorMsg true if show error xml msg
+	 * @return results
+	 */
+	public String generateXmlStats( HashMap<String, Integer> stats, String serverUrl, boolean showErrorMsg);
 }

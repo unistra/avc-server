@@ -11,14 +11,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
+import java.util.StringTokenizer;
 import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
+import org.ulpmm.univrav.entities.Discipline;
 import org.ulpmm.univrav.entities.Job;
+import org.ulpmm.univrav.entities.Level;
 import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Tag;
@@ -78,6 +79,65 @@ public class DatabaseImpl implements IDatabase {
 			}
 		}
 	}
+	
+
+	/**
+	 * Get the full name of formation. Matching with level and discipline tables.
+	 * @param formation the course formation codes
+	 * @return the full name of formation
+	 */
+	public String getFormationFullName(String formation) {
+				
+		String formFullName = null;
+		
+		Connection cnt = null;
+		Statement stmt=null;
+		ResultSet rs = null;		
+		String sql = null;
+		
+		// Get the component name
+		try {
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			sql = "SELECT namecomp FROM discipline WHERE codecomp='"+(formation!=null && formation.indexOf("-")!=-1 ? formation.substring(0,formation.indexOf("-")) : "")+"'";
+			rs = stmt.executeQuery( sql);
+			
+			if(rs.next())
+				formFullName = rs.getString("namecomp");					
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the formation name " + formation,sqle);
+			throw new DaoException("Error while retrieving the formation name" + formation);
+		}
+		finally {
+			close(rs,stmt,cnt);
+		}
+		
+		
+		// Get the level name
+		try {
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			sql = "SELECT name FROM level WHERE code='"+(formation!=null && formation.indexOf("-")!=-1 ? formation.substring(formation.indexOf("-")+1) : "")+"'";
+			rs = stmt.executeQuery( sql);
+			
+			if(rs.next())
+				formFullName += " - " + rs.getString("name");					
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the formation name " + formation,sqle);
+			throw new DaoException("Error while retrieving the formation name" + formation);
+		}
+		finally {
+			close(rs,stmt,cnt);
+		}
+		
+		
+		return formFullName;
+	}
+	
+	
+	
 	
 	/**
 	 * Adds a new course
@@ -173,9 +233,11 @@ public class DatabaseImpl implements IDatabase {
 	/**
 	 * Gets a list of all the courses
 	 * @param onlyvisible true to get only visible courses
+	 * @param formationfullname show full name of formation with discipline and level table
+	 * @param limit limit number of courses
 	 * @return the list of courses
 	 */
-	public List<Course> getAllCourses(boolean onlyvisible) {
+	public List<Course> getAllCourses(boolean onlyvisible, boolean formationfullname, Integer limit) {
 		
 		Connection cnt = null;
 		Statement stmt = null;
@@ -192,68 +254,23 @@ public class DatabaseImpl implements IDatabase {
 				sql += "WHERE visible=true ";
 				
 			sql += "ORDER BY date DESC";		
+			
+			if(limit!=null)
+				sql += " LIMIT "+limit;
+			
 			rs = stmt.executeQuery(sql);
 							
-			while(rs.next()) {
-				l.add(new Course(
-					rs.getInt("courseid"),
-					rs.getTimestamp("date"),
-					rs.getString("type"),
-					rs.getString("title"),
-					rs.getString("description"),
-					rs.getString("formation"),
-					rs.getString("name"),
-					rs.getString("firstname"),
-					rs.getString("ipaddress"),
-					rs.getInt("duration"),
-					rs.getString("genre"),
-					rs.getBoolean("visible"),
-					rs.getInt("consultations"),
-					rs.getString("timing"),
-					rs.getInt("userid"),
-					rs.getString("adddocname"),
-					rs.getBoolean("download"),
-					rs.getBoolean("restrictionuds"),
-					rs.getInt("mediatype"),
-					rs.getShort("volume")
-				));
-			}
-		}
-		catch( SQLException sqle) {
-			logger.error("Error while retrieving the courses list",sqle);
-			throw new DaoException("Error while retrieving the courses list");
-		}
-		finally {
-			close(rs,stmt,cnt);
-		}
-		
-		return l;
-	}
-		
-	/**
-	 * Gets a list of all the courses without access code
-	 * @return the list of courses
-	 */
-	public List<Course> getAllUnlockedCourses() {
-		
-		Connection cnt = null;
-		ResultSet rs = null;
-		Statement stmt = null;
-		List<Course> l = new ArrayList<Course>();
-		
-		try {
-			cnt = datasrc.getConnection();
-			stmt = cnt.createStatement();
-			rs = stmt.executeQuery( "SELECT * From course WHERE genre IS NULL AND restrictionuds = false AND visible = true ORDER BY date DESC");
 			
+			String formation =null;			
 			while(rs.next()) {
+				formation = formationfullname ? getFormationFullName(rs.getString("formation")) : rs.getString("formation");	
 				l.add(new Course(
 					rs.getInt("courseid"),
 					rs.getTimestamp("date"),
 					rs.getString("type"),
 					rs.getString("title"),
 					rs.getString("description"),
-					rs.getString("formation"),
+					formation!=null ? formation : rs.getString("formation"),
 					rs.getString("name"),
 					rs.getString("firstname"),
 					rs.getString("ipaddress"),
@@ -278,10 +295,11 @@ public class DatabaseImpl implements IDatabase {
 		finally {
 			close(rs,stmt,cnt);
 		}
-
+		
 		return l;
 	}
-	
+		
+		
 	/**
 	 * Gets a list of the n last courses
 	 * @param n the number of courses to return
@@ -370,19 +388,23 @@ public class DatabaseImpl implements IDatabase {
 		Statement stmt=null;
 		ResultSet rs = null;
 		List<Course> l = new ArrayList<Course>();
+		String formation =null;
 		try {
 			cnt = datasrc.getConnection();
 			stmt = cnt.createStatement();
 			rs = stmt.executeQuery( sql);
 			
 			while(rs.next()) {
+				
+				formation = getFormationFullName(rs.getString("formation"));
+				
 				l.add(new Course(
 					rs.getInt("courseid"),
 					rs.getTimestamp("date"),
 					rs.getString("type"),
 					rs.getString("title"),
 					rs.getString("description"),
-					rs.getString("formation"),
+					formation!=null ? formation : rs.getString("formation"),
 					rs.getString("name"),
 					rs.getString("firstname"),
 					rs.getString("ipaddress"),
@@ -446,8 +468,15 @@ public class DatabaseImpl implements IDatabase {
 				String param = it.next();
 				if( param.equals("fullname") )
 					sql += "AND (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = ? ";
-				else if( param.equals("keyword") )
-					sql += "AND (INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?) OR INITCAP(name) LIKE INITCAP(?) OR INITCAP(firstname) LIKE INITCAP(?) OR INITCAP(formation) LIKE INITCAP(?) OR courseid IN (select courseid from tag where INITCAP(tag) LIKE INITCAP(?))) ";
+				else if( param.equals("keyword") ) {
+					sql += "AND (UPPER(title) LIKE UPPER(?) OR UPPER(description) LIKE UPPER(?) OR UPPER(name) LIKE UPPER(?) OR UPPER(firstname) LIKE UPPER(?) ";
+					sql += "OR courseid IN(SELECT courseid FROM course WHERE SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1))) IN (SELECT codecomp FROM discipline WHERE UPPER(namecomp) LIKE UPPER(?))) ";
+					sql += "OR courseid IN(SELECT courseid FROM tag WHERE UPPER(tag) LIKE UPPER(?))) ";
+				}	
+				else if (param.equals("discipline"))
+					sql += "AND UPPER(formation) LIKE UPPER(?) ";
+				else if (param.equals("level"))
+					sql += "AND UPPER(formation) LIKE UPPER(?) ";
 				else
 					sql += "AND " + param + " = ? ";
 			}
@@ -478,6 +507,12 @@ public class DatabaseImpl implements IDatabase {
 						i++;
 						pstmt.setString(i, "%" + params.get(param) + "%");
 					}
+					else if (param.equals("discipline")) {
+						pstmt.setString(i, params.get(param) + "-%");
+					}
+					else if (param.equals("level")) {
+						pstmt.setString(i, "%-" + params.get(param));
+					}
 					else
 						pstmt.setString(i, params.get(param));
 					i++;
@@ -486,14 +521,17 @@ public class DatabaseImpl implements IDatabase {
 				rs = pstmt.executeQuery();
 				
 				/* Retrieves the records */
+				String formation =null;
+								
 				while(rs.next()) {
+					formation = getFormationFullName(rs.getString("formation"));
 					l.add(new Course(
 							rs.getInt("courseid"),
 							rs.getTimestamp("date"),
 							rs.getString("type"),
 							rs.getString("title"),
 							rs.getString("description"),
-							rs.getString("formation"),
+							formation!=null ? formation : rs.getString("formation"),
 							rs.getString("name"),
 							rs.getString("firstname"),
 							rs.getString("ipaddress"),
@@ -531,9 +569,10 @@ public class DatabaseImpl implements IDatabase {
 	/**
 	 * Gets the list of courses for an author
 	 * @param author the author
+	 * @param limit limit number of courses
 	 * @return the list of courses
 	 */
-	public List<Course> getCoursesByAuthor(String author) {
+	public List<Course> getCoursesByAuthor(String author, Integer limit) {
 		
 		Connection cnt = null;
 		List<Course> l = new ArrayList<Course>();
@@ -541,6 +580,9 @@ public class DatabaseImpl implements IDatabase {
 		String sql = "SELECT * FROM course WHERE " +
 				"(COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = INITCAP(?) " +
 				"AND visible = true ORDER BY date DESC";
+		
+		if(limit!=null)
+			sql += " LIMIT "+limit;
 			
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -552,14 +594,16 @@ public class DatabaseImpl implements IDatabase {
 			rs = pstmt.executeQuery();
 			
 			/* Retrieves the records */
+			String formation =null;
 			while(rs.next()) {
+				formation = getFormationFullName(rs.getString("formation"));	
 				l.add(new Course(
 						rs.getInt("courseid"),
 						rs.getTimestamp("date"),
 						rs.getString("type"),
 						rs.getString("title"),
 						rs.getString("description"),
-						rs.getString("formation"),
+						formation!=null ? formation : rs.getString("formation"),
 						rs.getString("name"),
 						rs.getString("firstname"),
 						rs.getString("ipaddress"),
@@ -591,15 +635,19 @@ public class DatabaseImpl implements IDatabase {
 	/**
 	 * Gets the list of courses for a formation
 	 * @param formation the formation
+	 * @param limit limit number of courses
 	 * @return the list of courses
 	 */
-	public List<Course> getCoursesByFormation(String formation) {
+	public List<Course> getCoursesByFormation(String formation,Integer limit) {
 		
 		Connection cnt = null;
 		List<Course> l = new ArrayList<Course>();
 	
 		String sql = "SELECT * FROM course WHERE " +
 				"formation=?" + "AND visible = true ORDER BY date DESC";
+		
+		if(limit!=null)
+			sql += " LIMIT "+limit;
 			
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -611,14 +659,16 @@ public class DatabaseImpl implements IDatabase {
 			rs = pstmt.executeQuery();
 			
 			/* Retrieves the records */
+			String showform =null;
 			while(rs.next()) {
+				showform = getFormationFullName(rs.getString("formation"));
 				l.add(new Course(
 						rs.getInt("courseid"),
 						rs.getTimestamp("date"),
 						rs.getString("type"),
 						rs.getString("title"),
 						rs.getString("description"),
-						rs.getString("formation"),
+						showform!=null ? showform : rs.getString("formation"),
 						rs.getString("name"),
 						rs.getString("firstname"),
 						rs.getString("ipaddress"),
@@ -867,8 +917,15 @@ public class DatabaseImpl implements IDatabase {
 				String param = it.next();
 				if( param.equals("fullname") )
 					sql += "(COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = ? ";
-				else if( param.equals("keyword") )
-					sql += "(INITCAP(title) LIKE INITCAP(?) OR INITCAP(description) LIKE INITCAP(?) OR INITCAP(name) LIKE INITCAP(?) OR INITCAP(firstname) LIKE INITCAP(?)OR INITCAP(formation) LIKE INITCAP(?) OR courseid IN (select courseid from tag where INITCAP(tag) LIKE INITCAP(?))) ";
+				else if( param.equals("keyword") ) {
+					sql += "(UPPER(title) LIKE UPPER(?) OR UPPER(description) LIKE UPPER(?) OR UPPER(name) LIKE UPPER(?) OR UPPER(firstname) LIKE UPPER(?) ";
+					sql += "OR courseid IN(SELECT courseid FROM course WHERE SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1))) IN (SELECT codecomp FROM discipline WHERE UPPER(namecomp) LIKE UPPER(?))) ";
+					sql += "OR courseid IN(SELECT courseid FROM tag WHERE UPPER(tag) LIKE UPPER(?))) ";
+				}
+				else if (param.equals("discipline"))
+					sql += "UPPER(formation) LIKE UPPER(?) ";
+				else if (param.equals("level"))
+					sql += "UPPER(formation) LIKE UPPER(?) ";
 				else
 					sql += param + " = ? ";
 			}
@@ -899,6 +956,12 @@ public class DatabaseImpl implements IDatabase {
 						i++;
 						pstmt.setString(i, "%" + params.get(param) + "%");
 					}
+					else if (param.equals("discipline")) {
+						pstmt.setString(i, params.get(param) + "-%");
+					}
+					else if (param.equals("level")) {
+						pstmt.setString(i, "%-" + params.get(param));
+					}
 					else
 						pstmt.setString(i, params.get(param));
 					i++;
@@ -910,8 +973,8 @@ public class DatabaseImpl implements IDatabase {
 					number = rs.getInt("count");
 			}
 			catch( SQLException sqle) {
-				logger.error("Error while retrieving the buildings list",sqle);
-				throw new DaoException("Error while retrieving the buildings list");
+				logger.error("Error while retrieving the course number",sqle);
+				throw new DaoException("Error while retrieving the course number");
 			}
 			finally {
 				close(rs,pstmt,cnt);
@@ -1208,14 +1271,16 @@ public class DatabaseImpl implements IDatabase {
 			stmt = cnt.createStatement();
 			rs = stmt.executeQuery( sql);
 			
+			String formation =null;
 			while(rs.next()) {
+				formation = getFormationFullName(rs.getString("formation"));
 				l.add(new Course(
 					rs.getInt("courseid"),
 					rs.getTimestamp("date"),
 					rs.getString("type"),
 					rs.getString("title"),
 					rs.getString("description"),
-					rs.getString("formation"),
+					formation!=null ? formation : rs.getString("formation"),
 					rs.getString("name"),
 					rs.getString("firstname"),
 					rs.getString("ipaddress"),
@@ -2114,7 +2179,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("profile"),
 					rs.getString("establishment"),
 					rs.getString("type"),
-					rs.getBoolean("activate")
+					rs.getBoolean("activate"),
+					rs.getString("etp")
 					
 				);
 			}
@@ -2157,7 +2223,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getString("profile"),
 						rs.getString("establishment"),
 						rs.getString("type"),
-						rs.getBoolean("activate")
+						rs.getBoolean("activate"),
+						rs.getString("etp")
 				);
 			}
 		}
@@ -2199,7 +2266,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("profile"),
 					rs.getString("establishment"),
 					rs.getString("type"),
-					rs.getBoolean("activate")
+					rs.getBoolean("activate"),
+					rs.getString("etp")
 					
 				);
 			}
@@ -2292,7 +2360,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addUser(User u) {
 		
-		String sql = "INSERT INTO \"user\"(\"login\",email,firstname,lastname,profile,establishment,type,activate) values(?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO \"user\"(\"login\",email,firstname,lastname,profile,establishment,type,activate,etp) values(?,?,?,?,?,?,?,?,?)";
 		PreparedStatement pstmt = null;
 		Connection cnt = null;
 		
@@ -2307,6 +2375,7 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setString(6, u.getEstablishment());
 			pstmt.setString(7, u.getType());
 			pstmt.setBoolean(8, u.isActivate());
+			pstmt.setString(9, u.getEtp());
 			
 			if( pstmt.executeUpdate() == 0) {
 				logger.error("The User " + u + " has not been added to the database");
@@ -2331,7 +2400,7 @@ public class DatabaseImpl implements IDatabase {
 		Connection cnt = null;
 		/* Creation of the SQL query string */
 		String sql = "UPDATE \"user\" SET userid = ?, login = ? , email = ?, firstname = ?,lastname = ?," +
-				"profile = ?,establishment = ?,type = ?,activate = ? ";
+				"profile = ?,establishment = ?,type = ?,activate = ?,etp = ? ";
 		sql += "WHERE userid = ?";
 		
 		PreparedStatement pstmt = null;
@@ -2350,7 +2419,8 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setString(7, u.getEstablishment());
 			pstmt.setString(8, u.getType());
 			pstmt.setBoolean(9, u.isActivate());
-			pstmt.setInt(10, u.getUserid());
+			pstmt.setString(10, u.getEtp());
+			pstmt.setInt(11, u.getUserid());
 						
 			if( pstmt.executeUpdate() == 0 ) {
 				logger.error("The user " + u + " has not been modified");
@@ -2425,14 +2495,17 @@ public class DatabaseImpl implements IDatabase {
 			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, u.getUserid());
 			rs = pstmt.executeQuery();
+			
+			String formation =null;
 			while(rs.next()) {
+				formation = getFormationFullName(rs.getString("formation"));
 				l.add( new Course(
 					rs.getInt("courseid"),
 					rs.getTimestamp("date"),
 					rs.getString("type"),
 					rs.getString("title"),
 					rs.getString("description"),
-					rs.getString("formation"),
+					formation!=null ? formation : rs.getString("formation"),
 					rs.getString("name"),
 					rs.getString("firstname"),
 					rs.getString("ipaddress"),
@@ -2519,7 +2592,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getString("profile"),
 						rs.getString("establishment"),
 						rs.getString("type"),
-						rs.getBoolean("activate")
+						rs.getBoolean("activate"),
+						rs.getString("etp")
 					
 				));
 			}
@@ -2722,14 +2796,16 @@ public class DatabaseImpl implements IDatabase {
 			stmt = cnt.createStatement();
 			rs = stmt.executeQuery( sql);
 			
+			String formation =null;
 			while(rs.next()) {
+				formation = getFormationFullName(rs.getString("formation"));
 				l.add(new Course(
 					rs.getInt("courseid"),
 					rs.getTimestamp("date"),
 					rs.getString("type"),
 					rs.getString("title"),
 					rs.getString("description"),
-					rs.getString("formation"),
+					formation!=null ? formation : rs.getString("formation"),
 					rs.getString("name"),
 					rs.getString("firstname"),
 					rs.getString("ipaddress"),
@@ -3102,7 +3178,7 @@ public class DatabaseImpl implements IDatabase {
 			close(null,pstmt,cnt);
 		}
 	}
-	
+		
 	/**
 	 * Gets the list of all jobs
 	 * @return the list of jobs
@@ -3330,5 +3406,450 @@ public class DatabaseImpl implements IDatabase {
 		
 		return s;
 	}
+		
+
+	/**
+	 * Gets the list of all discipline
+	 * @return the list of discipline
+	 */
+	public List<Discipline> getAllDiscipline() {
+		
+		List<Discipline> l = new ArrayList<Discipline>();
+		Connection cnt = null;
+		
+		String sql = "SELECT * FROM discipline order by namecomp asc";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				l.add( new Discipline(
+					rs.getInt("disciplineid"),
+					rs.getString("codecomp"),
+					rs.getString("namecomp"),
+					rs.getString("codedom"),
+					rs.getString("namedom")
+				));
+			}
+		}	
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the list of discipline",sqle);
+			throw new DaoException("Error while retrieving the list of discipline");
+		}
+		finally {
+			close(rs,pstmt,cnt);
+		}
+		
+		return l;
+	}
+	
+	/**
+	 * Adds a new discipline
+	 * @param d the discipline
+	 */
+	public void addDiscipline(Discipline d) {
+		
+		String sql = "INSERT INTO discipline(codecomp,namecomp,codedom,namedom) values(?,?,?,?)";
+		PreparedStatement pstmt = null;
+		Connection cnt = null;
+		
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			pstmt.setString(1, d.getCodecomp());
+			pstmt.setString(2, d.getNamecomp());
+			pstmt.setString(3, d.getCodedom());
+			pstmt.setString(4, d.getNamedom());
+			
+			if( pstmt.executeUpdate() == 0) {
+				logger.error("The discipline " + d + " has not been added to the database");
+				throw new DaoException("The discipline " + d + " has not been added to the database");
+			}
+		}
+		catch(SQLException sqle){
+			logger.error("Error while adding the new discipline " + d,sqle);
+			throw new DaoException("Error while adding the new discipline. The code " + d.getCodecomp() +" must be unique.");
+		}
+		finally {
+			close(null,pstmt,cnt);
+		}
+	}
+	
+	
+	/**
+	 * Modify a discipline
+	 * @param d the discipline
+	 */
+	public void modifyDiscipline(Discipline d) {
+		
+		Connection cnt = null;
+		/* Creation of the SQL query string */
+		String sql = "UPDATE discipline SET disciplineid = ?, codecomp = ?, namecomp = ?, codedom = ?, namedom = ? ";
+		sql += "WHERE disciplineid = ?";
+		
+		PreparedStatement pstmt = null;
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			
+			/* Applies the parameters to the query */
+			pstmt.setInt(1, d.getDisciplineid());
+			pstmt.setString(2, d.getCodecomp());
+			pstmt.setString(3, d.getNamecomp());
+			pstmt.setString(4, d.getCodedom());
+			pstmt.setString(5, d.getNamedom());
+			pstmt.setInt(6, d.getDisciplineid());
+						
+			if( pstmt.executeUpdate() == 0 ) {
+				logger.error("The discipline " + d + " has not been modified");
+				throw new DaoException("The discipline " + d + " has not been modified");
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while modifying the discipline " + d,sqle);
+			throw new DaoException("Error while modifying the discipline " + d);
+		}
+		finally {
+			close(null,pstmt,cnt);
+		}
+		
+	}
+	
+	/**
+	 * Gets the id of the next discipline which will be uploaded
+	 * @return the id of the discipline
+	 */
+	public int getNextDisciplineId() {
+		int id = 0 ;
+		ResultSet rs = null;
+		Statement stmt = null;
+		Connection cnt = null;
+		try {
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery("SELECT nextval('discipline_disciplineid_seq')");
+			
+			if( rs.next() ) 
+				id = rs.getInt("nextval");
+			else {
+				logger.error("The next discipline Id hasn't been retrieved");
+				throw new DaoException("The next discipline Id hasn't been retrieved");
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the next discipline Id",sqle);
+			throw new DaoException("Error while retrieving the discipline Id");
+		}
+		finally {
+			close(rs,stmt,cnt);
+		}
+		
+		return id;
+	}
+	
+		
+	/**
+	 * Get discipline by id 
+	 * @param id the id of the discipline
+	 * @return the discipline
+	 */
+	public Discipline getDiscipline(int id) {
+		Discipline d = null;
+		Connection cnt = null;
+		String sql = "SELECT * FROM discipline WHERE disciplineid = ?";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, id);
+			rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				d = new Discipline(
+						rs.getInt("disciplineid"),
+						rs.getString("codecomp"),
+						rs.getString("namecomp"),
+						rs.getString("codedom"),
+						rs.getString("namedom")
+				);
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the discipline " + id,sqle);
+			throw new DaoException("Error while retrieving the discipline " + id);
+		}
+		finally {
+			close(rs,pstmt,cnt);
+		}
+		
+		return d;
+	}
+	
+	
+	/**
+	 * Deletes a discipline by providing its id
+	 * @param disciplineid the id of the discipline
+	 */
+	public void deleteDiscipline(int disciplineid) {
+		
+		Connection cnt = null;
+		String sql = "DELETE FROM discipline WHERE disciplineid = ?";
+		PreparedStatement pstmt = null;
+		
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			pstmt.setInt(1, disciplineid);
+			if( pstmt.executeUpdate() == 0) {
+				logger.error("the discipline " + disciplineid + " has not been deleted");
+				throw new DaoException("the discipline " + disciplineid + " has not been deleted");
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while deleting the discipline " + disciplineid,sqle);
+			throw new DaoException("Error while deleting the discipline " + disciplineid);
+		}
+		finally {
+			close(null,pstmt,cnt);
+		}
+	}
+	
+	
+	/**
+	 * Gets the list of all levels
+	 * @return the list of levels
+	 */
+	public List<Level> getAllLevels() {
+		
+		List<Level> l = new ArrayList<Level>();
+		Connection cnt = null;
+		
+		String sql = "SELECT * FROM level order by name asc";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				l.add( new Level(
+					rs.getInt("levelid"),
+					rs.getString("code"),
+					rs.getString("name")
+				));
+			}
+		}	
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the list of level",sqle);
+			throw new DaoException("Error while retrieving the list of level");
+		}
+		finally {
+			close(rs,pstmt,cnt);
+		}
+		
+		return l;
+	}
+	
+	
+	
+	
+	/**
+	 * Return the result of find tracks function
+	 * 
+	 * @param params all parameters
+	 * @return a list of course
+	 */
+	public List<Course> getTracks(HashMap<String, String> params) {
+
+		Connection cnt = null;
+		List<Course> l = new ArrayList<Course>();
+
+		Set<String> keys = params.keySet();
+
+		/* Creation of the SQL query string */
+		String sql = "SELECT * FROM course c WHERE visible = true ";
+
+		if(!params.isEmpty() ) {
+
+			Iterator<String> it = keys.iterator();
+			while( it.hasNext()) {				
+				String param = it.next();
+
+				if(param.equals("authorName"))
+					sql += "AND UPPER(c.name)=UPPER('"+params.get(param)+"') ";
+
+				if(param.equals("authorFirstname"))
+					sql += "AND UPPER(c.firstname)=UPPER('"+params.get(param)+"') ";
+
+				if(param.equals("component"))
+					sql += "AND UPPER(c.formation) LIKE UPPER('"+params.get(param)+"-%') ";
+
+				if(param.equals("level"))
+					sql += "AND UPPER(c.formation) LIKE UPPER('%-"+params.get(param)+"') ";
+
+				if(param.equals("authorLogin"))
+					sql += "AND c.userid=(SELECT u.userid FROM \"user\" u WHERE u.login='"+params.get(param)+"') ";
+
+				if(param.equals("idBeg"))
+					sql += "AND c.courseid >= "+params.get(param)+" ";
+
+				if(param.equals("idLast"))
+					sql += "AND c.courseid <= "+params.get(param)+" ";
+
+				if(param.equals("dateBeg"))
+					sql += "AND c.date >= '"+params.get(param)+"' ";
+
+				if(param.equals("dateLast"))
+					sql += "AND c.date <= '"+params.get(param)+"' ";
+
+				if(param.equals("tags")) {
+
+					StringTokenizer st = new StringTokenizer(params.get(param));
+					while(st.hasMoreTokens()) {
+						sql += "AND c.courseid IN (SELECT t.courseid FROM tag t WHERE UPPER(t.tag)=UPPER('"+st.nextToken()+"')) ";
+					}
+
+				}
+			}
+
+		}
+		sql += "ORDER BY date DESC, courseid DESC";
+
+		//System.out.println(sql);
+
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery(sql);
+
+			/* Retrieves the records */								
+			while(rs.next()) {
+
+				l.add(new Course(
+						rs.getInt("courseid"),
+						rs.getTimestamp("date"),
+						rs.getString("type"),
+						rs.getString("title"),
+						rs.getString("description"),
+						rs.getString("formation"),
+						rs.getString("name"),
+						rs.getString("firstname"),
+						rs.getString("ipaddress"),
+						rs.getInt("duration"),
+						rs.getString("genre"),
+						rs.getBoolean("visible"),
+						rs.getInt("consultations"),
+						rs.getString("timing"),
+						rs.getInt("userid"),
+						rs.getString("adddocname"),
+						rs.getBoolean("download"),
+						rs.getBoolean("restrictionuds"),
+						rs.getInt("mediatype"),
+						rs.getShort("volume")
+				));
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the courses list for find tracks",sqle);
+			throw new DaoException("Error while retrieving the courses list for find tracks");
+		}
+		finally {
+			close(rs,stmt,cnt);
+		}
+
+
+		return l;
+	}
+	
+	
+	/**
+	 * Return the result of find stats function
+	 * 
+	 * @param params all parameters
+	 * @return a list of stats
+	 */
+	public HashMap<String, Integer> getStats(HashMap<String, String> params) {
+		//TODO calculate number of prod. students
+		
+		Connection cnt = null;
+		HashMap<String, Integer> hm = new HashMap<String, Integer>();
+
+		Set<String> keys = params.keySet();
+
+		/* Creation of the SQL query string */
+		String sql = "SELECT count(*) as nbcourses, sum(c.duration) as nbduration, sum(c.consultations) as nbviews, count(DISTINCT (COALESCE(INITCAP(c.name),'') || COALESCE(INITCAP(' ' || c.firstname),''))) AS nbauthors FROM course c WHERE visible = true ";
+
+		if(!params.isEmpty() ) {
+
+			Iterator<String> it = keys.iterator();
+			while( it.hasNext()) {				
+				String param = it.next();
+
+				if(param.equals("dateBeg"))
+					sql += "AND c.date >= '"+params.get(param)+"' ";
+
+				if(param.equals("dateLast"))
+					sql += "AND c.date <= '"+params.get(param)+"' ";
+
+				if(param.equals("level"))
+					sql += "AND UPPER(c.formation) LIKE UPPER('%-"+params.get(param)+"') ";
+
+				if(param.equals("component"))
+					sql += "AND UPPER(c.formation) LIKE UPPER('"+params.get(param)+"-%') ";
+
+				if(param.equals("domain"))
+					sql += "AND UPPER(SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1)))) in (select UPPER(d.codecomp) from discipline d where d.codedom='"+params.get(param)+"') ";
+
+				if(param.equals("account")) {
+					if(params.get(param).equals("student"))
+						sql += "AND userid in (select userid from \"user\" u where UPPER(u.profile)='"+params.get(param).toUpperCase()+"') ";
+					else
+						sql += "AND userid in (select userid from \"user\" u where u.type='"+params.get(param)+"') ";
+				}
+				
+				if(param.equals("weekday"))
+					sql += "AND to_char(c.date, 'D') in ('"+params.get(param)+"') ";
+
+			}
+		}
+		//System.out.println(sql);
+
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			cnt = datasrc.getConnection();
+			stmt = cnt.createStatement();
+			rs = stmt.executeQuery(sql);
+
+			/* Retrieves the records */								
+			if(rs.next()) {										
+				hm.put("nbcourses", rs.getInt("nbcourses"));
+				hm.put("nbduration", rs.getInt("nbduration"));
+				hm.put("nbviews", rs.getInt("nbviews"));
+				hm.put("nbauthors", rs.getInt("nbauthors"));
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the courses list for find tracks",sqle);
+			throw new DaoException("Error while retrieving the courses list for find tracks");
+		}
+		finally {
+			close(rs,stmt,cnt);
+		}
+
+
+		return hm;
+	}
+	
 	
 }

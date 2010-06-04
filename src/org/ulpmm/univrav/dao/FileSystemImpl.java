@@ -79,9 +79,10 @@ public class FileSystemImpl implements IFileSystem {
 	/** Logger log4j */
 	private static final Logger logger = Logger.getLogger(FileSystemImpl.class);
 	
-	/** The current volume disk **/
-	//private static Short volume;
-		
+	/** Database interface */
+	private static IDatabase db;
+	
+	
 	/**
 	 * Constructor for file system
 	 * 
@@ -94,12 +95,11 @@ public class FileSystemImpl implements IFileSystem {
 	 * @param defaultFlashFile Default Flash filename in the archive sent by the client
 	 * @param defaultScreenshotsFolder Folder which contains all screenshots in the archive sent by the client
 	 * @param comment Copyright comment
-	 * @param volume The current volume disk
 	 */
 	@SuppressWarnings("static-access")
 	public FileSystemImpl(String scriptsFolder, String ftpFolder, String coursesFolder, 
 		String liveFolder, String coursesUrl, String defaultMp3File, String defaultFlashFile, 
-		String defaultScreenshotsFolder, String comment) {
+		String defaultScreenshotsFolder, String comment, IDatabase db) {
 		
 		r = Runtime.getRuntime();
 		this.scriptsFolder = new File(scriptsFolder);
@@ -110,6 +110,7 @@ public class FileSystemImpl implements IFileSystem {
 		this.defaultFlashFile = defaultFlashFile;
 		this.defaultScreenshotsFolder = defaultScreenshotsFolder;
 		this.comment = comment;
+		this.db = db;
 	}
 	
 	/**
@@ -148,7 +149,8 @@ public class FileSystemImpl implements IFileSystem {
 			descriptionFile.createNewFile();
 			PrintWriter pw = new PrintWriter( new OutputStreamWriter( new FileOutputStream( descriptionFile), "ISO8859-15"));
 			pw.println("Author:" +  (c.getName() != null ? c.getName() + ( c.getFirstname() != null ? " " + c.getFirstname() : "") : "-"));
-			pw.println("Formation:" +  (c.getFormation() != null ? c.getFormation() : "-"));
+			String form = c.getFormation() != null ? db.getFormationFullName(c.getFormation()) : "-";
+			pw.println("Formation:" +  (form != null ? form : "-"));
 			pw.println("Title:" +  (c.getTitle() != null ? c.getTitle() : "-"));
 			pw.println("Subject:" +  (c.getDescription() != null ? c.getDescription() : "-"));
 			pw.println("Date:" + c.getDateString());
@@ -180,55 +182,15 @@ public class FileSystemImpl implements IFileSystem {
 		//smilCreation(c, c.getMediaFolder(), c.getMediasFileName()); // SMIL
 		//courseZip(c, c.getMediaFolder(), c.getMediasFileName()); // ZIP
 		videoslideCreation(c.getMediaFolder(), c.getMediasFileName()); // VS
+		mp4Tag(c, c.getMediaFolder(), c.getMediasFileName()+"_videoslide");
 	}
 	
-	/**
-	 * Create the jobs file for medias encodage
-	 * @param c the course
-	 * @param mediatype media type to encode
-	 * @param type CA,CV,MUA ou MUV
-	 * @param extension extension of the file for MU
-	 */
-	/*public void createJobsFile(Course c, int mediatype, String type, String extension) {
-				
-		File fichier = new java.io.File(coursesFolder+volume+"/jobs.txt");
 		
-		// Create the file if not exists
-		if(!fichier.exists()) {
-			try {
-				fichier.createNewFile(); 
-			}
-			catch (IOException e){
-				logger.error("error to create the file " + e);
-			}
-		}
-							
-		// Write into file
-		FileWriter writer = null;
-		String texte = c.getCourseid()+":"+"waiting:"+mediatype+":"+type+":"+coursesFolder+c.getMediaFolder()+":"+extension+"\n";
-		try{
-			writer = new FileWriter(fichier, true);
-			writer.write(texte,0,texte.length());
-		}catch(IOException e){
-			logger.error("error to write into jobs file " + e);
-		}finally{
-			if(writer != null){
-				try {
-					writer.close();
-				} catch (IOException e) {
-					logger.error("error to close jobs file " + e);
-				}
-			}
-		}
-		
-		
-	}*/
-	
 	/**
 	 * Creates a course from an uploaded audio or video media file
 	 * @param c the course to create
 	 * @param mediaFile the media file of the course to create
-	 * @param filename the filename
+	 * @param fileName the filename
 	 * @param extension the extension
 	 */
 	public void mediaUpload(Course c, FileItem mediaFile, String fileName, String extension) {
@@ -296,6 +258,8 @@ public class FileSystemImpl implements IFileSystem {
 				videoHighQualityConvert(c.getMediaFolder(), c.getMediasFileName() + ".flv", c.getMediasFileName());
 			else
 				videoHighQualityConvert(c.getMediaFolder(), "ori_"+c.getMediasFileName()+"."+extension, c.getMediasFileName());
+			
+			mp4Tag(c, c.getMediaFolder(), c.getMediasFileName());
 		}
 				
 	}
@@ -456,12 +420,11 @@ public class FileSystemImpl implements IFileSystem {
 	 * @param itunesImage The itunes image
 	 * @param itunesCategory The itunes category
 	 * @param itunesKeywords The itunes keywords
-	 * @param db the database interface
 	 */
 	public void rssCreation( List<Course> courses, String filePath, String rssName, 
 			String rssTitle, String rssDescription, String serverUrl, String rssImageUrl, 
 			String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
-			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords, IDatabase db) {
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
 		
 		try {		
 			// Création d'un nouveau DOM
@@ -679,6 +642,54 @@ public class FileSystemImpl implements IFileSystem {
 			        		coursEnclosure5.setAttribute("url",courseMediaUrl + "_videoslide.mp4");
 			        		coursEnclosure5.setAttribute("type","video/mp4");
 			        		coursEnclosure5.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + "_videoslide.mp4")));
+			        		item2.appendChild(coursEnclosure5);
+			        	}
+
+			        	Element itDuration2 = document.createElement("itunes:duration");
+			        	itDuration2.setTextContent(itDuration.getTextContent());
+			        	item2.appendChild(itDuration2);
+			        	
+			        	Element itItemKeywords2 = document.createElement("itunes:keywords");
+			        	itItemKeywords2.setTextContent(itItemKeywords.getTextContent());
+			        	item2.appendChild(itItemKeywords2);
+			        	
+			        }
+			        
+			        // MP4-HQ-HD ITEM
+			        if(course.isAvailable("hq")) {
+			        	Element item2 = document.createElement("item");
+			        	channel.appendChild(item2);
+
+			        	Element coursGuid2 = document.createElement("guid");
+			        	coursGuid2.setTextContent(rssName + "_" + course.getCourseid() + "_hq");
+			        	coursGuid2.setAttribute("isPermaLink","false");
+			        	item2.appendChild(coursGuid2);
+
+			        	Element coursTitle2 = document.createElement("title");
+			        	coursTitle2.setTextContent("Video - " + course.getTitle());
+			        	item2.appendChild(coursTitle2);
+
+			        	Element coursDescription2 = document.createElement("description");
+			        	coursDescription2.setTextContent(coursDescription.getTextContent());
+			        	item2.appendChild(coursDescription2);
+			        	
+			        	Element coursCategory2 = document.createElement("category");
+			        	coursCategory2.setTextContent(coursCategory.getTextContent());
+			        	item2.appendChild(coursCategory2);
+			        	
+			        	Element coursLink2 = document.createElement("link");
+			        	coursLink2.setTextContent(recordedInterfaceUrl + "?id=" + course.getCourseid() + "&type=hq");
+			        	item2.appendChild(coursLink2);
+			        	
+			        	Element coursPubDate2 = document.createElement("pubDate");
+			        	coursPubDate2.setTextContent(coursPubDate.getTextContent());
+			        	item2.appendChild(coursPubDate2);
+			        	
+			        	if(course.getGenre()==null && !course.isRestrictionuds()) {
+			        		Element coursEnclosure5 = document.createElement("enclosure");
+			        		coursEnclosure5.setAttribute("url",courseMediaUrl + ".mp4");
+			        		coursEnclosure5.setAttribute("type","video/mp4");
+			        		coursEnclosure5.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".mp4")));
 			        		item2.appendChild(coursEnclosure5);
 			        	}
 
@@ -927,6 +938,58 @@ public class FileSystemImpl implements IFileSystem {
 		}
 		catch( InterruptedException ie) {
 			logger.error("Error while adding the tags to the ogg file " + mediaFileName + ".ogg",ie);
+		}
+	}
+	
+	
+	/**
+	 * Adds the tags to the mp4 file
+	 * @param c the course
+	 * @param mediaFolder the folder which contains the media files of a course
+	 * @param mediaFileName the name used by all the media files of a course
+	 */ 
+	private static void mp4Tag(Course c, String mediaFolder, String mediaFileName) {
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+			ArrayList<String> command = new ArrayList<String>();
+						
+			command.add("AtomicParsley");
+			
+			command.add(mediaFileName + ".mp4");
+			
+			if( c.getTitle() != null) {
+				command.add("--title");
+				command.add(c.getTitle());
+			}
+			if( c.getName() != null) {
+				command.add("--artist");
+				command.add(c.getName() + (c.getFirstname() == null ? "" : " " + c.getFirstname()));
+			}
+			command.add("--year");
+			command.add(sdf.format(c.getDate()));
+			if( c.getFormation() != null) {
+				command.add("--album");
+				command.add(c.getFormation());
+			}
+			if( comment != null) {
+				command.add("--comment");
+				command.add(comment);
+			}
+			
+			command.add("--overWrite");
+			
+			Process p = r.exec(command.toArray(new String[command.size()]), null, new File(coursesFolder + mediaFolder));
+			
+			if( p.waitFor() != 0 ) {
+				logger.error("Error while adding the tags to the mp4 file " + mediaFileName + ".mp4");
+				throw new DaoException("Error while adding the tags to the mp4 file " + mediaFileName + ".mp4");
+			}
+		}
+		catch( IOException ioe) {
+			logger.error("Error while adding the tags to the mp4 file " + mediaFileName + ".mp4",ioe);
+		}
+		catch( InterruptedException ie) {
+			logger.error("Error while adding the tags to the mp4 file " + mediaFileName + ".mp4",ie);
 		}
 	}
 	
@@ -1327,4 +1390,5 @@ public class FileSystemImpl implements IFileSystem {
 		File newAddDocFile = new File(coursesFolder + mediafolder +"/additional_docs/" + new Date().getTime() + "." + addDocName);
 		addDocFile.renameTo(newAddDocFile);
 	}
+	
 }

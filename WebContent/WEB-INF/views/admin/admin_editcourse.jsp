@@ -68,67 +68,96 @@
 				    		<td>Description</td>
 				    		<td><input type="text" name="description" value="${course.description}" class="field"></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<!--<tr class="even">
 				    		<td>Formation</td>
 				    		<td><input type="text" name="formation" value="${course.formation}" class="field"></td>
-			    		</tr>
-			    		<tr class="odd">
+			    		</tr>-->
+			    		<tr class="even">
+						<td title="<fmt:message key="ib_level"/>"><fmt:message key="level"/></td>
+						<td>
+							<select name="level">
+								<c:forEach var="levels" items="${levels}">
+									<c:if test="${levelSelected == levels.code}">
+										<c:set var="selected" value="selected" />
+									</c:if>
+									<option value="${levels.code}" ${selected}>${levels.name}</option>
+									<c:remove var="selected"/>
+								</c:forEach>
+							</select>
+						</td>
+					</tr>
+								
+					<tr class="odd">
+						<td title="<fmt:message key="ib_form"/>"><fmt:message key="component"/></td>
+						<td>
+							<select name="component">
+								<c:forEach var="discipline" items="${disciplines}">
+									<c:if test="${discSelected == discipline.codecomp}">
+										<c:set var="selected" value="selected" />
+									</c:if>
+									<option value="${discipline.codecomp}" ${selected}>${discipline.namecomp}</option>
+									<c:remove var="selected"/>
+								</c:forEach>
+							</select>
+						</td>
+					</tr>
+			    		<tr class="even">
 				    		<td>Name</td>
 				    		<td><input type="text" name="name" value="${course.name}" class="field"></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>Firstname</td>
 				    		<td><input type="text" name="firstname" value="${course.firstname}" class="field"></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>Ipaddress</td>
 				    		<td><input type="text" name="ipaddress" value="${course.ipaddress}" class="field"></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>Duration</td>
 				    		<td><input type="hidden" name="duration" value="${course.duration}">${course.durationString}</td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>Password</td>
 				    		<td><input type="text" name="genre" value="${course.genre}" class="field"></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>Visible</td>
 				    		<td><input type="checkbox" name="visible" ${course.visible == true ? 'checked' : ''} ></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>Consultations</td>
 				    		<td><input type="hidden" name="consultations" value="${course.consultations}">${course.consultations}</td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>Timing</td>
 				    		<td><input type="hidden" name="timing" value="${course.timing}">${course.timing}</td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>UserId</td>
 				    		<td><input type="text" name="userid" value="${course.userid}" class="field"></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>Tags</td>
 				    		<td><input type="text" name="tags" value="${tags}" class="field"></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>AddDocName</td>
 				    		<td><input type="hidden" name="adddocname" value="${course.adddocname}">${course.adddocname}</td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>Download</td>
 				    		<td><input type="checkbox" name="download" ${course.download == true ? 'checked' : ''} ></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>Restriction Uds</td>
 				    		<td><input type="checkbox" name="restrictionuds" ${course.restrictionuds == true ? 'checked' : ''} ></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 			    			<td>MediaType</td>
 				    		<td><input type="text" name="mediatype" value="${course.mediatype}" class="field"></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>Volume</td>
 				    		<td><input type="hidden" name="volume" value="${course.volume}">${course.volume}</td>
 			    		</tr>

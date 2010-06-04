@@ -70,35 +70,64 @@
 				    		<td title="<fmt:message key="ib_desc"/>"><fmt:message key="description"/></td>
 				    		<td><input type="text" name="description" value="${course.description}" class="field"></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<!--<tr class="odd">
 				    		<td title="<fmt:message key="ib_form"/>"><fmt:message key="ue"/></td>
 				    		<td><input type="text" name="formation" value="${course.formation}" class="field"></td>
-			    		</tr>
-			    		<tr class="even">
+			    		</tr>-->
+			    		<tr class="odd">
+						<td title="<fmt:message key="ib_level"/>"><fmt:message key="level"/></td>
+						<td>
+							<select name="level">
+								<c:forEach var="levels" items="${levels}">
+									<c:if test="${levelSelected == levels.code}">
+										<c:set var="selected" value="selected" />
+									</c:if>
+									<option value="${levels.code}" ${selected}>${levels.name}</option>
+									<c:remove var="selected"/>
+								</c:forEach>
+							</select>
+						</td>
+					</tr>
+								
+					<tr class="even">
+						<td title="<fmt:message key="ib_form"/>"><fmt:message key="component"/></td>
+						<td>
+							<select name="component">
+								<c:forEach var="discipline" items="${disciplines}">
+									<c:if test="${discSelected == discipline.codecomp}">
+										<c:set var="selected" value="selected" />
+									</c:if>
+									<option value="${discipline.codecomp}" ${selected}>${discipline.namecomp}</option>
+									<c:remove var="selected"/>
+								</c:forEach>
+							</select>
+						</td>
+					</tr>
+			    		<tr class="odd">
 				    		<td title="<fmt:message key="ib_name"/>"><fmt:message key="name"/></td>
 				    		<td><input type="text" name="name" value="${course.name}" class="field"></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td title="<fmt:message key="ib_firstname"/>"><fmt:message key="firstname"/></td>
 				    		<td><input type="text" name="firstname" value="${course.firstname}" class="field"></td>
 			    		</tr>			    		
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td title="<fmt:message key="ib_code"/>"><fmt:message key="Code d'acc&egrave;s"/></td>
 				    		<td><input type="text" name="genre" value="${course.genre}" class="field"></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td title="<fmt:message key="ib_visible"/>">Visible</td>
 				    		<td><input type="checkbox" name="visible" ${course.visible == true ? 'checked' : ''} ></td>
 			    		</tr>			    		
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td title="<fmt:message key="ib_tags"/>">Tags</td>
 				    		<td><input type="text" name="tags" value="${tags}" class="field"></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td title="<fmt:message key="ib_dl"/>"><fmt:message key="Telecharger"/></td>
 				    		<td><input type="checkbox" name="download" ${course.download == true ? 'checked' : ''} ></td>
 			    		</tr>	
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds</td>
 				    		<td><input type="checkbox" name="restrictionuds" ${course.restrictionuds == true ? 'checked' : ''} ></td>
 			    		</tr>	    	

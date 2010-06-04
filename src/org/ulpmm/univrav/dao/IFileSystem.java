@@ -34,20 +34,12 @@ public interface IFileSystem {
 	 */
 	public void createDescriptionFile(Course c);
 	
-	/**
-	 * Create the jobs file for medias encodage
-	 * @param c the course
-	 * @param mediatype media type to encode
-	 * @param type CA,CV,MUA ou MUV
-	 * @param extension extension of the file for MU
-	 */
-	//public void createJobsFile(Course c, int mediatype, String type, String extension);
-	
+		
 	/**
 	 * Creates a course from an uploaded audio or video media file
 	 * @param c the course to create
 	 * @param mediaFile the media file of the course to create
-	 * @param filename the filename
+	 * @param fileName the filename
 	 * @param extension the extension
 	 */
 	public void mediaUpload(Course c, FileItem mediaFile, String fileName, String extension);
@@ -90,12 +82,11 @@ public interface IFileSystem {
 	 * @param itunesImage The itunes image
 	 * @param itunesCategory The itunes category
 	 * @param itunesKeywords The itunes keywords
-	 * @param db the database interface
 	 */
 	public void rssCreation( List<Course> courses, String filePath, String rssName, 
 			String rssTitle, String rssDescription, String serverUrl, String rssImageUrl, 
 			String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
-			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords,IDatabase db);
+			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords);
 	
 		
 	/**
@@ -156,5 +147,5 @@ public interface IFileSystem {
 	 * @param addDocName the name of the additional document
 	 */
 	public void deleteAdditionalDoc(String mediafolder, String addDocName);
-	
+		
 }
