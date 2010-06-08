@@ -29,7 +29,7 @@
 				<c:if test="${nameSelected == teacher}">
 					<c:set var="selected" value="selected" />
 				</c:if>
-				<option value="${teacher}" ${selected}>${teacher}</option>
+				<option value="${teacher}" title="${teacher}" ${selected}>${teacher}</option>
 				<c:remove var="selected"/>
 			</c:forEach>
 		</select>
@@ -41,7 +41,7 @@
 				<c:if test="${levelSelected == levels.code}">
 					<c:set var="selected" value="selected" />
 				</c:if>
-				<option value="${levels.code}" ${selected}>${levels.name}</option>
+				<option value="${levels.code}" title="${levels.name}" ${selected}>${levels.name}</option>
 				<c:remove var="selected"/>
 			</c:forEach>
 		</select>
@@ -53,7 +53,7 @@
 				<c:if test="${discSelected == discipline.codecomp}">
 					<c:set var="selected" value="selected" />
 				</c:if>
-				<option value="${discipline.codecomp}" ${selected} >${discipline.namecomp}</option>
+				<option value="${discipline.codecomp}" title="${discipline.namecomp}" ${selected} >${discipline.namecomp}</option>
 				<c:remove var="selected"/>
 			</c:forEach>
 		</select>
