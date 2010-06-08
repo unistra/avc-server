@@ -55,32 +55,14 @@
 	    			
 	    		<br>
 	    		
-	    		<a href="<c:url value="${statsUrl}" />">Univ-R AV access stats</a>
-	    		&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="./findTracks" />">Find tracks</a>
+	    		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="./findStats" />">Find stats</a>
+	    		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	    		<a href="<c:url value="${statsUrl}adminfms/fms_adminConsole.htm" />">FMS stats</a>
-	    		&nbsp;&nbsp;&nbsp;
-	    		<a href="<c:url value="./admin_versionclient?ip=all"/>">Clients version stats</a>
-	    		<br>
-	    		<br>
-	    		<a href="<c:url value="${oldStatsUrl}xml.html#Requested pages" />">XML stats</a>
-	    		&nbsp;&nbsp;&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}mp3.html#Requested pages" />">MP3 stats</a>
-	    		&nbsp;&nbsp;&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}pdf.html#Requested pages" />">PDF stats</a>
-	    		&nbsp;&nbsp;&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}flv.html#Requested pages" />">FLV stats</a>
-	    		&nbsp;&nbsp;&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}ogg.html#Requested pages" />">OGG stats</a>
-	    		&nbsp;&nbsp;&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}rm.html#Requested pages" />">RM stats</a>
-	    		&nbsp;&nbsp;&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}smil.html#Requested pages" />">SMIL stats</a>
-	    		&nbsp;&nbsp;&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}zip.html#Requested pages" />">ZIP stats</a>
-	    		&nbsp;&nbsp;&nbsp;
-	    		<a href="<c:url value="${oldStatsUrl}mp4.html#Requested pages" />">MP4 stats</a>
-	    		&nbsp;&nbsp;&nbsp;
-	    			    			
+	    		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	    		<a href="<c:url value="./admin_versionclient?ip=all"/>">Clients version</a>
+	    			    			    			
 	    	</div>
 	    	
 	    </div>

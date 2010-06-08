@@ -10,14 +10,14 @@
 
 .searchform {
 	width: 400px;
-	height:160px;
+	height:180px;
 	background-color: #444444;
 	float:left;	
 }
 
 .tagsform {
 	width: 400px;
-	height:160px;
+	height:180px;
 	background-color: #444444;
 	float:right;
 }

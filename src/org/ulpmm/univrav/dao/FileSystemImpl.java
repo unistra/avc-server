@@ -14,7 +14,7 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -343,8 +343,8 @@ public class FileSystemImpl implements IFileSystem {
 	public void returnFile(String filename, OutputStream out) {				
 		InputStream in = null;
 		try {
-			URL url = new URL(filename);
-			URLConnection urlConnection = url.openConnection();
+			URI uri = new URI(null,null,filename,null);
+			URLConnection urlConnection = uri.toURL().openConnection();
 			in=new BufferedInputStream(urlConnection.getInputStream());
 			//in = new BufferedInputStream(new FileInputStream(filename));
 			byte[  ] buf = new byte[4 * 1024];  // 4K buffer
