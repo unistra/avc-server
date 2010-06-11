@@ -39,56 +39,22 @@ public interface IService {
 	 * @param c the course to add
 	 * @param courseArchive the archive file of the course to add
 	 * @param tags list of tags
-	 * @param rssFolderPath the path of the folder to store the RSS files
-	 * @param rssName the filename of the general RSS file
-	 * @param rssTitle the title of the RSS files
-	 * @param rssDescription the description of the RSS files
 	 * @param serverUrl the URL of the application on the server
-	 * @param rssImageUrl the URL of the RSS image files
-	 * @param recordedInterfaceUrl the URL of the recorded interface
-	 * @param language the language of the RSS files
-	 * @param rssCategory the category of the RSS file
-	 * @param itunesAuthor The itunes author
-	 * @param itunesSubtitle The itunes subtitle
-	 * @param itunesSummary The itunes summary
-	 * @param itunesImage The itunes image
-	 * @param itunesCategory The itunes category
-	 * @param itunesKeywords The itunes keywords
 	 * @param sepEnc true if medias encodage is separated
 	 * @param coursesFolder the courses folder
 	 */
-	public void addCourse(Course c, String courseArchive, String tags, String rssFolderPath, 
-			String rssName, String rssTitle, String rssDescription, String serverUrl, 
-			String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
-			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords, boolean sepEnc, String coursesFolder);
+	public void addCourse(Course c, String courseArchive, String tags, String serverUrl, boolean sepEnc, String coursesFolder);
 		
 	/**
 	 * Creates a course from an uploaded audio or video media file
 	 * @param c the course to create
 	 * @param mediaFile the media file of the course to create
 	 * @param tags tags list
-	 * @param rssFolderPath the path of the folder to store the RSS files
-	 * @param rssName the filename of the general RSS file
-	 * @param rssTitle the title of the RSS files
-	 * @param rssDescription the description of the RSS files
 	 * @param serverUrl the URL of the application on the server
-	 * @param rssImageUrl the URL of the RSS image files
-	 * @param recordedInterfaceUrl the URL of the recorded interface
-	 * @param language the language of the RSS files
-	 * @param rssCategory the category of the RSS file
-	 * @param itunesAuthor The itunes author
-	 * @param itunesSubtitle The itunes subtitle
-	 * @param itunesSummary The itunes summary
-	 * @param itunesImage The itunes image
-	 * @param itunesCategory The itunes category
-	 * @param itunesKeywords The itunes keywords
 	 * @param sepEnc true if medias encodage is separated
 	 * @param coursesFolder the courses folder
 	 */
-	public void mediaUpload( Course c, FileItem mediaFile, String tags , String rssFolderPath, 
-		String rssName, String rssTitle, String rssDescription, String serverUrl, 
-		String rssImageUrl, String recordedInterfaceUrl, String language, String rssCategory, String itunesAuthor,
-		String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords, boolean sepEnc, String coursesFolder);
+	public void mediaUpload( Course c, FileItem mediaFile, String tags, String serverUrl, boolean sepEnc, String coursesFolder);
 	
 	/**
 	 * Gets a list of all the courses
@@ -795,4 +761,12 @@ public interface IService {
 	 * @return results
 	 */
 	public String generateXmlStats( HashMap<String, Integer> stats, String serverUrl, boolean showErrorMsg);
+	
+	
+	/**
+	 * Script to launch medias encodage
+	 * @param serverUrl the server url
+	 * @param job_line the job line
+	 */
+	public void launchJob(String serverUrl, String job_line);
 }

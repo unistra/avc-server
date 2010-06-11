@@ -26,7 +26,9 @@
 	<![endif]-->
 	
 	<c:forEach var="rssfile" items="${rssfiles}" begin="0" end="1">
-		<link rel="alternate" type="application/rss+xml" title="${rssfile.key}" href="${rssfile.value}"/>
+		<c:if test="${rssfile.key != null}">	
+			<link rel="alternate" type="application/rss+xml" title="${rssfile.key}" href="${rssfile.value}"/>
+		</c:if>
 	</c:forEach>
 	
 	<script type="text/javascript" src="../files/js/details.js"></script>
@@ -43,6 +45,9 @@
 	<meta name="keywords" content="${course.name},${course.title},${formationfullname}">
 	<META NAME=”robots” CONTENT=”nofollow”>
 
+	<!-- google analytics -->
+	<c:import url="include/google_analytics.jsp" />
+		
   </head>
   
   <body>
@@ -51,7 +56,17 @@
 	    	
 	    	<div class="firstline">
 		    	<div class="amphitheatre">${building} | ${amphi}</div>
-		    	<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
+		    	<div class="closeButton">
+		    		<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
+	    			<c:forEach var="rssfile" items="${rssfiles}" begin="0" end="1" varStatus="status">
+	    				<c:if test="${rssfile.key != null}">
+	    					<c:url value="itpc://${fn:substringAfter(serverUrl,\"://\")}/${fn:substringAfter(rssfile.value,\"../\")}" var="variableURL"></c:url>
+							<a href="${variableURL}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/itunes_abo.png" alt="itunes_icon"></a>					
+							<c:if test="${status.index == 0}"><a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/rss_abo.png" alt="rss_icon"><fmt:message key="Abonnement"/> <fmt:message key="Auteur"/></a>&nbsp;-&nbsp;</c:if>
+	    					<c:if test="${status.index == 1}"><a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/rss_abo.png" alt="rss_icon"><fmt:message key="Abonnement"/> <fmt:message key="Formation"/></a>&nbsp;-&nbsp;</c:if>
+	    				</c:if>
+	    			</c:forEach>
+	    		</div> 
 	    	</div>
 	    	
 	    	<table class="flashslide">

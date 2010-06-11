@@ -94,9 +94,7 @@ public class Application extends HttpServlet {
 	private static String defaultMp3File;
 	/** Default Flash filename in the archive sent by the client */
 	private static String defaultFlashFile;
-	/** Default screenshots folder in the archive sent by the client */
-	private static String defaultScreenshotsFolder;
-	
+		
 	/** Copyright comment */
 	private static String comment;
 	
@@ -230,8 +228,7 @@ public class Application extends HttpServlet {
 			// Default media filenames in the archive sent by the client
 			defaultMp3File = p.getProperty("defaultMp3File");
 			defaultFlashFile = p.getProperty("defaultFlashFile");
-			defaultScreenshotsFolder = p.getProperty("defaultScreenshotsFolder");
-			
+						
 			// Copyright comment
 			comment = service.cleanString(p.getProperty("comment"));
 			
@@ -348,7 +345,7 @@ public class Application extends HttpServlet {
 			FileSystemImpl fs = new FileSystemImpl(
 					getServletContext().getRealPath("/") + "scripts",
 					ftpFolder, coursesFolder, liveFolder, coursesUrl,
-					defaultMp3File, defaultFlashFile, defaultScreenshotsFolder, comment, db
+					defaultMp3File, defaultFlashFile, comment, db
 			);
 			
 			LdapAccessImpl ldap = new LdapAccessImpl(
@@ -1809,10 +1806,7 @@ public class Application extends HttpServlet {
 						volume
 				);
 					
-				service.addCourse(c, media, tags, getServletContext().getRealPath("/rss"), 
-						rssName, rssTitle, rssDescription, serverUrl, 
-						rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor,
-						itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords, sepEnc, coursesFolder);
+				service.addCourse(c, media, tags, serverUrl, sepEnc, coursesFolder);
 												
 				// Sending email for the user
 				String emailUserSubject = "Your new course on Univr-AV";
@@ -2118,10 +2112,7 @@ public class Application extends HttpServlet {
 								);
 
 								/* Sends the creation of the course to the service layer */
-								service.mediaUpload(c, item, tags, getServletContext().getRealPath("/rss"), 
-										rssName, rssTitle, rssDescription, serverUrl, 
-										rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor,
-										itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords,sepEnc,coursesFolder);
+								service.mediaUpload(c, item, tags, serverUrl,sepEnc,coursesFolder);
 
 								// Sending email for the user
 								String emailUserSubject = "Your new file on Univr-AV";
@@ -2260,7 +2251,6 @@ public class Application extends HttpServlet {
 		String message = "";
 		String messageType = "information";
 				
-		if(sepEnc) {
 			/* Verifies that all parameters are sent and are not empty */
 			if( request.getParameter("courseid") != null && request.getParameter("mediatype") != null && ! request.getParameter("courseid").equals("") && ! request.getParameter("mediatype").equals("")) {
 
@@ -2271,7 +2261,7 @@ public class Application extends HttpServlet {
 				Job j = service.getJob(courseid);
 				
 			    // If job not already done				
-				if (!j.getStatus().equals("done")) {
+				if (j!=null && !j.getStatus().equals("done")) {
 					
 					//update the job status
 					service.modifyJobStatus(courseid, "done");
@@ -2286,7 +2276,6 @@ public class Application extends HttpServlet {
 
 				}
 				else {
-					System.out.println("PASSELA");
 					messageType = "error";
 					message = "Error: job already done";
 				}
@@ -2295,10 +2284,7 @@ public class Application extends HttpServlet {
 				messageType = "error";
 				message = "Error: missing parameters";
 			}
-		}
-		else {
-			message = "separation of encodage not activated";
-		}
+		
 		
 		request.setAttribute("messagetype", messageType);
 		request.setAttribute("message", message);

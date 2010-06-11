@@ -37,6 +37,9 @@
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
 	<script type="text/javascript" src="../files/js/tags.js"></script>
 	
+	<!-- google analytics -->
+	<c:import url="include/google_analytics.jsp" />
+		
   </head>
   
   <body>

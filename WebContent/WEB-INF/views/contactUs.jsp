@@ -24,7 +24,10 @@
 	
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
-
+	
+	<!-- google analytics -->
+	<c:import url="include/google_analytics.jsp" />
+	
   </head>
   
   <body>

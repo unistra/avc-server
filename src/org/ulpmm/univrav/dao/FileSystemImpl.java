@@ -53,7 +53,7 @@ public class FileSystemImpl implements IFileSystem {
 	private static Runtime r;
 	
 	/** Folder which contains all scripts */
-	private static File scriptsFolder;
+	private static String scriptsFolder;
 	
 	/** Folder in which the courses are uploaded by FTP */
 	private static String ftpFolder;
@@ -69,10 +69,7 @@ public class FileSystemImpl implements IFileSystem {
 		
 	/** Default Flash filename in the archive sent by the client */
 	private static String defaultFlashFile;
-	
-	/** Folder which contains all screenshots in the archive sent by the client */
-	private static String defaultScreenshotsFolder;
-	
+		
 	/** Copyright comment */
 	private static String comment;
 	
@@ -93,22 +90,20 @@ public class FileSystemImpl implements IFileSystem {
 	 * @param coursesUrl The URL of courses
 	 * @param defaultMp3File Default MP3 filename in the archive sent by the client
 	 * @param defaultFlashFile Default Flash filename in the archive sent by the client
-	 * @param defaultScreenshotsFolder Folder which contains all screenshots in the archive sent by the client
 	 * @param comment Copyright comment
 	 */
 	@SuppressWarnings("static-access")
 	public FileSystemImpl(String scriptsFolder, String ftpFolder, String coursesFolder, 
 		String liveFolder, String coursesUrl, String defaultMp3File, String defaultFlashFile, 
-		String defaultScreenshotsFolder, String comment, IDatabase db) {
+		String comment, IDatabase db) {
 		
 		r = Runtime.getRuntime();
-		this.scriptsFolder = new File(scriptsFolder);
+		this.scriptsFolder = scriptsFolder;
 		this.ftpFolder = ftpFolder;
 		this.coursesFolder = coursesFolder;
 		this.coursesUrl = coursesUrl;
 		this.defaultMp3File = defaultMp3File;
 		this.defaultFlashFile = defaultFlashFile;
-		this.defaultScreenshotsFolder = defaultScreenshotsFolder;
 		this.comment = comment;
 		this.db = db;
 	}
@@ -163,29 +158,7 @@ public class FileSystemImpl implements IFileSystem {
 		}
 		
 	}
-	
-	/**
-	 * Creates all course media files on the file system
-	 * @param c the course to create
-	 */
-	public void generateCourseMedias(Course c) {	
-				
-		if( c.getType().equals("video")) {
-			convertAllToMp3(c.getMediaFolder(), c.getMediasFileName(), "flv"); // MP3
-		}
-		mp3Tag(c, c.getMediaFolder(), c.getMediasFileName()); //MP3
-		
-		pdfCreation(c.getMediaFolder(), c.getMediasFileName()); // PDF
-		mp3ToOgg(c.getMediaFolder(), c.getMediasFileName()); // OGG
-		oggTag(c, c.getMediaFolder(), c.getMediasFileName());
-		renameFile(c.getMediaFolder(), c.getMediasFileName() + "_new.ogg", c.getMediasFileName() + ".ogg");
-		//smilCreation(c, c.getMediaFolder(), c.getMediasFileName()); // SMIL
-		//courseZip(c, c.getMediaFolder(), c.getMediasFileName()); // ZIP
-		videoslideCreation(c.getMediaFolder(), c.getMediasFileName()); // VS
-		mp4Tag(c, c.getMediaFolder(), c.getMediasFileName()+"_videoslide");
-	}
-	
-		
+			
 	/**
 	 * Creates a course from an uploaded audio or video media file
 	 * @param c the course to create
@@ -209,59 +182,6 @@ public class FileSystemImpl implements IFileSystem {
 		
 		// create the description file
 		createDescriptionFile(c);
-	}
-	
-	
-	/**
-	 * Creates all media upload media files on the file system
-	 * @param c the media upload to create
-	 * @param extension the original extension of the media
-	 */
-	public void generateMediaUploadMedias(Course c, String extension) {	
-				
-		if(c.getType().equals("audio")) { // audio files
-			
-			if( extension.equals("mp3")) {
-				mp3Tag(c, c.getMediaFolder(), c.getMediasFileName());
-				mp3ToOgg(c.getMediaFolder(), c.getMediasFileName());
-				oggTag(c, c.getMediaFolder(), c.getMediasFileName());
-				renameFile(c.getMediaFolder(), c.getMediasFileName() + "_new.ogg", c.getMediasFileName() + ".ogg");
-			}
-			else if( extension.equals("ogg")) {
-				oggTag(c, c.getMediaFolder(), c.getMediasFileName());
-				renameFile(c.getMediaFolder(), c.getMediasFileName() + "_new."+extension, c.getMediasFileName() + "."+extension);
-				convertAllToMp3(c.getMediaFolder(), c.getMediasFileName(), extension);
-			}
-			else if( extension.equals("wma") || extension.equals("wav")) {
-				convertAllToMp3(c.getMediaFolder(), c.getMediasFileName(), extension);
-				mp3Tag(c, c.getMediaFolder(), c.getMediasFileName());
-				mp3ToOgg(c.getMediaFolder(), c.getMediasFileName());
-				oggTag(c, c.getMediaFolder(), c.getMediasFileName());
-				renameFile(c.getMediaFolder(), c.getMediasFileName() + "_new.ogg", c.getMediasFileName() + ".ogg");
-			}
-		}
-		else if(c.getType().equals("video")) { // video files
-						
-			if( !extension.equals("flv") ) {
-				videoConvert(c.getMediaFolder(), "ori_"+c.getMediasFileName()+"."+extension, c.getMediasFileName());
-			}
-						
-			injectMetadata(c.getMediaFolder(), c.getMediasFileName(), "flv");	
-			convertAllToMp3(c.getMediaFolder(), c.getMediasFileName(), "flv");
-			mp3Tag(c, c.getMediaFolder(), c.getMediasFileName());
-			mp3ToOgg(c.getMediaFolder(), c.getMediasFileName());
-			oggTag(c, c.getMediaFolder(), c.getMediasFileName());
-			renameFile(c.getMediaFolder(), c.getMediasFileName() + "_new.ogg", c.getMediasFileName() + ".ogg");
-			courseZip(c, c.getMediaFolder(), c.getMediasFileName());
-						
-			if( extension.equals("flv")) 	
-				videoHighQualityConvert(c.getMediaFolder(), c.getMediasFileName() + ".flv", c.getMediasFileName());
-			else
-				videoHighQualityConvert(c.getMediaFolder(), "ori_"+c.getMediasFileName()+"."+extension, c.getMediasFileName());
-			
-			mp4Tag(c, c.getMediaFolder(), c.getMediasFileName());
-		}
-				
 	}
 	
 	
@@ -687,7 +607,7 @@ public class FileSystemImpl implements IFileSystem {
 			        	
 			        	if(course.getGenre()==null && !course.isRestrictionuds()) {
 			        		Element coursEnclosure5 = document.createElement("enclosure");
-			        		coursEnclosure5.setAttribute("url",courseMediaUrl + ".mp4");
+			        		coursEnclosure5.setAttribute("url",courseMediaUrl + "_ipod.mp4");
 			        		coursEnclosure5.setAttribute("type","video/mp4");
 			        		coursEnclosure5.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".mp4")));
 			        		item2.appendChild(coursEnclosure5);
@@ -845,153 +765,6 @@ public class FileSystemImpl implements IFileSystem {
 		}
 	}
 	
-			
-	/**
-	 * Adds the id3 tags to the mp3 file
-	 * @param c the course
-	 * @param mediaFolder the folder which contains the media files of a course
-	 * @param mediaFileName the name used by all the media files of a course
-	 */ 
-	private static void mp3Tag(Course c, String mediaFolder, String mediaFileName) {
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-			ArrayList<String> command = new ArrayList<String>();
-			
-			command.add("mp3info");
-			if( c.getTitle() != null) {
-				command.add("-t");
-				command.add(c.getTitle());
-			}
-			if( c.getName() != null) {
-				command.add("-a");
-				command.add(c.getName() + (c.getFirstname() == null ? "" : " " + c.getFirstname()));
-			}
-			command.add("-y");
-			command.add(sdf.format(c.getDate()));
-			if( c.getFormation() != null) {
-				command.add("-l");
-				command.add(c.getFormation());
-			}
-			if( comment != null) {
-				command.add("-c");
-				command.add(comment);
-			}
-			command.add(mediaFileName + ".mp3");
-
-			Process p = r.exec(command.toArray(new String[command.size()]), null, new File(coursesFolder + mediaFolder));
-			if( p.waitFor() != 0 ) {
-				logger.error("Error while adding the tags to the mp3 file " + mediaFileName + ".mp3");
-				throw new DaoException("Error while adding the tags to the mp3 file " + mediaFileName + ".mp3");
-			}
-		}
-		catch( IOException ioe) {
-			logger.error("Error while adding the tags to the mp3 file " + mediaFileName + ".mp3",ioe);
-		}
-		catch( InterruptedException ie) {
-			logger.error("Error while adding the tags to the mp3 file " + mediaFileName + ".mp3",ie);
-		}
-	}
-	
-	/**
-	 * Adds the tags to the ogg file
-	 * @param c the course
-	 * @param mediaFolder the folder which contains the media files of a course
-	 * @param mediaFileName the name used by all the media files of a course
-	 */ 
-	private static void oggTag(Course c, String mediaFolder, String mediaFileName) {
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-			ArrayList<String> command = new ArrayList<String>();
-						
-			command.add("vorbiscomment");
-			command.add("-w");
-			if( c.getTitle() != null) {
-				command.add("-t");
-				command.add("title="+c.getTitle());
-			}
-			if( c.getName() != null) {
-				command.add("-t");
-				command.add("artist="+c.getName() + (c.getFirstname() == null ? "" : " " + c.getFirstname()));
-			}
-			command.add("-t");
-			command.add("date="+sdf.format(c.getDate()));
-			if( c.getFormation() != null) {
-				command.add("-t");
-				command.add("album="+c.getFormation());
-			}
-			if( comment != null) {
-				command.add("-t");
-				command.add("COMMENT="+comment);
-			}
-			command.add(mediaFileName + ".ogg");
-			command.add(mediaFileName + "_new.ogg");
-									
-
-			Process p = r.exec(command.toArray(new String[command.size()]), null, new File(coursesFolder + mediaFolder));
-			if( p.waitFor() != 0 ) {
-				logger.error("Error while adding the tags to the ogg file " + mediaFileName + ".ogg");
-				throw new DaoException("Error while adding the tags to the ogg file " + mediaFileName + ".ogg");
-			}
-		}
-		catch( IOException ioe) {
-			logger.error("Error while adding the tags to the ogg file " + mediaFileName + ".ogg",ioe);
-		}
-		catch( InterruptedException ie) {
-			logger.error("Error while adding the tags to the ogg file " + mediaFileName + ".ogg",ie);
-		}
-	}
-	
-	
-	/**
-	 * Adds the tags to the mp4 file
-	 * @param c the course
-	 * @param mediaFolder the folder which contains the media files of a course
-	 * @param mediaFileName the name used by all the media files of a course
-	 */ 
-	private static void mp4Tag(Course c, String mediaFolder, String mediaFileName) {
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-			ArrayList<String> command = new ArrayList<String>();
-						
-			command.add("AtomicParsley");
-			
-			command.add(mediaFileName + ".mp4");
-			
-			if( c.getTitle() != null) {
-				command.add("--title");
-				command.add(c.getTitle());
-			}
-			if( c.getName() != null) {
-				command.add("--artist");
-				command.add(c.getName() + (c.getFirstname() == null ? "" : " " + c.getFirstname()));
-			}
-			command.add("--year");
-			command.add(sdf.format(c.getDate()));
-			if( c.getFormation() != null) {
-				command.add("--album");
-				command.add(c.getFormation());
-			}
-			if( comment != null) {
-				command.add("--comment");
-				command.add(comment);
-			}
-			
-			command.add("--overWrite");
-			
-			Process p = r.exec(command.toArray(new String[command.size()]), null, new File(coursesFolder + mediaFolder));
-			
-			if( p.waitFor() != 0 ) {
-				logger.error("Error while adding the tags to the mp4 file " + mediaFileName + ".mp4");
-				throw new DaoException("Error while adding the tags to the mp4 file " + mediaFileName + ".mp4");
-			}
-		}
-		catch( IOException ioe) {
-			logger.error("Error while adding the tags to the mp4 file " + mediaFileName + ".mp4",ioe);
-		}
-		catch( InterruptedException ie) {
-			logger.error("Error while adding the tags to the mp4 file " + mediaFileName + ".mp4",ie);
-		}
-	}
 	
 	/** 
 	 * Renames a file
@@ -1023,7 +796,7 @@ public class FileSystemImpl implements IFileSystem {
 	 */
 	private static void injectMetadata( String mediaFolder, String mediaFileName, String mediaFileExtension) {
 		try {
-			Process p = r.exec("bash injectMetadata.sh "  + coursesFolder + mediaFolder + " " + mediaFileName + " " + mediaFileExtension, null, scriptsFolder);
+			Process p = r.exec("bash injectMetadata.sh "  + coursesFolder + mediaFolder + " " + mediaFileName + " " + mediaFileExtension, null, new File(scriptsFolder));
 			if( p.waitFor() != 0 ) {
 				logger.error("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension);
 				throw new DaoException("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension);
@@ -1037,27 +810,6 @@ public class FileSystemImpl implements IFileSystem {
 		}
 	}
 	
-	/** 
-	 * Launches a bash script which converts media file to mp3
-	 * @param mediaFolder the folder which contains the media files of a course
-	 * @param mediaFileName the name used by all the media files of a course
-	 * @param mediaFileExtension the extension used by the media file
-	 */
-	private static void convertAllToMp3( String mediaFolder, String mediaFileName, String mediaFileExtension) {
-		try {
-			Process p = r.exec("bash convertAll2Mp3.sh "  + coursesFolder + mediaFolder + " " + mediaFileName + " " + mediaFileExtension, null, scriptsFolder);
-			if( p.waitFor() != 0 ) {
-				logger.error("Error while converting the file " + mediaFileName + "." + mediaFileExtension + " to mp3");
-				throw new DaoException("Error while converting file " + mediaFileName + "." + mediaFileExtension + " to mp3");
-			}
-		}
-		catch(IOException ioe) {
-			logger.error("Error while converting file " + mediaFileName + "." + mediaFileExtension + " to mp3",ioe);
-		}
-		catch(InterruptedException ie) {
-			logger.error("Error while converting file " + mediaFileName + "." + mediaFileExtension + " to mp3",ie);
-		}
-	}
 	
 	/** 
 	 * Sets the "duration" attribute of the Course object by identifying the media file
@@ -1071,7 +823,7 @@ public class FileSystemImpl implements IFileSystem {
 		
 		try {
 			//Process p = r.exec("mp3info -p %S " +  mediaFileName + ".mp3", null, new File(coursesFolder + mediaFolder));
-			Process p = r.exec("bash mediaduration.sh " + coursesFolder + mediaFolder + " " + mediaFileName + " " + mediaFileExtension, null, scriptsFolder);
+			Process p = r.exec("bash mediaduration.sh " + coursesFolder + mediaFolder + " " + mediaFileName + " " + mediaFileExtension, null, new File(scriptsFolder));
 			if( p.waitFor() != 0 ) {
 				logger.error("Error while getting the length of the file " + mediaFileName + "."+mediaFileExtension);
 				throw new DaoException("Error while getting the length of the file " + mediaFileName + "."+mediaFileExtension);
@@ -1091,117 +843,7 @@ public class FileSystemImpl implements IFileSystem {
 		}
 	}
 	
-	/** 
-	 * Converts the mp3 file to a ogg file using the mp32ogg command
-	 * @param mediaFolder the folder which contains the media files of a course
-	 * @param mediaFileName the name used by all the media files of a course
-	 */
-	private static void mp3ToOgg(String mediaFolder, String mediaFileName) {
-		try {
-			//Process p = r.exec("mp32ogg " + mediaFileName + ".mp3", null, new File(coursesFolder + mediaFolder));
-			Process p = r.exec("bash convertAll2Ogg.sh "  + coursesFolder + mediaFolder + " " + mediaFileName + " " + "mp3", null, scriptsFolder);
-			if( p.waitFor() != 0 ) {
-				logger.error("Error while converting the mp3 file " + mediaFileName + ".mp3 to ogg");
-				throw new DaoException("Error while converting the mp3 file " + mediaFileName + ".mp3 to ogg");
-			}
-		} catch (IOException ioe) {
-			logger.error("Error while converting the mp3 file " + mediaFileName + ".mp3 to ogg",ioe);
-		}
-		catch( InterruptedException ie) {
-			logger.error("Error while converting the mp3 file " + mediaFileName + ".mp3 to ogg",ie);
-		}
-	}
 	
-	/**
-	 * Create video slide
-	 * @param mediaFolder the folder which contains the media files of a course
-	 * @param mediaFileName the name used by all the media files of a course
-	 */
-	private static void videoslideCreation(String mediaFolder, String mediaFileName) {
-		try {
-			Process p = r.exec("bash videoslide.sh " + coursesFolder + mediaFolder + " " + mediaFileName, null, scriptsFolder);
-			if( p.waitFor() != 0 ) {
-				logger.error("Error while creating the videoslide of " + mediaFileName);
-				throw new DaoException("Error while creating the videoslide of " + mediaFileName);
-			}
-		} catch (IOException ioe) {
-			logger.error("Error while creating the videoslide of " + mediaFileName,ioe);
-		}
-		catch( InterruptedException ie) {
-			logger.error("Error while creating the videoslide of " + mediaFileName,ie);
-		}
-	}
-	
-	/**
-	 * Launches a python script which creates a pdf file with the screenshots
-	 * @param mediaFolder the folder which contains the media files of a course
-	 * @param mediaFileName the name used by all the media files of a course
-	 */
-	private static void pdfCreation(String mediaFolder, String mediaFileName) {
-		try {
-			Process p = r.exec("python CreatePDF.py " + coursesFolder + mediaFolder + " " + mediaFileName, null, scriptsFolder); 
-			if( p.waitFor() != 0 ) {
-				logger.error("Error while creating the pdf file " + mediaFileName + ".pdf");
-				throw new DaoException("Error while creating the pdf file " + mediaFileName + ".pdf");
-			}
-		}
-		catch(IOException ioe) {
-			logger.error("Error while creating the pdf file " + mediaFileName + ".pdf",ioe);
-		}
-		catch(InterruptedException ie) {
-			logger.error("Error while creating the pdf file " + mediaFileName + ".pdf",ie);
-		}
-	}
-		
-	/**
-	 * Creates the smil file
-	 * @param c the course
-	 * @param mediaFolder the folder which contains the media files of a course
-	 * @param mediaFileName the name used by all the media files of a course
-	 */
-/*	private void smilCreation(Course c, String mediaFolder, String mediaFileName) {
-		ISmil smil;
-		
-		if( c.getType().equals("audio")) {
-			smil = new LocalAudioSmil1(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, coursesUrl, comment, getTimecodes(c.getMediaFolder()));
-			smil.smilCreation();
-		}
-		else if( c.getType().equals("video")) {
-			String mediaFileExtension = ".flv";		
-			smil = new LocalVideoSmil1(c, coursesFolder + mediaFolder + "/", mediaFolder, mediaFileName, mediaFileExtension, coursesUrl, comment, getTimecodes(c.getMediaFolder()));
-			smil.smilCreation();
-		}
-	}*/
-	
-	/**
-	 * Creates a zip file containing the mp3, rm, or flv file, the smil file, and the pdf file
-	 * @param c the course
-	 * @param mediaFolder the folder which contains the media files of a course
-	 * @param mediaFileName the name used by all the media files of a course
-	 */
-	private static void courseZip(Course c, String mediaFolder, String mediaFileName) {
-		String mediaFileExtension = "";
-		if( c.getType().equals("audio") )
-			mediaFileExtension = ".mp3";
-		else if( c.getType().equals("video") )
-			mediaFileExtension = ".flv";
-				
-		String command = "zip -r " + mediaFileName + ".zip description.txt local_" + mediaFileName + ".smil" + " " + defaultScreenshotsFolder + " " + mediaFileName + mediaFileExtension + " " + mediaFileName + ".pdf";
-		
-		try {
-			Process p = r.exec(command, null, new File(coursesFolder + mediaFolder));
-			if( p.waitFor() != 0 ) {
-				logger.error("Error while creating the zip file " + mediaFileName + ".zip");
-				throw new DaoException("Error while creating the zip file " + mediaFileName + ".zip");
-			}
-			
-		} catch (IOException ioe) {
-			logger.error("Error while creating the zip file " + mediaFileName + ".zip",ioe);
-		}
-		catch(InterruptedException ie) {
-			logger.error("Error while creating the zip file " + mediaFileName + ".zip",ie);
-		}
-	}
 	
 	/**
 	 * To save the xml file of the Rss flux
@@ -1261,67 +903,7 @@ public class FileSystemImpl implements IFileSystem {
 		}
 	}
 	
-	/** 
-	 * converts a video format into .flv format
-	 * @param mediaFolder the folder which contains the media files of a course
-	 * @param inputFileName the input video filename (with extension)
-	 * @param outputName the output video name (without extension)
-	 */
-	private static void videoConvert( String mediaFolder, String inputFileName, String outputName) {
-		
-		try {						
-			String[] cmd = new String[] {"bash" , "convertAll2Flv.sh" , coursesFolder + mediaFolder , inputFileName , outputName, "./calculate_padding.sh"};
-			Process p = r.exec(cmd, null, scriptsFolder);
-			
-			/* Used to avoid ffmpeg crash ... */
-			InputStream in=p.getInputStream();
-			BufferedReader entree = new BufferedReader(new InputStreamReader(in));
-
-			while( entree.readLine() != null );
-			
-			if( p.waitFor() != 0 ) {
-				logger.error("Error while converting the file " + inputFileName + " to flv");
-				throw new DaoException("Error while converting the file " + inputFileName + " to flv");
-			}
-		}
-		catch(IOException ioe) {
-			logger.error("Error while converting the file " + inputFileName + " to flv",ioe);
-		}
-		catch(InterruptedException ie) {
-			logger.error("Error while converting the file " + inputFileName + " to flv",ie);
-		}
-	}
 	
-	/** 
-	 * converts a video format into .mp4 format in High Quality
-	 * @param mediaFolder the folder which contains the media files of a course
-	 * @param inputFileName the input video filename (with extension)
-	 * @param outputName the output video name (without extension)
-	 */
-	private static void videoHighQualityConvert( String mediaFolder, String inputFileName, String outputName) {
-				
-		try {						
-			String[] cmd = new String[] {"bash" , "convertAll2Mp4.sh" , coursesFolder + mediaFolder , inputFileName , outputName, "./calculate_padding.sh"};
-			Process p = r.exec(cmd, null, scriptsFolder);
-			
-			// Used to avoid ffmpeg crash ... 
-			InputStream in=p.getInputStream();
-			BufferedReader entree = new BufferedReader(new InputStreamReader(in));
-
-			while( entree.readLine() != null );
-			
-			if( p.waitFor() != 0 ) {
-				logger.error("Error while converting the file " + inputFileName + " to mp4");
-				throw new DaoException("Error while converting the file " + inputFileName + " to mp4");
-			}
-		}
-		catch(IOException ioe) {
-			logger.error("Error while converting the file " + inputFileName + " to mp4",ioe);
-		}
-		catch(InterruptedException ie) {
-			logger.error("Error while converting the file " + inputFileName + " to mp4",ie);
-		}
-	}
 		
 	/**
 	 * Send an email to confirm the add of the new course 
@@ -1334,7 +916,7 @@ public class FileSystemImpl implements IFileSystem {
 	  String[] command_array = {"bash","mail.sh",message,subject, email};
 		
 		try {
-			Process p = r.exec(command_array, null, scriptsFolder);
+			Process p = r.exec(command_array, null, new File(scriptsFolder));
 						
 			if( p.waitFor() != 0 ) {
 				logger.error("Error while send the mail to " + email);
@@ -1389,6 +971,31 @@ public class FileSystemImpl implements IFileSystem {
 		File addDocFile = new File(coursesFolder + mediafolder +"/additional_docs/" + addDocName);
 		File newAddDocFile = new File(coursesFolder + mediafolder +"/additional_docs/" + new Date().getTime() + "." + addDocName);
 		addDocFile.renameTo(newAddDocFile);
+	}
+	
+	
+	/**
+	 * Script to launch medias encodage
+	 * @param serverUrl the server url
+	 * @param job_line the job line
+	 */
+	public void launchJob(String serverUrl, String job_line) {
+		
+		try {	
+			String[] cmd = new String[] {"nice", "-n", "19", "bash" , "JobEnc.sh" , scriptsFolder+"/jobs_encodage" , serverUrl, coursesFolder, job_line};		
+			Process p = r.exec(cmd, null, new File(scriptsFolder+"/jobs_encodage"));
+			
+			if( p.waitFor() != 0 ) {
+				logger.error("Error while lauching the job");
+				throw new DaoException("Error while lauching the job");
+			}
+		}
+		catch(IOException ioe) {
+			logger.error("Error while lauching the job ",ioe);
+		}
+		catch(InterruptedException ie) {
+			logger.error("Error while lauching the job ",ie);
+		}		
 	}
 	
 }

@@ -22,11 +22,6 @@ public interface IFileSystem {
 	 */
 	public void addCourse(Course c, String courseArchive);
 	
-	/**
-	 * Creates all course media files on the file system
-	 * @param c the course to create
-	 */
-	public void generateCourseMedias(Course c);
 	
 	/**
 	 * Create the file description.txt
@@ -44,13 +39,7 @@ public interface IFileSystem {
 	 */
 	public void mediaUpload(Course c, FileItem mediaFile, String fileName, String extension);
 	
-	/**
-	 * Creates all media upload media files on the file system
-	 * @param c the media upload to create
-	 * @param extension the original extension of the media
-	 */
-	public void generateMediaUploadMedias(Course c, String extension);
-	
+		
 	/**
 	 * Reads the timecodes csv file and creates the timecodes list
 	 * @param mediaFolder the folder where the timecode list is stored
@@ -147,5 +136,13 @@ public interface IFileSystem {
 	 * @param addDocName the name of the additional document
 	 */
 	public void deleteAdditionalDoc(String mediafolder, String addDocName);
+	
+	
+	/**
+	 * Script to launch medias encodage
+	 * @param serverUrl the server url
+	 * @param job_line the job line
+	 */
+	public void launchJob(String serverUrl, String job_line);
 		
 }

@@ -9,7 +9,9 @@
 <html>
   <head>
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/></title>
-	<script type="text/javascript" src="../files/js/xml2json.js"></script>		
+	<script type="text/javascript" src="../files/js/xml2json.js"></script>	
+	<!-- google analytics -->
+	<c:import url="include/google_analytics.jsp" />
   </head>
   
 	<body>
