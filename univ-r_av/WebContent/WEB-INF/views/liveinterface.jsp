@@ -24,7 +24,10 @@
 	
 	<script type="text/javascript" src="../files/js/ieupdate.js"></script>
 	<script type="text/javascript" src="../files/jwflvplayer/swfobject.js"></script>
-
+	
+	<!-- google analytics -->
+	<c:import url="include/google_analytics.jsp" />
+	
   </head>
   
   <body>

@@ -36,7 +36,9 @@
 	
 	<meta name="keywords" content="${course.name},${course.title},${course.formation}">
 	
-
+	<!-- google analytics -->
+	<c:import url="include/google_analytics.jsp" />
+	
   </head>
   
   <body>

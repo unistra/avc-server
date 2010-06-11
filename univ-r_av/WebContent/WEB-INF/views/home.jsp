@@ -38,6 +38,9 @@
 		
 	<meta name="keywords" content="flash, cours audio, cours video, cours live, cours en direct, synchronisation de médias, audiocours, videocours">
 	
+	<!-- google analytics -->
+	<c:import url="include/google_analytics.jsp" />
+		
   </head>
   
   <body>
