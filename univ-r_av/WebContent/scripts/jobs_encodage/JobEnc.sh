@@ -24,7 +24,7 @@ fi
 
 if test -z "$3"
 then
-	echo "CRSMNTPNT is needed. Ex: /audiovideocours/cours/"
+	echo "CRSMNTPNT is needed. Ex: /audiovideocours/cours"
 	exit
 fi
 
@@ -42,7 +42,7 @@ JobState=`echo $ligne | cut -d: -f2`
 MediaType=`echo $ligne | cut -d: -f3`
 JobType=`echo $ligne | cut -d: -f4`
 MediaFolder=`echo $ligne | cut -d: -f5`
-MediaFolder="$CRSMNTPNT$MediaFolder"
+MediaFolder="$CRSMNTPNT/$MediaFolder"
 Extension=`echo $ligne | cut -d: -f6`
 
 #Extraction des Metadonnées
