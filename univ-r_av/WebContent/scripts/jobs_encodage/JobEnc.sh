@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script to encode medias
-# $1 scripts repertory path
-# $2 server url
+# $1 scripts directory path
+# $2 audiovideocours server url
 # $3 course folder
 # Optional : $4 job ligne if separate medias encodage is true. Else nothing.
 
@@ -31,6 +31,7 @@ fi
 # Lire le job et récupérer la première ligne en mode "waiting"
 if test -z "$4"
 then
+	sleep $(($RANDOM%60))
 	ligne=`python $PTHSCR/accessbase.py`
 fi
 
