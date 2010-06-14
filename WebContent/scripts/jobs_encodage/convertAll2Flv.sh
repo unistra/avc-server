@@ -13,4 +13,4 @@ PL=`echo $donnees | cut -d: -f3`
 PHB=`echo $donnees | cut -d: -f4`
 
 cd $1
-/usr/bin/ffmpeg -i "$2" -ac 2 -ar 44100 -b 400000 -s "$L"x"$H" -padleft $PL -padright $PL -padtop $PHB -padbottom $PHB -aspect 4:3 -y "$3".flv
+/usr/bin/ffmpeg -v -1 -i "$2" -ac 2 -ar 44100 -b 400000 -s "$L"x"$H" -padleft $PL -padright $PL -padtop $PHB -padbottom $PHB -aspect 4:3 -y "$3".flv &> /dev/null
