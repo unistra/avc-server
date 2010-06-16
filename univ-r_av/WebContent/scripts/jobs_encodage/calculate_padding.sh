@@ -28,13 +28,13 @@ PAD=$(echo $((($DesiW-($wforH))/2)))
 RESTE=$(echo $(($PAD % 2)))
   if (( $RESTE != 0 ))
   then
-        PAD=$(echo $(($PAD + 1)))
+        PAD=$(echo $(($PAD - 1)))
   fi
 
 RESTE2=$(echo $(($wforH % 2)))
   if (( $RESTE2 != 0 ))
   then
-        wforH=$(echo $(($wforH + 1)))
+        wforH=$(echo $(($wforH - 1)))
   fi
 
 PADL=$PAD
@@ -46,13 +46,13 @@ PAD=$(echo $((($DesiH-($hforW))/2)))
 RESTE=$(echo $(($PAD % 2)))
   if (( $RESTE != 0 ))
   then
-        PAD=$(echo $(($PAD + 1)))
+        PAD=$(echo $(($PAD - 1)))
   fi
 
 RESTE2=$(echo $(($hforW % 2)))
   if (( $RESTE2 != 0 ))
   then
-        hforW=$(echo $(($hforW + 1)))
+        hforW=$(echo $(($hforW - 1)))
   fi
 
 PADHB=$PAD
