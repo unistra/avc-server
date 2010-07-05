@@ -41,6 +41,42 @@
 		var slidesurl = "${slidesurl}";
 		var timing = ${timing};
 	</script>
+	<c:if test="${course.type!='video'}">
+		<script type="text/javascript">
+     		var flashvars =
+     	 	{
+       			file:					'${courseurl}', 
+        		id:						'flashvideo', 
+       			autostart:				'true',
+       			image:					'../files/img/logo_audio.png' 			  
+     		};
+     	</script>
+	</c:if>
+	<c:if test="${course.type=='video'}">
+		<script type="text/javascript">
+    		var flashvars =
+     	 	{
+       	 		file:					'${courseurl}', 
+        		id:						'flashvideo', 
+       			autostart:				'true',
+       			image:					'../files/img/logo_audio.png',
+           		type:					'lighttpd'			  
+     		};
+     	</script>
+	</c:if>		          	    
+	<script type="text/javascript">
+    	var params =
+    	{
+    		allowfullscreen:		'true', 
+       		allowscriptaccess:		'always'
+     	 };
+
+      	var attributes =
+     	 {
+     		id:						'flashvideo', 
+       		name:					'flashvideo'
+     	}; 		
+	</script>
 	
 	<meta name="keywords" content="${course.name},${course.title},${formationfullname}">
 	<META NAME=”robots” CONTENT=”nofollow”>
@@ -72,60 +108,23 @@
 	    	<table class="flashslide">
 	    	<tr>
 				<td id="cellule_flash">
-				
-					<c:if test="${course.type!='video'}">
+							   				 		
+   				 	<!-- player flash if slides not null -->
+					<c:if test="${fn:length(slides) != 0}">
 						<script type="text/javascript">
-     				 		var flashvars =
-     						 {
-       			     			file:					'${courseurl}', 
-        			 			id:						'flashvideo', 
-       				 			autostart:				'true',
-       				 			image:					'../files/img/logo_audio.png' 			  
-     				 		};
-     					</script>
+							swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '320', '260', '9.0.124', false, flashvars, params, attributes);
+   				 		</script>		 
+   				 		<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>		 	            	
+	            		<div class="highquality">
+	            			<c:if test="${fn:contains(mediaLst, 'hq')}">
+	            				<c:url var="courseaccess" scope="page" value="./courseaccess">
+									<c:param name="id" value="${course.courseid}"/>
+									<c:param name="type" value="hq"/>
+								</c:url>
+								<a href="<c:out value="${courseaccess}" />"><b><fmt:message key="Highquality"/></b></a>	
+							</c:if>
+						</div>
 					</c:if>
-					<c:if test="${course.type=='video'}">
-						<script type="text/javascript">
-     				 		var flashvars =
-     						 {
-       			     			file:					'${courseurl}', 
-        			 			id:						'flashvideo', 
-       				 			autostart:				'true',
-       				 			image:					'../files/img/logo_audio.png',
-           				 		type:					'lighttpd'			  
-     				 		};
-     					</script>
-					</c:if>
-					          	    
-	            	<script type="text/javascript">
-     				 
-     				 var params =
-     				 {
-       			     	allowfullscreen:		'true', 
-       					allowscriptaccess:		'always'
-     				 };
-
-      				var attributes =
-     				 {
-     				 	id:						'flashvideo', 
-       					name:					'flashvideo'
-     				 };
-
-    				  swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '320', '260', '9.0.124', false, flashvars, params, attributes);
-    				  
-   				 	</script>
-   				 
-   				 	<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>
-   				 	            	
-	            	<div class="highquality">
-	            		<c:if test="${fn:contains(mediaLst, 'hq')}">
-	            			<c:url var="courseaccess" scope="page" value="./courseaccess">
-								<c:param name="id" value="${course.courseid}"/>
-								<c:param name="type" value="hq"/>
-							</c:url>
-							<a href="<c:out value="${courseaccess}" />"><b><fmt:message key="Highquality"/></b></a>	
-						</c:if>
-					</div>
 	                                   
 	                  
 					<div class="info"> 
@@ -222,7 +221,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="videoslide"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/videoslide.png" alt="vs"></a><br><b id="type">mp4</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: pageTracker._trackPageview('/downloads/videoslide');"><img src="../files/styles/${sessionScope.style}/img/videoslide.png" alt="vs"></a><br><b id="type">mp4</b>
 							</td>
 						</c:if>
 											
@@ -233,7 +232,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="ogg"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/ogg_v2.png" alt="ogg"></a><br><b id="type">ogg</b>	
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: pageTracker._trackPageview('/downloads/ogg');"><img src="../files/styles/${sessionScope.style}/img/ogg_v2.png" alt="ogg"></a><br><b id="type">ogg</b>	
 							</td>
 						</c:if>
 						
@@ -244,7 +243,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="mp3"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/mp3_v2.png" alt="mp3"></a><br><b id="type">mp3</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: pageTracker._trackPageview('/downloads/mp3');"><img src="../files/styles/${sessionScope.style}/img/mp3_v2.png" alt="mp3"></a><br><b id="type">mp3</b>
 							</td>
 						</c:if>
 							
@@ -255,7 +254,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="zip"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/winzip3.png" alt="zip"></a><br><b id="type">zip</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: pageTracker._trackPageview('/downloads/zip');"><img src="../files/styles/${sessionScope.style}/img/winzip3.png" alt="zip"></a><br><b id="type">zip</b>
 							</td>
 						</c:if>
 						
@@ -266,7 +265,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="pdf"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/acrobat.png" alt="pdf"></a><br><b id="type">pdf</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: pageTracker._trackPageview('/downloads/pdf');"><img src="../files/styles/${sessionScope.style}/img/acrobat.png" alt="pdf"></a><br><b id="type">pdf</b>
 							</td>
 						</c:if>
 						
@@ -277,7 +276,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="video"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/videodl.png" alt="video"></a><br><b id="type">video</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: pageTracker._trackPageview('/downloads/video');"><img src="../files/styles/${sessionScope.style}/img/videodl.png" alt="video"></a><br><b id="type">video</b>
 							</td>
 						</c:if>
 							
@@ -295,18 +294,42 @@
 								<c:param name="id" value="${course.courseid}"/>
 								<c:param name="type" value="adddoc"/>
 							</c:url>
-						<b>Supplément: </b><a href="<c:out value="${courseaccess}" />">${course.adddocname }</a>	
+						<b>Supplément: </b><a href="<c:out value="${courseaccess}" />" onClick="javascript: pageTracker._trackPageview('/downloads/adddoc'); ">${course.adddocname }</a>	
 					</c:if>
 					
 					</div>
 					
 	            </td>
-	  
-	            <td id="cellule_dia">	
-	           		<div id="currentDia">          	           		
-	            		<img class="slide" id="slide" src="../files/img/DiaVide.png" width="620" height="472">
-					</div>
-				</td>
+	            
+	            <!-- current slide -->  
+	           	<c:if test="${fn:length(slides) != 0}">
+	           	 	<td id="cellule_dia">	
+	           			<div id="currentDia">          	           		
+	            			<img class="slide" id="slide" src="../files/img/DiaVide.png" width="620" height="472">
+						</div>		
+					</td>			
+				</c:if>	
+				
+				<!-- player flash if no slides-->
+				<c:if test="${fn:length(slides) == 0}">     
+					<td>
+	            		<script type="text/javascript">
+     			  			swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '640', '500', '9.0.124', false, flashvars, params, attributes);
+   						</script>
+   						<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>
+   						<div class="highquality">
+	            			<c:if test="${fn:contains(mediaLst, 'hq')}">
+	            				<c:url var="courseaccess" scope="page" value="./courseaccess">
+									<c:param name="id" value="${course.courseid}"/>
+									<c:param name="type" value="hq"/>
+								</c:url>
+								<a href="<c:out value="${courseaccess}" />"><b><fmt:message key="Highquality"/></b></a>	
+							</c:if>
+						</div>
+					</td>
+				</c:if>	
+					
+				
 			</tr>
 			</table>
 			
