@@ -34,10 +34,10 @@ faac -b 64k -w -o $3.m4a $3.wav &> /dev/null
 #Creation du fichier HD mp4
 if [ $5 == 'true' ]
 then
-	/usr/bin/ffmpeg -v -1 -i $3.m4a -acodec copy -i "$2" -vcodec libx264 -s "$L"x"$H" -padleft $PL -padright $PL -padtop $PHB -padbottom $PHB -aspect 4:3 -vpre normal -vpre ipod640 -crf 27 -y $3_tmp.mp4 -threads 0 &> /dev/null
+	/usr/bin/ffmpeg -v -1 -i $3.m4a -acodec copy -i "$2" -r 25 -vcodec libx264 -s "$L"x"$H" -padleft $PL -padright $PL -padtop $PHB -padbottom $PHB -aspect 4:3 -vpre normal -vpre ipod640 -crf 27 -threads 0 -y $3_tmp.mp4 &> /dev/null
 	/usr/bin/qt-faststart $3_tmp.mp4 "$3"_ipod.mp4 &> /dev/null
 else
-	/usr/bin/ffmpeg -v -1 -i $3.m4a -acodec copy -i "$2" -vcodec libx264 -s "$L"x"$H" -padleft $PL -padright $PL -padtop $PHB -padbottom $PHB -aspect 16:9 -vpre normal -crf 27 -y $3_tmp.mp4 -threads 0 &> /dev/null
+	/usr/bin/ffmpeg -v -1 -i $3.m4a -acodec copy -i "$2" -r 25 -vcodec libx264 -s "$L"x"$H" -padleft $PL -padright $PL -padtop $PHB -padbottom $PHB -aspect 16:9 -vpre normal -crf 27 -threads 0 -y $3_tmp.mp4 &> /dev/null
 	/usr/bin/qt-faststart $3_tmp.mp4 $3.mp4 &> /dev/null
 fi	
 

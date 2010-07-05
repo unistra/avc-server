@@ -39,7 +39,7 @@ cd workingVS
 /usr/bin/faac -b 64k -w -o ./../$2.m4a ./../$2.wav &> /dev/null
 
 # Convert avi+aac into mp4
-/usr/bin/ffmpeg -v -1 -i ./../$2.m4a -acodec copy -i ./../$2_tmp.avi -f mp4 -vcodec libx264 -vpre normal -vpre ipod640 -crf 27 -s 640x480 -y ./../$2_videoslide_tmp.mp4 -threads 0 &> /dev/null
+/usr/bin/ffmpeg -v -1 -i ./../$2.m4a -acodec copy -i ./../$2_tmp.avi -f mp4 -vcodec libx264 -vpre normal -vpre ipod640 -crf 27 -s 640x480 -y ./../$2_videoslide_tmp.mp4 &> /dev/null
 
 # Adds mov atom
 /usr/bin/qt-faststart ./../$2_videoslide_tmp.mp4 ./../$2_videoslide.mp4 &> /dev/null

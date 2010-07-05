@@ -7,5 +7,5 @@
 cd $1
 
 # Transformation du fichier mp3 en fichier ogg
-/usr/bin/ffmpeg -v -1 -i $2.$3 -acodec vorbis -aq 50 -ac 2 -y $2.ogg &> /dev/null
+/usr/bin/ffmpeg -v -1 -i $2.$3 -acodec vorbis -aq 50 -ac 2 -threads 0 -y $2.ogg &> /dev/null
 
