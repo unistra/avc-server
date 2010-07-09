@@ -59,8 +59,6 @@
 	    		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	    		<a href="<c:url value="./findStats" />">Find stats</a>
 	    		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	    		<a href="<c:url value="${statsUrl}adminfms/fms_adminConsole.htm" />">FMS stats</a>
-	    		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	    		<a href="<c:url value="./admin_versionclient?ip=all"/>">Clients version</a>
 	    			    			    			
 	    	</div>
