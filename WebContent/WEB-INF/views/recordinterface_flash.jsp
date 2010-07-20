@@ -221,7 +221,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="videoslide"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/videoslide']);"><img src="../files/styles/${sessionScope.style}/img/videoslide.png" alt="vs"></a><br><b id="type">mp4</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.videoslide']);"><img src="../files/styles/${sessionScope.style}/img/videoslide.png" alt="vs"></a><br><b id="type">mp4</b>
 							</td>
 						</c:if>
 											
@@ -232,7 +232,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="ogg"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/ogg']);"><img src="../files/styles/${sessionScope.style}/img/ogg_v2.png" alt="ogg"></a><br><b id="type">ogg</b>	
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.ogg']);"><img src="../files/styles/${sessionScope.style}/img/ogg_v2.png" alt="ogg"></a><br><b id="type">ogg</b>	
 							</td>
 						</c:if>
 						
@@ -243,7 +243,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="mp3"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/mp3']);"><img src="../files/styles/${sessionScope.style}/img/mp3_v2.png" alt="mp3"></a><br><b id="type">mp3</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.mp3']);"><img src="../files/styles/${sessionScope.style}/img/mp3_v2.png" alt="mp3"></a><br><b id="type">mp3</b>
 							</td>
 						</c:if>
 							
@@ -254,7 +254,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="zip"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/zip']);"><img src="../files/styles/${sessionScope.style}/img/winzip3.png" alt="zip"></a><br><b id="type">zip</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.zip']);"><img src="../files/styles/${sessionScope.style}/img/winzip3.png" alt="zip"></a><br><b id="type">zip</b>
 							</td>
 						</c:if>
 						
@@ -265,7 +265,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="pdf"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/pdf']);"><img src="../files/styles/${sessionScope.style}/img/acrobat.png" alt="pdf"></a><br><b id="type">pdf</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.pdf']);"><img src="../files/styles/${sessionScope.style}/img/acrobat.png" alt="pdf"></a><br><b id="type">pdf</b>
 							</td>
 						</c:if>
 						
@@ -276,7 +276,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="video"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/video']);"><img src="../files/styles/${sessionScope.style}/img/videodl.png" alt="video"></a><br><b id="type">video</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.video']);"><img src="../files/styles/${sessionScope.style}/img/videodl.png" alt="video"></a><br><b id="type">video</b>
 							</td>
 						</c:if>
 							
@@ -294,7 +294,7 @@
 								<c:param name="id" value="${course.courseid}"/>
 								<c:param name="type" value="adddoc"/>
 							</c:url>
-						<b>Supplément: </b><a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/adddoc']);">${course.adddocname }</a>	
+						<b>Supplément: </b><a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.adddoc']);">${course.adddocname }</a>	
 					</c:if>
 					
 					</div>

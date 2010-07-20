@@ -145,4 +145,10 @@ public interface IFileSystem {
 	 */
 	public void launchJob(String serverUrl, String job_line);
 		
+	/**
+	 * Return the clean courses url (check if RAND[?-?] exist)
+	 * @param coursesUrl : the coursesurl from univrav.properties
+	 * @return the clean courses url
+	 */
+	public String getCleanCoursesUrl(String coursesUrl) ;
 }

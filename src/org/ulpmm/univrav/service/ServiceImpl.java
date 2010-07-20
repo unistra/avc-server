@@ -1588,5 +1588,15 @@ public class ServiceImpl implements IService {
 		
 		fs.launchJob(serverUrl, job_line);
 	}
+	
+	
+	/**
+	 * Return the clean courses url (check if RAND[?-?] exist)
+	 * @param coursesUrl : the coursesurl from univrav.properties
+	 * @return the clean courses url
+	 */
+	public String getCleanCoursesUrl(String coursesUrl) {
+		return fs.getCleanCoursesUrl(coursesUrl);
+	}
 
 }
