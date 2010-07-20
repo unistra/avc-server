@@ -2295,6 +2295,7 @@ public class Application extends HttpServlet {
 		int courseid = Integer.parseInt( (String) request.getParameter("id"));
 		String genre = (String) request.getParameter("code");
 		String type = (String) request.getParameter("type");
+		String courseAccessUrl = service.getCleanCoursesUrl(coursesUrl);
 		
 		Course c = null;
 		
@@ -2335,10 +2336,10 @@ public class Application extends HttpServlet {
 
 					// To fix a bug with SSL and IE
 					String slidesurl = null;
-					if(request.getRequestURL().toString().substring(0, 5).equals("https") && coursesUrl.substring(0, 4).equals("http"))
-						slidesurl = coursesUrl.replace("http", "https") + c.getMediaFolder() + "/screenshots/";
+					if(request.getRequestURL().toString().substring(0, 5).equals("https") && courseAccessUrl.substring(0, 4).equals("http"))
+						slidesurl = courseAccessUrl.replace("http", "https") + c.getMediaFolder() + "/screenshots/";
 					else 
-						slidesurl = coursesUrl + c.getMediaFolder() + "/screenshots/";
+						slidesurl = courseAccessUrl + c.getMediaFolder() + "/screenshots/";
 
 					service.incrementConsultations(c);
 
@@ -2353,7 +2354,7 @@ public class Application extends HttpServlet {
 							else if( c.getType().equals("video"))
 								courseExtension = ".flv";
 
-							request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + courseExtension);
+							request.setAttribute("courseurl", courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + courseExtension);
 							request.setAttribute("slidesurl", slidesurl);
 							request.setAttribute("course", c);
 							String showForm = service.getFormationFullName(c.getFormation());
@@ -2378,13 +2379,13 @@ public class Application extends HttpServlet {
 							// Sets embed objects
 							if(c.isDownload() && !c.isRestrictionuds() && c.getGenre()==null) {
 								if(c.isAvailable("videoslide"))
-									request.setAttribute("embedvs", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='640' height='480' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+"_videoslide.mp4&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='640' height='480' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+"_videoslide.mp4&type=lighttpd' /></object>");
+									request.setAttribute("embedvs", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='640' height='480' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+"_videoslide.mp4&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='640' height='480' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+"_videoslide.mp4&type=lighttpd' /></object>");
 								if(c.isAvailable("mp3"))
-									request.setAttribute("embedaudio", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='320' height='20' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp3'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='320' height='20' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp3' /></object>");
+									request.setAttribute("embedaudio", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='320' height='20' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp3'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='320' height='20' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp3' /></object>");
 								if(c.getType().equals("video"))
-									request.setAttribute("embedvideo", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='320' height='240' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".flv&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='320' height='240' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".flv&type=lighttpd' /></object>");
+									request.setAttribute("embedvideo", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='320' height='240' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".flv&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='320' height='240' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".flv&type=lighttpd' /></object>");
 								if(c.isAvailable("hq"))
-									request.setAttribute("embedhq", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='1024' height='576' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp4&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='1024' height='576' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp4&type=lighttpd' /></object>");
+									request.setAttribute("embedhq", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='1024' height='576' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp4&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='1024' height='576' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp4&type=lighttpd' /></object>");
 							}
 							
 							/* displays the .jsp view */
@@ -2392,7 +2393,7 @@ public class Application extends HttpServlet {
 						}
 						// High Quality
 						else if( type.equals("hq")) {
-							request.setAttribute("courseurl", coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".mp4");
+							request.setAttribute("courseurl", courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".mp4");
 							request.setAttribute("course", c);					
 							Amphi a = service.getAmphi(c.getIpaddress());
 							String amphi = a != null ? a.getName() : "";
@@ -2408,7 +2409,7 @@ public class Application extends HttpServlet {
 						
 						else if(c.isDownload() & (type.equals("mp3") || type.equals("ogg") || type.equals("zip") || type.equals("pdf"))) {
 							
-							String filename = coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
+							String filename = courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + "." + type;
 							
 							/* Initializes the headers */
 							response.setContentType("application/x-download");
@@ -2420,7 +2421,7 @@ public class Application extends HttpServlet {
 						}
 						else if(c.isDownload() & (type.equals("videoslide"))) {
 							//String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "_videoslide.mp4";
-							String filename = coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + "_videoslide.mp4";
+							String filename = courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + "_videoslide.mp4";
 
 							/* Initializes the headers */
 							response.setContentType("application/x-download");
@@ -2431,7 +2432,7 @@ public class Application extends HttpServlet {
 							service.returnFile(filename, out);
 						}
 						else if(c.isDownload() & (type.equals("video"))) {
-							String filename = coursesUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".mp4";
+							String filename = courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".mp4";
 
 							/* Initializes the headers */
 							response.setContentType("application/x-download");
@@ -2443,7 +2444,7 @@ public class Application extends HttpServlet {
 						}
 						else if(type.equals("adddoc")) {
 							//String filename = coursesFolder + c.getMediaFolder() +"/additional_docs/" + c.getAdddocname();
-							String filename = coursesUrl + c.getMediaFolder() +"/additional_docs/" + c.getAdddocname();
+							String filename = courseAccessUrl + c.getMediaFolder() +"/additional_docs/" + c.getAdddocname();
 							
 							/* Initializes the headers */
 							response.setContentType("application/x-download");

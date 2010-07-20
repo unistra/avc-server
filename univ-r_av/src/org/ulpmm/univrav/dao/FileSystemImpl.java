@@ -478,7 +478,7 @@ public class FileSystemImpl implements IFileSystem {
 			        coursPubDate.setTextContent(sdf.format(d));
 			        item.appendChild(coursPubDate);
 			        
-			        String courseMediaUrl = coursesUrl + course.getMediaFolder() + "/" + course.getMediasFileName();
+			        String courseMediaUrl = getCleanCoursesUrl(coursesUrl) + course.getMediaFolder() + "/" + course.getMediasFileName();
 			        		        
 			        if(course.getGenre()==null && !course.isRestrictionuds()) {
 			        	if(course.isAvailable("mp3")) {
@@ -996,6 +996,34 @@ public class FileSystemImpl implements IFileSystem {
 		catch(InterruptedException ie) {
 			logger.error("Error while lauching the job ",ie);
 		}		
+	}
+	
+	
+	/**
+	 * Return the clean courses url (check if RAND[?-?] exist)
+	 * @param coursesUrl : the coursesurl from univrav.properties
+	 * @return the clean courses url
+	 */
+	public String getCleanCoursesUrl(String coursesUrl) {
+		// Replace RAND[?-?] by random number (for load balancing streaming)
+	
+		if(coursesUrl.contains("RAND[")) {
+						
+			int randBeg = coursesUrl.indexOf("RAND[");
+			int randEnd = coursesUrl.indexOf("]")+1;
+			String randStr = coursesUrl.substring(randBeg, randEnd);
+						
+			int lower = Integer.parseInt(randStr.substring(randStr.indexOf("[")+1, randStr.indexOf("-"))); //include
+			int higher = Integer.parseInt(randStr.substring(randStr.indexOf("-")+1, randStr.indexOf("]"))) + 1; //exclude
+			int random = (int)(Math.random() * (higher-lower)) + lower;
+						
+			return (coursesUrl.substring(0, randBeg)+random+coursesUrl.substring(randEnd));
+		}
+		else {
+			return coursesUrl;
+		}
+		
+		
 	}
 	
 }
