@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script which converts a video file into HD format
+# Script which calculate padding for a video
 # First argument: the video folder
 # Second argument: the input video filename (with extension)
 # Third argument: Desired width
