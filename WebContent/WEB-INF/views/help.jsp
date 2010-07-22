@@ -123,7 +123,7 @@
 			    		<a class="link" href="../files/img/help/myspace.png">Screenshot</a>
 			    		<h5>Editer un cours</h5>
 			    		<p>Pour &eacute;diter un cours, il vous suffit de cliquer sur « Editer », d'effectuer vos modifications dans le formulaire, et de valider.<br>
-			    		Vous avez ainsi la possibilit&eacute; de modifier le titre du cours, sa description, la discipline concern&eacute;e, le nom et le pr&eacute;nom de l'auteur, le code d'acc&egrave;s, la visibilit&eacute; et les tags.</p>
+			    		Vous avez ainsi la possibilit&eacute; de modifier le titre du cours, sa description, la composant et le niveau concern&eacute;s, le nom et le pr&eacute;nom de l'auteur, le code d'acc&egrave;s, la visibilit&eacute; et les tags.</p>
 			    		<p>Il est &eacute;galement possible de d&eacute;poser un fichier compl&eacute;mentaire &agrave; l'enregistrement. Celui-ci sera ainsi t&eacute;l&eacute;chargeable dans l'interface de visualisation flash du cours. Les formats suivants sont pris en charge: Pdf, Ppt, Pptx, Odp, Docx, Doc, Odt, Archive Zip. Pour ajouter plusieurs documents compl&eacute;mentaires &agrave; l'enregistrement, veuillez les mettre dans une archive zip.</p>
 			    		<a class="link" href="../files/img/help/editcourse.png">Screenshot</a>
 			    		<h5>D&eacute;poser un fichier</h5>
@@ -131,7 +131,6 @@
 			    		<p>Les formats vid&eacute;o suivants sont pris en charge: avi, mov, mp4, mkv, divx, mpg, wmv, flv.<br>
 			    		Les formats audio suivants sont pris en charge: mp3, wma, wav, ogg.</p>
 			    		<p>L'upload d&eacute;pend de la taille de votre fichier et de votre vitesse d'envoi. Cela peut &ecirc;tre assez long. Soyez patient, ne fermez pas la page "envoi en cours" avant d'avoir re&ccedil;u le message de succ&egrave;s ou d'&eacute;chec.</p>
-			    		<p>L'option Haute-D&eacute;finition vous permet d'uploader une vid&eacute;o haute-d&eacute;finition. Attention, cette option augmente consid&eacute;rablement le temps de traitement de votre vid&eacute;o. En effet, le traitement d'une vid&eacute;o en mode Haute-D&eacute;finition dure 3 heures pour 1 heure de film.</p>
 			    		<a class="link" href="../files/img/help/upload.png">Screenshot</a>
 			    		
 			    		<h3><a id="publication"></a>Publication</h3>
@@ -142,7 +141,7 @@
 			    		<p>Deux possibilit&eacute;s s'offrent &agrave; vous:</p>
 			    		<p>1) Compte UDS: En vous connectant avec votre compte ENT, votre enregistrement sera associ&eacute; &agrave; votre compte. Ainsi, vous aurez par la suite acc&egrave;s aux fonctionnalit&eacute;s de « mon espace » pour &eacute;diter votre enregistrement (modifier le titre, la visibilit&eacute;, la description, les tags, ...) ou d&eacute;poser une vid&eacute;o sans passer par le client.</p>
 			    		<p>2) Libre: En choisissant l'option libre, vous pouvez envoyer un enregistrement sans avoir de compte UDS. Pour acc&eacute;der aux fonctionnalit&eacute;s de « mon espace », il suffit de renseigner le champs E-mail dans le formulaire. Vous recevrez alors un mail contenant une « URL compte » qui vous permettra de g&eacute;rer vos cours envoy&eacute;s avec cette m&ecirc;me adresse mail. Attention, il faut bien remettre la m&ecirc;me adresse mail (y compris majuscules/minuscules) pour chaque cours car une adresse mail = 1 compte.</p>
-			    		<p>Apr&egrave;s avoir choisi l'une des deux options, vous devez remplir le formulaire. Les champs « Titre » et « Nom Auteur » sont obligatoires.</p>
+			    		<p>Apr&egrave;s avoir choisi l'une des deux options, vous devez remplir le formulaire. Les champs « Titre », « Nom Auteur », « Niveau », « Composante », « Droit de diffusion » sont obligatoires.</p>
 			    		<a class="link" href="../files/img/help/pub2.png">Screenshot</a>
 			    					    		
 			    		<p>Validez l'enregistrement en cliquant sur « Publier l'enregistrement ». Un message vous indiquant que le fichier a &eacute;t&eacute; correctement envoy&eacute; appara&icirc;tra &agrave; l'&eacute;cran.</p>
@@ -181,8 +180,8 @@
 						d'origine pour une meilleure lecture. Celles-ci s'adaptent &eacute;galement &agrave; la taille de la fen&ecirc;tre de votre navigateur.<br>
 						Les tags associ&eacute;s au cours sont &eacute;galement cliquables et permettent d'afficher l'ensemble des cours correspondant au tag s&eacute;lectionn&eacute;.<br>
 						On y trouve les informations concernant le cours, un acc&egrave;s direct aux 
-						t&eacute;l&eacute;chargement des diff&eacute;rents m&eacute;dias le composant, et un permalien.</p>	
-						<p><b>Clic sur les ic&ocirc;nes sous les intitul&eacute;s 'ogg', 'mp3', 'zip', ou 'pdf':</b><br>
+						t&eacute;l&eacute;chargement des diff&eacute;rents m&eacute;dias le composant, un permalien, et des codes d'encastrement pour page html.</p>	
+						<p><b>Clic sur les ic&ocirc;nes sous les intitul&eacute;s 'mp4', 'ogg', 'mp3', 'zip', ou 'pdf':</b><br>
 						Ces modes permettent d'avoir un acc&egrave;s direct aux fichiers des m&eacute;dias. </p>
 						
 					    <h3><a id="podcasting"></a>Podcasting et flux RSS</h3>
@@ -194,7 +193,8 @@
 						<a class="link" href="../files/img/help/Rss.png">Screenshot</a>
 						<p>En s&eacute;lectionnant un flux dans cette liste, Firefox affiche une page permettant d'avoir le listing 
 						de tous les cours.<br>
-						Le lien donne un acc&egrave;s direct &agrave; la page de diffusion du cours.</p>
+						Le lien donne un acc&egrave;s direct &agrave; la page de diffusion du cours. <br>
+						En cliquant sur une ic&ocirc;ne violette iTunes, vous serez directement abonn&eacute; dans l'application iTunes si elle est install&eacute;e.</p>
 						<a class="link" href="../files/img/help/Rss_FF.png">Screenshot</a>
 						<p>Vous pouvez utiliser d'autres logiciels capables de g&eacute;rer les flux Rss comme le navigateur Opera ou 
 						les lecteurs audio de type itunes. Il vous suffit de r&eacute;cup&eacute;rer l'adresse du fichier XML et de 

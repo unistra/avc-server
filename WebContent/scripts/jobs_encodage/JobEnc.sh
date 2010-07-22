@@ -156,8 +156,6 @@ bash $PTHSCR/convertAll2Ogg.sh $MediaFolder $CourseID "mp3"
 /usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg $MediaFolder/new_$CourseID.ogg
 #renameFile
 mv $MediaFolder/new_$CourseID.ogg $MediaFolder/$CourseID.ogg
-#courseZip
-#/usr/bin/zip $MediaFolder/$CourseID.zip -j $MediaFolder/description.txt $MediaFolder/$CourseID.flv
 #videoHighQualityConvert
 bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $ORI$CourseID.$Extension $CourseID $PTHSCR/calculate_padding.sh false
 #mp4Tag

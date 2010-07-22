@@ -170,17 +170,11 @@
 							</c:otherwise>
 						</c:choose>
 					</tr>
-					
-					<!--				
-					<tr class="odd">
-						<td title="<fmt:message key="ib_form"/>"><fmt:message key="ue"/> : </td>
-						<td><input type="text" name="ue" class="${classField}" <c:out value="${disabledField}"/> value="${ue}"> </td>
-					</tr>-->
-									
+								
 					<tr class="odd">
 						<td title="<fmt:message key="ib_level"/>"><fmt:message key="level"/><b class="boldStar">*</b> : </td>
 						<td>
-							<select name="level">
+							<select name="level" <c:out value="${disabledField}"/> >
 								<option value=""></option>
 								<c:forEach var="levels" items="${levels}">
 									<c:if test="${levelSelected == levels.code}">
@@ -196,7 +190,7 @@
 					<tr class="even">
 						<td title="<fmt:message key="ib_form"/>"><fmt:message key="component"/><b class="boldStar">*</b> : </td>
 						<td>
-							<select name="component">
+							<select name="component" <c:out value="${disabledField}"/> >
 								<option value=""></option>
 								<c:forEach var="discipline" items="${disciplines}">
 									<c:if test="${discSelected == discipline.codecomp}">
