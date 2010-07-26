@@ -796,7 +796,7 @@ public class FileSystemImpl implements IFileSystem {
 	 */
 	private static void injectMetadata( String mediaFolder, String mediaFileName, String mediaFileExtension) {
 		try {
-			Process p = r.exec("bash injectMetadata.sh "  + coursesFolder + mediaFolder + " " + mediaFileName + " " + mediaFileExtension, null, new File(scriptsFolder));
+			Process p = r.exec("bash injectMetadata.sh "  + coursesFolder + mediaFolder + " " + mediaFileName + " " + mediaFileExtension, null, new File(scriptsFolder+"/jobs_encodage"));
 			if( p.waitFor() != 0 ) {
 				logger.error("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension);
 				throw new DaoException("Error while inject metadata to " + mediaFileName + "." + mediaFileExtension);
