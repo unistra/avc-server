@@ -771,3 +771,6 @@ INSERT INTO level (levelid, code, name) VALUES (7, '52', 'Master 2ème année');
 INSERT INTO level (levelid, code, name) VALUES (8, '6+', 'Doctorat');
 INSERT INTO level (levelid, code, name) VALUES (1, 'O0', 'Autres');
 INSERT INTO level (levelid, code, name) VALUES (2, 'C0', 'Conférence');
+
+SELECT setval('discipline_disciplineid_seq',44);
+SELECT setval('level_levelid_seq',8);
