@@ -170,10 +170,21 @@ public class Application extends HttpServlet {
 		
 	/** Ldap base dn */
 	private static String ldapBaseDn;
-
 	/** ldap search filter */
 	private static String ldapSearchFilter;
-	
+	/** ldap mail */
+	private static String ldapMail;
+	/** ldap firstname */
+	private static String ldapFirstname;
+	/** ldap lastname */
+	private static String ldapLastname;
+	/** ldap profile */
+	private static String ldapProfile;
+	/** ldap affectation */
+	private static String ldapAffectation;
+	/** ldap code etp */
+	private static String ldapEtpPrimaryCode;
+		
 	/** volume number for filesystem **/
 	private static Short volume;	
 	
@@ -283,7 +294,22 @@ public class Application extends HttpServlet {
 			/* ldap properties */
 			ldapBaseDn = p.getProperty("ldapBaseDn");
 			ldapSearchFilter = p.getProperty("ldapSearchFilter");
+			ldapMail=p.getProperty("ldapMail");
+			ldapFirstname = p.getProperty("ldapFirstname");
+			ldapLastname = p.getProperty("ldapLastname");
+			ldapProfile = p.getProperty("ldapProfile");
+			ldapAffectation = p.getProperty("ldapAffectation");
+			ldapEtpPrimaryCode = p.getProperty("ldapEtpPrimaryCode");
 			
+			List<String> ldapinfos = new ArrayList<String>(6);
+			ldapinfos.add(0,ldapMail);
+			ldapinfos.add(1,ldapFirstname);
+			ldapinfos.add(2,ldapLastname);
+			ldapinfos.add(3,ldapProfile);
+			ldapinfos.add(4,ldapAffectation);
+			ldapinfos.add(5,ldapEtpPrimaryCode);
+
+						
 			/* to separate medias encodage */
 			sepEnc = Boolean.parseBoolean(p.getProperty("sepEnc"));
 			
@@ -342,7 +368,8 @@ public class Application extends HttpServlet {
 			LdapAccessImpl ldap = new LdapAccessImpl(
 					env,
 					ldapBaseDn,
-					ldapSearchFilter
+					ldapSearchFilter,
+					ldapinfos
 			);
 		
 			

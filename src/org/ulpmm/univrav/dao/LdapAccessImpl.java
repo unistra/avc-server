@@ -27,6 +27,8 @@ public class LdapAccessImpl implements ILdapAccess {
 	private String LDAP_SEARCH_FILTER;
 	/** Ldap environment */
 	private Hashtable<?,?> env;
+	/** ldap infos*/
+	private List<String> ldapinfos;
 	
 	/** Logger log4j */
 	private static final Logger logger = Logger.getLogger(LdapAccessImpl.class);
@@ -37,11 +39,13 @@ public class LdapAccessImpl implements ILdapAccess {
 	 * @param env ldap environment
 	 * @param LDAP_BASE_DN the base dn
 	 * @param LDAP_SEARCH_FILTER the search filter
+	 * @param ldapinfos the ldap informations
 	 */
-	public LdapAccessImpl(Hashtable<?,?> env, String LDAP_BASE_DN, String LDAP_SEARCH_FILTER) {
+	public LdapAccessImpl(Hashtable<?,?> env, String LDAP_BASE_DN, String LDAP_SEARCH_FILTER, List<String> ldapinfos) {
 		this.env=env;
 		this.LDAP_BASE_DN = LDAP_BASE_DN;
 		this.LDAP_SEARCH_FILTER = LDAP_SEARCH_FILTER;	
+		this.ldapinfos = ldapinfos;
 	}
 	
 		
@@ -104,13 +108,13 @@ public class LdapAccessImpl implements ILdapAccess {
 			SearchResult searchResult = searchInLdap(login);
 
 			if(searchResult!=null) {
-
-				String email = searchResult.getAttributes().get("mail").get().toString();
-				String firstname = searchResult.getAttributes().get("givenName").get().toString();
-				String lastname = searchResult.getAttributes().get("sn").get().toString();
-				String profile = searchResult.getAttributes().get("eduPersonPrimaryAffiliation").get().toString();
-				String establishment = searchResult.getAttributes().get("supannetablissement").get().toString();
-				String etpPrimaryCode = searchResult.getAttributes().get("udsPrimaryEtpCode")!=null ? searchResult.getAttributes().get("udsPrimaryEtpCode").get().toString() : "";
+										
+				String email = ldapinfos.get(0)!=null ? searchResult.getAttributes().get(ldapinfos.get(0)).get().toString() : "";
+				String firstname = ldapinfos.get(1)!=null ? searchResult.getAttributes().get(ldapinfos.get(1)).get().toString() : "";
+				String lastname = ldapinfos.get(2)!=null ? searchResult.getAttributes().get(ldapinfos.get(2)).get().toString() : "";
+				String profile = ldapinfos.get(3)!=null ? searchResult.getAttributes().get(ldapinfos.get(3)).get().toString() : "";
+				String establishment = ldapinfos.get(4)!=null ? searchResult.getAttributes().get(ldapinfos.get(4)).get().toString() : "";
+				String etpPrimaryCode = ldapinfos.get(5)!=null ? (searchResult.getAttributes().get(ldapinfos.get(5))!=null ? searchResult.getAttributes().get(ldapinfos.get(5)).get().toString() : "") : "";
 				
 				userInfos = new ArrayList<String>();
 				userInfos.add(email!=null ? email : "");
