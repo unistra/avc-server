@@ -164,24 +164,24 @@
 					<td><input type="password" name="genre" class="field" value="${genre}"></td>
 				</tr>
 				<tr class="even">
-				   	<td title="<fmt:message key="ib_tags"/>">Tags</td>
+				   	<td title="<fmt:message key="ib_tags"/>">Tags :</td>
 					<td><input type="text" name="tags" class="field" value="${tags}"></td>
 			    </tr>
 			    <tr class="odd">
-				    <td title="<fmt:message key="ib_visible"/>">Visible</td>
+				    <td title="<fmt:message key="ib_visible"/>">Visible :</td>
 				    <td><input type="checkbox" name="visible" <c:out value="${checkedVisbleField}"/>></td>
 			   	</tr>
 				<!--<tr class="odd">
 					<td title="<fmt:message key="ib_hq"/>"><fmt:message key="hd"/> : </td>
-					<td><input type="checkbox" name="hd" <c:out value="${checkedHdField}"/>> <font class="chpsHd"><fmt:message key="uploadmessage4"/></font> </td>
+					<td><input type="checkbox" name="hd" <c:out value="${checkedHdField}"/>> <font class="littleFont"><fmt:message key="uploadmessage4"/></font> </td>
 				</tr>-->
 				<tr class="even">
-				    <td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds</td>
-				    <td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/>> <font class="chpsHd"><fmt:message key="uploadmessage6"/></font> </td>
+				    <td title="<fmt:message key="ib_restrictionuds"/> ${univName}"><fmt:message key="restrictionuds"/> ${univAcronym} :</td>
+				    <td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/>> <font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
 			   	</tr>
 			   	<tr class="odd">
-					  	<td title="<fmt:message key="ib_permission"/>"><fmt:message key="permission"/><b class="boldStar">*</b></td>
-					   	<td><input type="checkbox" name="permission" <c:out value="${checkedPermField}"/> <c:out value="${disabledField}"/>><font class="chpsHd"><fmt:message key="uploadmessage7"/></font></td>
+					  	<td title="<fmt:message key="ib_permission"/>"><fmt:message key="permission"/><b class="boldStar">*</b> :</td>
+					   	<td><input type="checkbox" name="permission" <c:out value="${checkedPermField}"/> <c:out value="${disabledField}"/>><font class="littleFont"><fmt:message key="uploadmessage7"/> ${univName} <fmt:message key="uploadmessage7b"/></font></td>
 			   	</tr>
 				<tr class="even">
 					<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/><b class="boldStar">*</b> : </td>

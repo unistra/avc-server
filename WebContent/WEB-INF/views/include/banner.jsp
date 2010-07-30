@@ -6,9 +6,8 @@
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
 <a class="bannerPageZone" href="<c:url value="./home" />"></a>
-<a class="udsZone" href="http://www.unistra.fr/" target="external"></a>
-<!--<a class="ulpmmZone" href="http://ulpmultimedia.u-strasbg.fr/" target="external"></a>-->
-<!--<a class="ulpZone" href="http://www-ulp.u-strasbg.fr/" target="external"></a>-->
+<a class="udsZone" href="${univLink}" target="external"></a>
+
 <div class="recorded">
 	<a class="recordedZone" href="<c:url value="./recorded" />"><fmt:message key="Enregistr&eacute;"/></a>
 </div>
