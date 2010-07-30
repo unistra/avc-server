@@ -71,8 +71,8 @@
 				    		<td><input type="hidden" name="version" value="${amphi.version}">${amphi.version}</td>
 			    		</tr>
 			    		<tr class="even">
-				    		<td>Restriction Uds</td>
-				    		<td><input type="checkbox" name="restrictionuds" ${amphi.restrictionuds == true ? 'checked' : ''} ></td>
+				    		<td><fmt:message key="restrictionuds"/> ${univAcronym}</td>
+				    		<td><input type="checkbox" name="restrictionuds" ${amphi.restrictionuds == true ? 'checked' : ''} ><font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
 			    		</tr>
 			    	</table>
 			    	<br>

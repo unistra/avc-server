@@ -131,8 +131,8 @@
 				    		<td><input type="checkbox" name="download" ${course.download == true ? 'checked' : ''} ></td>
 			    		</tr>	
 			    		<tr class="odd">
-				    		<td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds</td>
-				    		<td><input type="checkbox" name="restrictionuds" ${course.restrictionuds == true ? 'checked' : ''} ></td>
+				    		<td title="<fmt:message key="ib_restrictionuds"/> ${univName}"><fmt:message key="restrictionuds"/> ${univAcronym}</td>
+				    		<td><input type="checkbox" name="restrictionuds" ${course.restrictionuds == true ? 'checked' : ''} ><font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
 			    		</tr>	    	
 			    	</table>
 			    	<br>

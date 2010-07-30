@@ -40,12 +40,12 @@
 	    	</div>
 	    	
 	    	<div class="divCenter">
-	    		<p><fmt:message key="publicationmessage1"/></p>
+	    		<p><fmt:message key="publicationmessage1"/> ${univAcronym}</p>
 	    	</div>
 	    	
 	    	<br>
 	    	
-	    	<c:if test="${publication_type == 'serverFree'}">
+	    	<c:if test="${publication_type == 'serverFree' and pubFree == true}">
 	    	 	<c:set var="borderstyleFree" value="border:2px dotted red;" />
 	    	</c:if>
 	    	<c:if test="${publication_type == 'serverCas'}">
@@ -55,11 +55,13 @@
 	    	<!-- Choose if you have an account or not -->
 	    	<div class="pubLinks">
 	    		<div class="divPubCas" style="${borderstyleCas}">
-	    			<a class="linkPubCas" href="./authentication_cas?returnPage=publication"><fmt:message key="udsAccount"/></a>
-	    		</div>	    		
-	    		<div class="divPubFree" style="${borderstyleFree}">
-	    			<a class="linkPubFree" href="./publication?publication_type=serverFree"><fmt:message key="free"/></a>
-	    		</div>
+	    			<a class="linkPubCas" href="./authentication_cas?returnPage=publication"><fmt:message key="udsAccount"/> ${univAcronym}</a>
+	    		</div>	  
+	    		<c:if test="${pubFree == true}">
+	    			<div class="divPubFree" style="${borderstyleFree}">
+	    				<a class="linkPubFree" href="./publication?publication_type=serverFree"><fmt:message key="free"/></a>
+	    			</div>
+	    		</c:if>
 	    	</div>
 	    	<br>
 	    	<div class="divCenter">
@@ -68,7 +70,7 @@
 	    		    		    	
 	    	<!-- VARS FOR THE FORM -->
 	  	  	<c:choose>
-				<c:when test="${publication_type != 'serverFree' and publication_type != 'serverCas'}">
+				<c:when test="${(publication_type != 'serverFree' or pubFree == false) and publication_type != 'serverCas'}">
 					<c:set var="classField" value="txtDisabled" />
 					<c:set var="disabledField" value="disabled" />
 				</c:when>
@@ -86,7 +88,7 @@
 				</c:otherwise>
 			</c:choose>
 			<c:choose>
-				<c:when test="${(message!=null and restrictionuds==null) or (message==null && publication_type == 'serverFree')}">
+				<c:when test="${(message!=null and restrictionuds==null) or (message==null && publication_type == 'serverFree' and pubFree == true)}">
 					<c:set var="checkedRestUdsField" value="" />
 				</c:when>
 				<c:otherwise>
@@ -134,7 +136,7 @@
 						</c:choose>
 					</tr>
 					</c:if>
-					<c:if test="${publication_type == 'serverFree'}">
+					<c:if test="${publication_type == 'serverFree' and pubFree == true}">
 						<tr class="even">
 							<td title="<fmt:message key="ib_email"/>">E-mail : </td>
 							<td><input type="text" name="email" class="${classField}"> </td>
@@ -216,12 +218,12 @@
 					    <td><input type="checkbox" name="visible" <c:out value="${checkedVisbleField}"/> <c:out value="${disabledField}"/>></td>
 			   		</tr>
 			   		<tr class="even">
-					  	<td title="<fmt:message key="ib_restrictionuds"/>">Restriction Uds : </td>
-					   	<td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/> <c:out value="${disabledField}"/>><font class="chpsHd"><fmt:message key="uploadmessage6"/></font></td>
+					  	<td title="<fmt:message key="ib_restrictionuds"/> ${univName}"><fmt:message key="restrictionuds"/> ${univAcronym} : </td>
+					   	<td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/> <c:out value="${disabledField}"/>><font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
 			   		</tr>
 			   		<tr class="odd">
 					  	<td title="<fmt:message key="ib_permission"/>"><fmt:message key="permission"/><b class="boldStar">*</b> : </td>
-					   	<td><input type="checkbox" name="permission" <c:out value="${checkedPermField}"/> <c:out value="${disabledField}"/>><font class="chpsHd"><fmt:message key="uploadmessage7"/></font></td>
+					   	<td><input type="checkbox" name="permission" <c:out value="${checkedPermField}"/> <c:out value="${disabledField}"/>><font class="littleFont"><fmt:message key="uploadmessage7"/> ${univName} <fmt:message key="uploadmessage7b"/></font></td>
 			   		</tr>
 			   		
 			    	<tr>
@@ -239,7 +241,7 @@
 			
 			<div class="divCenter">
 	    		<p><fmt:message key="publicationmessage2"/></p>
-	    		<p><fmt:message key="publicationmessage3"/><a href="http://audiovideocours.u-strasbg.fr/avc/test">http://audiovideocours.u-strasbg.fr/avc/test</a></p>
+	    		<p><fmt:message key="publicationmessage3"/><a href="${serverUrl}/avc/test">${serverUrl}/avc/test</a></p>
 	    		<p><fmt:message key="publicationmessage4"/></p>
 	    	</div>
 			

@@ -126,6 +126,16 @@ public class Application extends HttpServlet {
 	/** The itunes keywords */
 	private static String itunesKeywords;
 	
+	/** University name */
+	private static String univName;
+	/** University acronym */
+	private static String univAcronym;
+	/** University link */
+	private static String univLink;
+
+	/** Publication free */
+	private static boolean pubFree;
+	
 	/** The numbers of last courses to display */
 	private static int lastCourseNumber;
 	/** The numbers of selection courses to display */
@@ -255,6 +265,14 @@ public class Application extends HttpServlet {
 			itunesImage = p.getProperty("itunesImage");
 			itunesCategory = p.getProperty("itunesCategory");
 			itunesKeywords = p.getProperty("itunesKeywords");
+			
+			// University parameters
+			univName = p.getProperty("univName");
+			univAcronym = p.getProperty("univAcronym");
+			univLink = p.getProperty("univLink");
+
+			// Publication free
+			pubFree = Boolean.parseBoolean(p.getProperty("pubFree"));
 			
 			// The numbers of courses to display at the same time
 			lastCourseNumber = Integer.parseInt(p.getProperty("lastCourseNumber"));
@@ -471,6 +489,9 @@ public class Application extends HttpServlet {
 			
 			// Button disconnect
 			session.setAttribute("btnDeco", false);		
+			
+			//university link for banner
+			session.setAttribute("univLink", univLink);	
 		}
 								
 		/* Retrieves the path info from the browser's URL */
@@ -635,6 +656,8 @@ public class Application extends HttpServlet {
 		else if( page.equals("/admin_addamphi")) {
 			request.setAttribute("buildingId", request.getParameter("buildingId"));
 			request.setAttribute("action","add"); 
+			// univ acronym
+			request.setAttribute("univAcronym", univAcronym);
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editamphi.jsp").forward(request, response);
 		}
 		else if( page.equals("/admin_editamphi")) {
@@ -642,6 +665,8 @@ public class Application extends HttpServlet {
 			request.setAttribute("buildingName", service.getBuilding(Integer.parseInt(request.getParameter("buildingId"))).getName());
 			request.setAttribute("action","edit"); 
 			request.setAttribute("amphi", service.getAmphi(Integer.parseInt(request.getParameter("id"))));
+			// univ acronym
+			request.setAttribute("univAcronym", univAcronym);
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editamphi.jsp").forward(request, response);
 		}
 		else if( page.equals("/admin_deleteamphi")) {
@@ -1122,6 +1147,17 @@ public class Application extends HttpServlet {
 			
 			/* the levels box */
 			request.setAttribute("levels", service.getAllLevels());
+			
+			// serveur url for test url
+			request.setAttribute("serverUrl", serverUrl);
+			
+			// publication free
+			request.setAttribute("pubFree", pubFree);
+			
+			// univ acronym
+			request.setAttribute("univAcronym", univAcronym);
+			// univ name
+			request.setAttribute("univName", univName);
 
 			/* Displays the view */ 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/publication.jsp").forward(request, response);
@@ -1671,6 +1707,11 @@ public class Application extends HttpServlet {
 				// the levelSelected
 				request.setAttribute("levelSelected", service.getLevelCodeByFormation(c.getFormation()));
 				
+				// univ acronym
+				request.setAttribute("univAcronym", univAcronym);
+				// univ name
+				request.setAttribute("univName", univName);
+				
 				/* Displays the view */
 				getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace_editmycourse.jsp").forward(request, response);
 
@@ -1921,6 +1962,11 @@ public class Application extends HttpServlet {
 			
 			/* the levels box */
 			request.setAttribute("levels", service.getAllLevels());
+			
+			// univ acronym
+			request.setAttribute("univAcronym", univAcronym);
+			// univ name
+			request.setAttribute("univName", univName);
 
 			
 			getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
@@ -2846,6 +2892,9 @@ public class Application extends HttpServlet {
 
 		// the levelSelected
 		request.setAttribute("levelSelected", service.getLevelCodeByFormation(c.getFormation()));
+		
+		// univ acronym
+		request.setAttribute("univAcronym", univAcronym);
 		
 		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editcourse.jsp").forward(request, response);
 		

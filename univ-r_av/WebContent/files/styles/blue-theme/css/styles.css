@@ -210,3 +210,8 @@ a, .linkText, .helpText, h5, .buildingName, .searchText {
 	text-align:center;
 	margin:auto;
 }
+
+.littleFont {
+	font-size:12px;
+ 	color:black;
+ }
