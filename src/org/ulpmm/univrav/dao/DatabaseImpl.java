@@ -3777,8 +3777,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @param params all parameters
 	 * @return a list of stats
 	 */
-	public HashMap<String, Integer> getStats(HashMap<String, String> params) {
-		//TODO calculate number of prod. students
+	public HashMap<String, Integer> getStats(HashMap<String, String> params) {		
 		
 		Connection cnt = null;
 		HashMap<String, Integer> hm = new HashMap<String, Integer>();

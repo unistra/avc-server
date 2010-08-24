@@ -11,11 +11,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1004,9 +1006,22 @@ public class FileSystemImpl implements IFileSystem {
 	 * @param coursesUrl : the coursesurl from univrav.properties
 	 * @return the clean courses url
 	 */
-	public String getCleanCoursesUrl(String coursesUrl) {
+	public String getCleanCoursesUrl(String coursesUrl) {		
+		
+		// Replace HOSTNAME by the real hostname of the server
+		if(coursesUrl.contains("[HOSTNAME]")) {
+						
+			int hostBeg = coursesUrl.indexOf("[HOSTNAME");
+			int hostEnd = coursesUrl.indexOf("]") + 1;
+			
+			try {
+				coursesUrl = coursesUrl.substring(0,hostBeg) + InetAddress.getLocalHost().getHostName() + coursesUrl.substring(hostEnd);			
+			} catch (UnknownHostException e) {
+				logger.error("Error with courseurl and [HOSTNAME] function");
+			}
+		}
+		
 		// Replace RAND[?-?] by random number (for load balancing streaming)
-	
 		if(coursesUrl.contains("RAND[")) {
 						
 			int randBeg = coursesUrl.indexOf("RAND[");
@@ -1017,13 +1032,10 @@ public class FileSystemImpl implements IFileSystem {
 			int higher = Integer.parseInt(randStr.substring(randStr.indexOf("-")+1, randStr.indexOf("]"))) + 1; //exclude
 			int random = (int)(Math.random() * (higher-lower)) + lower;
 						
-			return (coursesUrl.substring(0, randBeg)+random+coursesUrl.substring(randEnd));
-		}
-		else {
-			return coursesUrl;
+			coursesUrl = coursesUrl.substring(0, randBeg)+random+coursesUrl.substring(randEnd);
 		}
 		
-		
+		return coursesUrl;		
 	}
 	
 }

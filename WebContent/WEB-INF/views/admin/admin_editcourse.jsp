@@ -223,7 +223,9 @@
 	    	
 	    	<br>
 	    	<p><fmt:message key="editmessage1"/></p> 
-	        <p><fmt:message key="editmessage2"/></p> 
+	        <p><fmt:message key="editmessage2"/></p>
+	        <br>
+	        <p><fmt:message key="editmessage4"/></p>  
 		  		
 	    </div>
 	    	
