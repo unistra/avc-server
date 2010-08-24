@@ -134,7 +134,6 @@ public class CourseAddition extends Thread {
 				job_line =c.getCourseid()+":"+"waiting"+":"+String.valueOf(Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide)+":CA:"+c.getMediaFolder()+":mp3";
 			}
 			
-			//TODO
 			service.modifyJobStatus(c.getCourseid(), "processing");					
 			service.launchJob(serverUrl, job_line);		
 		}

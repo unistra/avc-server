@@ -819,7 +819,7 @@ public class Application extends HttpServlet {
 	 */
 	private void displayHomePage(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
-		// TODO Check all form with new combobox (disciplines,levels)
+		
 		/* initializes the model */
 		request.setAttribute("teachers", service.getTeachers());
 		request.setAttribute("disciplines", service.getAllDiscipline());
@@ -2570,7 +2570,6 @@ public class Application extends HttpServlet {
 		String amphi = a != null ? a.getName() : ip;
 		String building = service.getBuildingName(ip);
 				
-		//TODO Check function with ip and host name
 		ip=InetAddress.getByName(ip).getHostAddress();
 		
 		String streamerUrl = "rtmp://" + flashServerIp + "/live";

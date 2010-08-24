@@ -121,7 +121,6 @@ public class MediaUpload extends Thread {
 			String type = c.getType().equals("video") ? "MUV" : "MUA";
 			service.createJob(c,mediatype,type,extension,coursesFolder);
 			
-			//TODO
 			String job_line =c.getCourseid()+":"+"waiting"+":"+mediatype+":" + type + ":"+c.getMediaFolder()+":"+extension;
 			service.modifyJobStatus(c.getCourseid(), "processing");
 			service.launchJob(serverUrl, job_line);				
