@@ -182,14 +182,14 @@
 						<input type="hidden" name="returnUrl" value="/avc/admin_editcourse?id=${course.courseid}">
 						<table>
 						<tr class="tableheader">
-							<th colspan="2" id="adddoc"><fmt:message key="uploadadddoc"/></th>
+							<th colspan="2" class="adddoc" id="adddoc"><fmt:message key="uploadadddoc"/></th>
 						</tr>
 						<tr class="odd">
-							<td><fmt:message key="file"/> : </td>
+							<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/> : </td>
 							<td><input type="file" name="media" class="field"> </td>
 						</tr>
 						<tr>
-							<td><input type="submit" name="valider" onclick="javascript:document.getElementById('process').style.visibility='visible';document.subeditform.valider.disabled=true;this.disabled=true;" value="<fmt:message key="sendFile"/>"> </td>
+							<td><input type="submit" name="valider" onclick="javascript:document.getElementById('process').style.visibility='visible';document.subeditform.valider.disabled=true;" value="<fmt:message key="sendFile"/>"> </td>
 							<td><img id="process" src="../files/img/squaresCircle.gif" /></td>
 						</tr>
 						</table>
@@ -204,7 +204,7 @@
 							<th colspan="2" id="adddoc"><fmt:message key="deleteadddoc"/></th>
 						</tr>
 						<tr class="odd">
-							<td><fmt:message key="file"/> : </td>
+							<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/> : </td>
 							<td><input type="text" name="media" class="fieldAdddoc" readonly="readonly" value="${course.adddocname}"></td>
 						</tr>
 						<tr>
