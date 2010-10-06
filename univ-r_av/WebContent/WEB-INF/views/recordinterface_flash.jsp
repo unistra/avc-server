@@ -317,15 +317,16 @@
      			  			swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '640', '500', '9.0.124', false, flashvars, params, attributes);
    						</script>
    						<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>
-   						<div class="highquality">
+   						
 	            			<c:if test="${fn:contains(mediaLst, 'hq')}">
 	            				<c:url var="courseaccess" scope="page" value="./courseaccess">
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="hq"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />"><b><fmt:message key="Highquality"/></b></a>	
+								<div class="highquality">
+									<a href="<c:out value="${courseaccess}" />"><b><fmt:message key="Highquality"/></b></a>	
+								</div>
 							</c:if>
-						</div>
 					</td>
 				</c:if>	
 					

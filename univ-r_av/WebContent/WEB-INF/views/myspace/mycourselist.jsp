@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="dt" uri="/WEB-INF/taglibs-datetime.tld" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
@@ -88,6 +89,15 @@
 					<a href="<c:out value="${edit}"/>"  class="aEdit"><fmt:message key="Editer"/> </a>
 				</noscript>
 	    	</div>
+		</td>
+		
+		<c:url var="deleteurl" scope="page" value="./myspace_deletecourse">
+    		<c:param name="id" value="${course.courseid}"/>
+		</c:url>
+		<td class="tdalign" >
+    		<div class="btnDelete">
+    			<a class="aDelete" href="javascript:confirmation('<fmt:message key="Supprimer_confirmation"/> ${course.courseid} : ${fn:replace(course.title,'\'',' ')}?','${deleteurl}')"><fmt:message key="Supprimer"/> </a>
+    		</div>
 		</td>
 		
 		</tr>

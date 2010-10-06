@@ -14,10 +14,24 @@ DesiH=$4
 
 cd $1
 # Padding calculation
-vidh=`mplayer -nosound -frames 0 -vo null -ss 03:00:00 -really-quiet -identify "$2" | grep ID_VIDEO_HEIGHT=`
-vidw=`mplayer -nosound -frames 0 -vo null -ss 03:00:00 -really-quiet -identify "$2" | grep ID_VIDEO_WIDTH=`
-HAUTEUR=$(echo $vidh | sed s/ID_VIDEO_HEIGHT=//)
-LARGEUR=$(echo $vidw | sed s/ID_VIDEO_WIDTH=//)
+#vidh=`mplayer -nosound -frames 0 -vo null -ss 03:00:00 -really-quiet -identify "$2" | grep ID_VIDEO_HEIGHT=`
+#vidw=`mplayer -nosound -frames 0 -vo null -ss 03:00:00 -really-quiet -identify "$2" | grep ID_VIDEO_WIDTH=`
+vidw=`ffmpeg -i "$2" 2>&1 | grep "Video:"  | cut -d',' -f3 | cut -d' ' -f2 | cut -d'x' -f1`
+vidh=`ffmpeg -i "$2" 2>&1 | grep "Video:"  | cut -d',' -f3 | cut -d' ' -f2 | cut -d'x' -f2`
+#HAUTEUR=$(echo $vidh | sed s/ID_VIDEO_HEIGHT=//)
+#LARGEUR=$(echo $vidw | sed s/ID_VIDEO_WIDTH=//)
+HAUTEUR=$vidh
+LARGEUR=$vidw
+
+#Anamorphic pixels correction
+PAR=`ffmpeg -i "$2" 2>&1 | grep "Video:" | cut -d',' -f3 | cut -d' ' -f4`
+if [[ $PAR == "" ]]
+then
+PAR="1:1"
+fi
+PARX=$(echo $PAR | cut -d':' -f1)
+PARY=$(echo $PAR | cut -d':' -f2)
+LARGEUR=$(echo " $LARGEUR * $PARX / $PARY " | bc)
 
 wforH=$(echo $((DesiH*($LARGEUR)/($HAUTEUR)))) #Largeur pour la hauteur voulue
 hforW=$(echo $((DesiW*($HAUTEUR)/($LARGEUR)))) #Hauteur pour la largeur voulue

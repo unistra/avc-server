@@ -538,6 +538,17 @@ public class Application extends HttpServlet {
 			myspaceAddDocUpload(request, response);
 		else if( page.equals("/myspace_deleteadddoc"))
 			myspaceDeleteAddDoc(request, response);
+		else if( page.equals("/myspace_deletecourse")) {
+		    int courseid = Integer.parseInt(request.getParameter("id"));
+		    Course c = service.getCourse(courseid);
+		    service.deleteTag(courseid);
+		    service.deleteCourse(courseid, c.getMediaFolder(),false);
+		    /* Regeneration of the RSS files */
+		    //service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+		    /* Generation of the RSS files */
+			service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+		    response.sendRedirect(response.encodeRedirectURL("./myspace_home"));
+		}
 		else if( page.equals("/add") || page.equals("/UploadClient"))
 			addCourse(request, response);
 		else if(page.equals("/livestate") || page.equals("/LiveState"))
@@ -615,10 +626,12 @@ public class Application extends HttpServlet {
 		}
 		else if( page.equals("/admin_deletecourse")) {
 			int courseid = Integer.parseInt(request.getParameter("id"));
+			Course c = service.getCourse(courseid);
 			service.deleteTag(courseid);
-			service.deleteCourse(courseid, service.getCourse(courseid).getMediaFolder());
+			service.deleteCourse(courseid, c.getMediaFolder(),true);
 			/* Regeneration of the RSS files */
-			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+			//service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+			service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 			response.sendRedirect(response.encodeRedirectURL("./admin_courses"));
 		}
 		else if( page.equals("/admin_validatecourse"))

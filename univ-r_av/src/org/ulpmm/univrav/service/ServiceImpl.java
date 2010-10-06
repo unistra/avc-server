@@ -282,10 +282,16 @@ public class ServiceImpl implements IService {
 	 * Deletes a course by providing its id and media Folder
 	 * @param courseId the id of the course to delete
 	 * @param mediaFolder the folder of the course to delete
+	 * @param permanent true really delete the course, false move the course with the name folder_DELETE
 	 */
-	public synchronized void deleteCourse(int courseId, String mediaFolder) {
+	public synchronized void deleteCourse(int courseId, String mediaFolder, boolean permanent) {
 		db.deleteCourse(courseId);
-		fs.deleteCourse(mediaFolder);
+		
+		if(permanent)
+			fs.deleteCourse(mediaFolder);
+		else
+			fs.deleteMoveCourse(mediaFolder);
+			
 	}
 	
 	
@@ -555,12 +561,9 @@ public class ServiceImpl implements IService {
 	public void generateRss( String rssFolderPath, String rssName, String rssTitle, String rssDescription, 
 			String serverUrl, String rssImageUrl, String recordedInterfaceUrl, String language,String rssCategory, String itunesAuthor,
 			String itunesSubtitle, String itunesSummary, String itunesImage, String itunesCategory, String itunesKeywords) {
-		// For all courses 
-		List<Course> courses = db.getAllCourses(true,true,20);
-		String rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
-		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
-		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
-		
+				
+		List<Course> courses = null;
+		String rssPath = null;
 		
 		// For the teachers
 		List<String> teachers = db.getTeachers();
@@ -588,6 +591,11 @@ public class ServiceImpl implements IService {
 			fs.rssCreation(courses, rssPath, rssName, rssTitle+" - "+"lgn_"+u.getLogin(), rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		}
 		
+		// For all courses 
+		courses = db.getAllCourses(true,true,20);
+		rssPath = rssFolderPath + "/" + cleanFileName(rssName) + ".xml";
+		fs.rssCreation(courses, rssPath, rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+		fs.rssCreation(courses, rssFolderPath + "/" + cleanFileName("univrav") + ".xml", rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory,itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);		
 		
 	}
 	

@@ -54,6 +54,12 @@ public interface IFileSystem {
 	public void deleteCourse(String mediaFolder);
 	
 	/**
+	 * Move the media folder of a course on the file system with "_DELETE"
+	 * @param mediaFolder the media folder of the course
+	 */
+	public void deleteMoveCourse(String mediaFolder);
+	
+	/**
 	 * Creates a RSS files for a list of courses
 	 * @param courses the list of courses
 	 * @param filePath the full path of the RSS file to create
