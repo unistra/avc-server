@@ -228,6 +228,26 @@ public class FileSystemImpl implements IFileSystem {
 		}
 	}
 	
+	/**
+	 * Move the media folder of a course on the file system with "_DELETE"
+	 * @param mediaFolder the media folder of the course
+	 */
+	public void deleteMoveCourse(String mediaFolder) {
+		if( mediaFolder != null && ! mediaFolder.equals("")) {
+			try {
+				Process p = r.exec("mv " + coursesFolder + mediaFolder + " " + coursesFolder + mediaFolder + "_DELETED");
+				if( p.waitFor() != 0)
+					logger.error("the course folder " + mediaFolder + " mediaFolder has not been deleted");
+			}
+			catch(IOException ioe) {
+				logger.error("Impossible to delete the course folder");
+			}
+			catch(InterruptedException ie) {
+				logger.error("Impossible to delete the course folder");
+			}
+		}
+	}
+	
 		
 	/**
 	 * Retrieves a list of the website's available themes

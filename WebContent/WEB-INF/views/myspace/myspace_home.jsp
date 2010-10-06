@@ -33,6 +33,7 @@
 		<link rel="alternate" type="application/rss+xml" title="${rssfile.key}" href="${rssfile.value}"/>
 	</c:forEach>
 
+	<script type="text/javascript" src="../files/js/confirmation.js"></script>
 	<script type="text/javascript" src="../files/js/details.js"></script>
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
@@ -76,6 +77,7 @@
 						<tr class="tableheader">
 							<th colspan="5" id="courses"><fmt:message key="Mes cours"/></th>
 							<th colspan="1"><fmt:message key="Editer"/></th>
+							<th colspan="1" ><fmt:message key="Supprimer"/></th>
 						</tr>
 						<c:import url="./mycourselist.jsp" />
 					</table>

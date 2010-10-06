@@ -207,8 +207,8 @@
 				
 					
 						<h3><a id="downloads"></a>T&eacute;l&eacute;chargement des logiciels et plugins</h3>
-						<h5>Adobe Flash Player</h5>
-						<p><a href="http://get.adobe.com/fr/flashplayer/">Flash_allplatforms</a></p>
+						<p><a href="https://sourcesup.cru.fr/frs/?group_id=781">Client AudioVid&eacute;oCours</a></p>
+                        <p><a href="http://get.adobe.com/fr/flashplayer/">Adode Flash Player</a></p>
 			    	</div>
 		    	</div>
 		    	

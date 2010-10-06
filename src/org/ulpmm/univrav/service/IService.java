@@ -161,8 +161,9 @@ public interface IService {
 	 * Deletes a course by providing its id and media Folder
 	 * @param courseId the id of the course to delete
 	 * @param mediaFolder the folder of the course to delete
+	 * @param permanent true really delete the course, false move the course with the name folder_DELETE
 	 */
-	public void deleteCourse(int courseId, String mediaFolder);
+	public void deleteCourse(int courseId, String mediaFolder, boolean permanent);
 	
 	
 	/**
