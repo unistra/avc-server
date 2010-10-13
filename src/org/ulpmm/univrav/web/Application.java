@@ -1132,7 +1132,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("restrictionuds", request.getParameter("restrictionuds"));
 			request.setAttribute("levelSelected", request.getParameter("level"));
 			request.setAttribute("discSelected", request.getParameter("component"));
-			request.setAttribute("permission", request.getParameter("permission"));
+			//request.setAttribute("permission", request.getParameter("permission"));
 			
 			String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 
@@ -1225,12 +1225,12 @@ public class Application extends HttpServlet {
 			request.setAttribute("message", bundle.getString("err_component"));
 			getServletContext().getRequestDispatcher("/avc/publication").forward(request, response);
 		}
-		else if(request.getParameter("permission")==null || request.getParameter("permission").equals("")) {
+		/*else if(request.getParameter("permission")==null || request.getParameter("permission").equals("")) {
 			request.setAttribute("messagetype", "error");
 			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 			request.setAttribute("message", bundle.getString("err_permission"));
 			getServletContext().getRequestDispatcher("/avc/publication").forward(request, response);
-		}
+		}*/
 		// If the formulaire is valid
 		else {
 			getServletContext().getRequestDispatcher("/avc/UploadClient").forward(request, response);
@@ -2007,8 +2007,9 @@ public class Application extends HttpServlet {
 		String title, description, name, firstname, date, formation, genre,tags, fileName, level, component;
 		title = description = name = firstname = date = formation = genre = tags = fileName = level = component = "";
 		//boolean hq=false;
-		boolean visible, restrictionuds, permission;
-		visible=restrictionuds=permission=false;
+		boolean visible, restrictionuds;
+		//boolean permission = false;
+		visible=restrictionuds=false;
 		String message = "";
 		String messageType = "information";
 		String requestDispatcher = "/WEB-INF/views/message.jsp";
@@ -2091,9 +2092,9 @@ public class Application extends HttpServlet {
 							else if(item.getFieldName().equals("restrictionuds")) {
 								restrictionuds=true;
 							}
-							else if(item.getFieldName().equals("permission")) {
+							/*else if(item.getFieldName().equals("permission")) {
 								permission=true;
-							}
+							}*/
 
 						} /* If the element is a file (the last element */
 						else {
@@ -2141,12 +2142,12 @@ public class Application extends HttpServlet {
 								message = bundle.getString("err_component");
 								requestDispatcher="/avc/myspace_upload";
 							}
-							else if(!permission) {
+							/*else if(!permission) {
 								messageType = "error";
 								ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 								message = bundle.getString("err_permission");
 								requestDispatcher="/avc/myspace_upload";
-							}
+							}*/
 							else {
 								
 								String clientIP = request.getRemoteAddr();
@@ -2252,7 +2253,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("restrictionuds", restrictionuds!=false ? restrictionuds : null);
 			request.setAttribute("levelSelected", level);
 			request.setAttribute("discSelected", component);
-			request.setAttribute("permission", permission!=false ? permission : null);
+			//request.setAttribute("permission", permission!=false ? permission : null);
 		}
 				
 		/* Displays the result of the upload process */

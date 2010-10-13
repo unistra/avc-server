@@ -73,6 +73,15 @@ p#flash {
 	text-align: center;
 }
 
+.highquality2 {
+	margin-top:-15px;
+	margin-left: 15px;
+	font-size: 12px;
+	border-color: #ff9602;
+	border-style: solid;
+	border-width: 1px;
+}
+
 /* Displays information about the course */
 .info {
 	margin-left: 15px;
