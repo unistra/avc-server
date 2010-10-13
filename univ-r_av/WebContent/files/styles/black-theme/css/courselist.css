@@ -63,3 +63,9 @@ tr:hover,tr.hover {
 	font-size: 11px;
 	color:white;
 }
+
+.acourse {
+	display:block;
+	color:white;
+	cursor:pointer
+}

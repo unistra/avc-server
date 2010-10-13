@@ -67,14 +67,14 @@
 					<c:set var="checkedRestUdsField" value="checked" />
 				</c:otherwise>
 			</c:choose>
-			<c:choose>
+			<!--<c:choose>
 				<c:when test="${(message!=null and permission!=null)}">
 					<c:set var="checkedPermField" value="checked" />
 				</c:when>
 				<c:otherwise>
 					<c:set var="checkedPermField" value="" />
 				</c:otherwise>
-			</c:choose>
+			</c:choose>-->
 			
 	    	
 	    	<form action="<c:url value="./myspace_mediaupload"/>" method="post" enctype="multipart/form-data">
@@ -179,11 +179,11 @@
 				    <td title="<fmt:message key="ib_restrictionuds"/> ${univName}"><fmt:message key="restrictionuds"/> ${univAcronym} :</td>
 				    <td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/>> <font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
 			   	</tr>
-			   	<tr class="odd">
+			   	<!--  <tr class="odd">
 					  	<td title="<fmt:message key="ib_permission"/>"><fmt:message key="permission"/><b class="boldStar">*</b> :</td>
 					   	<td><input type="checkbox" name="permission" <c:out value="${checkedPermField}"/> <c:out value="${disabledField}"/>><font class="littleFont"><fmt:message key="uploadmessage7"/> ${univName} <fmt:message key="uploadmessage7b"/></font></td>
-			   	</tr>
-				<tr class="even">
+			   	</tr>-->
+				<tr class="odd">
 					<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/><b class="boldStar">*</b> : </td>
 					<td><input type="file" name="media" class="field"> </td>
 				</tr>

@@ -43,35 +43,35 @@
 			<c:param name="id" value="${course.courseid}"/>
 			<c:param name="type" value="flash"/>
 		</c:url>		
-		<tr class="${class}" onclick="document.location.href='${courseaccess}'" style="cursor:pointer">
-				
-
-<!-- Note: If javascript isn't activated, you can access to the course with the ahref on the img -->		
-	
+		<tr class="${class}">
+					
 		<td>
-		<script type="text/javascript">
-			document.write('<img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video">');
-		</script>
-		<noscript>
-			<a href="<c:out value="${courseaccess}" />"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a>
-		</noscript>
+			<a href="<c:out value="${courseaccess}" />" class="acourse"><img src="../files/styles/${sessionScope.style}/img/${typeImg}.png" alt="video"></a>
 		</td>
-		<td> 	    				
+		<td> 	   
+			<a href="<c:out value="${courseaccess}" />" class="acourse"> 				
 			<b><fmt:message key="Titre :"/> </b> <c:out value="${course.title}" /> <br>
-			<b><fmt:message key="Auteur :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>			
+			<b><fmt:message key="Auteur :"/> </b> <c:out value="${course.name}" /> <c:out value="${course.firstname}" /> <br>	
+			</a>		
 		</td>
 		<td>
+			<a href="<c:out value="${courseaccess}" />" class="acourse">
 			<b><fmt:message key="Formation :"/> </b> <c:out value="${course.formation}" /> <br>
 			<b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br>
+			</a>
 		</td>
 		<td nowrap="nowrap">
+			<a href="<c:out value="${courseaccess}" />" class="acourse">
 			<fmt:message key="dateFormat" var="dateFormat" />
 			<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
 			<b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br>
+			</a>
 		</td>
 		<td nowrap="nowrap">
+			<a href="<c:out value="${courseaccess}" />" class="acourse">
 			<b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br>
 			<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>
+			</a>
 		</td>
 								
 		</tr>
