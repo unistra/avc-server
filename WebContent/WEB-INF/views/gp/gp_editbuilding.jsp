@@ -32,55 +32,40 @@
   <body>
     <div class="main">
 	    <div class="contents">
-	    	<div class="banner">
+	   		<div class="banner">
 	    		<c:import url="../include/banner.jsp" />
 	    	</div>
-	    	<div class="links">
-		    	<c:import url="./links.jsp" />
-	    	</div>
-	    	
+	    		    	
+	    	<c:choose>
+				<c:when test="${building.imageFile == '' || building.imageFile == null}">
+					<c:set var="imageFile" value="generique-thumb.png" />
+				</c:when>
+				<c:when test="${building.imageFile != '' && building.imageFile != null}">
+					<c:set var="imageFile" value="${building.imageFile}" />
+				</c:when>
+			</c:choose>
+	    	    	
 	    	<div class="editform">
-		    	<form method="POST" action="<c:url value="./admin_validateamphi" />">
+		    	<form method="POST" action="<c:url value="./gp_validatebuilding" />">
 			    	<table>
 			    		<tr class="odd">
-				    		<td>AmphiId</td>
-				    		<td><input type="hidden" name="amphiid" value="${amphi.amphiid}">${amphi.amphiid}</td>
+				    		<td>BuildingId</td>
+				    		<td><input type="hidden" name="buildingid" value="${building.buildingid}">${building.buildingid}</td>
 			    		</tr>
 			    		<tr class="even">
-				    		<td>Building</td>
-				    		<td><input type="text" name="buildingid" value="${buildingId}"></td>
-			    		</tr>
-			    		<tr class="odd">
 				    		<td>Name</td>
-				    		<td><input type="text" name="name" value="${amphi.name}" class="field"></td>
-			    		</tr>
-			    		<tr class="even">
-				    		<td>IpAddress</td>
-				    		<td><input type="text" name="ipaddress" value="${amphi.ipAddress}" class="field"></td>
+				    		<td><input type="text" name="name" value="${building.name}" class="field"></td>
 			    		</tr>
 			    		<tr class="odd">
-				    		<td>Status</td>
-				    		<td><input type="hidden" name="status" value="${amphi.status}">${amphi.status}</td>
-			    		</tr>
-			    		<tr class="even">
-				    		<td>Google Map</td>
-				    		<td><input type="text" name="gmapurl" value="${amphi.gmapurl}" class="field"></td>
-			    		</tr>
-			    		<tr class="odd">
-				    		<td>Version</td>
-				    		<td><input type="hidden" name="version" value="${amphi.version}">${amphi.version}</td>
-			    		</tr>
-			    		<tr class="even">
-				    		<td><fmt:message key="restrictionuds"/> ${univAcronym}</td>
-				    		<td><input type="checkbox" name="restrictionuds" ${amphi.restrictionuds == true ? 'checked' : ''} ><font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
+				    		<td>ImageFile</td>
+				    		<td><input type="text" name="imagefile" value="${imageFile}" class="field"></td>
 			    		</tr>
 			    	</table>
 			    	<br>
-			    	<input type="hidden" name="oldAmphiip" value="${amphi.ipAddress}">
 			    	<input type="hidden" name="action" value="${action}">
 			    	<input type="submit" value="Validate">
 			    	<br><br>
-			    	<a href="<c:url value="./admin_amphis?buildingId=${buildingId}" />">Go back</a>
+			    	<a href="<c:url value="./gp_home" />">Go back</a>
 		    	</form>
 		    </div>
 	    </div>

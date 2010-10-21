@@ -114,6 +114,32 @@
    		<transport-guarantee>CONFIDENTIAL</transport-guarantee>
 	</user-data-constraint>
     </security-constraint>
+    
+    
+    <security-constraint>
+		<display-name>GP access restriction</display-name>
+		<!-- List of the protected pages -->
+		<web-resource-collection>
+			<web-resource-name>Protected resources</web-resource-name>
+			<url-pattern>/avc/gp_home</url-pattern>
+			<url-pattern>/avc/gp_editbuilding</url-pattern>
+			<url-pattern>/avc/gp_validatebuilding</url-pattern>
+			<url-pattern>/avc/gp_amphis</url-pattern>
+			<url-pattern>/avc/gp_editamphi</url-pattern>
+			<url-pattern>/avc/gp_validateamphi</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<!-- roles of the authorized users -->
+		<auth-constraint>
+			<role-name>gp</role-name>
+			<role-name>ulpmm</role-name>
+		</auth-constraint>
+		<!-- SSL -->
+		<user-data-constraint>
+   			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
 	
 	<!-- authentication type -->
 	<login-config>
@@ -124,6 +150,10 @@
 	<security-role>
 		<description>Univ-R AV administrators</description>
 		<role-name>ulpmm</role-name>
+	</security-role>
+	<security-role>
+		<description>GP administrators</description>
+		<role-name>gp</role-name>
 	</security-role>
 	
 	<filter> 

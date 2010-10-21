@@ -38,11 +38,7 @@
 	    	<div class="banner">
 	    		<c:import url="../include/banner.jsp" />
 	    	</div>
-	    
-	    	<div class="links">
-		    	<c:import url="./links.jsp" />
-	    	</div>
-	    	
+	    	    	
 	    	<p id="nbr"><c:out value="${buildingName}"/></p>
 	    	<br>
 	    	
@@ -50,31 +46,41 @@
 	    		<display:column property="amphiid" sortable="true"/>
 	    		<display:column property="buildingid" />
 				<display:column property="name" title="Name" sortable="true" />
-				<display:column property="ipAddress" sortable="true" />
-				<display:column property="version" sortable="true" />
-				<display:column property="number" title="Courses" sortable="true" />
-				<display:column title="status live">
-					<input type="checkbox" disabled="disabled" ${amphis.status == true ? 'checked' : '' } />
-					<a href="<c:url value="./livestate?recordingPlace=${amphis.ipAddress}&status=begin" />">On</a> /
-					<a href="<c:url value="./livestate?recordingPlace=${amphis.ipAddress}&status=end" />">Off</a>
-				</display:column>
-				<display:column title="client">
-					<a href="<c:url value="./admin_versionclient?ip=${amphis.ipAddress}"/>">version</a>
-				</display:column>
+				<display:column property="ipAddress" sortable="true" />				
 				<display:column>
-					<a href="<c:url value="./admin_editamphi?id=${amphis.amphiid}&buildingId=${buildingId}" />">Edit</a>
-				</display:column>
-				<display:column>
-					<a href="javascript:confirmation('Delete the amphi named ${fn:replace(amphis.name,'\'',' ')}?','./admin_deleteamphi?id=${amphis.amphiid}&buildingId=${buildingId}')">Delete</a>
+					<a href="<c:url value="./gp_editamphi?id=${amphis.amphiid}&buildingId=${buildingId}" />">Edit</a>
 				</display:column>
 				<display:column>
 					<a href="<c:url value="http://${amphis.ipAddress }" />">Access client</a>
 				</display:column>
 	    	</display:table>
 	    	<br>
+	    		    	
+	    	<div class="displaytag">   	
+		    	<form method="POST" action="<c:url value="./gp_validateamphi" />">
+		    		<input type="hidden" name="buildingid" value="${buildingId}">
+		    		<input type="hidden" name="amphiid" value="${amphi.amphiid}">
+		    		<input type="hidden" name="action" value="${action}">
+			    	<table cellspacing="0">
+			    		<tr class="tableheader">
+							<td class="littleFont">Name</td>
+							<td class="littleFont">IpAddress</td>
+							<td class="littleFont">Add</td>
+						</tr>
+			    		<tr class="odd">	    		
+				    		<td><input type="text" name="name" class="field"></td>
+			  				<td><input type="text" name="ipaddress" class="field"></td>
+			  				<td><input type="submit" value="Validate"></td>
+			    		</tr>
+			    	</table>
+		    	</form>
+		    </div>
+	    		    	
 	    	<div class="add">
-	    		<a href="<c:url value="./admin_addamphi?buildingId=${buildingId}" />">Add</a>		
+	    		<br>
+				<a href="<c:url value="./gp_home" />">Go back</a>	
 	  		</div>
+	  		
 	    </div>
 	    	
 	    <div class="footer">
