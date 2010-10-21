@@ -199,15 +199,17 @@
 					</div>   
 					</c:if>
 							
-					<br>
+					<br>	
+								
+					<div class="telecharger">
+					<table>
+					<tr>
+					<td class="tdalign">
+						<b id="type"><fmt:message key="Telecharger"/>:&nbsp;</b>
+					</td>
 						
-					<c:if test="${course.download}">						
-						<div class="telecharger">
-						<table>
-						<tr>
-						<td class="tdalign">
-							<b id="type"><fmt:message key="Telecharger"/>:&nbsp;</b>
-						</td>
+					<c:choose>	
+					<c:when test="${course.download}">	
 						
 						<!-- FLASH ONLY -->
 						 <c:if test="${course.mediatype == 1}">
@@ -282,10 +284,19 @@
 							</td>
 						</c:if>
 							
-						</tr>						
-						</table>
-						</div>
-					</c:if>	
+						</tr>	
+						
+					</c:when>
+					<c:otherwise>
+						<td class="tdalign">	
+							<b id="type"><fmt:message key="nodownload"/></b>
+						</td>
+					</c:otherwise>	
+					</c:choose>
+											
+					</table>
+					</div>
+					
 					
 					<br>
 					

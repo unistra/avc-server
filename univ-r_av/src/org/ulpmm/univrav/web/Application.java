@@ -659,7 +659,7 @@ public class Application extends HttpServlet {
 			response.sendRedirect(response.encodeRedirectURL("./admin_buildings"));
 		}
 		else if( page.equals("/admin_validatebuilding"))
-			validateBuilding(request, response);
+			validateBuilding(request, response,"./admin_buildings");
 		else if( page.equals("/admin_amphis")) {
 			request.setAttribute("buildingId", request.getParameter("buildingId"));
 			request.setAttribute("buildingName", service.getBuilding(Integer.parseInt(request.getParameter("buildingId"))).getName());
@@ -688,7 +688,7 @@ public class Application extends HttpServlet {
 			response.sendRedirect(response.encodeRedirectURL("./admin_amphis?buildingId=" + request.getParameter("buildingId")));
 		}
 		else if( page.equals("/admin_validateamphi"))
-			validateAmphi(request, response);
+			validateAmphi(request, response,"./admin_amphis");
 		else if( page.equals("/admin_versionclient"))
 			versionclient(request, response);
 		else if( page.equals("/admin_users")) {
@@ -797,6 +797,36 @@ public class Application extends HttpServlet {
 			service.deleteDiscipline(disciplineid);
 			response.sendRedirect(response.encodeRedirectURL("./admin_disciplines"));
 		}
+		else if( page.equals("/gp_home")) {
+			/* Saves the page for the style selection thickbox return */
+			session.setAttribute("previousPage", "/gp_home");
+			request.setAttribute("buildings", service.getBuildings());
+			getServletContext().getRequestDispatcher("/WEB-INF/views/gp/gp_home.jsp").forward(request, response);
+		}
+		else if( page.equals("/gp_editbuilding")) {
+			request.setAttribute("action","edit"); 
+			request.setAttribute("building", service.getBuilding(Integer.parseInt(request.getParameter("id"))));
+			getServletContext().getRequestDispatcher("/WEB-INF/views/gp/gp_editbuilding.jsp").forward(request, response);
+		}
+		else if( page.equals("/gp_validatebuilding"))
+			validateBuilding(request, response,"./gp_home");
+		else if( page.equals("/gp_amphis")) {
+			request.setAttribute("buildingId", request.getParameter("buildingId"));
+			request.setAttribute("buildingName", service.getBuilding(Integer.parseInt(request.getParameter("buildingId"))).getName());
+			request.setAttribute("amphis", service.getAmphis(Integer.parseInt(request.getParameter("buildingId"))));
+			getServletContext().getRequestDispatcher("/WEB-INF/views/gp/gp_amphis.jsp").forward(request, response);
+		}
+		else if( page.equals("/gp_editamphi")) {
+			request.setAttribute("buildingId", request.getParameter("buildingId"));
+			request.setAttribute("buildingName", service.getBuilding(Integer.parseInt(request.getParameter("buildingId"))).getName());
+			request.setAttribute("action","edit"); 
+			request.setAttribute("amphi", service.getAmphi(Integer.parseInt(request.getParameter("id"))));
+			// univ acronym
+			request.setAttribute("univAcronym", univAcronym);
+			getServletContext().getRequestDispatcher("/WEB-INF/views/gp/gp_editamphi.jsp").forward(request, response);
+		}
+		else if( page.equals("/gp_validateamphi"))
+			validateAmphi(request, response,"./gp_amphis");
 		else if(page.equals("/findTracks"))
 				displayFindTracks(request, response);
 		else if(page.equals("/findStats"))
@@ -2702,10 +2732,11 @@ public class Application extends HttpServlet {
 	 * 
 	 * @param request the request send by the client to the server
 	 * @param response the response send by the server to the client
+	 * @param responseredirect redirection when the form validated
 	 * @throws ServletException if an error occurred
 	 * @throws IOException if an error occurred
 	 */
-	private void validateBuilding(HttpServletRequest request, HttpServletResponse response) 
+	private void validateBuilding(HttpServletRequest request, HttpServletResponse response, String responseredirect) 
 		throws ServletException, IOException {
 		
 		if( ! (request.getParameter("name").equals("") || request.getParameter("imagefile").equals(""))) {
@@ -2722,7 +2753,7 @@ public class Application extends HttpServlet {
 				service.modifyBuilding(b);
 			else
 				service.addBuilding(b);
-			response.sendRedirect(response.encodeRedirectURL("./admin_buildings"));
+			response.sendRedirect(response.encodeRedirectURL(responseredirect));
 		}
 		else {
 			request.setAttribute("messagetype", "error");
@@ -2737,10 +2768,11 @@ public class Application extends HttpServlet {
 	 * 
 	 * @param request the request send by the client to the server
 	 * @param response the response send by the server to the client
+	 * @param responseredirect redirection when the form validated
 	 * @throws ServletException if an error occurred
 	 * @throws IOException if an error occurred
 	 */
-	private void validateAmphi(HttpServletRequest request, HttpServletResponse response) 
+	private void validateAmphi(HttpServletRequest request, HttpServletResponse response, String responseredirect) 
 		throws ServletException, IOException {
 		
 		if( ! (request.getParameter("name").equals("") || request.getParameter("ipaddress").equals(""))) {
@@ -2753,9 +2785,9 @@ public class Application extends HttpServlet {
 				request.getParameter("name"),
 				request.getParameter("ipaddress"),
 				Boolean.parseBoolean(request.getParameter("status")),
-				request.getParameter("gmapurl").equals("") ? null : request.getParameter("gmapurl"),
+				request.getParameter("gmapurl")!=null && request.getParameter("gmapurl").equals("") ? null : request.getParameter("gmapurl"),
 				request.getParameter("version"),
-				request.getParameter("restrictionuds") != null ? true : false
+				request.getParameter("restrictionuds") != null && request.getParameter("restrictionuds") != "" ? true : false
 			);
 			
 			String oldAmphiip = request.getParameter("oldAmphiip");
@@ -2764,7 +2796,7 @@ public class Application extends HttpServlet {
 				service.modifyAmphi(a, oldAmphiip);
 			else
 				service.addAmphi(a);
-			response.sendRedirect(response.encodeRedirectURL("./admin_amphis?buildingId=" + request.getParameter("buildingid")));
+			response.sendRedirect(response.encodeRedirectURL(responseredirect+"?buildingId=" + request.getParameter("buildingid")));
 		}
 		else {
 			request.setAttribute("messagetype", "error");
