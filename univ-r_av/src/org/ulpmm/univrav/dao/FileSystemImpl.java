@@ -708,27 +708,16 @@ public class FileSystemImpl implements IFileSystem {
 					/* Archive extraction according to its type to the courses folder */
 					if(extension.equals(".zip")){			
 						/* Zip extracting */
-						Process p = r.exec("unzip -u " + ftpFolder + courseArchive, null, mediaFolder);
-						if( p.waitFor() != 0) {
+						String[] cmd = new String[] {"nice", "-n", "19", "bash" , scriptsFolder+"/unzip.sh" , ftpFolder + courseArchive, tmpMediaFolder, mf.substring(mf.lastIndexOf('/')+1)};		
+						Process p1 = r.exec(cmd, null, mediaFolder);
+						if( p1.waitFor() != 0) {
 							logger.error("The course archive " + courseArchive + " has not been extracted");
-		        			throw new DaoException("The course archive " + courseArchive + " has not been extracted");
+							throw new DaoException("The course archive " + courseArchive + " has not been extracted");
 						}
 					}
-					/*else {								
-						// Tar extracting
-						Process p = r.exec("tar xf " + ftpFolder + courseArchive, null, mediaFolder);
-						if( p.waitFor() != 0) {
-							logger.error("The course archive " + courseArchive + " has not been extracted");
-		        			throw new DaoException("The course archive " + courseArchive + " has not been extracted");
-						}
-					}*/
-						
-	        		/* Renaming of the extracted folder to have a unique one */
-					Process p = r.exec("mv " + tmpMediaFolder + " " + mf.substring(mf.lastIndexOf('/')+1), null, mediaFolder);
-	        		if( p.waitFor() != 0) {
-	        			logger.error("The course archive " + courseArchive + " has not been renamed");
-	        			throw new DaoException("The course archive " + courseArchive + " has not been renamed");
-	        		}
+					else {
+						logger.error("Error while extracting the course archive. Not a zip file.");
+					}
 				}
 				catch (IOException ioe) {
 					logger.error("Error while extracting the course archive",ioe);

@@ -166,7 +166,14 @@
 						</div>	   				
 						<div id="permaliencoldetails" class="hidden">				
 							<c:url var="permaauthor" scope="page" value="${serverUrl}/avc/courses">
-								<c:param name="author" value="${course.name} ${course.firstname}"/>
+								<c:choose>	
+									<c:when test="${course.firstname==null || course.firstname==''}">
+										<c:param name="author" value="${course.name}"/>
+									</c:when>
+									<c:otherwise>
+										<c:param name="author" value="${course.name} ${course.firstname}"/>
+									</c:otherwise>
+								</c:choose>		
 							</c:url>	
 							<b>URL <fmt:message key="Auteur"/>:</b> <input id="permalieninput" type="text" value="${permaauthor}" onClick="javascript:focus();select();" readonly>
 							<br>

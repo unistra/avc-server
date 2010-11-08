@@ -28,7 +28,7 @@ class CreatePDF:
         timecode= open(workingDirectory+"/timecode.csv",'r')
         self.slides=[]
         for line in timecode:
-            print "Found slide at t (seconds) = "+line
+            #print "Found slide at t (seconds) = "+line
             self.slides.append(line)
         #self.slides=self.slides[1:]#Don't use the first slide
         print "\nNumber of slides to process :", len(self.slides)
