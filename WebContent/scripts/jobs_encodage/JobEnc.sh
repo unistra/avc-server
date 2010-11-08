@@ -72,7 +72,7 @@ mv $MediaFolder/new_$CourseID.ogg $MediaFolder/$CourseID.ogg
 #videoslideCreation $MediaFolder $CourseID
 bash $PTHSCR/videoslide.sh $MediaFolder $CourseID
 #mp4Tag
-/usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite
+/usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 ;;
 
 CV)
@@ -91,7 +91,7 @@ mv $MediaFolder/new_$CourseID.ogg $MediaFolder/$CourseID.ogg
 #videoslideCreation(c.getMediaFolder(), c.getMediasFileName()); // VS
 bash $PTHSCR/videoslide.sh $MediaFolder $CourseID
 #mp4Tag
-/usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite
+/usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 ;;
 
 MUA)
@@ -159,11 +159,11 @@ mv $MediaFolder/new_$CourseID.ogg $MediaFolder/$CourseID.ogg
 #videoHighQualityConvert
 bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $ORI$CourseID.$Extension $CourseID $PTHSCR/calculate_padding.sh false
 #mp4Tag
-/usr/bin/AtomicParsley $MediaFolder/$CourseID.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite
+/usr/bin/AtomicParsley $MediaFolder/$CourseID.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 #videoHighQualityConvert for ipod
 bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $ORI$CourseID.$Extension $CourseID $PTHSCR/calculate_padding.sh true
 #mp4Tag for ipod
-/usr/bin/AtomicParsley $MediaFolder/"$CourseID"_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite
+/usr/bin/AtomicParsley $MediaFolder/"$CourseID"_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 
 ;;
 

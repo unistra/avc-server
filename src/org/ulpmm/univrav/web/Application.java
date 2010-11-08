@@ -1440,7 +1440,7 @@ public class Application extends HttpServlet {
 		}
 		else { // The user has clicked on a pagination link
 			
-			pageNumber = Integer.parseInt( request.getParameter("page"));
+			pageNumber = request.getParameter("page")!=null ? Integer.parseInt(request.getParameter("page")) : 1;
 			start = recordedCourseNumber * (pageNumber - 1) ;
 			
 			params = (HashMap<String, String>) session.getAttribute("params");
@@ -3439,7 +3439,7 @@ public class Application extends HttpServlet {
 			try {
 				// Find the list of courses 
 				List<Course> lstCrs = service.getTracks(params);
-				results = service.generateXmlTracks(lstCrs,serverUrl,false);
+				results = service.generateXmlTracks(coursesUrl,lstCrs,serverUrl,false);
 			}
 			catch(Exception e1) {
 				showErrorMsg = true;
@@ -3448,7 +3448,7 @@ public class Application extends HttpServlet {
 		
 		//if error, show xml error
 		if(showErrorMsg) {
-			results = service.generateXmlTracks(null,null,true);
+			results = service.generateXmlTracks(null,null,null,true);
 		}
 				
 		// Return results

@@ -742,9 +742,10 @@ public interface IService {
 	 * @param courses list of courses
 	 * @param serverUrl the url server for url course access
 	 * @param showErrorMsg true if show error xml msg
+	 * @param coursesUrl the courses url
 	 * @return results
 	 */
-	public String generateXmlTracks( List<Course> courses, String serverUrl, boolean showErrorMsg);
+	public String generateXmlTracks(String coursesUrl, List<Course> courses, String serverUrl, boolean showErrorMsg);
 	
 	/**
 	 * Return the result of find stats function

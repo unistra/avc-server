@@ -1291,9 +1291,10 @@ public class ServiceImpl implements IService {
 	 * @param courses list of courses
 	 * @param serverUrl the url server for url course access
 	 * @param showErrorMsg true if show error xml msg
+	 * @param coursesUrl the courses url
 	 * @return results
 	 */
-	public String generateXmlTracks( List<Course> courses, String serverUrl, boolean showErrorMsg) {
+	public String generateXmlTracks( String coursesUrl, List<Course> courses, String serverUrl, boolean showErrorMsg) {
 		
 		String results=null;
 		
@@ -1412,7 +1413,11 @@ public class ServiceImpl implements IService {
 	        			for(int i=0;i<listTags.size();i++) 
 	        					tags=i==0 ? listTags.get(i).getTag() : tags + "+" + listTags.get(i).getTag();
 	        			elTags.setTextContent(tags);
-	        			item.appendChild(elTags);	        			
+	        			item.appendChild(elTags);	  
+	        			
+	        			Element elUrlFolder= document.createElement("urlfolder");
+	        			elUrlFolder.setTextContent(String.valueOf(getCleanCoursesUrl(coursesUrl)+course.getMediaFolder()));
+	        			item.appendChild(elUrlFolder);
 	        		}
 	        	}
 	        }
