@@ -8,13 +8,13 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Map.Entry;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,6 +27,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
@@ -1334,7 +1335,6 @@ public class ServiceImpl implements IService {
 
 	        		if( course.getTitle() != null) {
 	        			// Conversion de la date dans le bon format	
-	        			Date d = course.getDate();
 	        			SimpleDateFormat sdf = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
 
 	        			// item
@@ -1351,8 +1351,12 @@ public class ServiceImpl implements IService {
 	        			item.appendChild(elUrl);
 
 	        			Element elDate = document.createElement("date");
-	        			elDate.setTextContent(sdf.format(d));
+	        			elDate.setTextContent(sdf.format(course.getDate()));
 	        			item.appendChild(elDate);
+	        			
+	        			Element elRecordDate = document.createElement("recorddate");
+	        			elRecordDate.setTextContent(course.getRecorddate()!=null ? sdf.format(course.getRecorddate()) : "" );
+	        			item.appendChild(elRecordDate);
 
 	        			Element elTitle = document.createElement("title");
 	        			elTitle.setTextContent(course.getTitle());

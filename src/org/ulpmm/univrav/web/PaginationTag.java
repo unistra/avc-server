@@ -35,6 +35,9 @@ public class PaginationTag extends TagSupport {
 	/** tags */
 	private String tags;
 	
+	/** paramsUrl */
+	private String paramsUrl;
+	
 	/** The name of the bundle to search the corresponding language properties files */
 	private static final String BUNDLE_NAME = "org.ulpmm.univrav.language.messages";
 	
@@ -54,26 +57,26 @@ public class PaginationTag extends TagSupport {
 		/* Calculates the numbers of the first and the last pages */
 		int begin, end;
 		
-		if( pagesNumber <= 20 ) {
+		if( pagesNumber <= 10 ) {
 			begin = 1 ;
 			end = pagesNumber;
 		}
 		else {
 			
-			if( currentPage <= 9 ) {
+			if( currentPage <= 4 ) {
 				/* The first pages will be displayed */
 				begin = 1 ;
-				end = 20;
+				end = 10;
 			}
-			else if( pagesNumber - currentPage <= 10) {
+			else if( pagesNumber - currentPage <= 5) {
 				/* The last pages will be displayed */
-				begin = pagesNumber - 19;
+				begin = pagesNumber - 9;
 				end = pagesNumber;
 			}
 			else {
-				/* 9 pages before and 10 pages after the current page will be displayed */
-				begin = currentPage -9;
-				end = currentPage + 10;
+				/* 4 pages before and 5 pages after the current page will be displayed */
+				begin = currentPage -4;
+				end = currentPage + 5;
 			}
 			
 		}
@@ -88,17 +91,33 @@ public class PaginationTag extends TagSupport {
 			JspWriter out = pageContext.getOut();
 			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) pageContext.getSession().getAttribute("language")));
 			
-			
-			/* Link to the first page */
-			out.println("<a href=\"" + resultPageName + sessionId + "?page=1" + (resultPageName.equals("tags")? "&tags="+tags :"") + "\">" + bundle.getString("Premier") + "<img src=\"../files/img/previous_noshadow.png\"></a>&nbsp;");
-			
-			
+			/* Link to the previous page */
+			out.println("<a href=\"" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&page=" : "?page=") + ((currentPage-1) > 0 ? currentPage-1 : 1)  + (resultPageName.equals("tags")? "&tags="+tags :"") + "#tableheader\">" + bundle.getString("Precedent") + "<img src=\"../files/img/R.png\"></a>&nbsp;");
+
 			/* Links with page numbers to the pages */
 			for( int i=begin ; i<= end ; i++)
-				out.println((i != currentPage ? "<a href=\"" + resultPageName + sessionId + "?page=" + i + (resultPageName.equals("tags")? "&tags="+tags :"") + "\">" : "<b>") + i + (i != currentPage ? "</a>" : "</b>") +"&nbsp;");
+				out.println((i != currentPage ? "<a class=\"numpage\" href=\"" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&page=" : "?page=") + i + (resultPageName.equals("tags")? "&tags="+tags :"") + "#tableheader\">" : "<b class=\"currentnumpage\">") + i + (i != currentPage ? "</a>" : "</b>") +"&nbsp;");
+		
 			
-			/* Link to the last page */
-			out.println("<a href=\"" + resultPageName + sessionId + "?page=" + pagesNumber + (resultPageName.equals("tags")? "&tags="+tags :"") + "\"><img src=\"../files/img/next_noshadow.png\">"+ bundle.getString("Dernier")+"</a>&nbsp;");
+			// Combobox
+			int combosize=10;
+			
+			out.println("<select name=combopages onchange=\"javascript:document.location.href='" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&page=" : "?page=") + "'+this.value+'#tableheader'\" />");
+			out.println("<option value=''>page</option>");
+			for(int i=1;i<=pagesNumber;i++) {
+								
+				//the first and the other
+				if(i==1 || (i%combosize)==0) {
+					out.println("<option value=" + i /*+ (i == currentPage ? " selected" : "")*/ + ">" + i + " ... " +"</option>");
+				}	
+							
+			}
+			out.println("</select>");
+						
+			
+			/* Link to the next page */
+			out.println("<a href=\"" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&page=" : "?page=") + ((currentPage+1) <= pagesNumber ? currentPage+1 : pagesNumber) + (resultPageName.equals("tags")? "&tags="+tags :"") + "#tableheader\"><img src=\"../files/img/F.png\">"+ bundle.getString("Suivant") + "</a>&nbsp;");
+
 			
 		}
 		catch(IOException ioe){
@@ -186,6 +205,22 @@ public class PaginationTag extends TagSupport {
 	 */
 	public void setTags(String tags) {
 		this.tags = tags;
+	}
+
+	/**
+	 * Gets paramsurl
+	 * @return paramsurl
+	 */
+	public String getParamsUrl() {
+		return paramsUrl;
+	}
+
+	/**
+	 * Sets paramsurl
+	 * @param paramsUrl
+	 */
+	public void setParamsUrl(String paramsUrl) {
+		this.paramsUrl = paramsUrl;
 	}
 	
 	

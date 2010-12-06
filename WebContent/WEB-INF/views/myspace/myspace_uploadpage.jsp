@@ -51,6 +51,14 @@
 					<c:set var="checkedVisbleField" value="checked" />
 				</c:otherwise>
 			</c:choose>
+				<c:choose>
+				<c:when test="${message!=null and download==null}">
+					<c:set var="checkedDownloadField" value="" />
+				</c:when>
+				<c:otherwise>
+					<c:set var="checkedDownloadField" value="checked" />
+				</c:otherwise>
+			</c:choose>
 			<c:choose>
 				<c:when test="${hd==null}">
 					<c:set var="checkedHdField" value="" />
@@ -171,11 +179,15 @@
 				    <td title="<fmt:message key="ib_visible"/>">Visible :</td>
 				    <td><input type="checkbox" name="visible" <c:out value="${checkedVisbleField}"/>></td>
 			   	</tr>
+			   	<tr class="even">
+				    <td title="<fmt:message key="ib_dl"/>"><fmt:message key="Telecharger"/> :</td>
+				    <td><input type="checkbox" name="download" <c:out value="${checkedDownloadField}"/>></td>
+			   	</tr>
 				<!--<tr class="odd">
 					<td title="<fmt:message key="ib_hq"/>"><fmt:message key="hd"/> : </td>
 					<td><input type="checkbox" name="hd" <c:out value="${checkedHdField}"/>> <font class="littleFont"><fmt:message key="uploadmessage4"/></font> </td>
 				</tr>-->
-				<tr class="even">
+				<tr class="odd">
 				    <td title="<fmt:message key="ib_restrictionuds"/> ${univName}"><fmt:message key="restrictionuds"/> ${univAcronym} :</td>
 				    <td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/>> <font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
 			   	</tr>
@@ -183,7 +195,7 @@
 					  	<td title="<fmt:message key="ib_permission"/>"><fmt:message key="permission"/><b class="boldStar">*</b> :</td>
 					   	<td><input type="checkbox" name="permission" <c:out value="${checkedPermField}"/> <c:out value="${disabledField}"/>><font class="littleFont"><fmt:message key="uploadmessage7"/> ${univName} <fmt:message key="uploadmessage7b"/></font></td>
 			   	</tr>-->
-				<tr class="odd">
+				<tr class="even">
 					<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/><b class="boldStar">*</b> : </td>
 					<td><input type="file" name="media" class="field"> </td>
 				</tr>

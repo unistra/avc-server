@@ -27,9 +27,28 @@
 .pagination {
 	color: #FFFFFF;
 	font-size: 12px;
-	text-align: right;
-	margin: 5px;
-	margin-right: 5%;
+	text-align: center;
+	margin-top: 5px;
+}
+
+
+.currentnumpage {
+	color:#ff9602;
+	border-style:solid;
+	border-width:3px;
+	border-color:#606060;
+}
+
+.numpage {
+	border-style:solid;
+	border-width:3px;
+	border-color:#606060;
+}
+
+.numpage:hover {
+	border-color:white;
+	color:#606060;
+	background-color:white;
 }
 
 .pagination a {

@@ -65,14 +65,14 @@
 				<c:choose>
 					<c:when test="${!empty courses}">	
 						<table cellspacing="0">
-							<tr class="tableheader">
+							<tr class="tableheader" id="tableheader">
 								<th colspan="5" id="courses"><fmt:message key="Les cours"/></th>
 							</tr>
 							<c:import url="include/courselist.jsp" />
 						</table>
 								
 	    				<div class="pagination">
-	    					<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" tags="${tags}" />
+	    					<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" tags="${tags}" paramsUrl="${paramsUrl}" />
 						</div>
 					</c:when>
 					<c:otherwise>

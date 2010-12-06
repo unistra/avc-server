@@ -74,7 +74,7 @@
 			<c:when test="${!empty courses}">	
 	    		<div class="course">
 					<table cellspacing="0">
-						<tr class="tableheader">
+						<tr class="tableheader" id="tableheader">
 							<th colspan="5" id="courses"><fmt:message key="Mes cours"/></th>
 							<th colspan="1"><fmt:message key="Editer"/></th>
 							<th colspan="1" ><fmt:message key="Supprimer"/></th>

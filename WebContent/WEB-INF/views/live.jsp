@@ -26,7 +26,7 @@
 	
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
-	<script type="text/javascript">window.setInterval("location.reload(true)",60000);</script>
+	<script type="text/javascript">window.setInterval("location.reload(true)",30000);</script>
 	
 	<!-- google analytics -->
 	<c:import url="include/google_analytics.jsp" />

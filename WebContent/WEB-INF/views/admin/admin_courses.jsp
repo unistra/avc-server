@@ -52,6 +52,7 @@
 				<display:column property="name" sortable="true" />
 				<display:column property="firstname" />
 				<display:column property="ipaddress" sortable="true" />
+				<display:column property="recorddate" sortable="true" />
 				<display:column property="durationString" title="Duration" sortable="true" />
 				<display:column title="visible" sortable="true">
 					<input type="checkbox" disabled="disabled" ${courses.visible == true ? 'checked' : '' } />

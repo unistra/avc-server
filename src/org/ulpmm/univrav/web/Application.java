@@ -20,6 +20,9 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.zip.Adler32;
+import java.util.zip.CheckedInputStream;
+
 import javax.naming.InitialContext;
 import javax.naming.directory.DirContext;
 import javax.servlet.ServletException;
@@ -29,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
@@ -53,6 +57,8 @@ import org.ulpmm.univrav.entities.Tag;
 import org.ulpmm.univrav.entities.Teacher;
 import org.ulpmm.univrav.entities.User;
 import org.ulpmm.univrav.service.ServiceImpl;
+
+import com.sun.jndi.toolkit.url.UrlUtil;
 
 
 /**
@@ -605,7 +611,7 @@ public class Application extends HttpServlet {
 			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_legal.jsp").forward(request, response);
 		else if( page.equals("/thick_download"))
 			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_download.jsp").forward(request, response);
-		else if( page.equals("/iframe_liveslide"))
+		else if( page.equals("/liveslide"))
 			liveSlide(request, response);
 		else if( page.equals("/admin_home")) {
 			/* Saves the page for the style selection thickbox return */
@@ -1159,6 +1165,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("genre", request.getParameter("genre"));
 			request.setAttribute("tags", request.getParameter("tags"));
 			request.setAttribute("visible", request.getParameter("visible"));
+			request.setAttribute("download", request.getParameter("download"));
 			request.setAttribute("restrictionuds", request.getParameter("restrictionuds"));
 			request.setAttribute("levelSelected", request.getParameter("level"));
 			request.setAttribute("discSelected", request.getParameter("component"));
@@ -1402,82 +1409,130 @@ public class Application extends HttpServlet {
 	 * @throws ServletException if an error occurred
 	 * @throws IOException if an error occurred
 	 */
-	@SuppressWarnings("unchecked")
 	private void displaySearchResults(HttpServletRequest request, HttpServletResponse response)
-		throws ServletException, IOException {
+	throws ServletException, IOException {
 		
-		int start = 0;
-		int pageNumber;
-		
-		HashMap<String, String> params = new HashMap<String, String>();
-		
-		if( request.getMethod().equals("POST")) { // The form has just been posted
+		//TODO PROBLEME ENCODAGE EN FONCTION DES NAVIGATEURS
 			
-			pageNumber = 1;		
+		String paramsUrl="?search=true";
+		
+		
+		// to set typevideo and typeaudio nochecked
+		if(request.getParameter("typevideo") != null && request.getParameter("typevideo").equals("nochecked")) 
+			paramsUrl=paramsUrl+"&typevideo=nochecked";
+		if( request.getParameter("typeaudio") != null && request.getParameter("typeaudio").equals("nochecked")) 
+			paramsUrl=paramsUrl+"&typeaudio=nochecked";
+		
+		
+		// SOLUTION 1 AVEC UTF8
+		// Si c'est posté depuis le formulaire, on est en utf8
+		if( request.getMethod().equals("POST") ) { 
 						
+			// to set typevideo and typeaudio nochecked when form post
+			if(request.getParameter("video") == null) 
+				paramsUrl=paramsUrl+"&typevideo=nochecked";
+			if( request.getParameter("audio") == null) 
+				paramsUrl=paramsUrl+"&typeaudio=nochecked";
+							
+			
+			if(request.getParameter("fullname") != null && ! request.getParameter("fullname").equals("*")) 
+				paramsUrl=paramsUrl+"&fullname="+UrlUtil.encode(request.getParameter("fullname"), "UTF-8");		
+			if( request.getParameter("discipline") != null && ! request.getParameter("discipline").equals("*") )
+				paramsUrl=paramsUrl+"&discipline="+UrlUtil.encode(request.getParameter("discipline"), "UTF-8");	
+			if( request.getParameter("level") != null && ! request.getParameter("level").equals("*")) 
+				paramsUrl=paramsUrl+"&level="+UrlUtil.encode(request.getParameter("level"), "UTF-8");		
+			if( request.getParameter("keyword") != null && ! request.getParameter("keyword").equals("")) 
+				paramsUrl=paramsUrl+"&keyword="+UrlUtil.encode(request.getParameter("keyword"), "UTF-8");
+		}
+		// Sinon on doit le retransformer en utf8 à cause de la récupération via url
+		else {
+			
+			if(request.getParameter("fullname") != null && ! request.getParameter("fullname").equals("*")) 
+				paramsUrl=paramsUrl+"&fullname="+UrlUtil.encode(new String(request.getParameter("fullname").getBytes("8859_1"),"UTF8"), "UTF-8");		
+			if( request.getParameter("discipline") != null && ! request.getParameter("discipline").equals("*") )
+				paramsUrl=paramsUrl+"&discipline="+UrlUtil.encode(new String(request.getParameter("discipline").getBytes("8859_1"),"UTF8"), "UTF-8");	
+			if( request.getParameter("level") != null && ! request.getParameter("level").equals("*")) 
+				paramsUrl=paramsUrl+"&level="+UrlUtil.encode(new String(request.getParameter("level").getBytes("8859_1"),"UTF8"), "UTF-8");	
+			if( request.getParameter("keyword") != null && ! request.getParameter("keyword").equals("")) 
+				paramsUrl=paramsUrl+"&keyword="+UrlUtil.encode(new String(request.getParameter("keyword").getBytes("8859_1"),"UTF8"), "UTF-8");
+		}
+			
+				
+		// Redirect if the form posted
+		if( request.getMethod().equals("POST") ) { 
+						
+			String redirect = "./search"+paramsUrl;
+			response.sendRedirect(redirect);
+		}
+
+		// Print the results
+		else {
+
+			int start = 0;
+			int pageNumber = 1;
+
+			HashMap<String, String> params = new HashMap<String, String>();
+
+			// The user has clicked on a pagination link
+			if(request.getParameter("page")!=null ) {
+				pageNumber = request.getParameter("page")!=null ? Integer.parseInt(request.getParameter("page")) : 1;
+				start = recordedCourseNumber * (pageNumber - 1) ;
+			}
+
+			
+			
 			/* Puts the search paramaters in a HashMap object */
-			if( request.getParameter("audio") != null && request.getParameter("video") == null ) 
-				params.put("type", "audio");
-			else if( request.getParameter("audio") == null && request.getParameter("video") != null ) 
-				params.put("type", "video");
-			else if( request.getParameter("audio") == null && request.getParameter("video") == null ) 
+			if( request.getParameter("typeaudio") != null && request.getParameter("typeaudio").equals("nochecked") && request.getParameter("typevideo") != null && request.getParameter("typevideo").equals("nochecked")) {
 				params.put("type", "");
+			}
+			else if( request.getParameter("typeaudio") != null && request.getParameter("typeaudio").equals("nochecked") && request.getParameter("typevideo") == null) {
+				params.put("type", "video");
+				request.setAttribute("video", "checked");
+			}
 			
-			if( request.getParameter("fullname") != null && ! request.getParameter("fullname").equals("*") ) 
-				params.put("fullname", request.getParameter("fullname"));
-			
-			if( request.getParameter("discipline") != null && ! request.getParameter("discipline").equals("*") ) 
-				params.put("discipline", request.getParameter("discipline"));
-			
-			if( request.getParameter("level") != null && ! request.getParameter("level").equals("*") ) 
-				params.put("level", request.getParameter("level"));
-			
-			if( request.getParameter("keyword") != null && ! request.getParameter("keyword").equals("") ) 
-				params.put("keyword", request.getParameter("keyword"));
-			
-			/* Saves the hashmap in the session */
-			session.setAttribute("params", params);
-		}
-		else { // The user has clicked on a pagination link
-			
-			pageNumber = request.getParameter("page")!=null ? Integer.parseInt(request.getParameter("page")) : 1;
-			start = recordedCourseNumber * (pageNumber - 1) ;
-			
-			params = (HashMap<String, String>) session.getAttribute("params");
-		}
+			else if( request.getParameter("typevideo") != null && request.getParameter("typevideo").equals("nochecked") && request.getParameter("typeaudio") == null) {
+				params.put("type", "audio");
+				request.setAttribute("audio", "checked");
+			}
+			else {
+				request.setAttribute("audio", "checked");
+				request.setAttribute("video", "checked");
+			}
 		
-		if( params != null) {
-			/* Saves the parameters of the form */
-			if( params.get("type") == null ) { 
-				request.setAttribute("audio", "checked");
-				request.setAttribute("video", "checked");
-			}
-			else if( (params.get("type")).equals("audio") ) {
-				request.setAttribute("audio", "checked");
-			}
-			else if( (params.get("type")).equals("video") ) {
-				request.setAttribute("video", "checked");
-			}
 			
-			if( params.get("fullname") != null && ! params.get("fullname").equals("*") ) {
+			if( request.getParameter("fullname") != null && ! request.getParameter("fullname").equals("*") ) {
+				//params.put("fullname", request.getParameter("fullname"));
+				params.put("fullname", new String(request.getParameter("fullname").getBytes("8859_1"),"UTF8"));
 				request.setAttribute("nameSelected", params.get("fullname"));
 			}
-			
-			if( params.get("discipline") != null && ! params.get("discipline").equals("*") ) {
-				request.setAttribute("discSelected", params.get("discipline"));
+
+			if( request.getParameter("discipline") != null && ! request.getParameter("discipline").equals("*") ) {
+				//params.put("discipline", request.getParameter("discipline"));
+				params.put("discipline", new String(request.getParameter("discipline").getBytes("8859_1"),"UTF8"));
+				request.setAttribute("discSelected", params.get("discipline"));	
 			}
-			
-			if( params.get("level") != null && ! params.get("level").equals("*") ) {
-				request.setAttribute("levelSelected", params.get("level"));
+
+			if( request.getParameter("level") != null && ! request.getParameter("level").equals("*") ) {
+				//params.put("level", request.getParameter("level"));
+				params.put("level", new String(request.getParameter("level").getBytes("8859_1"),"UTF8"));
+				request.setAttribute("levelSelected", params.get("level"));	
 			}
-			
-			if( params.get("keyword") != null && ! params.get("keyword").equals("") ) {
+
+			if( request.getParameter("keyword") != null && ! request.getParameter("keyword").equals("") ) {
+				//params.put("keyword", request.getParameter("keyword"));
+				params.put("keyword", new String(request.getParameter("keyword").getBytes("8859_1"),"UTF8"));
 				request.setAttribute("keyword", params.get("keyword"));
+				
+				
+		    //	System.out.println("Keyword: " + new String(request.getParameter("keyword").getBytes("8859_1"),"UTF8"));
+			//	System.out.println("Keyword: " + new String(request.getParameter("keyword").getBytes("UTF8"),"8859_1"));
+			//	System.out.println("Keyword: " + request.getParameter("keyword"));	
+			//	System.out.println("Keyword: " + UrlUtil.decode(request.getParameter("keyword")));
+				
 			}
-			
+
 			request.setAttribute("page", pageNumber);
 			request.setAttribute("teachers", service.getTeachers());
-			//request.setAttribute("formations", service.getFormations());
 			request.setAttribute("disciplines", service.getAllDiscipline());
 			request.setAttribute("courses", service.getCourses(params, recordedCourseNumber, start, testKeyWord1, testKeyWord2, testKeyWord3));
 			request.setAttribute("items", service.getCourseNumber(params,testKeyWord1, testKeyWord2, testKeyWord3));
@@ -1488,15 +1543,15 @@ public class Application extends HttpServlet {
 			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName, true));
 			request.setAttribute("levels", service.getAllLevels());
 
-			
 			/* Saves the page for the style selection thickbox return */
-			session.setAttribute("previousPage", "/search?page=" + pageNumber);
+			session.setAttribute("previousPage", "/search" + paramsUrl +"&page=" + pageNumber);
+
 			
+			// params url
+			request.setAttribute("paramsUrl", paramsUrl);
+
 			/* Displays the view */
 			getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
-		}
-		else { // if the session is not valid anymore
-			response.sendRedirect("./recorded");
 		}
 	}
 	
@@ -1787,7 +1842,7 @@ public class Application extends HttpServlet {
 		throws ServletException, IOException {
 						
 		String title, description, mediapath, media, timing, name, firstname, formation, genre, login, email,tags,level,component;
-		boolean visible,restrictionuds;
+		boolean visible,restrictionuds, download;
 		String message, message2, ahref, ahref2;
 		message=message2=ahref=ahref2="";
 		String messageType = "information";
@@ -1814,19 +1869,16 @@ public class Application extends HttpServlet {
 		level = request.getParameter("level")!=null ? request.getParameter("level") : "";
 		component = request.getParameter("component")!=null ? request.getParameter("component") : "";
 				
-		if(request.getParameter("publication_type")!=null) {
-			visible = request.getParameter("visible") != null ? true : false;
-		}
-		// for old client
-		else {
-			visible = true;
-		}
 		
 		if(request.getParameter("publication_type")!=null) {
+			visible = request.getParameter("visible") != null ? true : false;
+			download = request.getParameter("download") != null ? true : false;
 			restrictionuds = request.getParameter("restrictionuds") != null ? true : false;
 		}
 		// for old client
 		else {
+			visible = true;
+			download = true;
 			restrictionuds = false;
 		}
 						
@@ -1900,10 +1952,11 @@ public class Application extends HttpServlet {
 						timing,
 						user!=null ? user.getUserid() : null,
 						null,
-						true,
+						download,
 						restrictionuds,
 						Course.typeFlash, // Other medias can't be set yet
-						volume
+						volume,
+						null // The date recorded can't be set yet
 				);
 					
 				service.addCourse(c, media, tags, serverUrl, sepEnc, coursesFolder);
@@ -2037,9 +2090,9 @@ public class Application extends HttpServlet {
 		String title, description, name, firstname, date, formation, genre,tags, fileName, level, component;
 		title = description = name = firstname = date = formation = genre = tags = fileName = level = component = "";
 		//boolean hq=false;
-		boolean visible, restrictionuds;
+		boolean visible, restrictionuds, download;
 		//boolean permission = false;
-		visible=restrictionuds=false;
+		visible=restrictionuds=download=false;
 		String message = "";
 		String messageType = "information";
 		String requestDispatcher = "/WEB-INF/views/message.jsp";
@@ -2115,6 +2168,9 @@ public class Application extends HttpServlet {
 							}*/
 							else if(item.getFieldName().equals("visible")) {
 								visible=true;
+							}
+							else if(item.getFieldName().equals("download")) {
+								download=true;
 							}
 							else if(item.getFieldName().equals("tags")) {
 								tags = item.getString("UTF8");
@@ -2211,10 +2267,11 @@ public class Application extends HttpServlet {
 										timing,
 										user.getUserid(),
 										null,
-										true,
+										download,
 										restrictionuds,
 										0,
-										volume
+										volume,
+										new Timestamp(new Date().getTime())
 								);
 
 								/* Sends the creation of the course to the service layer */
@@ -2279,6 +2336,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("genre", genre);
 			request.setAttribute("tags", tags);
 			request.setAttribute("visible", visible!=false ? visible : null);
+			request.setAttribute("download", download!=false ? download : null);
 			//request.setAttribute("hd", hq!=false ? hq : null);
 			request.setAttribute("restrictionuds", restrictionuds!=false ? restrictionuds : null);
 			request.setAttribute("levelSelected", level);
@@ -2637,7 +2695,7 @@ public class Application extends HttpServlet {
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
 		}
 		else {
-
+			
 			request.setAttribute("amphi", amphi);
 			request.setAttribute("building", building);
 			request.setAttribute("ip", ip);
@@ -2662,10 +2720,32 @@ public class Application extends HttpServlet {
 		
 		String ip = request.getParameter("ip");
 		String url = "../../live/" + ip.replace('.','_') + ".jpg";
-		request.setAttribute("ip", ip);
-		request.setAttribute("url", url);
 		
-		getServletContext().getRequestDispatcher("/WEB-INF/views/include/iframe_liveslide.jsp").forward(request, response);
+		long checksum = 0;
+		FileInputStream fis = null;
+		CheckedInputStream cis = null;
+		boolean nodia = false;
+		
+		try {
+			    fis = new FileInputStream(liveFolder+"/"+ip.replace('.','_') + ".jpg");
+		        cis = new CheckedInputStream(fis, new Adler32());
+		        byte[] tempBuf = new byte[128];
+		        while (cis.read(tempBuf) >= 0) {}
+		        
+		        checksum = cis.getChecksum().getValue();
+		        
+		        cis.close();
+		    	fis.close();
+		        
+	    } catch (IOException e) {
+	    	nodia = true;
+	    }
+			    
+		request.setAttribute("urlimg", url);
+		request.setAttribute("checksum", checksum);
+		request.setAttribute("nodia", nodia);
+		
+		getServletContext().getRequestDispatcher("/WEB-INF/views/include/liveslide.jsp").forward(request, response);
 	}
 	
 	/**
@@ -2701,7 +2781,8 @@ public class Application extends HttpServlet {
 			request.getParameter("download") != null ? true : false,
 			request.getParameter("restrictionuds") != null ? true : false,
 			Integer.parseInt(request.getParameter("mediatype")),
-			Short.parseShort(request.getParameter("volume"))
+			Short.parseShort(request.getParameter("volume")),
+			! request.getParameter("recorddate").equals("") ? new Timestamp(Long.parseLong(request.getParameter("recorddate"))) : null
 		);
 		service.modifyCourse(c);
 		

@@ -46,11 +46,33 @@
 	vertical-align: middle;
 }
 
-iframe#DiaFrame {
-	width:981; /*966*/
-	height:739;
+/*
+
+.flashslide {
+	float: left;
 }
 
-p#flash {
-	/*text-align:center;*/
+
+div#liveslidediv {
+	margin-left:10px;
+	float: left;
+	width:650px;
+}*/
+
+
+.tableliveslide {
+	float: left;	
 }
+
+.flashslide {
+	vertical-align: top;	
+}
+
+div#liveslidediv {
+	margin-left:10px;
+}
+
+.linkplayersize {
+	float:left;
+}
+

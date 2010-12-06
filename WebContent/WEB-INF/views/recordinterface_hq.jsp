@@ -51,10 +51,8 @@
 	    	</div>
 	    			
 	        <div class="flashslide">
-	        	           			
-	        	<br>
-	        	           			
-	        	<p id=textHqPlayer><fmt:message key="Highqualityplayer"/></p>
+	        	           				        	           			
+	        	<p id=textHqPlayer><a href="./courseaccess?id=${course.courseid}&amp;type=flash"><fmt:message key="Highqualityplayer"/></a></p>
 	        	
 	        	            
 	            <script type="text/javascript">
