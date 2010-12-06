@@ -86,6 +86,9 @@ public class Course {
 	/** the mediaFolder. It's not a database column. It's used because it's convenient */
 	private String mediafolder;
 	
+	/** the course's record date */
+	private Timestamp recorddate; 
+	
 	/**
 	 * Default constructor
 	 */
@@ -113,9 +116,10 @@ public class Course {
 	 * @param download the download parameter
 	 * @param restrictionuds the restriction uds
 	 * @param mediatype media type
-	 * @param volume
+	 * @param volume the volume disk
+	 * @param recorddate the course's record date
 	 */
-	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, Integer userid, String adddocname, boolean download, boolean restrictionuds, int mediatype, short volume) {
+	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, Integer userid, String adddocname, boolean download, boolean restrictionuds, int mediatype, short volume, Timestamp recorddate) {
 		this.courseid = courseid;
 		this.date = date;
 		this.type = type;
@@ -137,6 +141,7 @@ public class Course {
 		this.mediatype=mediatype;
 		this.volume=volume;
 		this.mediafolder=FindMediaFolder();
+		this.recorddate=recorddate;
 	}
 	
 	
@@ -580,7 +585,32 @@ public class Course {
 	public String getMediaFolder() {
 		return mediafolder;
 	}
+
+	/**
+	 * return course's record date
+	 * @return timestamp
+	 */
+	public Timestamp getRecorddate() {
+		return recorddate;
+	}
+
+	/**
+	 * set course's record date
+	 * @param daterecorded the timestamp
+	 */
+	public void setRecorddate(Timestamp recorddate) {
+		this.recorddate = recorddate;
+	}
+
 	
+	/**
+	 * Gets a record date string
+	 * @return the date in the convenient String format
+	 */
+	public String getRecordDateString() {
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");	
+		return sdf.format(recorddate);
+	}
 	
 	
 }

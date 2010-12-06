@@ -66,10 +66,14 @@
 				    		<td><input type="hidden" name="date" value="${course.date.time}">${course.date}</td>
 			    		</tr>
 			    		<tr class="odd">
+				    		<td title="<fmt:message key="ib_recorddate"/>"><fmt:message key="RecordDate"/></td>
+				    		<td><input type="hidden" name="recorddate" value="${course.recorddate.time}">${course.recorddate}</td>
+			    		</tr>
+			    		<tr class="even">
 				    		<td title="<fmt:message key="ib_title"/>"><fmt:message key="title"/></td>
 				    		<td><input type="text" name="title" value="${course.title}" class="field"></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td title="<fmt:message key="ib_desc"/>"><fmt:message key="description"/></td>
 				    		<td><input type="text" name="description" value="${course.description}" class="field"></td>
 			    		</tr>
@@ -77,7 +81,7 @@
 				    		<td title="<fmt:message key="ib_form"/>"><fmt:message key="ue"/></td>
 				    		<td><input type="text" name="formation" value="${course.formation}" class="field"></td>
 			    		</tr>-->
-			    		<tr class="odd">
+			    		<tr class="even">
 						<td title="<fmt:message key="ib_level"/>"><fmt:message key="level"/></td>
 						<td>
 							<select name="level">
@@ -92,7 +96,7 @@
 						</td>
 					</tr>
 								
-					<tr class="even">
+					<tr class="odd">
 						<td title="<fmt:message key="ib_form"/>"><fmt:message key="component"/></td>
 						<td>
 							<select name="component">
@@ -106,31 +110,31 @@
 							</select>
 						</td>
 					</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td title="<fmt:message key="ib_name"/>"><fmt:message key="name"/></td>
 				    		<td><input type="text" name="name" value="${course.name}" class="field"></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td title="<fmt:message key="ib_firstname"/>"><fmt:message key="firstname"/></td>
 				    		<td><input type="text" name="firstname" value="${course.firstname}" class="field"></td>
 			    		</tr>			    		
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td title="<fmt:message key="ib_code"/>"><fmt:message key="Code d'acc&egrave;s"/></td>
 				    		<td><input type="text" name="genre" value="${course.genre}" class="field"></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td title="<fmt:message key="ib_visible"/>">Visible</td>
 				    		<td><input type="checkbox" name="visible" ${course.visible == true ? 'checked' : ''} ></td>
 			    		</tr>			    		
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td title="<fmt:message key="ib_tags"/>">Tags</td>
 				    		<td><input type="text" name="tags" value="${tags}" class="field"></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td title="<fmt:message key="ib_dl"/>"><fmt:message key="Telecharger"/></td>
 				    		<td><input type="checkbox" name="download" ${course.download == true ? 'checked' : ''} ></td>
 			    		</tr>	
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td title="<fmt:message key="ib_restrictionuds"/> ${univName}"><fmt:message key="restrictionuds"/> ${univAcronym}</td>
 				    		<td><input type="checkbox" name="restrictionuds" ${course.restrictionuds == true ? 'checked' : ''} ><font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
 			    		</tr>	    	

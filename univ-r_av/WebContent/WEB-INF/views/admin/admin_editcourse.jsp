@@ -57,14 +57,18 @@
 				    		<td><input type="hidden" name="date" value="${course.date.time}">${course.date}</td>
 			    		</tr>
 			    		<tr class="odd">
+				    		<td>Record Date</td>
+				    		<td><input type="hidden" name="recorddate" value="${course.recorddate.time}">${course.recorddate}</td>
+			    		</tr>
+			    		<tr class="even">
 				    		<td>Type</td>
 				    		<td><input type="hidden" name="type" value="${course.type}">${course.type}</td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>Title</td>
 				    		<td><input type="text" name="title" value="${course.title}" class="field"></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>Description</td>
 				    		<td><input type="text" name="description" value="${course.description}" class="field"></td>
 			    		</tr>
@@ -72,7 +76,7 @@
 				    		<td>Formation</td>
 				    		<td><input type="text" name="formation" value="${course.formation}" class="field"></td>
 			    		</tr>-->
-			    		<tr class="even">
+			    		<tr class="odd">
 						<td title="<fmt:message key="ib_level"/>"><fmt:message key="level"/></td>
 						<td>
 							<select name="level">
@@ -87,7 +91,7 @@
 						</td>
 					</tr>
 								
-					<tr class="odd">
+					<tr class="even">
 						<td title="<fmt:message key="ib_form"/>"><fmt:message key="component"/></td>
 						<td>
 							<select name="component">
@@ -101,63 +105,63 @@
 							</select>
 						</td>
 					</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>Name</td>
 				    		<td><input type="text" name="name" value="${course.name}" class="field"></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>Firstname</td>
 				    		<td><input type="text" name="firstname" value="${course.firstname}" class="field"></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>Ipaddress</td>
 				    		<td><input type="text" name="ipaddress" value="${course.ipaddress}" class="field"></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>Duration</td>
 				    		<td><input type="hidden" name="duration" value="${course.duration}">${course.durationString}</td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>Password</td>
 				    		<td><input type="text" name="genre" value="${course.genre}" class="field"></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>Visible</td>
 				    		<td><input type="checkbox" name="visible" ${course.visible == true ? 'checked' : ''} ></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>Consultations</td>
 				    		<td><input type="hidden" name="consultations" value="${course.consultations}">${course.consultations}</td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>Timing</td>
 				    		<td><input type="hidden" name="timing" value="${course.timing}">${course.timing}</td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>UserId</td>
 				    		<td><input type="text" name="userid" value="${course.userid}" class="field"></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>Tags</td>
 				    		<td><input type="text" name="tags" value="${tags}" class="field"></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>AddDocName</td>
 				    		<td><input type="hidden" name="adddocname" value="${course.adddocname}">${course.adddocname}</td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 				    		<td>Download</td>
 				    		<td><input type="checkbox" name="download" ${course.download == true ? 'checked' : ''} ></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td><fmt:message key="restrictionuds"/> ${univAcronym}</td>
 				    		<td><input type="checkbox" name="restrictionuds" ${course.restrictionuds == true ? 'checked' : ''} ><font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
 			    		</tr>
-			    		<tr class="odd">
+			    		<tr class="even">
 			    			<td>MediaType</td>
 				    		<td><input type="text" name="mediatype" value="${course.mediatype}" class="field"></td>
 			    		</tr>
-			    		<tr class="even">
+			    		<tr class="odd">
 				    		<td>Volume</td>
 				    		<td><input type="hidden" name="volume" value="${course.volume}">${course.volume}</td>
 			    		</tr>

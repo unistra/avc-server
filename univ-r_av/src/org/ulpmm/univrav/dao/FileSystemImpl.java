@@ -18,6 +18,8 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -119,6 +121,7 @@ public class FileSystemImpl implements IFileSystem {
 		
 		archiveExtraction(c, courseArchive);
 		moveArchive(c, courseArchive);
+		setRecordDate(c, courseArchive);
 		setCourseType(c);
 		
 		if( c.getType().equals("audio")) {
@@ -774,6 +777,27 @@ public class FileSystemImpl implements IFileSystem {
 			logger.error("No course media file found in the " + coursesFolder + c.getMediaFolder() + " folder");
 			throw new DaoException("No course media file found in the " + coursesFolder + c.getMediaFolder() + " folder");
 		}
+	}
+	
+	
+	/**
+	 * Sets the "recorddate" attribute of the Course object by identifying the media file
+	 * @param c the course
+	 * @param courseArchive the course archive
+	 */
+	private static void setRecordDate(Course c, String courseArchive) {
+					
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-hh'h'-mm'm'-ss's'");	
+		Date recorddate = null;
+		
+		try {
+			recorddate = sdf.parse(courseArchive);
+		} catch (ParseException e) {
+			recorddate = new Date();
+		}
+		
+		c.setRecorddate(new Timestamp(recorddate.getTime()));
+		
 	}
 	
 	

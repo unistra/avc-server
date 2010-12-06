@@ -146,7 +146,7 @@ public class DatabaseImpl implements IDatabase {
 	public void addCourse(Course c) {
 		
 		Connection cnt = null;
-		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";	
+		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";	
 		PreparedStatement pstmt = null;
 		
 		try {
@@ -215,6 +215,11 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setBoolean(18, c.isRestrictionuds());
 			pstmt.setInt(19, c.getmediatype());
 			pstmt.setShort(20, c.getVolume());
+						
+			if(c.getRecorddate() !=null)
+				pstmt.setTimestamp(21, c.getRecorddate());
+			else
+				pstmt.setNull(21, Types.TIMESTAMP);
 			
 			if( pstmt.executeUpdate() == 0) {
 				logger.error("The course " + c + " has not been added to the database");
@@ -284,7 +289,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
-					rs.getShort("volume")
+					rs.getShort("volume"),
+					rs.getTimestamp("recorddate")
 				));
 			}
 		}
@@ -349,7 +355,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
-					rs.getShort("volume")
+					rs.getShort("volume"),
+					rs.getTimestamp("recorddate")
 				));
 			}
 		}
@@ -418,7 +425,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
-					rs.getShort("volume")
+					rs.getShort("volume"),
+					rs.getTimestamp("recorddate")
 				));
 			}
 		}
@@ -545,7 +553,8 @@ public class DatabaseImpl implements IDatabase {
 							rs.getBoolean("download"),
 							rs.getBoolean("restrictionuds"),
 							rs.getInt("mediatype"),
-							rs.getShort("volume")
+							rs.getShort("volume"),
+							rs.getTimestamp("recorddate")
 					));
 				}
 			}
@@ -617,7 +626,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getBoolean("download"),
 						rs.getBoolean("restrictionuds"),
 						rs.getInt("mediatype"),
-						rs.getShort("volume")
+						rs.getShort("volume"),
+						rs.getTimestamp("recorddate")
 				));
 			}
 		}
@@ -682,7 +692,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getBoolean("download"),
 						rs.getBoolean("restrictionuds"),
 						rs.getInt("mediatype"),
-						rs.getShort("volume")
+						rs.getShort("volume"),
+						rs.getTimestamp("recorddate")
 				));
 			}
 		}
@@ -737,7 +748,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
-					rs.getShort("volume")
+					rs.getShort("volume"),
+					rs.getTimestamp("recorddate")
 				);
 			}
 			else
@@ -795,7 +807,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
-					rs.getShort("volume")
+					rs.getShort("volume"),
+					rs.getTimestamp("recorddate")
 				);
 			}
 			else
@@ -996,7 +1009,7 @@ public class DatabaseImpl implements IDatabase {
 		/* Creation of the SQL query string */
 		String sql = "UPDATE course SET date = ? , type = ? , title = ? , description = ? , ";
 		sql += "formation = ? , name = ? , firstname = ? , ipaddress = ? , duration = ? , ";
-		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, userid = ?, adddocname = ?, download = ?, restrictionuds = ?, mediatype = ?, volume = ? ";
+		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, userid = ?, adddocname = ?, download = ?, restrictionuds = ?, mediatype = ?, volume = ?, recorddate = ? ";
 		sql += "WHERE courseid = ?";
 		
 		PreparedStatement pstmt = null;
@@ -1069,7 +1082,14 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setBoolean(17, c.isRestrictionuds());
 			pstmt.setInt(18, c.getmediatype());
 			pstmt.setShort(19, c.getVolume());
-			pstmt.setInt(20, c.getCourseid());
+			
+			if(c.getRecorddate() !=null)
+				pstmt.setTimestamp(20, c.getRecorddate());
+			else
+				pstmt.setNull(20, Types.TIMESTAMP);
+			
+			
+			pstmt.setInt(21, c.getCourseid());
 			
 			
 			if( pstmt.executeUpdate() == 0 ) {
@@ -1225,7 +1245,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
-					rs.getShort("volume")
+					rs.getShort("volume"),
+					rs.getTimestamp("recorddate")
 				));
 			}			
 		}
@@ -1294,7 +1315,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
-					rs.getShort("volume")
+					rs.getShort("volume"),
+					rs.getTimestamp("recorddate")
 				));
 			}
 		}
@@ -2519,7 +2541,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
-					rs.getShort("volume")
+					rs.getShort("volume"),
+					rs.getTimestamp("recorddate")
 				));
 			}
 		}	
@@ -2819,7 +2842,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
-					rs.getShort("volume")
+					rs.getShort("volume"),
+					rs.getTimestamp("recorddate")
 				));
 			}
 		}
@@ -2933,7 +2957,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
-					rs.getShort("volume")
+					rs.getShort("volume"),
+					rs.getTimestamp("recorddate")
 				));
 			}
 		}
@@ -2995,7 +3020,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("download"),
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
-					rs.getShort("volume")
+					rs.getShort("volume"),
+					rs.getTimestamp("recorddate")
 				));
 			}
 		}
@@ -3754,7 +3780,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getBoolean("download"),
 						rs.getBoolean("restrictionuds"),
 						rs.getInt("mediatype"),
-						rs.getShort("volume")
+						rs.getShort("volume"),
+						rs.getTimestamp("recorddate")
 				));
 			}
 		}

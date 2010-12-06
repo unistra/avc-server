@@ -88,6 +88,14 @@
 				</c:otherwise>
 			</c:choose>
 			<c:choose>
+				<c:when test="${message!=null and download==null}">
+					<c:set var="checkedDownloadField" value="" />
+				</c:when>
+				<c:otherwise>
+					<c:set var="checkedDownloadField" value="checked" />
+				</c:otherwise>
+			</c:choose>
+			<c:choose>
 				<c:when test="${(message!=null and restrictionuds==null) or (message==null && publication_type == 'serverFree' and pubFree == true)}">
 					<c:set var="checkedRestUdsField" value="" />
 				</c:when>
@@ -218,6 +226,10 @@
 					    <td><input type="checkbox" name="visible" <c:out value="${checkedVisbleField}"/> <c:out value="${disabledField}"/>></td>
 			   		</tr>
 			   		<tr class="even">
+					    <td title="<fmt:message key="ib_dl"/>"><fmt:message key="Telecharger"/> : </td>
+					    <td><input type="checkbox" name="download" <c:out value="${checkedDownloadField}"/> <c:out value="${disabledField}"/>></td>
+			   		</tr>
+			   		<tr class="odd">
 					  	<td title="<fmt:message key="ib_restrictionuds"/> ${univName}"><fmt:message key="restrictionuds"/> ${univAcronym} : </td>
 					   	<td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/> <c:out value="${disabledField}"/>><font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
 			   		</tr>

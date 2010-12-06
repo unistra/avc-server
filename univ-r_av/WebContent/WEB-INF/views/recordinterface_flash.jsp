@@ -143,6 +143,7 @@
 							<b><fmt:message key="Sujet :"/> </b> <c:out value="${course.description}" /> <br>
 							<fmt:message key="dateFormat" var="dateFormat" />
 							<b><fmt:message key="Date :"/> </b> <dt:format pattern="${dateFormat}">${course.date.time}</dt:format> <br>
+							<b><fmt:message key="RecordDate"/> : </b> <c:if test="${course.recorddate != null && course.recorddate != ''}"><dt:format pattern="${dateFormat}">${course.recorddate.time}</dt:format></c:if> <br>
 							<b><fmt:message key="Type :"/> </b> <c:out value="${course.type}" /> <br>
 							<b><fmt:message key="Dur&eacute;e :"/> </b> <c:out value="${course.durationString}" /> <br>
 							<b><fmt:message key="Consultations :"/> </b> <c:out value="${course.consultations}" /> <br>

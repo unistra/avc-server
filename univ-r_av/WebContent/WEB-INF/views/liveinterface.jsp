@@ -8,7 +8,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    
+      
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/> - <fmt:message key="Visualisation du cours"/></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
@@ -24,6 +24,23 @@
 	
 	<script type="text/javascript" src="../files/js/ieupdate.js"></script>
 	<script type="text/javascript" src="../files/jwflvplayer/swfobject.js"></script>
+	<script type="text/javascript" src="../files/js/jquery.min.js"></script>
+	<script type="text/javascript" src="../files/js/liveinterface.js"></script>
+		
+	<script type="text/javascript">
+		$.ajaxSetup({cache:false}) 
+		function loadLiveslide() { $('#liveslidediv').load('./liveslide?ip=${ip}'); }
+		var auto_refresh = setInterval("loadLiveslide()", 5000);  // every 5 sec
+
+
+		// When browser resolution changed
+		$(window).smartresize(function(){
+			resizeLiveside('liveslideimg');
+		});
+
+
+		
+	</script>
 	
 	<!-- google analytics -->
 	<c:import url="include/google_analytics.jsp" />
@@ -34,14 +51,18 @@
     <div class="main">
 	    <div class="contents">
 	    	
-	    	<div class="amphitheatre">${building} | ${amphi}</div>  	
-	    	<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
-	    		 
-	    	<br><br>	 
-	    		    	    		    	
-			<iframe id="DiaFrame" name="DiaFrame" scrolling="no" src="./iframe_liveslide?ip=${ip}"></iframe>
-			
-			<br><br>
+	    	<div class="firstline">
+	    		<div class="amphitheatre">${building} | ${amphi}</div>  	
+	    		<div class="closeButton">
+	    			<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
+	    		</div>
+	    	</div>	
+	    	
+	    	
+	    	<table class="tableliveslide">   	
+	    	<tr>
+	    	
+	    	<td class="flashslide">
 						
 		    	<script type="text/javascript">
      				 var flashvars =
@@ -69,8 +90,30 @@
     				  swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '320', '260', '9.0.124', false, flashvars, params, attributes);
     				  
    				 </script>
-   				 
    				 <p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>
+   				 
+   				 
+   				 <a class="linkplayersize" href="javascript:modifyPlayerSize();"><fmt:message key="playersize"/></a>
+   				 
+   			</td>
+	    	
+	    	<td>    		    		    	    	
+	    	
+	    	<!-- dia div -->	    	    	
+	    	<div class="liveslidediv" id="liveslidediv"></div>
+	    	
+	    	<!-- load live slide first time -->
+	    	<script type="text/javascript">
+	    		loadLiveslide();
+	    	</script>
+	    	
+	    	
+	    	</td>	
+	    	
+	    	</tr>
+	    	</table>	 
+	    	 				 
+   				 
     	</div>
 	    	
 	    <div class="footer">
