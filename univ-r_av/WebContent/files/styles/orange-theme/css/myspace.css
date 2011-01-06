@@ -1,0 +1,98 @@
+.welcome {
+	text-align:center;
+}
+
+.btnMyspace {
+	text-align:center; 
+	width: 140px;
+	height: 20px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* Div containing the website's banner */
+.btnUpload {
+	float:left;
+	width: 140px;
+	height: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	background: url(../img/btn_or_upload.png) 50% 50%;
+  	background-repeat: no-repeat;
+  	font-size: 12px;
+	text-align:center; 	
+}
+
+.btnUpload a {
+	color:white;
+	font-weight: bold;
+	float:left;
+	width: 140px;
+	height: 20px;
+	margin-top:3px;
+}
+
+.btnEdit {
+	float:left;
+	width: 61px;
+	height: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	background: url(../img/btn_or_edit.png) 50% 50%;
+  	background-repeat: no-repeat;
+  	font-size: 12px;
+	text-align:center; 	
+}
+
+.btnEdit a {
+	color:white;
+	font-weight: bold;
+}
+
+.aEdit {
+	float:left;
+	width: 61px;
+	height: 20px;
+	margin-top:3px;
+}
+
+/*
+.btnModifierEmail {
+	float:right;
+	width: 140px;
+	height: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	background: url(../img/btn_or_upload.png) 50% 50%;
+  	background-repeat: no-repeat;
+  	font-size: 12px;
+	text-align:center; 	
+}
+
+.btnModifierEmail a {
+	color:white;
+	font-weight: bold;
+}*/
+
+.btnDelete {
+    float:left;
+    width: 81px;
+    height: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    background: url(../img/btn_or_delete.png) 50% 50%;
+      background-repeat: no-repeat;
+      font-size: 12px;
+    text-align:center;
+}
+
+.btnDelete a {
+    color:white;
+    font-weight: bold;
+}
+.aDelete {
+    float:left;
+    width: 81px;
+    height: 20px;
+    margin-top:3px;
+}

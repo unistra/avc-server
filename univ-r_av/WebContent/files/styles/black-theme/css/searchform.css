@@ -1,0 +1,125 @@
+/* Div of the search part of the page */
+.search {
+	width: 900px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 20px;
+	overflow: hidden;
+	font-size: 12px;
+}
+
+.searchform {
+	width: 400px;
+	height:180px;
+	background-color: #444444;
+	float:left;	
+}
+
+.tagsform {
+	width: 400px;
+	height:180px;
+	background-color: #444444;
+	float:right;
+}
+
+/* Div containing the search image */
+.searchImage {
+	position: absolute;
+	width: 180px; /*237*/
+	height: 139px;
+	margin-left: -20px;
+	margin-top: -20px;
+	background-image: url(../img/search.png);
+}
+
+/* Div containing the tag image */
+.tagImage {
+	position: absolute;
+	width: 140px; /*180*/
+	height: 139px;
+	margin-left: -20px;
+	margin-top: -20px;
+	background-image: url(../img/tags.png);
+}
+
+/* Div containing the "search" text */
+.searchText {
+	position: absolute;
+	font-size: 20px;
+	left: 10px;
+	top: 18px;
+}
+
+/* Float div containing search criteria */
+.criteria {
+	float: right;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 30px;
+	padding-right: 30px;
+	text-align: right;
+}
+
+/* A field of the html form */
+.field {
+	width: 190px;
+	margin: 3px;
+}
+
+.checkbox {
+	margin-right: 5px;
+}
+
+/* Formatting of the submit button of the html form */
+.submit {
+	background: none;
+	border:0;
+	color: white;
+	font-size: 14px;
+	font-family: helvetica, arial;
+	cursor:pointer;
+}
+
+/* vertical line in the "search" div */
+.hr {
+	position: absolute;
+	background-color: #DDDDDD;
+	border: 0;
+	margin-top:30px;
+	margin-left:190px;
+	height: 80px;
+	width: 1px;
+	text-align:left;
+}
+
+.launchsearch {
+	float: left;
+	padding-top: 100px; 
+	padding-left: 3px;
+	text-align: left;
+}
+
+/* TAG CLOUD */
+#tagcloud {							
+	width: 260px;
+	height:65px;
+	text-align: right;
+	margin-left: 50px;
+	margin-bottom: 5px;
+}
+#tagcloud a {
+	text-decoration:none;
+}
+#tagcloud a:hover {
+	text-decoration:none;
+	background-color:#B3B3B3;
+	color:#FFFFFF;
+}
+#tag1,#tag2,#tag3,#tag4,#tag5 {
+	font-size: 12px;
+	font-weight: bold;
+}
+
+#tag6,#tag7,#tag8,#tag9,#tag10,#tag11,#tag12,#tag13,#tag14,#tag15,#tag16,#tag17,#tag18,#tag19,#tag20 {
+	font-size: 12px;
+}

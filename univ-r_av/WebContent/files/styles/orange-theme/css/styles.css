@@ -1,0 +1,214 @@
+/* Html page */
+html {
+	height: 100%;
+	margin: 0;
+	background-color:black; /* #959595 */ 
+}
+
+/* Page body */
+body {
+	font-family: helvetica, arial;
+	color: #FFFFFF;
+	height: 100%;
+	margin: 0;
+}
+
+/* Main div */
+.main {
+	position: relative;
+	width:90%;
+	min-width: 980px;
+	min-height: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	background-color:#606060;
+}
+
+/* Div containing the website's banner */
+.banner {
+	width: 980px; /* 940 */
+	height: 200px; /* 180 */
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 0px;
+	background: url(../img/banner_or.png) 50% 50%;
+  	background-repeat: no-repeat;
+}
+
+/* Clickable zone to go back to the banner page */
+.bannerPageZone {
+	position: absolute;
+	width : 250px;
+	height: 58px;
+	margin-left: 45px; /* 25 */
+	margin-top: 12px;
+	/*background-image: url(../img/univr-av-logo.png);*/
+	background-image: url(../img/audiovideocours-logo.png);
+}
+
+/* Clickable zone, link to the ULPMM website */
+.udsZone {
+	position: absolute;
+	width : 126px;
+	height: 58px;
+	margin-left:45px; /*200*/
+	margin-top: 105px;/*105*/
+	background-image: url(../img/uds-logo.png);
+}
+
+/* Div containing the "logout" link */
+.logout {
+	position: absolute;
+	font-size: 12px;
+	width: 150px;
+	text-align:right;
+	margin-top: 5px;
+	margin-left: 800px;
+}
+
+/* Div containing the "Myspace" link */
+.myspace {
+	position: absolute;
+	font-size: 12px;
+	width: 150px;
+	text-align:right;
+	margin-top: 55px;
+	margin-left: 800px;
+}
+
+/* Div containing the "Styles" link */
+.styles {
+	position: absolute;
+	font-size: 12px;
+	width: 150px;
+	text-align:right;
+	margin-top: 80px;
+	margin-left: 800px;
+}
+
+/* Div containing the "Languages" link */
+.languages {
+	position: absolute;
+	font-size: 12px;
+	width: 150px;
+	text-align:right;
+	margin-top: 105px;
+	margin-left: 800px;
+}
+
+/* Div containing the "Help" link */
+.help {
+	position: absolute;
+	font-size: 12px;
+	width: 150px;
+	text-align:right;
+	margin-top: 130px;
+	margin-left: 800px;
+}
+
+/* Div containing the "Downloads" link */
+.download {
+	position: absolute;
+	font-size: 12px;
+	width: 150px;
+	text-align:right;
+	margin-top: 155px;
+	margin-left: 800px;
+}
+
+.myspace a, .styles a, .languages a, .download a, .help a {
+	color: white;
+}
+
+.logout a {
+	color: white;	
+	font-weight: bold;
+}
+
+/*  Div containing the "Live" button */
+.recorded {
+	position: absolute;
+	margin-left: 332px; /* 312 */
+	width: 115px;
+	height: 180px;
+}
+
+/* Clickable zone, link to the "Live" page */
+.recordedZone {
+	position: absolute;
+	width : 105px;
+	height: 28px;
+	margin-left:5px;
+	margin-top: 145px;
+}
+
+/*  Div containing the "Recorded" button */
+.live {
+	position: absolute;
+	margin-left: 448px; /* 428 */
+	width: 115px;
+	height: 180px;
+}
+
+/* Clickable zone, link to the "Recorded" page */
+.liveZone {
+	position: absolute;
+	width : 105px;
+	height: 28px;
+	margin-left:5px;
+	margin-top: 145px;
+}
+
+/* Text formatting of the "Live" and "Recorded" buttons */
+.liveZone, .recordedZone {
+	text-align: center;
+	margin-top: 152px;
+	font-size: 16px;
+}
+
+/* Page content div */
+.contents {
+	margin-left: auto;
+	margin-right: auto;
+	padding-bottom: 50px;
+	overflow: auto;
+}
+
+/* Page bottom div */
+.footer {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	margin-bottom: 5px;
+	text-align: center;
+	font-size: 11px;
+}
+
+/* To remove the borders of the pictures which are links */
+a img {
+	border: 0px;
+}
+
+/* Links style */
+a {
+	text-decoration: none;
+}
+
+/* Defines the colors of the different elements */
+a, .linkText, .helpText, h5, .buildingName, .searchText {
+	color: #FF9602;
+}
+
+.tableheader, .displaytag th {
+	background-image: url("../img/array_title.png");
+}
+
+.divCenter {
+	text-align:center;
+	margin:auto;
+}
+
+.littleFont {
+	font-size:12px;
+ 	color:black;
+ }
