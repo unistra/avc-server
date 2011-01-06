@@ -504,9 +504,8 @@ public class Application extends HttpServlet {
 		String page = request.getPathInfo();
 		
 		if( page == null )
-			page = "/home";
-		
-		if( page.equals("/home"))
+			response.sendRedirect(response.encodeRedirectURL("./avc/home"));
+		else if( page.equals("/home"))
 			displayHomePage(request, response);
 		else if (page.equals("/authentication_cas")) 
 			authenticationCas(request,response);
@@ -1566,72 +1565,22 @@ public class Application extends HttpServlet {
 	private void displayCourses(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 		
-		int start = 0;
-		int pageNumber=1;
-		
-		HashMap<String, String> params = new HashMap<String, String>();
+		String paramsUrl="?search=true";
 		
 		if( request.getParameter("author") != null) {
-			params.put("fullname", WordUtils.capitalize(new String(request.getParameter("author").getBytes("8859_1"),"UTF8")));
+			paramsUrl = paramsUrl + "&fullname=" + WordUtils.capitalize(request.getParameter("author"));
 		}
 		
 		if( request.getParameter("formation") != null) {
-			String formation = new String(request.getParameter("formation").getBytes("8859_1"),"UTF8");
-			params.put("level", service.getLevelCodeByFormation(formation));
-			params.put("discipline", service.getComponentCodeByFormation(formation));
+			
+			String formation = new String(request.getParameter("formation"));
+			paramsUrl = paramsUrl + "&level=" + service.getLevelCodeByFormation(formation) + "&discipline=" +  service.getComponentCodeByFormation(formation);
+			
 		}
 				
-		/* Saves the hashmap in the session */
-		session.setAttribute("params", params);
+		String redirect = "./search"+paramsUrl;
+		response.sendRedirect(redirect);
 		
-		if( params != null) {
-			
-			String rssNamePar=rssName;
-			
-			request.setAttribute("audio", "checked");
-			request.setAttribute("video", "checked");
-							
-			if( params.get("fullname") != null) {
-				request.setAttribute("nameSelected", params.get("fullname"));
-				rssNamePar=service.cleanFileName(params.get("fullname"));
-			}
-			
-			// Priority for the rss "formation"
-			/*if( params.get("formation") != null ) {
-				request.setAttribute("formationSelected", params.get("formation"));
-				rssNamePar=service.cleanFileName(params.get("formation"));
-			}*/
-			if( params.get("discipline") != null ) {
-				request.setAttribute("discSelected", params.get("discipline"));
-				rssNamePar=service.cleanFileName(params.get("discipline"));
-			}
-			if( params.get("level") != null ) {
-				request.setAttribute("levelSelected", params.get("level"));
-				rssNamePar=service.cleanFileName(params.get("level"));
-			}
-									
-			request.setAttribute("page", pageNumber);
-			request.setAttribute("teachers", service.getTeachers());
-			//request.setAttribute("formations", service.getFormations());	
-			request.setAttribute("disciplines", service.getAllDiscipline());
-			request.setAttribute("courses", service.getCourses(params, recordedCourseNumber, start, testKeyWord1, testKeyWord2, testKeyWord3));
-			request.setAttribute("items", service.getCourseNumber(params,testKeyWord1, testKeyWord2, testKeyWord3));
-			request.setAttribute("number", recordedCourseNumber);
-			request.setAttribute("resultPage", "search");
-			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssNamePar, true));
-			request.setAttribute("allTags", service.getAllTags());
-			request.setAttribute("mostPopularTags", service.getTagCloud(service.getMostPopularTags()));
-			request.setAttribute("levels", service.getAllLevels());
-			
-			/* Saves the page for the style selection thickbox return */
-			session.setAttribute("previousPage", "/search?page=" + pageNumber);
-			
-			/* Displays the view */
-			getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
-		}
-		else { // if the session is not valid anymore
-			response.sendRedirect("./recorded");
-		}
 	}
 	
 	/**
