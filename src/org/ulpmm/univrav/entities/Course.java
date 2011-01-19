@@ -602,7 +602,7 @@ public class Course {
 
 	/**
 	 * set course's record date
-	 * @param daterecorded the timestamp
+	 * @param recorddate the timestamp
 	 */
 	public void setRecorddate(Timestamp recorddate) {
 		this.recorddate = recorddate;
