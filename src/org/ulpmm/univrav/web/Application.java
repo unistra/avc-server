@@ -163,7 +163,7 @@ public class Application extends HttpServlet {
 	private static String testKeyWord3;
 	
 	/** The client port for the Univ-R integration */
-	private static int clientSocketPort;
+	//private static int clientSocketPort;
 	
 	/** Admin email for notification */
 	private static String adminEmail1;
@@ -183,6 +183,15 @@ public class Application extends HttpServlet {
 	
 	/** Link for support (help page) */
 	private static String trainingLink;
+	
+	/** Link for support (help page) */
+	private static String helpLink;
+	
+	/** Link for client download (download thick) */
+	private static String clientLink;
+	
+	/** Link for trac (download thick) */
+	private static String tracLink;
 		
 	/** Ldap base dn */
 	private static String ldapBaseDn;
@@ -298,7 +307,7 @@ public class Application extends HttpServlet {
 			defaultStyle = p.getProperty("defaultStyle");
 			
 			// The client port for the Univ-R integration
-			clientSocketPort = Integer.parseInt(p.getProperty("clientSocketPort"));
+			//clientSocketPort = Integer.parseInt(p.getProperty("clientSocketPort"));
 			
 			// Admin email for notification
 			adminEmail1 = p.getProperty("adminEmail1");
@@ -314,6 +323,9 @@ public class Application extends HttpServlet {
 			// Link for support (help page)
 			supportLink = p.getProperty("supportLink");
 			trainingLink = p.getProperty("trainingLink");
+			helpLink = p.getProperty("helpLink");
+			clientLink = p.getProperty("clientLink");
+			tracLink = p.getProperty("tracLink");
 			
 			/* ldap properties */
 			ldapBaseDn = p.getProperty("ldapBaseDn");
@@ -543,6 +555,10 @@ public class Application extends HttpServlet {
 			myspaceAddDocUpload(request, response);
 		else if( page.equals("/myspace_deleteadddoc"))
 			myspaceDeleteAddDoc(request, response);
+		else if( page.equals("/myspace_addsubtitles"))
+			myspaceAddSubtitles(request, response);
+		else if( page.equals("/myspace_deletesubtitles"))
+			myspaceDeleteSubtitles(request, response);
 		else if( page.equals("/myspace_deletecourse")) {
 		    int courseid = Integer.parseInt(request.getParameter("id"));
 		    Course c = service.getCourse(courseid);
@@ -564,13 +580,6 @@ public class Application extends HttpServlet {
 			courseAccess(request, response);
 		else if( page.equals("/liveaccess"))
 			liveAccess(request, response);
-		else if( page.equals("/help")) {
-			/* Saves the page for the style selection thickbox return */
-			session.setAttribute("previousPage", "/help");
-			request.setAttribute("supportLink", supportLink);
-			request.setAttribute("trainingLink", trainingLink);
-			getServletContext().getRequestDispatcher("/WEB-INF/views/help.jsp").forward(request, response);
-		}
 		else if( page.equals("/contactUs")) {
 			/* Saves the page for the style selection thickbox return */
 			session.setAttribute("previousPage", "/contactUs");
@@ -608,8 +617,17 @@ public class Application extends HttpServlet {
 		}
 		else if( page.equals("/thick_legal")) 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_legal.jsp").forward(request, response);
-		else if( page.equals("/thick_download"))
+		else if( page.equals("/thick_download")) {
+			request.setAttribute("clientLink", clientLink);
+			request.setAttribute("tracLink", tracLink);
 			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_download.jsp").forward(request, response);
+		}
+		else if( page.equals("/thick_help")) {
+			request.setAttribute("supportLink", supportLink);
+			request.setAttribute("trainingLink", trainingLink);
+			request.setAttribute("helpLink", helpLink);
+			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_help.jsp").forward(request, response);
+		}
 		else if( page.equals("/liveslide"))
 			liveSlide(request, response);
 		else if( page.equals("/admin_home")) {
@@ -645,6 +663,10 @@ public class Application extends HttpServlet {
 			addDocUpload(request, response);
 		else if( page.equals("/admin_deleteadddoc"))
 			deleteAddDoc(request, response);
+		else if( page.equals("/admin_addsubtitles"))
+			addSubtitles(request, response);
+		else if( page.equals("/admin_deletesubtitles"))
+			deleteSubtitles(request, response);
 		else if( page.equals("/admin_buildings")) {
 			request.setAttribute("buildings", service.getBuildings());
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_buildings.jsp").forward(request, response);
@@ -694,8 +716,6 @@ public class Application extends HttpServlet {
 		}
 		else if( page.equals("/admin_validateamphi"))
 			validateAmphi(request, response,"./admin_amphis");
-		else if( page.equals("/admin_versionclient"))
-			versionclient(request, response);
 		else if( page.equals("/admin_users")) {
 			request.setAttribute("viewurl", "./admin_users");
 			List<User> users = service.getAllUsers();
@@ -1136,7 +1156,14 @@ public class Application extends HttpServlet {
 		
 	}
 	
-	
+	/**
+	 * Method to display publication page
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
 	private void displayPublicationPage(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {  
 
@@ -1144,80 +1171,67 @@ public class Application extends HttpServlet {
 			request.setAttribute("publication_type", request.getParameter("publication_type"));	
 		}
 
-		if(request.getParameter("id")!=null) {
-			session.setAttribute("publication_id", request.getParameter("id"));
-		}
-
 		if(request.getParameter("mediapath")!=null) {
 			session.setAttribute("publication_mediapath", request.getParameter("mediapath"));
 		}
-		
-		// Standard course
-		if( request.getParameter("id")==null || request.getParameter("id").equals("") || request.getParameter("id").equals("(id:no)") || request.getParameter("id").equals("None") ) {
 
-			// Get the form parameters if error message
-			request.setAttribute("title", request.getParameter("title"));
-			request.setAttribute("description", request.getParameter("description"));
-			request.setAttribute("name", request.getParameter("name"));
-			request.setAttribute("firstname", request.getParameter("firstname"));
-			request.setAttribute("ue", request.getParameter("ue"));
-			request.setAttribute("genre", request.getParameter("genre"));
-			request.setAttribute("tags", request.getParameter("tags"));
-			request.setAttribute("visible", request.getParameter("visible"));
-			request.setAttribute("download", request.getParameter("download"));
-			request.setAttribute("restrictionuds", request.getParameter("restrictionuds"));
-			request.setAttribute("levelSelected", request.getParameter("level"));
-			request.setAttribute("discSelected", request.getParameter("component"));
-			//request.setAttribute("permission", request.getParameter("permission"));
-			
-			String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+		// Get the form parameters if error message
+		request.setAttribute("title", request.getParameter("title"));
+		request.setAttribute("description", request.getParameter("description"));
+		request.setAttribute("name", request.getParameter("name"));
+		request.setAttribute("firstname", request.getParameter("firstname"));
+		request.setAttribute("ue", request.getParameter("ue"));
+		request.setAttribute("genre", request.getParameter("genre"));
+		request.setAttribute("tags", request.getParameter("tags"));
+		request.setAttribute("visible", request.getParameter("visible"));
+		request.setAttribute("download", request.getParameter("download"));
+		request.setAttribute("restrictionuds", request.getParameter("restrictionuds"));
+		request.setAttribute("levelSelected", request.getParameter("level"));
+		request.setAttribute("discSelected", request.getParameter("component"));
+		//request.setAttribute("permission", request.getParameter("permission"));
 
-			User user = null;
-			// Authentification CAS	
-			if(casUser!=null) {
-				// Gets the user from the session
-				user=service.getUser(casUser);
-			}
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
 
-			// if user is present and activate
-			if(user!=null && user.isActivate()) {
-
-				request.setAttribute("user", user);
-
-				// Button disconnect
-				session.setAttribute("btnDeco", true);
-			}
-			
-			/* Saves the page for the style selection thickbox return */
-			session.setAttribute("previousPage", "/publication");
-			
-			/* the discipline box */
-			request.setAttribute("disciplines", service.getAllDiscipline());
-			
-			/* the levels box */
-			request.setAttribute("levels", service.getAllLevels());
-			
-			// serveur url for test url
-			request.setAttribute("serverUrl", serverUrl);
-			
-			// publication free
-			request.setAttribute("pubFree", pubFree);
-			
-			// univ acronym
-			request.setAttribute("univAcronym", univAcronym);
-			// univ name
-			request.setAttribute("univName", univName);
-
-			/* Displays the view */ 
-			getServletContext().getRequestDispatcher("/WEB-INF/views/publication.jsp").forward(request, response);
-
+		User user = null;
+		// Authentification CAS	
+		if(casUser!=null) {
+			// Gets the user from the session
+			user=service.getUser(casUser);
 		}
-		// Univr Course
-		else {
-			request.setAttribute("id", "");	
-			getServletContext().getRequestDispatcher("/avc/UploadClient").forward(request, response);
 
+		// if user is present and activate
+		if(user!=null && user.isActivate()) {
+
+			request.setAttribute("user", user);
+
+			// Button disconnect
+			session.setAttribute("btnDeco", true);
 		}
+
+		/* Saves the page for the style selection thickbox return */
+		session.setAttribute("previousPage", "/publication");
+
+		/* the discipline box */
+		request.setAttribute("disciplines", service.getAllDiscipline());
+
+		/* the levels box */
+		request.setAttribute("levels", service.getAllLevels());
+
+		// serveur url for test url
+		request.setAttribute("serverUrl", serverUrl);
+
+		// publication free
+		request.setAttribute("pubFree", pubFree);
+
+		// univ acronym
+		request.setAttribute("univAcronym", univAcronym);
+		// univ name
+		request.setAttribute("univName", univName);
+
+		/* Displays the view */ 
+		getServletContext().getRequestDispatcher("/WEB-INF/views/publication.jsp").forward(request, response);
+
+
 	}
 	
 	/**
@@ -1759,6 +1773,8 @@ public class Application extends HttpServlet {
 				// univ name
 				request.setAttribute("univName", univName);
 				
+				request.setAttribute("mediaLst", c.getMedias());
+				
 				/* Displays the view */
 				getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace_editmycourse.jsp").forward(request, response);
 
@@ -2012,7 +2028,15 @@ public class Application extends HttpServlet {
 			request.setAttribute("univAcronym", univAcronym);
 			// univ name
 			request.setAttribute("univName", univName);
-
+			
+								
+			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+			request.setAttribute("err_title", bundle.getString("err_title"));
+			request.setAttribute("err_name", bundle.getString("err_name"));
+			request.setAttribute("err_lvl", bundle.getString("err_lvl"));
+			request.setAttribute("err_component", bundle.getString("err_component"));
+			request.setAttribute("err_file", bundle.getString("err_file"));
+			request.setAttribute("err_fileformat", bundle.getString("err_fileformat"));
 			
 			getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
 		}
@@ -2145,8 +2169,8 @@ public class Application extends HttpServlet {
 							}
 							/* Checks the extension of the item to have a supported file format */
 							else if( !extension.equals("mp3") && !extension.equals("ogg") && !extension.equals("wav") && !extension.equals("wma") && !extension.equals("avi") && !extension.equals("divx") 
-									&& !extension.equals("rm") && !extension.equals("rv") && !extension.equals("mp4") && !extension.equals("mpg") 
-									&& !extension.equals("mpeg") && !extension.equals("mov") && !extension.equals("wmv") && !extension.equals("mkv") && !extension.equals("flv") ) {
+									 && !extension.equals("mp4") && !extension.equals("mpg") && !extension.equals("mpeg") && !extension.equals("mov") && !extension.equals("wmv") && !extension.equals("mkv") 
+									 && !extension.equals("flv") ) {
 
 								messageType = "error";
 								ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
@@ -2442,11 +2466,11 @@ public class Application extends HttpServlet {
 			if(c.isRestrictionuds() && user==null) {
 				response.sendRedirect("./authentication_cas?returnPage=courseaccess&id="+courseid+"&type="+(type != null ? type : "flash")+(genre !=null ? "&code="+genre:""));
 			}
-			else if(c.isRestrictionuds() && user!=null && !user.isActivate()) {
+			/*else if(c.isRestrictionuds() && user!=null && !user.isActivate()) {
 				request.setAttribute("messagetype", "error");
 				request.setAttribute("message", "You don't have access to this page");
 				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
-			}
+			}*/
 			else {
 
 				if( genre == null && c.getGenre() != null) { // The user tries to access to the protected course directly via the URL
@@ -2479,6 +2503,7 @@ public class Application extends HttpServlet {
 								courseExtension = ".flv";
 
 							request.setAttribute("courseurl", courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + courseExtension);
+							request.setAttribute("courseurlfolder", courseAccessUrl + c.getMediaFolder());
 							request.setAttribute("slidesurl", slidesurl);
 							request.setAttribute("course", c);
 							String showForm = service.getFormationFullName(c.getFormation());
@@ -2518,6 +2543,7 @@ public class Application extends HttpServlet {
 						// High Quality
 						else if( type.equals("hq")) {
 							request.setAttribute("courseurl", courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".mp4");
+							request.setAttribute("courseurlfolder", courseAccessUrl + c.getMediaFolder());
 							request.setAttribute("course", c);					
 							Amphi a = service.getAmphi(c.getIpaddress());
 							String amphi = a != null ? a.getName() : "";
@@ -2544,12 +2570,22 @@ public class Application extends HttpServlet {
 							service.returnFile(filename, out);
 						}
 						else if(c.isDownload() & (type.equals("videoslide"))) {
-							//String filename = coursesFolder + c.getMediaFolder() + "/" + c.getMediasFileName() + "_videoslide.mp4";
 							String filename = courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + "_videoslide.mp4";
 
 							/* Initializes the headers */
 							response.setContentType("application/x-download");
 							response.setHeader("Content-Disposition", "attachment; filename=" + c.getMediasFileName() + "_videoslide.mp4");
+
+							/* Sends the file */
+							OutputStream out = response.getOutputStream();
+							service.returnFile(filename, out);
+						}
+						else if(c.isDownload() & (type.equals("videoslideipod"))) {
+							String filename = courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + "_videoslide_ipod.mp4";
+
+							/* Initializes the headers */
+							response.setContentType("application/x-download");
+							response.setHeader("Content-Disposition", "attachment; filename=" + c.getMediasFileName() + "_videoslide_ipod.mp4");
 
 							/* Sends the file */
 							OutputStream out = response.getOutputStream();
@@ -2578,6 +2614,51 @@ public class Application extends HttpServlet {
 							OutputStream out = response.getOutputStream();
 							service.returnFile(filename, out);
 						}
+					}
+					
+					// Html 5 test page
+					else if( type.equals("html5")) {
+						
+						//TODO html5
+						
+						request.setAttribute("courseurlnoext", courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName());
+						request.setAttribute("slidesurl", slidesurl);
+						request.setAttribute("course", c);
+						String showForm = service.getFormationFullName(c.getFormation());
+						request.setAttribute("formationfullname", showForm!=null ? showForm : c.getFormation());							
+						List<Slide> slides = service.getSlides(c.getCourseid());
+						request.setAttribute("slides", slides);
+						Amphi a = service.getAmphi(c.getIpaddress());
+						String amphi = a != null ? a.getName() : "";
+						String building = service.getBuildingName(c.getIpaddress());
+						request.setAttribute("amphi", amphi);
+						request.setAttribute("building", building);
+						if( c.getTiming().equals("n-1"))
+							request.setAttribute("timing", 1);
+						else
+							request.setAttribute("timing", 0);
+
+						request.setAttribute("serverUrl",serverUrl);
+						request.setAttribute("tags", service.getTagsByCourse(c));
+						request.setAttribute("rssfiles", service.getRssCourseFileList(c));
+						request.setAttribute("mediaLst", c.getMedias());
+						
+						// Sets embed objects
+						if(c.isDownload() && !c.isRestrictionuds() && c.getGenre()==null) {
+							if(c.isAvailable("videoslide"))
+								request.setAttribute("embedvs", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='640' height='480' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+"_videoslide.mp4&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='640' height='480' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+"_videoslide.mp4&type=lighttpd' /></object>");
+							if(c.isAvailable("mp3"))
+								request.setAttribute("embedaudio", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='320' height='20' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp3'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='320' height='20' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp3' /></object>");
+							if(c.getType().equals("video"))
+								request.setAttribute("embedvideo", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='320' height='240' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".flv&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='320' height='240' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".flv&type=lighttpd' /></object>");
+							if(c.isAvailable("hq"))
+								request.setAttribute("embedhq", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='1024' height='576' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp4&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='1024' height='576' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName()+".mp4&type=lighttpd' /></object>");
+						}
+						
+	
+						/* displays the .jsp view */
+						getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_html5.jsp").forward(request, response);
+
 					}
 					else {
 						// For media upload during process
@@ -2638,11 +2719,11 @@ public class Application extends HttpServlet {
 		if(a!=null && a.isRestrictionuds() && user==null) {
 			response.sendRedirect("./authentication_cas?returnPage=liveaccess&amphi="+ip);
 		}
-		else if(a!=null && a.isRestrictionuds() && user!=null && !user.isActivate()) {
+		/*else if(a!=null && a.isRestrictionuds() && user!=null && !user.isActivate()) {
 			request.setAttribute("messagetype", "error");
 			request.setAttribute("message", "You don't have access to this page");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
-		}
+		}*/
 		else {
 			
 			request.setAttribute("amphi", amphi);
@@ -2971,97 +3052,11 @@ public class Application extends HttpServlet {
 		// univ acronym
 		request.setAttribute("univAcronym", univAcronym);
 		
+		request.setAttribute("mediaLst", c.getMedias());
+		
 		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editcourse.jsp").forward(request, response);
 		
 	
-	}
-	
-	/**
-	 * Method to check version of clients in amphis
-	 * 
-	 * @param request the request send by the client to the server
-	 * @param response the response send by the server to the client
-	 * @throws ServletException if an error occurred
-	 * @throws IOException if an error occurred
-	 */
-	private void versionclient(HttpServletRequest request, HttpServletResponse response)
-	throws ServletException, IOException {
-		
-		if( request.getParameter("ip") != null) {
-						
-			if(request.getParameter("ip").equals("all")) {
-				
-				List<String> lstRes = new ArrayList<String>();
-				
-				List<Building> lstBuild=service.getBuildings();				
-				for(int i=0;i<lstBuild.size();i++) {
-					Building building = lstBuild.get(i);
-					List<Amphi> lstAmphi= building.getAmphis();
-					for(int j=0;j<lstAmphi.size();j++) {
-						Amphi amp = lstAmphi.get(j);
-						
-						String message=building.getName() + ": " + amp.getName() + ": "; 
-						String clientResponse=service.sendMessageToClient("VERSION", amp.getIpAddress(), clientSocketPort,500);
-							
-						// No Response from the client (timeout exception)
-						if(clientResponse=="") {
-							message=message+"no response from the client";
-						}
-						// Too old version
-						else if(clientResponse==null) {
-							message=message+"v 1.08 or less";
-							amp.setVersion("v 1.08 or less");
-							service.modifyAmphi(amp, amp.getIpAddress());
-						}
-						else {
-							message=message+clientResponse;
-							amp.setVersion(clientResponse);
-							service.modifyAmphi(amp, amp.getIpAddress());
-						}
-												
-						lstRes.add(message+"</br>");
-					}
-					lstRes.add("</br>");
-				}
-						
-				request.setAttribute("versions", lstRes);
-				
-				/* Displays the view */ 
-				getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_clientsversion.jsp").forward(request, response);				
-			}
-			else {
-				String clientResponse = service.sendMessageToClient("VERSION", request.getParameter("ip"), clientSocketPort,3000);
-				String message="Version: ";
-				
-				// No Response from the client (timeout exception)
-				if(clientResponse=="") {
-					message=message+"no response from the client";
-				}
-				// Too old version
-				else if(clientResponse==null) {
-					message=message+"v 1.08 or less";
-					Amphi a = service.getAmphi(request.getParameter("ip"));
-					a.setVersion("v 1.08 or less");
-					service.modifyAmphi(a, request.getParameter("ip"));
-				}
-				else {
-					message=message+clientResponse;
-					Amphi a = service.getAmphi(request.getParameter("ip"));
-					a.setVersion(clientResponse);
-					service.modifyAmphi(a, request.getParameter("ip"));
-				}
-
-				request.setAttribute("messagetype", "info");
-				request.setAttribute("message", message);
-				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
-			}
-		}
-		else {
-			String message = "Error: wrong parameters";
-			request.setAttribute("messagetype", "error");
-			request.setAttribute("message", message);
-			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
-		}
 	}
 	
 	/**
@@ -3621,6 +3616,219 @@ public class Application extends HttpServlet {
 		}			
 	
 	}
+	
+	/**
+	 * Method to upload a subtitles xml from myspace
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void myspaceAddSubtitles(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+
+		User user = null;
+		// Authentification CAS	
+		if(casUser!=null) {
+			// Gets the user from the session
+			user=service.getUser(casUser);
+		}
+		// Authentification local
+		else if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
+
+		if(user!=null && user.isActivate()) {
+
+			String courseid = request.getParameter("courseid");
+
+			if(courseid!=null) {
+				// Get the course
+				Course c = service.getCourse(Integer.parseInt(courseid));
+
+				// Check user id
+				if(c.getUserid()==user.getUserid()) {
+					addSubtitles(request,response);
+				}
+				else { 
+					request.setAttribute("messagetype", "error");
+					request.setAttribute("message", "Error: You don't have access to this page");
+					getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+				}		
+
+			}
+			else { 
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "Error: You don't have access to this page");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+			}	
+
+		}
+		else { 
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Error: Wrong parameters");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+		}	
+	}
+	
+	
+	/**
+	 * Methode to delete a subtitles xml from myspace
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void myspaceDeleteSubtitles(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+	
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+
+		User user = null;
+		// Authentification CAS	
+		if(casUser!=null) {
+			// Gets the user from the session
+			user=service.getUser(casUser);
+		}
+		// Authentification local
+		else if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
+
+		if(user!=null && user.isActivate()) {
+			
+			// Get the course
+			Course c = service.getCourse(Integer.parseInt(request.getParameter("courseid")));
+			
+			// Check user id
+			if(c.getUserid()==user.getUserid()) {
+				deleteSubtitles(request, response);
+			}
+			else { 
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "Error: You don't have access to this page");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+			}		
+		}
+		else { 
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Error: You don't have access to this page");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+		}	
+	}
+	
+	
+	/**
+	 * Method to upload a subtitles xml
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	@SuppressWarnings("unchecked")
+	private void addSubtitles(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+
+		// Attribute
+		String courseid, fileName, returnUrl;
+		courseid = fileName = returnUrl = "";
+		String message = "";
+		String messageType = "information";
+		String requestDispatcher = "/WEB-INF/views/message.jsp";
+		
+		if( ServletFileUpload.isMultipartContent(new ServletRequestContext(request)) ) {
+
+			try {
+				/* Prepares to parse the request to get the different elements of the POST */
+				FileItemFactory factory = new DiskFileItemFactory();
+				ServletFileUpload upload = new ServletFileUpload(factory);
+				List<FileItem> items = upload.parseRequest(request);
+
+				/* Processes the different elements */
+				Iterator<FileItem> iter = items.iterator();
+				while (iter.hasNext()) {
+					FileItem item = (FileItem) iter.next();
+
+					/* If the element is a form field, retrieves the info */
+					if (item.isFormField()) {
+
+						if(item.getFieldName().equals("courseid"))
+							courseid = item.getString("UTF8");
+						else if(item.getFieldName().equals("returnUrl"))
+							returnUrl = item.getString("UTF8");
+
+					} /* If the element is a file (the last element */
+					else {
+						fileName = item.getName();
+						String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()) : "";
+
+						/* Checks the extension of the item to have a supported file format */				
+						boolean isExtVal = extension.equals("xml");
+																								
+						// Test the form
+						if(fileName==null || fileName.equals("")) {
+							messageType = "error";
+							message = "File must be completed";							
+						}
+						/* Checks the extension of the item to have a supported file format */
+						else if(!isExtVal) {
+							messageType = "error";
+							message = "Error: Not supported file format. Only xml format.";
+						}
+						else {
+							// Get the course
+							Course c = service.getCourse(Integer.parseInt(courseid));
+
+							// Add the document to the course									
+							service.addSubtitles(c,item);
+							requestDispatcher=returnUrl;
+						}
+					}
+				}
+			}
+			catch( FileUploadException fue) {
+				messageType = "error";
+				message = "Error : File upload error";
+			}
+		}
+		else {
+			messageType = "error";
+			message = "Error: Incorrect file upload request";
+		}
+
+		/* Displays the result of the upload process */
+		request.setAttribute("messagetype", messageType);
+		request.setAttribute("message", message);
+		getServletContext().getRequestDispatcher(requestDispatcher).forward(request, response);
+	}
+	
+	
+	/**
+	 * Methode to delete a subtitles xml
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void deleteSubtitles(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+				
+		// Get the course
+		Course c = service.getCourse(Integer.parseInt(request.getParameter("courseid")));
+
+		// Delete the document to the course									
+		service.deleteSubtitles(c);
+		
+		/* Displays the result of the upload process */
+		getServletContext().getRequestDispatcher(request.getParameter("returnUrl")).forward(request, response);
+	}
+	
 	
 	
 }

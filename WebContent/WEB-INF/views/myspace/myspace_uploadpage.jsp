@@ -25,7 +25,8 @@
 
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
-	
+	<script type="text/javascript" src="../files/js/upload.js"></script>
+			
 	<!-- google analytics -->
 	<c:import url="../include/google_analytics.jsp" />
 	
@@ -39,7 +40,7 @@
 	    	</div>
 	    	
 	    	<div class="divCenter">
-	    		<p class="${messagetype}"><c:out value="${message}" /></p>
+	    		<p class="error" id="error"><c:out value="${message}" /></p>
 	  	 	</div>
 	  	 	
 	  	 	
@@ -85,7 +86,7 @@
 			</c:choose>-->
 			
 	    	
-	    	<form action="<c:url value="./myspace_mediaupload"/>" method="post" enctype="multipart/form-data">
+	    	<form action="<c:url value="./myspace_mediaupload"/>" method="post" enctype="multipart/form-data" name="uploadform" onsubmit="return verif_before_valid_form('${err_title}','${err_name}','${err_lvl}','${err_component}','${err_file}','${err_fileformat}')">
 				<table>
 				<tr class="odd"> 
 					<td title="<fmt:message key="ib_login"/>"><fmt:message key="login"/> : </td>

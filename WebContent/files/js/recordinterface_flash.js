@@ -5,6 +5,7 @@ var paginationUpdateTime = 10000; // after having clicked on the pagination, the
 var update = true; // if the time bar has to be updated or not
 var numberPerPage = 10; // number of time points in a page
 var player;
+var html5=false;
 
 /* function to call when the player is ready */
 function playerReady(obj) {
@@ -15,6 +16,19 @@ function playerReady(obj) {
 	// add time listener
 	player.addModelListener('TIME', 'timeMonitor');
 };
+
+//html5
+function initPlayerHtml5() {
+	//init player html5 exist (no flash)
+	if(document.getElementById("playerhtml5").currentTime == 0) {
+		html5 = true;
+		player = document.getElementById("playerhtml5");
+		player.addEventListener("seeked", function() { player.play(); }, true);  
+		player.addEventListener("timeupdate",function () { updateTimeBar(player.currentTime); },true);	
+		// init the time bar	
+		initTimeBar();
+	}
+}
 
 /* Time listener fonction */
 function timeMonitor(obj) {
@@ -95,7 +109,14 @@ function getSlideFromTime(time) {
 
 /* Sets the corresponding slide number from a given time */
 function setTimeFromSlide(slide) {
-    player.sendEvent('SEEK', timecodes[slide-1]);
+	
+	if(html5==true) {
+		player.currentTime = timecodes[slide-1];  
+	}
+	else {
+		player.sendEvent('SEEK', timecodes[slide-1]);
+	}
+	
 	update = true;
 }
 
@@ -161,4 +182,3 @@ function nextPage() {
 		initTimeBar();
 	}
 }
-

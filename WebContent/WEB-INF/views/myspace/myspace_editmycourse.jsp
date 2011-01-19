@@ -171,7 +171,7 @@
 		    		<input type="hidden" name="returnUrl" value="/avc/myspace_editmycourse?id=${course.courseid}">
 		    		<table>
 						<tr class="tableheader">
-							<th colspan="2" id="adddoc"><fmt:message key="deleteadddoc"/></th>
+							<th colspan="2" class="adddoc" id="adddoc"><fmt:message key="deleteadddoc"/></th>
 						</tr>
 						<tr class="odd">
 							<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/> : </td>
@@ -179,6 +179,48 @@
 						</tr>
 						<tr>
 							<td><input type="submit" name="valider" value="<fmt:message key="deletefile"/>"> </td>
+						</tr>
+					</table>
+				</form>
+		    	</c:otherwise>
+		    </c:choose>
+		   
+		   <br>
+		   
+		      <c:choose>
+		    	<c:when test="${!fn:contains(mediaLst, 'subtitles')}">
+		    		<form action="<c:url value="./myspace_addsubtitles?courseid=${course.courseid}"/>" method="post" enctype="multipart/form-data">
+						<input type="hidden" name="courseid" value="${course.courseid}">
+						<input type="hidden" name="returnUrl" value="/avc/myspace_editmycourse?id=${course.courseid}">
+						<table>
+						<tr class="tableheader">
+							<th colspan="2" class="thsubtitles" id="thsubtitles"><fmt:message key="uploadsubtitles"/>&nbsp<a class="captex" href="../files/jwflvplayer/caption_example.txt"><fmt:message key="examplesubtitles"/></a> </th>
+						</tr>
+						<tr class="odd">
+							<td title="<fmt:message key="ib_file"/>"><fmt:message key="filexml"/> : </td>
+							<td><input type="file" name="media_subtitles" class="field"> </td>
+						</tr>
+						<tr>
+							<td><input type="submit" name="subvalider" onclick="javascript:document.getElementById('subprocess').style.visibility='visible';document.subeditform.subvalider.disabled=true;" value="<fmt:message key="sendFile"/>"> </td>
+							<td><img id="subprocess" src="../files/img/squaresCircle.gif" /></td>
+						</tr>
+						</table>
+					</form>
+		   		 </c:when>
+		    	<c:otherwise>
+		    	<form method="POST" action="<c:url value="./myspace_deletesubtitles" />">	    	
+		    		<input type="hidden" name="courseid" value="${course.courseid}">
+		    		<input type="hidden" name="returnUrl" value="/avc/myspace_editmycourse?id=${course.courseid}">
+		    		<table>
+						<tr class="tableheader">
+							<th colspan="2" class="thsubtitles" id="thsubtitles"><fmt:message key="deletesubtitles"/></th>
+						</tr>
+						<tr class="odd">
+							<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/> : </td>
+							<td><input type="text" name="media_subtitles" class="fieldSubtitles" readonly="readonly" value="<fmt:message key="subtitlepresent"/>"></td>
+						</tr>
+						<tr>
+							<td><input type="submit" name="subvalider" value="<fmt:message key="deletefile"/>"> </td>
 						</tr>
 					</table>
 				</form>

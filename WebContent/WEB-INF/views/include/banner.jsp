@@ -19,12 +19,16 @@
 	<c:param name="height" value="500"/>
 </c:url>
 <c:url var="thick_languages" scope="page" value="./thick_languages">
-	<c:param name="width" value="150"/>
-	<c:param name="height" value="300"/>
+	<c:param name="width" value="250"/>
+	<c:param name="height" value="150"/>
 </c:url>
 <c:url var="thick_download" scope="page" value="./thick_download">
 	<c:param name="width" value="370"/>
 	<c:param name="height" value="220"/>
+</c:url>
+<c:url var="thick_help" scope="page" value="./thick_help">
+	<c:param name="width" value="250"/>
+	<c:param name="height" value="150"/>
 </c:url>
 
 <c:if test="${btnDeco}">
@@ -43,7 +47,7 @@
 	<a href="<c:out value="${thick_languages}" />" title="<fmt:message key="S&eacute;l&eacute;ction de la langue"/>" class="thickbox"><fmt:message key="language"/></a>
 </div>
 <div class="help">
-	<a href="<c:url value="./help" />" title="<fmt:message key="Utilisation d'Univ-R AV"/>" ><fmt:message key="Aide"/></a>
+	<a href="<c:url value="${thick_help}" />" title="<fmt:message key="Utilisation d'Univ-R AV"/>" class="thickbox"><fmt:message key="Aide"/></a>
 </div>
 <div class="download">
 	<a href="<c:out value="${thick_download}" />" title="<fmt:message key="T&eacute;l&eacute;chargements"/>" class="thickbox"><fmt:message key="T&eacute;l&eacute;chargements"/></a>

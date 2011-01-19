@@ -58,9 +58,7 @@
 	    		<a href="<c:url value="./findTracks" />">Find tracks</a>
 	    		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	    		<a href="<c:url value="./findStats" />">Find stats</a>
-	    		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	    		<a href="<c:url value="./admin_versionclient?ip=all"/>">Clients version</a>
-	    			    			    			
+	    			    			    			    			
 	    	</div>
 	    	
 	    </div>

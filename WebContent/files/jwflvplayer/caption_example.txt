@@ -1,0 +1,13 @@
+FR: Creer un fichier xml et copier le texte ci-dessous :
+EN: Create a xml file and put the text below in it :
+
+<tt xmlns="http://www.w3.org/2006/10/ttaf1">
+  <body>
+    <div>
+      <p begin="00:00:00" end="00:00:2">Hello world!</p>
+      <p begin="00:00:05" end="00:00:08">How are you?</p>
+      <p begin="00:00:15" end="00:00:20">Bonjour tout le monde !</p>
+      <p begin="00:00:25" end="00:00:30">Comment allez-vous ?</p>	
+    </div>
+  </body>
+</tt>

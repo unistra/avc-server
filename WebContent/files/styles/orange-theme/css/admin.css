@@ -96,15 +96,20 @@ pre#pre {
 }
 
 /* additional doc for edit course */ 
-img#process { 
+img#process,img#subprocess { 
 	visibility: hidden;
 }
 
-.fieldAdddoc {
+.fieldAdddoc, .fieldSubtitles {
 	width: 300px;
 	background-color:#d3d3d3;
 }
 
-.editcourse, .adddoc {
+.editcourse, .adddoc, .thsubtitles {
 	color:#FFFFFF;
+}
+
+.captex {
+	color:#974500;
+	TEXT-DECORATION:underline;
 }

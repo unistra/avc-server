@@ -147,7 +147,7 @@ public class FileSystemImpl implements IFileSystem {
 			/* creates the .txt description file */
 			File descriptionFile = new File(coursesFolder + c.getMediaFolder() + "/description.txt");
 			descriptionFile.createNewFile();
-			PrintWriter pw = new PrintWriter( new OutputStreamWriter( new FileOutputStream( descriptionFile), "ISO8859-15"));
+			PrintWriter pw = new PrintWriter( new OutputStreamWriter( new FileOutputStream( descriptionFile), "UTF-8"));
 			pw.println("Author:" +  (c.getName() != null ? c.getName() + ( c.getFirstname() != null ? " " + c.getFirstname() : "") : "-"));
 			String form = c.getFormation() != null ? db.getFormationFullName(c.getFormation()) : "-";
 			pw.println("Formation:" +  (form != null ? form : "-"));
@@ -553,7 +553,7 @@ public class FileSystemImpl implements IFileSystem {
 			        
 			        
 			        // VIDEOSLIDE ITEM
-			        if(course.isAvailable("videoslide")) {
+			        if(course.isAvailable("videoslideipod") || course.isAvailable("videoslide")) {
 			        	Element item2 = document.createElement("item");
 			        	channel.appendChild(item2);
 
@@ -584,7 +584,10 @@ public class FileSystemImpl implements IFileSystem {
 			        	
 			        	if(course.getGenre()==null && !course.isRestrictionuds()) {
 			        		Element coursEnclosure5 = document.createElement("enclosure");
-			        		coursEnclosure5.setAttribute("url",courseMediaUrl + "_videoslide.mp4");
+			        		if(course.isAvailable("videoslideipod"))
+			        			coursEnclosure5.setAttribute("url",courseMediaUrl + "_videoslide_ipod.mp4");
+			        		else
+			        			coursEnclosure5.setAttribute("url",courseMediaUrl + "_videoslide.mp4");
 			        		coursEnclosure5.setAttribute("type","video/mp4");
 			        		coursEnclosure5.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + "_videoslide.mp4")));
 			        		item2.appendChild(coursEnclosure5);
@@ -1070,5 +1073,50 @@ public class FileSystemImpl implements IFileSystem {
 		
 		return coursesUrl;		
 	}
+	
+	/**
+	 * Add a subtitles xml to a course
+	 * @param mediafolder the mediafolder
+	 * @param docFile the fileitem of the document
+	 * @param courseid courseid
+	 */
+	public void addSubtitles(String mediafolder, FileItem docFile, int courseid) {
+		
+		String fileName = docFile.getName();
+		
+		/* Used to fix full path problem with IE */
+		if( fileName.indexOf("\\") != -1 ) {
+			fileName = fileName.substring(fileName.lastIndexOf("\\") + 1,fileName.length());
+			docFile.setFieldName(fileName);
+		}
+				
+		File docFolder = new File(coursesFolder + mediafolder +"/additional_docs");
+		// Create the directory if not exist
+		if(!docFolder.exists()) {
+			docFolder.mkdir();
+		}
+				
+		try {
+			docFile.write(new File(docFolder, courseid+"_captions.xml"));
+		}
+		catch( Exception e) {
+			logger.error("Error while writing the doc file " + courseid+"_captions.xml",e);
+		}		
+		
+		
+	}
+	
+	/**
+	 * Delete a subtitles xml of a course
+	 * @param mediafolder the mediafolder
+	 * @param courseid courseid
+	 */
+	public void deleteSubtitles(String mediafolder, int courseid) {
+		
+		File SubtitlesFile = new File(coursesFolder + mediafolder +"/additional_docs/" + courseid+"_captions.xml");
+		File newSubtitlesFile = new File(coursesFolder + mediafolder +"/additional_docs/" + new Date().getTime() + "." + courseid+"_captions.xml");
+		SubtitlesFile.renameTo(newSubtitlesFile);
+	}
+	
 	
 }

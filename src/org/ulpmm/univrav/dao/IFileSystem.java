@@ -157,4 +157,21 @@ public interface IFileSystem {
 	 * @return the clean courses url
 	 */
 	public String getCleanCoursesUrl(String coursesUrl) ;
+	
+
+	/**
+	 * Add a subtitles xml to a course
+	 * @param mediafolder the mediafolder
+	 * @param docFile the fileitem of the document
+	 * @param courseid courseid
+	 */
+	public void addSubtitles(String mediafolder, FileItem docFile, int courseid);
+	
+	/**
+	 * Delete a subtitles xml of a course
+	 * @param mediafolder the mediafolder
+	 * @param courseid courseid
+	 */
+	public void deleteSubtitles(String mediafolder, int courseid);
 }
+

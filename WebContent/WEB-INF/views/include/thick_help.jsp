@@ -7,14 +7,18 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
-		<title>Downloads</title>
+		<title>Help</title>
 	</head>
 	<body>
 		<br>
-			<a href="${clientLink}"><fmt:message key="clientLink"/></a>
-			<p><fmt:message key="clientDescription"/></p>
-			<br><br>
-			<a href="${tracLink}"><fmt:message key="tracLink"/></a>
-			<p><fmt:message key="tracDescription"/></p>
+		
+		<a href="${helpLink}"><fmt:message key="helpLink"/></a>
+		<br><br>
+		<a href="${trainingLink}"><fmt:message key="trainingLink"/></a>
+		<br><br>
+		<a href="${supportLink}"><fmt:message key="supportLink"/></a>
+		<br><br>
+		<a href="./contactUs"><fmt:message key="contactUs"/></a>
+		
 	</body>
 </html>

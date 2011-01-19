@@ -778,4 +778,17 @@ public interface IService {
 	 * @return the clean courses url
 	 */
 	public String getCleanCoursesUrl(String coursesUrl) ;
+	
+	/**
+	 * Add a subtitles xml to a course
+	 * @param c the course
+	 * @param docFile the fileitem of the document
+	 */
+	public void addSubtitles(Course c, FileItem docFile);
+	
+	/**
+	 * Delete a subtitles xml of a course
+	 * @param c the course
+	 */
+	public void deleteSubtitles(Course c);
 }

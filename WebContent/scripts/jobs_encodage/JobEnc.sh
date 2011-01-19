@@ -31,7 +31,7 @@ fi
 # Lire le job et récupérer la première ligne en mode "waiting"
 if test -z "$4"
 then
-	sleep $(($RANDOM%60))
+#	sleep $(($RANDOM%60))
 	ligne=`python $PTHSCR/accessbase.py`
 fi
 
@@ -51,7 +51,7 @@ AUTHOR=`cat "$MediaFolder/description.txt" | grep Author: | cut -d":" -f2`
 FORMATION=`cat "$MediaFolder/description.txt" | grep Formation: | cut -d":" -f2`
 TITLE=`cat "$MediaFolder/description.txt" | grep Title: | cut -d":" -f2`
 SUBJECT=`cat "$MediaFolder/description.txt" | grep Subject: | cut -d":" -f2`
-DATE=`cat "$MediaFolder/description.txt" | grep Date: | cut -d":" -f2`
+DATE=`cat "$MediaFolder/description.txt" | grep Date: | cut -d":" -f2 | cut -d"/" -f1`
 TYPE=`cat "$MediaFolder/description.txt" | grep Type: | cut -d":" -f2`
 DURATION=`cat "$MediaFolder/description.txt" | grep Duration: | cut -d":" -f2`
 COMMENT=`cat "$MediaFolder/description.txt" | grep Comment: | cut -d":" -f2`
@@ -60,63 +60,65 @@ COMMENT=`cat "$MediaFolder/description.txt" | grep Comment: | cut -d":" -f2`
 case $JobType in
 CA)
 #mp3Tag
-/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3
+#/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3 &> /dev/null
+#mp3 tag image
+/usr/bin/eyeD3 -t "$TITLE" -a "$AUTHOR" -Y "$DATE" -A "$FORMATION" -c "::$COMMENT" --to-v2.3 --add-image=$PTHSCR/cover.jpg:FRONT_COVER $MediaFolder/$CourseID.mp3 &> /dev/null
 #pdfCreation $MediaFolder $CourseID
 python $PTHSCR/CreatePDF.py $MediaFolder $CourseID
 #mp3ToOgg
 bash $PTHSCR/convertAll2Ogg.sh $MediaFolder $CourseID "mp3"
 #oggTag
-/usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg $MediaFolder/new_$CourseID.ogg
-#renameFile
-mv $MediaFolder/new_$CourseID.ogg $MediaFolder/$CourseID.ogg
+/usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg &> /dev/null
 #videoslideCreation $MediaFolder $CourseID
 bash $PTHSCR/videoslide.sh $MediaFolder $CourseID
 #mp4Tag
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
+/usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 ;;
 
 CV)
-#convertAllToMp3 $MediaFolder $CourseID "flv"
+#convertAllToMp3
 bash $PTHSCR/convertAll2Mp3.sh $MediaFolder $CourseID "flv"
-#mp3Tag(c, c.getMediaFolder(), c.getMediasFileName()); //MP3
-/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3
+#mp3Tag
+#/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3 &> /dev/null
+#mp3 tag image
+/usr/bin/eyeD3 -t "$TITLE" -a "$AUTHOR" -Y "$DATE" -A "$FORMATION" -c "::$COMMENT" --to-v2.3 --add-image=$PTHSCR/cover.jpg:FRONT_COVER $MediaFolder/$CourseID.mp3 &> /dev/null
 #pdfCreation(c.getMediaFolder(), c.getMediasFileName()); // PDF
 python $PTHSCR/CreatePDF.py $MediaFolder $CourseID
 #mp3ToOgg
 bash $PTHSCR/convertAll2Ogg.sh $MediaFolder $CourseID "mp3"
 #oggTag
-/usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg $MediaFolder/new_$CourseID.ogg
-#renameFile
-mv $MediaFolder/new_$CourseID.ogg $MediaFolder/$CourseID.ogg
+/usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg &> /dev/null
 #videoslideCreation(c.getMediaFolder(), c.getMediasFileName()); // VS
 bash $PTHSCR/videoslide.sh $MediaFolder $CourseID
 #mp4Tag
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
+/usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 ;;
 
 MUA)
 #mp3
 if [ $Extension = "mp3" ]; then
 #mp3Tag
-/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3
+#/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3 &> /dev/null
+#mp3 tag image
+/usr/bin/eyeD3 -t "$TITLE" -a "$AUTHOR" -Y "$DATE" -A "$FORMATION" -c "::$COMMENT" --to-v2.3 --add-image=$PTHSCR/cover.jpg:FRONT_COVER $MediaFolder/$CourseID.mp3 &> /dev/null
 #mp3ToOgg
 bash $PTHSCR/convertAll2Ogg.sh $MediaFolder $CourseID "mp3"
 #oggTag
-/usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg $MediaFolder/new_$CourseID.ogg
-#renameFile
-mv $MediaFolder/new_$CourseID.ogg $MediaFolder/$CourseID.ogg
+/usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg &> /dev/null
 fi
 
 if [ $Extension = "ogg" ]; then
 #ogg
 #oggTag
-/usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg $MediaFolder/new_$CourseID.ogg
-#renameFile
-mv $MediaFolder/new_$CourseID.ogg $MediaFolder/$CourseID.ogg
+/usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg &> /dev/null
 #convertAllToMp3
 bash $PTHSCR/convertAll2Mp3.sh $MediaFolder $CourseID "ogg"
 #mp3Tag
-/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3
+#/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3 &> /dev/null
+#mp3 tag image
+/usr/bin/eyeD3 -t "$TITLE" -a "$AUTHOR" -Y "$DATE" -A "$FORMATION" -c "::$COMMENT" --to-v2.3 --add-image=$PTHSCR/cover.jpg:FRONT_COVER $MediaFolder/$CourseID.mp3 &> /dev/null
 fi
 
 if [ $Extension = "wma" ]||[ $Extension = "wav" ]; then
@@ -124,13 +126,13 @@ if [ $Extension = "wma" ]||[ $Extension = "wav" ]; then
 #convertAllToMp3
 bash $PTHSCR/convertAll2Mp3.sh $MediaFolder $CourseID $Extension
 #mp3Tag
-/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3
+#/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3 &> /dev/null
+#mp3 tag image
+/usr/bin/eyeD3 -t "$TITLE" -a "$AUTHOR" -Y "$DATE" -A "$FORMATION" -c "::$COMMENT" --to-v2.3 --add-image=$PTHSCR/cover.jpg:FRONT_COVER $MediaFolder/$CourseID.mp3 &> /dev/null
 #mp3ToOgg
 bash $PTHSCR/convertAll2Ogg.sh $MediaFolder $CourseID "mp3"
 #oggTag
-/usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg $MediaFolder/new_$CourseID.ogg
-#renameFile
-mv $MediaFolder/new_$CourseID.ogg $MediaFolder/$CourseID.ogg
+/usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg &> /dev/null
 fi
 ;;
 
@@ -148,14 +150,22 @@ fi
 bash $PTHSCR/injectMetadata.sh $MediaFolder $CourseID "flv"
 #convertAllToMp3
 bash $PTHSCR/convertAll2Mp3.sh $MediaFolder $CourseID "flv"
-#mp3Tag
-/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3
-#mp3ToOgg
-bash $PTHSCR/convertAll2Ogg.sh $MediaFolder $CourseID "mp3"
-#oggTag
-/usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg $MediaFolder/new_$CourseID.ogg
-#renameFile
-mv $MediaFolder/new_$CourseID.ogg $MediaFolder/$CourseID.ogg
+
+# test if no sound
+if [ `stat -c '%s' $MediaFolder/$CourseID.mp3` -eq 0 ]
+then
+	MediaType=$(echo "$MediaType-6"|bc)
+else
+	#mp3Tag
+	#/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3 &> /dev/null
+	#mp3 tag image
+	/usr/bin/eyeD3 -t "$TITLE" -a "$AUTHOR" -Y "$DATE" -A "$FORMATION" -c "::$COMMENT" --to-v2.3 --add-image=$PTHSCR/cover.jpg:FRONT_COVER $MediaFolder/$CourseID.mp3 &> /dev/null
+	#mp3ToOgg
+	bash $PTHSCR/convertAll2Ogg.sh $MediaFolder $CourseID "mp3"
+	#oggTag
+	/usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg &> /dev/null
+fi
+
 #videoHighQualityConvert
 bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $ORI$CourseID.$Extension $CourseID $PTHSCR/calculate_padding.sh false
 #mp4Tag
@@ -171,5 +181,24 @@ esac
 
 # Maj du mediatype sur le serveur avc
 wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType"
+
+
+########################## HTML5 TESTS
+case $JobType in
+
+CV)
+# flv to mp4
+bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $ORI$CourseID.$Extension $CourseID $PTHSCR/calculate_padding.sh true &> /dev/null
+# flv to ogv
+ffmpeg2theora $MediaFolder/"$CourseID"_ipod.mp4 -o $MediaFolder/"$CourseID".ogv &> /dev/null
+;;
+
+MUV)
+# ogv
+ffmpeg2theora $MediaFolder/"$CourseID".mp4 -o $MediaFolder/"$CourseID".ogv &> /dev/null
+;;
+
+esac
+##########################
 
 fi

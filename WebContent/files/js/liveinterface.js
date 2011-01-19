@@ -30,6 +30,8 @@ function modifyPlayerSize() {
 		player.style.height = playerMaxHeight;
 		playerWidth=playerMaxWidth;
 		playerHeight=playerMaxHeight;
+		document.getElementById("linkplayersize").style.display="none";
+		document.getElementById("linkplayersize2").style.display="block";
 	}
 	// when player 640 480
 	else {
@@ -37,6 +39,8 @@ function modifyPlayerSize() {
 		player.style.height = playerMinHeight;
 		playerWidth=playerMinWidth;
 		playerHeight=playerMinHeight;
+		document.getElementById("linkplayersize").style.display="block";
+		document.getElementById("linkplayersize2").style.display="none";
 	}
 	
 	resizeLiveside();
