@@ -36,15 +36,22 @@ cd workingVS
 
 # Extract audio into aac
 /usr/bin/mplayer -really-quiet -vo null -vc null -ao pcm:fast:file=./../$2.wav ./../$2.mp3
-/usr/bin/faac -b 64k -w -o ./../$2.m4a ./../$2.wav &> /dev/null
+/usr/bin/faac -b 128k -w -o ./../$2.m4a ./../$2.wav &> /dev/null
+
+# Convert avi+aac into mp4 ipod
+/usr/bin/ffmpeg -v -1 -i ./../$2.m4a -acodec copy -i ./../$2_tmp.avi -f mp4 -vcodec libx264 -vpre normal -vpre ipod640 -crf 27 -s 640x480 -y ./../$2_videoslide_tmp_ipod.mp4 &> /dev/null
+
+# Adds mov atom
+/usr/bin/qt-faststart ./../$2_videoslide_tmp_ipod.mp4 ./../$2_videoslide_ipod.mp4 &> /dev/null
 
 # Convert avi+aac into mp4
-/usr/bin/ffmpeg -v -1 -i ./../$2.m4a -acodec copy -i ./../$2_tmp.avi -f mp4 -vcodec libx264 -vpre normal -vpre ipod640 -crf 27 -s 640x480 -y ./../$2_videoslide_tmp.mp4 &> /dev/null
+/usr/bin/ffmpeg -v -1 -i ./../$2.m4a -acodec copy -i ./../$2_tmp.avi -f mp4 -vcodec libx264 -vpre normal -crf 27 -y ./../$2_videoslide_tmp.mp4 &> /dev/null
 
 # Adds mov atom
 /usr/bin/qt-faststart ./../$2_videoslide_tmp.mp4 ./../$2_videoslide.mp4 &> /dev/null
 
 # Remove tmp files
+rm ./../$2_videoslide_tmp_ipod.mp4
 rm ./../$2_videoslide_tmp.mp4
 rm ./../$2_tmp.avi
 rm ./../$2.wav

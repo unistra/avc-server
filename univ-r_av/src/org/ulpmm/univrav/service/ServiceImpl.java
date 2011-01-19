@@ -1616,4 +1616,30 @@ public class ServiceImpl implements IService {
 		return fs.getCleanCoursesUrl(coursesUrl);
 	}
 
+	
+	/**
+	 * Add a subtitles xml to a course
+	 * @param c the course
+	 * @param docFile the fileitem of the document
+	 */
+	public synchronized void addSubtitles(Course c, FileItem docFile) {
+		fs.addSubtitles(c.getMediaFolder(),docFile,c.getCourseid());
+		
+		if(!c.isAvailable("subtitles"))
+			c.setmediatype(c.getmediatype()+Course.typeSubtitles);
+		db.modifyCourse(c);
+	}
+	
+	/**
+	 * Delete a subtitles xml of a course
+	 * @param c the course
+	 */
+	public synchronized void deleteSubtitles(Course c) {
+		fs.deleteSubtitles(c.getMediaFolder(),c.getCourseid());
+		
+		if(c.isAvailable("subtitles"))
+			c.setmediatype(c.getmediatype()-Course.typeSubtitles);
+		db.modifyCourse(c);
+	}
+	
 }

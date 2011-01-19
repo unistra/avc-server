@@ -41,35 +41,49 @@
 		var slidesurl = "${slidesurl}";
 		var timing = ${timing};
 	</script>
+	
+	
+	<c:choose>
+	<c:when test="${course.type!='video'}">
+		<script type="text/javascript">var fileext = "mp3";</script>
+	</c:when>
+	<c:otherwise>
+		<c:choose>
+		<c:when test="${fn:length(slides) == 0}">
+			<script type="text/javascript">var fileext = "mp4";</script>
+		</c:when>
+		<c:otherwise>
+			<script type="text/javascript">var fileext = "flv";</script>
+		</c:otherwise>
+		</c:choose>
+	</c:otherwise>
+	</c:choose>
+		
 	<c:if test="${course.type!='video'}">
 		<script type="text/javascript">
-     		var flashvars =
-     	 	{
-       			file:					'${courseurl}', 
-        		id:						'flashvideo', 
-       			autostart:				'true',
-       			image:					'../files/img/logo_audio.png', 	
-       			plugins:				'captions-1',
-               	'captions.file':		'${courseurlfolder}/additional_docs/${course.courseid}_captions.xml',
-           		'captions.back':		'true'		  
-     		};
-     	</script>
+		var flashvars =
+	 	{
+			file:					'${courseurlnoext}.'+fileext, 
+			id:						'flashvideo', 
+			autostart:				'true',
+			image:					'../files/img/logo_audio.png' 			  
+		};
+		</script>
 	</c:if>
 	<c:if test="${course.type=='video'}">
 		<script type="text/javascript">
-    		var flashvars =
-     	 	{
-       	 		file:					'${courseurl}', 
-        		id:						'flashvideo', 
-       			autostart:				'true',
-       			image:					'../files/img/logo_audio.png',
-           		type:					'lighttpd',			  
-           		plugins:				'captions-1',
-           		'captions.file':		'${courseurlfolder}/additional_docs/${course.courseid}_captions.xml',
-           		'captions.back':		'true'
-     		};
-     	</script>
-	</c:if>		          	    
+		var flashvars =
+	 	{
+			file:					'${courseurlnoext}.'+fileext, 
+			id:						'flashvideo', 
+			autostart:				'true',
+			image:					'../files/img/logo_audio.png', 		
+			type:					'lighttpd'				  
+		};
+		</script>
+	</c:if>	
+		
+	
 	<script type="text/javascript">
     	var params =
     	{
@@ -88,7 +102,7 @@
 	<META NAME=”robots” CONTENT=”nofollow”>
 
 	<!-- google analytics -->
-	<c:import url="include/google_analytics.jsp" />
+	
 		
   </head>
   
@@ -117,20 +131,46 @@
 							   				 		
    				 	<!-- player flash if slides not null -->
 					<c:if test="${fn:length(slides) != 0}">
-						<script type="text/javascript">
-							swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '320', '260', '9.0.124', false, flashvars, params, attributes);
-   				 		</script>		 
-   				 		<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>		 	            	
+					   				 		
+   				 		<c:choose>
+   				 		<c:when test="${course.type!='video'}">
+   				 		   				 		
+   				 			<audio id="playerhtml5" autoplay controls style="width:320px;height:260px;background-image:url(../files/img/logo_audio.png);">  
+    				 			<source src="${courseurlnoext}.mp3" type="audio/mp3"> <!-- chrome/safari -->
+    				 			<source src="${courseurlnoext}.ogg" type="audio/ogg"> <!-- firefox/opera -->		
+    				 			<!-- ie8 does not support html5 -->
+    				 			<script type="text/javascript">  
+								swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '320', '260', '9.0.124', false, flashvars, params, attributes);
+   				 				</script>		 
+   				 				<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>	
+ 							</audio>  
+   				 		   				 		
+   				 		</c:when>
+   				 		<c:otherwise>
+   				 		   				 		
+   				 			<video id="playerhtml5" autoplay controls style="width:320px;height:260px;">  
+    				 			<source src="${courseurlnoext}_ipod.mp4" type="video/mp4"> <!-- safari/chrome -->
+    							<source src="${courseurlnoext}.ogv" type="video/ogg"> <!-- firefox/opera support ogv, not mp4 -->
+    				 			<!-- ie8 does not support html5 -->	
+       							<script type="text/javascript">  
+									swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '320', '260', '9.0.124', false, flashvars, params, attributes);
+   				 				</script>		 
+   				 				<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>	
+ 							</video>
+   				 		
+   				 		</c:otherwise>
+   				 		</c:choose>
+   				 				 	   				 			 	            	
 	            		
-	            			<c:if test="${fn:contains(mediaLst, 'hq')}">
-	            				<c:url var="courseaccess" scope="page" value="./courseaccess">
-									<c:param name="id" value="${course.courseid}"/>
-									<c:param name="type" value="hq"/>
-								</c:url>
-								<div class="highquality2">
-									<a href="<c:out value="${courseaccess}" />"><b><fmt:message key="Highquality"/></b></a>
-								</div>	
-							</c:if>
+	            		<c:if test="${fn:contains(mediaLst, 'hq')}">
+	            			<c:url var="courseaccess" scope="page" value="./courseaccess">
+								<c:param name="id" value="${course.courseid}"/>
+								<c:param name="type" value="hq"/>
+							</c:url>
+							<div class="highquality2">
+								<a href="<c:out value="${courseaccess}" />"><b><fmt:message key="Highquality"/></b></a>
+							</div>	
+						</c:if>
 						
 					</c:if>
 	                                   
@@ -351,20 +391,36 @@
 				<!-- player flash if no slides-->
 				<c:if test="${fn:length(slides) == 0}">     
 					<td>
-	            		<script type="text/javascript">
-     			  			swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '640', '500', '9.0.124', false, flashvars, params, attributes);
-   						</script>
-   						<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>
-   						
-	            			<c:if test="${fn:contains(mediaLst, 'hq')}">
-	            				<c:url var="courseaccess" scope="page" value="./courseaccess">
-									<c:param name="id" value="${course.courseid}"/>
-									<c:param name="type" value="hq"/>
-								</c:url>
-								<div class="highquality">
-									<a href="<c:out value="${courseaccess}" />"><b><fmt:message key="Highquality"/></b></a>	
-								</div>
-							</c:if>
+								 						
+ 						<c:choose>
+   				 		<c:when test="${course.type!='video'}">
+   				 		   				 		
+   				 			<audio id="playerhtml5" autoplay controls style="width:640px;">  
+    				 			<source src="${courseurlnoext}.mp3" type="audio/mp3"> <!-- chrome/safari -->
+    				 			<source src="${courseurlnoext}.ogg" type="audio/ogg"> <!-- firefox/opera -->		
+    				 			<!-- ie8 does not support html5 -->
+    				 			<script type="text/javascript">  
+								swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '640', '500', '9.0.124', false, flashvars, params, attributes);
+   				 				</script>		 
+   				 				<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>	
+ 							</audio>  
+   				 		   				 		
+   				 		</c:when>
+   				 		<c:otherwise>
+   				 		   				 		
+   				 			<video id="playerhtml5" autoplay controls style="width:800px;">  
+    							<source src="${courseurlnoext}.mp4" type="video/mp4"> <!-- safari/chrome -->
+    							<source src="${courseurlnoext}.ogv" type="video/ogg"> <!-- firefox/opera support ogv, not mp4 -->
+    							<!-- ie8 does not support html5 -->	
+    							<script type="text/javascript">
+     			  					swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '640', '500', '9.0.124', false, flashvars, params, attributes);
+   								</script>
+   								<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p> 
+ 							</video>      
+   				 		
+   				 		</c:otherwise>
+   				 		</c:choose>
+
 					</td>
 				</c:if>	
 					
@@ -387,6 +443,9 @@
 			<a href="javascript:nextPage()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fmt:message key="Suivant"/></a>
 			| Diapo <span id="slideNumber"></span>
 			</div>
+			
+			
+			<script type="text/javascript">initPlayerHtml5();</script>
 
     	</div>
 	
@@ -395,6 +454,6 @@
 	    </div>
     </div>
     
-    
+  
   </body>
 </html>

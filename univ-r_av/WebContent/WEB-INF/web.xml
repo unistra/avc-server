@@ -69,7 +69,6 @@
 			<url-pattern>/avc/admin_adduser</url-pattern>			
 			<url-pattern>/avc/admin_teachers</url-pattern>
 			<url-pattern>/avc/admin_stats</url-pattern>
-			<url-pattern>/avc/admin_versionclient</url-pattern>
 			<url-pattern>/avc/admin_selections</url-pattern>
 			<url-pattern>/avc/admin_editselection</url-pattern>
 			<url-pattern>/avc/admin_validateselection</url-pattern>
@@ -83,6 +82,8 @@
 			<url-pattern>/avc/admin_validatediscipline</url-pattern>
 			<url-pattern>/avc/admin_editdiscipline</url-pattern>
 			<url-pattern>/avc/admin_deletediscipline</url-pattern>
+			<url-pattern>/avc/admin_addsubtitles</url-pattern>
+			<url-pattern>/avc/admin_deletesubtitles</url-pattern>
 			<http-method>GET</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>
@@ -109,6 +110,10 @@
 			<url-pattern>/avc/publication</url-pattern>
 			<url-pattern>/avc/publication_validatepublication</url-pattern>
 			<url-pattern>/avc/authentication_cas</url-pattern>
+			<url-pattern>/avc/myspace_adddocupload</url-pattern>
+			<url-pattern>/avc/myspace_deleteadddoc</url-pattern>
+			<url-pattern>/avc/myspace_addsubtitles</url-pattern>
+			<url-pattern>/avc/myspace_deletesubtitles</url-pattern>
 	</web-resource-collection>
 	<user-data-constraint>
    		<transport-guarantee>CONFIDENTIAL</transport-guarantee>

@@ -93,7 +93,10 @@
    				 <p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>
    				 
    				 
-   				 <a class="linkplayersize" href="javascript:modifyPlayerSize();"><fmt:message key="playersize"/></a>
+   				 <a id="linkplayersize" class="linkplayersize" href="javascript:modifyPlayerSize();"><img src="../files/styles/${sessionScope.style}/img/btn_enl.png"></a>
+   				 
+   				 
+   				 <a id="linkplayersize2" class="linkplayersize2" href="javascript:modifyPlayerSize();" style="display:none;"><img src="../files/styles/${sessionScope.style}/img/btn_red.png"></a>
    				 
    			</td>
 	    	

@@ -62,7 +62,10 @@
         			 	id:						'flashvideo', 
        				 	autostart:				'true',
        				 	type:					'lighttpd',  
-       				 	image:					'../files/img/logo_audio.png'			  
+       				 	image:					'../files/img/logo_audio.png',
+       				 	plugins:				'captions-1',
+       	           		'captions.file':		'${courseurlfolder}/additional_docs/${course.courseid}_captions.xml',
+       	           		'captions.back':		'true'		  
      				 };
 
      				 var params =

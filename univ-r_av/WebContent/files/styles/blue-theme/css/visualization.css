@@ -218,3 +218,7 @@ a:hover .otherThumb, a:hover .currentThumb {
 .hidden {
 	display: none;
 }
+
+.tdalign {
+	vertical-align:top;
+}

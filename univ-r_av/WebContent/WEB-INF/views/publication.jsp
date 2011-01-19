@@ -115,7 +115,6 @@
 			<!-- FORMULAIRE -->
 	    	<form action="<c:url value="./publication_validatepublication"/>" method="POST">
 	    		
-	    		<input type="hidden" name="id" value="${publication_id}">
 	    		<input type="hidden" name="mediapath" value="${publication_mediapath}">
 	    		<input type="hidden" name="publication_type" value="${publication_type}">
 	    								
