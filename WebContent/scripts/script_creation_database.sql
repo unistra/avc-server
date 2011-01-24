@@ -125,7 +125,8 @@ CREATE TABLE course (
     download boolean DEFAULT true NOT NULL,
     restrictionuds boolean DEFAULT false NOT NULL,
     mediatype integer,
-    volume smallint DEFAULT 1 NOT NULL
+    volume smallint DEFAULT 1 NOT NULL,
+    recorddate timestamp without time zone
 );
 
 
@@ -768,7 +769,7 @@ INSERT INTO level (levelid, code, name) VALUES (4, '32', 'Licence 2ème année')
 INSERT INTO level (levelid, code, name) VALUES (5, '33', 'Licence 3ème année');
 INSERT INTO level (levelid, code, name) VALUES (6, '51', 'Master 1ère année');
 INSERT INTO level (levelid, code, name) VALUES (7, '52', 'Master 2ème année');
-INSERT INTO level (levelid, code, name) VALUES (8, '6+', 'Doctorat');
+INSERT INTO level (levelid, code, name) VALUES (8, '6X', 'Doctorat');
 INSERT INTO level (levelid, code, name) VALUES (1, 'O0', 'Autres');
 INSERT INTO level (levelid, code, name) VALUES (2, 'C0', 'Conférence');
 
