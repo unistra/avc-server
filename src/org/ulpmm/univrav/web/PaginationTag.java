@@ -102,7 +102,7 @@ public class PaginationTag extends TagSupport {
 			// Combobox
 			int combosize=10;
 			
-			out.println("<select name=combopages onchange=\"javascript:document.location.href='" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&page=" : "?page=") + "'+this.value+'#tableheader'\" />");
+			out.println("<select name=combopages onchange=\"javascript:document.location.href='" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&page=" : "?page=") + "'+this.value+'" + (resultPageName.equals("tags")? "&tags="+tags :"") + "#tableheader'\" />");
 			out.println("<option value=''>page</option>");
 			for(int i=1;i<=pagesNumber;i++) {
 								
