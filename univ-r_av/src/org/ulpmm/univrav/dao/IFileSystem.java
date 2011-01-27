@@ -173,5 +173,12 @@ public interface IFileSystem {
 	 * @param courseid courseid
 	 */
 	public void deleteSubtitles(String mediafolder, int courseid);
+	
+	
+	/**
+	 * Retag media function. Re-generate description.txt and re-tag medias 
+	 * @param c the course
+	 */
+	public void mediaRetag(Course c);
 }
 

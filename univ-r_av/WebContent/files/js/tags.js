@@ -35,26 +35,36 @@ function LienCumulTags() {
 
 // To delete a tag from the URL
 function closeTag(tag) {
+	
+	var oldUrl = parent.location.href;
    
-    var debTag = parent.location.href.lastIndexOf(tag);
-    var finTag = parent.location.href.lastIndexOf(tag)+tag.length;
+    var debTag = oldUrl.lastIndexOf(tag);
+    var finTag = oldUrl.lastIndexOf(tag)+tag.length;
    
-    // Because difference between IE/Mozilla with accents (ex: IE print 'é', Mozilla print '%C3%A9')
-    if(parent.location.href.lastIndexOf(tag)=='-1') {
-        tag=encodeURI(tag);
-        debTag = parent.location.href.lastIndexOf(tag);
-        finTag = parent.location.href.lastIndexOf(tag)+tag.length;
+    
+    // Because difference between IE/Mozilla with accents (ex: IE print 'é', Mozilla print '%C3%A9' or '%E9')
+    if(debTag == '-1') {
+    	oldUrl = unescape(parent.location.href);
+        debTag = oldUrl.lastIndexOf(tag);
+        finTag = oldUrl.lastIndexOf(tag)+tag.length;
+    }
+    
+    // Because difference between IE/Mozilla with accents (ex: IE print 'é', Mozilla print '%C3%A9' or '%E9')
+    if(debTag == '-1') {
+    	oldUrl = decodeURI(parent.location.href);
+        debTag = oldUrl.lastIndexOf(tag);
+        finTag = oldUrl.lastIndexOf(tag)+tag.length;
     }
    
     // To delete the character "+" of the URL
-    if(parent.location.href.substring(debTag-1,debTag)=='+') {
+    if(oldUrl.substring(debTag-1,debTag)=='+') {
         debTag = debTag-1;
     }
        
     // Remove the tag from the url
-    url = parent.location.href.substring(0,debTag) +
-    parent.location.href.substring(finTag,parent.location.href.length);
-       
+    url = oldUrl.substring(0,debTag) +
+    oldUrl.substring(finTag,oldUrl.length);
+
     parent.location.href = url;
 }
 

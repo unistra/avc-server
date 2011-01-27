@@ -84,7 +84,7 @@
     				  
    				 </script>
    				 
-   				 <center><div id="playercontainer"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></div></center>
+   				 <center><div id="playercontainer"><p id="flashvideo"><a href="http://www.adobe.com/go/getflashplayer">Get flash to see this player</a> <br>or<br> <a href="./courseaccess?id=${course.courseid}&type=html5">Try the html5 player</a></p></div></center>
 
  
 			</div>

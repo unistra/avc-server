@@ -31,6 +31,13 @@
 		</c:if>
 	</c:forEach>
 	
+	<!-- Redirection to html5 for ipad, ipod and iphone -->
+	<script type="text/javascript"> // <![CDATA[
+		if ((navigator.userAgent.indexOf('iPhone') != -1) || (navigator.userAgent.indexOf('iPod') != -1) || (navigator.userAgent.indexOf('iPad') != -1)) {
+			document.location = "./courseaccess?id=${course.courseid}&type=html5";
+		} // ]]>
+	</script>
+	
 	<script type="text/javascript" src="../files/js/details.js"></script>
 	<script type="text/javascript" src="../files/jwflvplayer/swfobject.js"></script>
 	<!-- <script type="text/javascript" src="../files/js/ieupdate.js"></script> -->
@@ -120,7 +127,8 @@
 						<script type="text/javascript">
 							swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '320', '260', '9.0.124', false, flashvars, params, attributes);
    				 		</script>		 
-   				 		<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>		 	            	
+   				 		<div class="flash" id="flash"><p id="flashvideo"><a href="http://www.adobe.com/go/getflashplayer">Get flash to see this player</a> <br>or<br> <a href="./courseaccess?id=${course.courseid}&type=html5">Try the html5 player</a></p></div>	 	            	
+	            		<br>
 	            		
 	            			<c:if test="${fn:contains(mediaLst, 'hq')}">
 	            				<c:url var="courseaccess" scope="page" value="./courseaccess">
@@ -354,8 +362,9 @@
 	            		<script type="text/javascript">
      			  			swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '640', '500', '9.0.124', false, flashvars, params, attributes);
    						</script>
-   						<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>
-   						
+   						<div class="flash" id="flash"><p id="flashvideo"><a href="http://www.adobe.com/go/getflashplayer">Get flash to see this player</a> <br>or<br> <a href="./courseaccess?id=${course.courseid}&type=html5">Try the html5 player</a></p></div>	 	            	
+	            		<br>	
+	            			
 	            			<c:if test="${fn:contains(mediaLst, 'hq')}">
 	            				<c:url var="courseaccess" scope="page" value="./courseaccess">
 									<c:param name="id" value="${course.courseid}"/>
