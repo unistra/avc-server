@@ -14,8 +14,6 @@
 		
 		<a href="${helpLink}"><fmt:message key="helpLink"/></a>
 		<br><br>
-		<a href="${trainingLink}"><fmt:message key="trainingLink"/></a>
-		<br><br>
 		<a href="${supportLink}"><fmt:message key="supportLink"/></a>
 		<br><br>
 		<a href="./contactUs"><fmt:message key="contactUs"/></a>

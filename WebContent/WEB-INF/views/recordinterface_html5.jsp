@@ -136,7 +136,7 @@
    				 		<c:when test="${course.type!='video'}">
    				 		   				 		
    				 			<audio id="playerhtml5" autoplay controls style="width:320px;height:260px;background-image:url(../files/img/logo_audio.png);">  
-    				 			<source src="${courseurlnoext}.mp3" type="audio/mp3"> <!-- chrome/safari -->
+    				 			<source src="${courseurlnoext}.mp3" type="audio/mpeg"> <!-- chrome/safari -->
     				 			<source src="${courseurlnoext}.ogg" type="audio/ogg"> <!-- firefox/opera -->		
     				 			<!-- ie8 does not support html5 -->
     				 			<script type="text/javascript">  
@@ -396,7 +396,7 @@
    				 		<c:when test="${course.type!='video'}">
    				 		   				 		
    				 			<audio id="playerhtml5" autoplay controls style="width:640px;">  
-    				 			<source src="${courseurlnoext}.mp3" type="audio/mp3"> <!-- chrome/safari -->
+    				 			<source src="${courseurlnoext}.mp3" type="audio/mpeg"> <!-- chrome/safari -->
     				 			<source src="${courseurlnoext}.ogg" type="audio/ogg"> <!-- firefox/opera -->		
     				 			<!-- ie8 does not support html5 -->
     				 			<script type="text/javascript">  
@@ -408,7 +408,7 @@
    				 		</c:when>
    				 		<c:otherwise>
    				 		   				 		
-   				 			<video id="playerhtml5" autoplay controls style="width:800px;">  
+   				 			<video id="playerhtml5" autoplay controls style="width:720px;">  
     							<source src="${courseurlnoext}.mp4" type="video/mp4"> <!-- safari/chrome -->
     							<source src="${courseurlnoext}.ogv" type="video/ogg"> <!-- firefox/opera support ogv, not mp4 -->
     							<!-- ie8 does not support html5 -->	

@@ -180,10 +180,7 @@ public class Application extends HttpServlet {
 	
 	/** Link for support (help page) */
 	private static String supportLink;
-	
-	/** Link for support (help page) */
-	private static String trainingLink;
-	
+		
 	/** Link for support (help page) */
 	private static String helpLink;
 	
@@ -322,7 +319,6 @@ public class Application extends HttpServlet {
 			
 			// Link for support (help page)
 			supportLink = p.getProperty("supportLink");
-			trainingLink = p.getProperty("trainingLink");
 			helpLink = p.getProperty("helpLink");
 			clientLink = p.getProperty("clientLink");
 			tracLink = p.getProperty("tracLink");
@@ -624,7 +620,6 @@ public class Application extends HttpServlet {
 		}
 		else if( page.equals("/thick_help")) {
 			request.setAttribute("supportLink", supportLink);
-			request.setAttribute("trainingLink", trainingLink);
 			request.setAttribute("helpLink", helpLink);
 			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_help.jsp").forward(request, response);
 		}
@@ -1425,54 +1420,36 @@ public class Application extends HttpServlet {
 	private void displaySearchResults(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 		
-		//TODO PROBLEME ENCODAGE EN FONCTION DES NAVIGATEURS
-			
 		String paramsUrl="?search=true";
-		
-		
+						
 		// to set typevideo and typeaudio nochecked
 		if(request.getParameter("typevideo") != null && request.getParameter("typevideo").equals("nochecked")) 
 			paramsUrl=paramsUrl+"&typevideo=nochecked";
 		if( request.getParameter("typeaudio") != null && request.getParameter("typeaudio").equals("nochecked")) 
 			paramsUrl=paramsUrl+"&typeaudio=nochecked";
 		
-		
-		// SOLUTION 1 AVEC UTF8
-		// Si c'est posté depuis le formulaire, on est en utf8
-		if( request.getMethod().equals("POST") ) { 
+				
+		// if UTF8 else ISO
+		if(request.getParameter("fullname") != null && ! request.getParameter("fullname").equals("*"))
+			paramsUrl=paramsUrl+"&fullname="+UrlUtil.encode(service.encodeString(request.getParameter("fullname")), "UTF-8");			
+		if( request.getParameter("discipline") != null && ! request.getParameter("discipline").equals("*") ) 
+			paramsUrl=paramsUrl+"&discipline="+UrlUtil.encode(service.encodeString(request.getParameter("discipline")), "UTF-8");
+		if( request.getParameter("level") != null && ! request.getParameter("level").equals("*"))
+			paramsUrl=paramsUrl+"&level="+UrlUtil.encode(service.encodeString(request.getParameter("level")), "UTF-8");
+		if( request.getParameter("keyword") != null && ! request.getParameter("keyword").equals(""))
+			paramsUrl=paramsUrl+"&keyword="+UrlUtil.encode(service.encodeString(request.getParameter("keyword")), "UTF-8");
+				
 						
+		// Redirect if the form posted
+		if( request.getMethod().equals("POST") ) { 
+			
+			
 			// to set typevideo and typeaudio nochecked when form post
 			if(request.getParameter("video") == null) 
 				paramsUrl=paramsUrl+"&typevideo=nochecked";
 			if( request.getParameter("audio") == null) 
 				paramsUrl=paramsUrl+"&typeaudio=nochecked";
-							
 			
-			if(request.getParameter("fullname") != null && ! request.getParameter("fullname").equals("*")) 
-				paramsUrl=paramsUrl+"&fullname="+UrlUtil.encode(request.getParameter("fullname"), "UTF-8");		
-			if( request.getParameter("discipline") != null && ! request.getParameter("discipline").equals("*") )
-				paramsUrl=paramsUrl+"&discipline="+UrlUtil.encode(request.getParameter("discipline"), "UTF-8");	
-			if( request.getParameter("level") != null && ! request.getParameter("level").equals("*")) 
-				paramsUrl=paramsUrl+"&level="+UrlUtil.encode(request.getParameter("level"), "UTF-8");		
-			if( request.getParameter("keyword") != null && ! request.getParameter("keyword").equals("")) 
-				paramsUrl=paramsUrl+"&keyword="+UrlUtil.encode(request.getParameter("keyword"), "UTF-8");
-		}
-		// Sinon on doit le retransformer en utf8 à cause de la récupération via url
-		else {
-			
-			if(request.getParameter("fullname") != null && ! request.getParameter("fullname").equals("*")) 
-				paramsUrl=paramsUrl+"&fullname="+UrlUtil.encode(new String(request.getParameter("fullname").getBytes("8859_1"),"UTF8"), "UTF-8");		
-			if( request.getParameter("discipline") != null && ! request.getParameter("discipline").equals("*") )
-				paramsUrl=paramsUrl+"&discipline="+UrlUtil.encode(new String(request.getParameter("discipline").getBytes("8859_1"),"UTF8"), "UTF-8");	
-			if( request.getParameter("level") != null && ! request.getParameter("level").equals("*")) 
-				paramsUrl=paramsUrl+"&level="+UrlUtil.encode(new String(request.getParameter("level").getBytes("8859_1"),"UTF8"), "UTF-8");	
-			if( request.getParameter("keyword") != null && ! request.getParameter("keyword").equals("")) 
-				paramsUrl=paramsUrl+"&keyword="+UrlUtil.encode(new String(request.getParameter("keyword").getBytes("8859_1"),"UTF8"), "UTF-8");
-		}
-			
-				
-		// Redirect if the form posted
-		if( request.getMethod().equals("POST") ) { 
 						
 			String redirect = "./search"+paramsUrl;
 			response.sendRedirect(redirect);
@@ -1514,34 +1491,27 @@ public class Application extends HttpServlet {
 		
 			
 			if( request.getParameter("fullname") != null && ! request.getParameter("fullname").equals("*") ) {
-				//params.put("fullname", request.getParameter("fullname"));
-				params.put("fullname", new String(request.getParameter("fullname").getBytes("8859_1"),"UTF8"));
+				// if UTF8 else ISO
+				params.put("fullname", service.encodeString(request.getParameter("fullname")));				
 				request.setAttribute("nameSelected", params.get("fullname"));
 			}
 
 			if( request.getParameter("discipline") != null && ! request.getParameter("discipline").equals("*") ) {
-				//params.put("discipline", request.getParameter("discipline"));
-				params.put("discipline", new String(request.getParameter("discipline").getBytes("8859_1"),"UTF8"));
+				// if UTF8 else ISO
+				params.put("discipline", service.encodeString(request.getParameter("discipline")));				
 				request.setAttribute("discSelected", params.get("discipline"));	
 			}
 
 			if( request.getParameter("level") != null && ! request.getParameter("level").equals("*") ) {
-				//params.put("level", request.getParameter("level"));
-				params.put("level", new String(request.getParameter("level").getBytes("8859_1"),"UTF8"));
+				// if UTF8 else ISO
+				params.put("level", service.encodeString(request.getParameter("level")));
 				request.setAttribute("levelSelected", params.get("level"));	
 			}
 
 			if( request.getParameter("keyword") != null && ! request.getParameter("keyword").equals("") ) {
-				//params.put("keyword", request.getParameter("keyword"));
-				params.put("keyword", new String(request.getParameter("keyword").getBytes("8859_1"),"UTF8"));
+				// if UTF8 else ISO
+				params.put("keyword", service.encodeString(request.getParameter("keyword")));
 				request.setAttribute("keyword", params.get("keyword"));
-				
-				
-		    //	System.out.println("Keyword: " + new String(request.getParameter("keyword").getBytes("8859_1"),"UTF8"));
-			//	System.out.println("Keyword: " + new String(request.getParameter("keyword").getBytes("UTF8"),"8859_1"));
-			//	System.out.println("Keyword: " + request.getParameter("keyword"));	
-			//	System.out.println("Keyword: " + UrlUtil.decode(request.getParameter("keyword")));
-				
 			}
 
 			request.setAttribute("page", pageNumber);
@@ -1613,8 +1583,10 @@ public class Application extends HttpServlet {
 			int pageNumber = request.getParameter("page")!=null ? Integer.parseInt( request.getParameter("page")):1;
 			int start = recordedCourseNumber * (pageNumber - 1) ;
 				
-			String tags = new String(request.getParameter("tags").getBytes("8859_1"),"UTF8");
-					
+			//if UTF8 else ISO
+			String tags = service.encodeString(request.getParameter("tags"));
+		
+			
 			List<String> listTags = new ArrayList<String>();
 			StringTokenizer st = new StringTokenizer(tags);
 			while(st.hasMoreTokens()) {
@@ -2619,7 +2591,6 @@ public class Application extends HttpServlet {
 					// Html 5 test page
 					else if( type.equals("html5")) {
 						
-						//TODO html5
 						
 						request.setAttribute("courseurlnoext", courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName());
 						request.setAttribute("slidesurl", slidesurl);
@@ -3379,7 +3350,7 @@ public class Application extends HttpServlet {
 	 */
 	private void displayFindTracks(HttpServletRequest request, HttpServletResponse response) 
 	throws ServletException, IOException {
-		//TODO FindTracks in dev. Build CSV.
+		
 		HashMap<String, String> params = new HashMap<String, String>();
 		String datatype = null;
 				
@@ -3433,10 +3404,10 @@ public class Application extends HttpServlet {
 			}
 			// Check and set authorName parameter.
 			else if( nameParam.equals("authorName") && ! request.getParameter("authorName").equals("") ) 
-				params.put("authorName", request.getParameter("authorName"));
+				params.put("authorName", service.encodeString(request.getParameter("authorName")));
 			// Check and set authorFirstname parameter.
 			else if( nameParam.equals("authorFirstname") && ! request.getParameter("authorFirstname").equals("") ) 
-				params.put("authorFirstname", request.getParameter("authorFirstname"));
+				params.put("authorFirstname", service.encodeString(request.getParameter("authorFirstname")));
 			// Check and set authorLogin parameter.
 			else if( nameParam.equals("authorLogin") && ! request.getParameter("authorLogin").equals("") ) 
 				params.put("authorLogin", request.getParameter("authorLogin"));
@@ -3448,7 +3419,7 @@ public class Application extends HttpServlet {
 				params.put("level", request.getParameter("level"));
 			// Check and set tags parameter.
 			else if( nameParam.equals("tags") && ! request.getParameter("tags").equals("") ) {
-				params.put("tags", request.getParameter("tags"));								
+				params.put("tags", service.encodeString(request.getParameter("tags")));								
 			}
 			// show error msg if parameter unknown
 			else {
@@ -3502,7 +3473,7 @@ public class Application extends HttpServlet {
 	 */
 	private void displayFindStats(HttpServletRequest request, HttpServletResponse response) 
 	throws ServletException, IOException {
-		//TODO FindStats in dev. Build CSV.
+		
 		HashMap<String, String> params = new HashMap<String, String>();
 		String datatype = null;
 		

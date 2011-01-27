@@ -259,6 +259,8 @@ public class ServiceImpl implements IService {
 	 */
 	public synchronized void modifyCourse(Course c) {
 		db.modifyCourse(c);
+		MediaRetag mr = new MediaRetag(fs, c);
+		mr.start();
 	}
 	
 	/**
@@ -1564,37 +1566,7 @@ public class ServiceImpl implements IService {
 		return results;
 	}
 
-	/*
-	private void xml2csv(String source) {
-		//TODO Convert XML to CSV for stats and tracks
-		try {
-
-			XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-			inputFactory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
-			inputFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.TRUE);
-
-			InputStream read = new ByteArrayInputStream(source.getBytes());
-			XMLStreamReader reader = inputFactory.createXMLStreamReader(read);
-			while (reader.hasNext()) {
-				int event = reader.next();
-				System.out.println("event:"+event);
-				if (event == XMLStreamConstants.CHARACTERS)
-					System.out.println(reader.getText());
-				else if (event == XMLStreamConstants.ENTITY_REFERENCE) {
-					System.out.println("en: " + reader.getLocalName());
-					System.out.println("er: " + reader.getText());
-				}
-				
-				
-			}
-
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
 		
-	}*/
-	
 	/**
 	 * Script to launch medias encodage
 	 * @param serverUrl the server url
@@ -1642,4 +1614,44 @@ public class ServiceImpl implements IService {
 		db.modifyCourse(c);
 	}
 	
+	
+	/**
+	 * encode string if iso or utf
+	 * @param s the string
+	 * @return encoded string
+	 */
+	public String encodeString(String s) {
+
+		String r = "";
+		
+		try {
+
+			if(s != null && !s.equals("")) {
+
+				//convert string to utf8
+				String st = new String(s.getBytes("8859_1"),"UTF8");
+				boolean toConvert = true;
+
+				for(int i=0;i<st.getBytes().length-2;i++) {
+					//if convertion to utf8 fail
+					if((st.getBytes()[i] & 0xff) == 239 && (st.getBytes()[i+1] & 0xff) == 191 && (st.getBytes()[i+2] & 0xff) == 189) {
+						toConvert = false;
+					}
+
+				}				
+				
+				// if UTF8 else ISO
+				if(toConvert)
+					r = st;				
+				else	
+					r = s;
+			}
+
+		} catch (UnsupportedEncodingException e) {
+			logger.error("Error while decode string",e);
+		}
+
+		return r;
+	}
+
 }

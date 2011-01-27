@@ -146,7 +146,13 @@ public class FileSystemImpl implements IFileSystem {
 		try {
 			/* creates the .txt description file */
 			File descriptionFile = new File(coursesFolder + c.getMediaFolder() + "/description.txt");
-			descriptionFile.createNewFile();
+			if(!descriptionFile.exists()) {
+				descriptionFile.createNewFile();
+			}
+			else {
+				descriptionFile.delete();
+				descriptionFile.createNewFile();
+			}
 			PrintWriter pw = new PrintWriter( new OutputStreamWriter( new FileOutputStream( descriptionFile), "UTF-8"));
 			pw.println("Author:" +  (c.getName() != null ? c.getName() + ( c.getFirstname() != null ? " " + c.getFirstname() : "") : "-"));
 			String form = c.getFormation() != null ? db.getFormationFullName(c.getFormation()) : "-";
@@ -1116,6 +1122,32 @@ public class FileSystemImpl implements IFileSystem {
 		File SubtitlesFile = new File(coursesFolder + mediafolder +"/additional_docs/" + courseid+"_captions.xml");
 		File newSubtitlesFile = new File(coursesFolder + mediafolder +"/additional_docs/" + new Date().getTime() + "." + courseid+"_captions.xml");
 		SubtitlesFile.renameTo(newSubtitlesFile);
+	}
+	
+	/**
+	 * Retag media function. Re-generate description.txt and re-tag medias 
+	 * @param c the course
+	 */
+	public void mediaRetag(Course c) {
+		createDescriptionFile(c);
+		
+		String[] command_array = {"bash","retag.sh",coursesFolder + c.getMediaFolder(),String.valueOf(c.getCourseid()), String.valueOf(c.getmediatype())};
+		
+		try {
+			Process p = r.exec(command_array, null, new File(scriptsFolder));
+						
+			if( p.waitFor() != 0 ) {
+				logger.error("Error while retag course " + c.getCourseid());
+				throw new DaoException("Error while retag course " + c.getCourseid());
+			}
+		}
+		catch(IOException ioe) {
+			logger.error("Error while retag course " + c.getCourseid(),ioe);
+		}
+		catch(InterruptedException ie) {
+			logger.error("Error while retag course " + c.getCourseid(),ie);
+		}
+		
 	}
 	
 	
