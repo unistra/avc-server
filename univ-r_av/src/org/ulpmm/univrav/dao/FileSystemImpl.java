@@ -73,6 +73,12 @@ public class FileSystemImpl implements IFileSystem {
 		
 	/** Default Flash filename in the archive sent by the client */
 	private static String defaultFlashFile;
+	
+	/** Default Audio filename 1 in the archive sent by the MAC client */
+	private static String defaultAudioMacFile1;
+	
+	/** Default Audio filename 2 in the archive sent by the MAC client */
+	private static String defaultAudioMacFile2;
 		
 	/** Copyright comment */
 	private static String comment;
@@ -99,7 +105,7 @@ public class FileSystemImpl implements IFileSystem {
 	@SuppressWarnings("static-access")
 	public FileSystemImpl(String scriptsFolder, String ftpFolder, String coursesFolder, 
 		String liveFolder, String coursesUrl, String defaultMp3File, String defaultFlashFile, 
-		String comment, IDatabase db) {
+		String defaultAudioMacFile1, String defaultAudioMacFile2, String comment, IDatabase db) {
 		
 		r = Runtime.getRuntime();
 		this.scriptsFolder = scriptsFolder;
@@ -108,6 +114,8 @@ public class FileSystemImpl implements IFileSystem {
 		this.coursesUrl = coursesUrl;
 		this.defaultMp3File = defaultMp3File;
 		this.defaultFlashFile = defaultFlashFile;
+		this.defaultAudioMacFile1 = defaultAudioMacFile1;
+		this.defaultAudioMacFile2 = defaultAudioMacFile2;
 		this.comment = comment;
 		this.db = db;
 	}
@@ -121,6 +129,7 @@ public class FileSystemImpl implements IFileSystem {
 		
 		archiveExtraction(c, courseArchive);
 		moveArchive(c, courseArchive);
+		convertMediasMacToMp3(c);
 		setRecordDate(c, courseArchive);
 		setCourseType(c);
 		
@@ -135,6 +144,27 @@ public class FileSystemImpl implements IFileSystem {
 		}	
 		
 		createDescriptionFile(c);
+	}
+	
+	/**
+	 * Convert medias from client MAC to MP3
+	 * @param c the course
+	 */
+	public void convertMediasMacToMp3(Course c) {
+
+		try {
+			Process p = r.exec("bash convertMediasMacToMp3.sh "  + coursesFolder + c.getMediaFolder() + " " + defaultMp3File + " " + defaultAudioMacFile1 + " " + defaultAudioMacFile2, null, new File(scriptsFolder));
+			if( p.waitFor() != 0 ) {
+				logger.error("Error while convert medias from client mac to mp3 - courseid : " + c.getCourseid());
+				throw new DaoException("Error while convert medias from client mac to mp3 - courseid : " + c.getCourseid());
+			}
+		}
+		catch(IOException ioe) {
+			logger.error("Error while convert medias from client mac to mp3 - courseid : " + c.getCourseid(),ioe);
+		}
+		catch(InterruptedException ie) {
+			logger.error("Error while convert medias from client mac to mp3 - courseid : " + c.getCourseid(),ie);
+		}
 	}
 	
 	/**

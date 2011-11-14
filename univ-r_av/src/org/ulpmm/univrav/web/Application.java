@@ -95,6 +95,10 @@ public class Application extends HttpServlet {
 	private static String defaultMp3File;
 	/** Default Flash filename in the archive sent by the client */
 	private static String defaultFlashFile;
+	/** Default Audio filename 1 in the archive sent by the MAC client */
+	private static String defaultAudioMacFile1;
+	/** Default Audio filename 2 in the archive sent by the MAC client */
+	private static String defaultAudioMacFile2;
 		
 	/** Copyright comment */
 	private static String comment;
@@ -252,6 +256,8 @@ public class Application extends HttpServlet {
 			// Default media filenames in the archive sent by the client
 			defaultMp3File = p.getProperty("defaultMp3File");
 			defaultFlashFile = p.getProperty("defaultFlashFile");
+			defaultAudioMacFile1 = p.getProperty("defaultAudioMacFile1");
+			defaultAudioMacFile2 = p.getProperty("defaultAudioMacFile2");
 						
 			// Copyright comment
 			comment = service.cleanString(p.getProperty("comment"));
@@ -394,7 +400,7 @@ public class Application extends HttpServlet {
 			FileSystemImpl fs = new FileSystemImpl(
 					getServletContext().getRealPath("/") + "scripts",
 					ftpFolder, coursesFolder, liveFolder, coursesUrl,
-					defaultMp3File, defaultFlashFile, comment, db
+					defaultMp3File, defaultFlashFile, defaultAudioMacFile1, defaultAudioMacFile2, comment, db
 			);
 			
 			LdapAccessImpl ldap = new LdapAccessImpl(
@@ -1863,7 +1869,7 @@ public class Application extends HttpServlet {
 						String emailUserSubject = "Your AVC space";
 						String emailUserMessage = "Dear Customer,\n\nYou can access in your space with the following url. Don't lost this mail.\n"
 						+ serverUrl + "/avc/authentication?account=" + hash
-						+ "\n\nBest Regards,\n\nUniv-r Av Administrator" 
+						+ "\n\nBest Regards,\n\nAudiovideocours Administrator" 
 						+"\n\nPlease, don't answer to this mail, for any question contact us on "+adminEmail1;
 							
 						service.sendMail(emailUserSubject,emailUserMessage,email);
@@ -1899,10 +1905,10 @@ public class Application extends HttpServlet {
 				service.addCourse(c, media, tags, serverUrl, sepEnc, coursesFolder);
 												
 				// Sending email for the user
-				String emailUserSubject = "Your new course on Univr-AV";
+				String emailUserSubject = "Your new course on Audiovideocours";
 				String emailUserMessage = "Dear Customer,\n\nYour course named \"" + c.getTitle()
 				+"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
-				+ "\n\nBest Regards,\n\nUniv-r Av Administrator" 
+				+ "\n\nBest Regards,\n\nAudiovideocours Administrator" 
 				+"\n\nPlease, don't answer to this mail, for any question contact us on "+adminEmail1;
 						
 				//if the email from av client is present, send an email
@@ -1917,8 +1923,8 @@ public class Application extends HttpServlet {
 				// If course is present in the recorded page
 				if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 					// Sending email for admins
-					String emailAdminSubject = "a new course on Univr-AV";
-					String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (email!=null ? "\n\nEmail:"+email : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nUniv-r Av Administrator" ;
+					String emailAdminSubject = "a new course on Audiovideocours";
+					String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (email!=null ? "\n\nEmail:"+email : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nAudiovideocours Administrator" ;
 					if(adminEmail1!=null && !adminEmail1.equals(""))
 						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
 					if(adminEmail2!=null && !adminEmail2.equals(""))
@@ -2223,11 +2229,11 @@ public class Application extends HttpServlet {
 								service.mediaUpload(c, item, tags, serverUrl,sepEnc,coursesFolder);
 
 								// Sending email for the user
-								String emailUserSubject = "Your new file on Univr-AV";
+								String emailUserSubject = "Your new file on Audiovideocours";
 								String emailUserMessage = "Dear Customer,\n\nYour file named \"" + c.getTitle()
 								+"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
 								+"\nDon't panic if your video doesn't appear in the website right now. The conversion may be long (30 minutes for 1 hour video)"
-								+ "\n\nBest Regards,\n\nUniv-r Av Administrator" 
+								+ "\n\nBest Regards,\n\nAudiovideocours Administrator" 
 								+"\n\nPlease, don't answer to this mail, for any question contact us on "+adminEmail1;
 
 								// If the user is not anonymous and his email is present
@@ -2238,8 +2244,8 @@ public class Application extends HttpServlet {
 								// If course is present in the recorded page
 								if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 									// Sending email for admins
-									String emailAdminSubject = "a new file on Univr-AV";
-									String emailAdminMessage = "Dear Admin,\n\nA file named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (user!=null && user.getEmail()!=null ? "\n\nEmail:"+user.getEmail() : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nUniv-r Av Administrator" ;
+									String emailAdminSubject = "a new file on Audiovideocours";
+									String emailAdminMessage = "Dear Admin,\n\nA file named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (user!=null && user.getEmail()!=null ? "\n\nEmail:"+user.getEmail() : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nAudiovideocours Administrator" ;
 									if(!adminEmail1.equals(""))
 										service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
 									if(!adminEmail2.equals(""))

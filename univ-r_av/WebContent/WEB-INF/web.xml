@@ -161,6 +161,19 @@
 		<role-name>gp</role-name>
 	</security-role>
 	
+	<listener>
+		<listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>
+	</listener>
+	
+	<filter>
+		<filter-name>CAS Single Sign Out Filter</filter-name>
+		<filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>
+		<init-param>
+			<param-name>artifactParameterName</param-name>
+			<param-value>ticket</param-value>
+		</init-param>
+	</filter>
+	
 	<filter> 
 		<filter-name>CAS filter</filter-name> 
 		<filter-class>edu.yale.its.tp.cas.client.filter.CASFilter</filter-class> 
@@ -177,6 +190,12 @@
 			<param-value>audiovideocours.u-strasbg.fr</param-value>
 		</init-param>
 	</filter>
+	
+	
+	<filter-mapping>
+		<filter-name>CAS Single Sign Out Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 			
 	<filter-mapping>
 	<filter-name>CAS filter</filter-name> 
