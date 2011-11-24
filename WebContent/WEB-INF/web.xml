@@ -192,10 +192,14 @@
 	</filter>
 	
 	
+	<!-- Disable CAS Single Sign Out because it affect character encoding and it don't work with multiples servers currently
+	 
 	<filter-mapping>
 		<filter-name>CAS Single Sign Out Filter</filter-name>
-		<url-pattern>/avc/authentication_cas</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+	-->
 			
 	<filter-mapping>
 	<filter-name>CAS filter</filter-name> 
