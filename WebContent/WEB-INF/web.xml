@@ -194,7 +194,7 @@
 	
 	<filter-mapping>
 		<filter-name>CAS Single Sign Out Filter</filter-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>/avc/authentication_cas</url-pattern>
 	</filter-mapping>
 			
 	<filter-mapping>
