@@ -14,7 +14,13 @@
 			<c:url var="changelanguage" scope="page" value="./changelanguage">
 				<c:param name="language" value="${language}"/>
 			</c:url>
-			<a href="${changelanguage}"> ${fn:toUpperCase(language)}</a> <br><br>
+			
+			<c:set var="langstr" value="${fn:toUpperCase(language)}"/>
+			<c:if test="${language eq 'fr'}"><c:set var="langstr" value="Fran&ccedil;ais"/></c:if>
+			<c:if test="${language eq 'en'}"><c:set var="langstr" value="English"/></c:if>
+			
+			<a href="${changelanguage}"> ${langstr}</a> <br><br>
+			
 		</c:forEach>
 	</body>
 </html>

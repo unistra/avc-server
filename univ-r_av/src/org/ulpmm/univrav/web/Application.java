@@ -193,6 +193,9 @@ public class Application extends HttpServlet {
 	
 	/** Link for trac (download thick) */
 	private static String tracLink;
+	
+	/** Link for doc (help page) */
+	private static String docLink;
 		
 	/** Ldap base dn */
 	private static String ldapBaseDn;
@@ -328,6 +331,7 @@ public class Application extends HttpServlet {
 			helpLink = p.getProperty("helpLink");
 			clientLink = p.getProperty("clientLink");
 			tracLink = p.getProperty("tracLink");
+			docLink = p.getProperty("docLink");
 			
 			/* ldap properties */
 			ldapBaseDn = p.getProperty("ldapBaseDn");
@@ -627,6 +631,7 @@ public class Application extends HttpServlet {
 		else if( page.equals("/thick_help")) {
 			request.setAttribute("supportLink", supportLink);
 			request.setAttribute("helpLink", helpLink);
+			request.setAttribute("docLink",docLink);
 			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_help.jsp").forward(request, response);
 		}
 		else if( page.equals("/liveslide"))
@@ -1866,11 +1871,25 @@ public class Application extends HttpServlet {
 						user = service.getUser(email);
 						
 						// Sending email for the user
-						String emailUserSubject = "Your AVC space";
-						String emailUserMessage = "Dear Customer,\n\nYou can access in your space with the following url. Don't lost this mail.\n"
+						String emailUserSubject = "Votre espace Audiovideocours / Your Audiovideocours space";
+						
+						String emailUserMessageFr = "Cher utilisateur,\n\nVous pouvez accéder à votre espace avec l'url suivante. Ne perdez pas ce mail.\n"
+							+ serverUrl + "/avc/authentication?account=" + hash
+							+"\n\nPour toute question sur l'usage de la plateforme AudiovideoCours,"
+							+"\n- contactez le support : " + supportLink
+							+"\n- ou consultez la documentation : " + docLink
+							+ "\n\nBien cordialement,\n\nL'équipe Audiovideocours";
+												
+						String emailUserMessageEn = "Dear Customer,\n\nYou can access in your space with the following url. Don't lost this mail.\n"
 						+ serverUrl + "/avc/authentication?account=" + hash
-						+ "\n\nBest Regards,\n\nAudiovideocours Administrator" 
-						+"\n\nPlease, don't answer to this mail, for any question contact us on "+adminEmail1;
+						+"\n\nFor any question,"
+						+"\n- contact the support : " + supportLink
+						+"\n- or read the documentation : " + docLink
+						+ "\n\nBest Regards,\n\nAudiovideocours team";
+												
+						
+						String emailUserMessage = emailUserMessageFr + "\n\n\n********************\n\n\n" + emailUserMessageEn;
+						
 							
 						service.sendMail(emailUserSubject,emailUserMessage,email);
 											
@@ -1905,11 +1924,26 @@ public class Application extends HttpServlet {
 				service.addCourse(c, media, tags, serverUrl, sepEnc, coursesFolder);
 												
 				// Sending email for the user
-				String emailUserSubject = "Your new course on Audiovideocours";
-				String emailUserMessage = "Dear Customer,\n\nYour course named \"" + c.getTitle()
-				+"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
-				+ "\n\nBest Regards,\n\nAudiovideocours Administrator" 
-				+"\n\nPlease, don't answer to this mail, for any question contact us on "+adminEmail1;
+				String emailUserSubject = "Votre nouvel enregistrement sur Audiovideocours / Your new course on Audiovideocours";
+				
+				String emailUserMessageFr = "Cher utilisateur,\n\nVotre enregistrement intitulé \"" + c.getTitle()
+				+"\" sera publié sur la plateforme Audiovideocours à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
+				+ "\nMerci de bien vouloir patienter quelques minutes avant la mise en ligne définitive du document, le processus de conversion durant environ 30 minutes pour chaque heure de vidéo."
+				+"\n\nPour toute question sur l'usage de la plateforme AudiovideoCours,"
+				+"\n- contactez le support : " + supportLink		
+				+"\n- ou consultez la documentation : " + docLink
+				+ "\n\nBien cordialement,\n\nL'équipe Audiovideocours";
+				
+				String emailUserMessageEn = "Dear Customer,\n\nYour course named \"" + c.getTitle()
+				+"\" will be published on : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
+				+"\nDon't panic if your video doesn't appear in the website right now. The conversion may be long (30 minutes for 1 hour video)"
+				+"\n\nFor any question,"
+				+"\n- contact the support : " + supportLink
+				+"\n- or read the documentation : " + docLink
+				+ "\n\nBest Regards,\n\nAudiovideocours team";
+				
+				String emailUserMessage = emailUserMessageFr + "\n\n\n********************\n\n\n" + emailUserMessageEn;
+				
 						
 				//if the email from av client is present, send an email
 				if(email!=null && !email.equals("")) {
@@ -2229,13 +2263,26 @@ public class Application extends HttpServlet {
 								service.mediaUpload(c, item, tags, serverUrl,sepEnc,coursesFolder);
 
 								// Sending email for the user
-								String emailUserSubject = "Your new file on Audiovideocours";
-								String emailUserMessage = "Dear Customer,\n\nYour file named \"" + c.getTitle()
-								+"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
+								String emailUserSubject = "Votre nouvel enregistrement sur Audiovideocours / Your new course on Audiovideocours";
+								
+								String emailUserMessageFr = "Cher utilisateur,\n\nVotre enregistrement intitulé \"" + c.getTitle()
+								+"\" sera publié sur la plateforme Audiovideocours à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
+								+ "\nMerci de bien vouloir patienter quelques minutes avant la mise en ligne définitive du document, le processus de conversion durant environ 30 minutes pour chaque heure de vidéo."
+								+"\n\nPour toute question sur l'usage de la plateforme AudiovideoCours,"
+								+"\n- contactez le support : " + supportLink		
+								+"\n- ou consultez la documentation : " + docLink
+								+ "\n\nBien cordialement,\n\nL'équipe Audiovideocours";
+								
+								String emailUserMessageEn = "Dear Customer,\n\nYour course named \"" + c.getTitle()
+								+"\" will be published on : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
 								+"\nDon't panic if your video doesn't appear in the website right now. The conversion may be long (30 minutes for 1 hour video)"
-								+ "\n\nBest Regards,\n\nAudiovideocours Administrator" 
-								+"\n\nPlease, don't answer to this mail, for any question contact us on "+adminEmail1;
-
+								+"\n\nFor any question,"
+								+"\n- contact the support : " + supportLink
+								+"\n- or read the documentation : " + docLink
+								+ "\n\nBest Regards,\n\nAudiovideocours team";
+								
+								String emailUserMessage = emailUserMessageFr + "\n\n\n********************\n\n\n" + emailUserMessageEn;
+								
 								// If the user is not anonymous and his email is present
 								if(user!=null && user.getEmail()!=null && !user.getEmail().equals("")) {
 									service.sendMail(emailUserSubject,emailUserMessage,user.getEmail());
@@ -2798,7 +2845,7 @@ public class Application extends HttpServlet {
 		
 		// ADD TAGS		
 		List<String> listTmp=new ArrayList<String>();
-		StringTokenizer st = new StringTokenizer(request.getParameter("tags"));
+		StringTokenizer st = new StringTokenizer(request.getParameter("tags")," ,;");
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken();
 			if(!listTmp.contains(token)) {
