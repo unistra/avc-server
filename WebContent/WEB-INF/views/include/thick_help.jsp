@@ -12,6 +12,8 @@
 	<body>
 		<br>
 		
+		<a href="${docLink}"><fmt:message key="docLink"/></a>
+		<br><br>
 		<a href="${helpLink}"><fmt:message key="helpLink"/></a>
 		<br><br>
 		<a href="${supportLink}"><fmt:message key="supportLink"/></a>

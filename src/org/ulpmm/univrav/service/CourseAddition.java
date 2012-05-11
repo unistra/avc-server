@@ -102,7 +102,7 @@ public class CourseAddition extends Thread {
 		if(tags!=null && !tags.equals("")) {
 			// ADD TAGS		
 			List<String> listTmp=new ArrayList<String>();
-			StringTokenizer st = new StringTokenizer(tags);
+			StringTokenizer st = new StringTokenizer(tags," ,;");
 			String token = null;
 			while (st.hasMoreTokens()) {
 				token = st.nextToken();
