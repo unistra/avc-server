@@ -1873,14 +1873,14 @@ public class Application extends HttpServlet {
 						// Sending email for the user
 						String emailUserSubject = "Votre espace Audiovideocours / Your Audiovideocours space";
 						
-						String emailUserMessageFr = "Cher utilisateur,\n\nVous pouvez accéder à votre espace avec l'url suivante. Ne perdez pas ce mail.\n"
+						String emailUserMessageFr = "Bonjour,\n\nVous pouvez accéder à votre espace avec l'url suivante. Ne perdez pas ce mail.\n"
 							+ serverUrl + "/avc/authentication?account=" + hash
 							+"\n\nPour toute question sur l'usage de la plateforme AudiovideoCours,"
 							+"\n- contactez le support : " + supportLink
 							+"\n- ou consultez la documentation : " + docLink
 							+ "\n\nBien cordialement,\n\nL'équipe Audiovideocours";
 												
-						String emailUserMessageEn = "Dear Customer,\n\nYou can access in your space with the following url. Don't lost this mail.\n"
+						String emailUserMessageEn = "Hello,\n\nYou can access in your space with the following url. Don't lost this mail.\n"
 						+ serverUrl + "/avc/authentication?account=" + hash
 						+"\n\nFor any question,"
 						+"\n- contact the support : " + supportLink
@@ -1926,7 +1926,7 @@ public class Application extends HttpServlet {
 				// Sending email for the user
 				String emailUserSubject = "Votre nouvel enregistrement sur Audiovideocours / Your new course on Audiovideocours";
 				
-				String emailUserMessageFr = "Cher utilisateur,\n\nVotre enregistrement intitulé \"" + c.getTitle()
+				String emailUserMessageFr = "Bonjour,\n\nVotre enregistrement intitulé \"" + c.getTitle()
 				+"\" sera publié sur la plateforme Audiovideocours à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
 				+ "\nMerci de bien vouloir patienter quelques minutes avant la mise en ligne définitive du document, le processus de conversion durant environ 30 minutes pour chaque heure de vidéo."
 				+"\n\nPour toute question sur l'usage de la plateforme AudiovideoCours,"
@@ -1934,11 +1934,11 @@ public class Application extends HttpServlet {
 				+"\n- ou consultez la documentation : " + docLink
 				+ "\n\nBien cordialement,\n\nL'équipe Audiovideocours";
 				
-				String emailUserMessageEn = "Dear Customer,\n\nYour course named \"" + c.getTitle()
+				String emailUserMessageEn = "Hello,\n\nYour recording entitled \"" + c.getTitle()
 				+"\" will be published on : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
-				+"\nDon't panic if your video doesn't appear in the website right now. The conversion may be long (30 minutes for 1 hour video)"
-				+"\n\nFor any question,"
-				+"\n- contact the support : " + supportLink
+				+"\nPlease note that the conversion process of your document will take about 30 minutes for every hour of video."
+				+"\n\nFor any question regarding AudiovideoCours,"
+				+"\n- contact support team : " + supportLink
 				+"\n- or read the documentation : " + docLink
 				+ "\n\nBest Regards,\n\nAudiovideocours team";
 				
@@ -2265,7 +2265,7 @@ public class Application extends HttpServlet {
 								// Sending email for the user
 								String emailUserSubject = "Votre nouvel enregistrement sur Audiovideocours / Your new course on Audiovideocours";
 								
-								String emailUserMessageFr = "Cher utilisateur,\n\nVotre enregistrement intitulé \"" + c.getTitle()
+								String emailUserMessageFr = "Bonjour,\n\nVotre enregistrement intitulé \"" + c.getTitle()
 								+"\" sera publié sur la plateforme Audiovideocours à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
 								+ "\nMerci de bien vouloir patienter quelques minutes avant la mise en ligne définitive du document, le processus de conversion durant environ 30 minutes pour chaque heure de vidéo."
 								+"\n\nPour toute question sur l'usage de la plateforme AudiovideoCours,"
@@ -2273,11 +2273,11 @@ public class Application extends HttpServlet {
 								+"\n- ou consultez la documentation : " + docLink
 								+ "\n\nBien cordialement,\n\nL'équipe Audiovideocours";
 								
-								String emailUserMessageEn = "Dear Customer,\n\nYour course named \"" + c.getTitle()
+								String emailUserMessageEn = "Hello,\n\nYour recording entitled \"" + c.getTitle()
 								+"\" will be published on : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
-								+"\nDon't panic if your video doesn't appear in the website right now. The conversion may be long (30 minutes for 1 hour video)"
-								+"\n\nFor any question,"
-								+"\n- contact the support : " + supportLink
+								+"\nPlease note that the conversion process of your document will take about 30 minutes for every hour of video."
+								+"\n\nFor any question regarding AudiovideoCours,"
+								+"\n- contact support team : " + supportLink
 								+"\n- or read the documentation : " + docLink
 								+ "\n\nBest Regards,\n\nAudiovideocours team";
 								
