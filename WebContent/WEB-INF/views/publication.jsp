@@ -51,6 +51,9 @@
 	    	<c:if test="${publication_type == 'serverCas'}">
 	       		<c:set var="borderstyleCas" value="border:2px dotted red;" />
 	    	</c:if>
+	    	<c:if test="${publication_type == 'serverTest' and pubTest == true}">
+	    		<c:set var="borderstyleTest" value="border:2px dotted red;" />
+	    	</c:if>
 	    				
 	    	<!-- Choose if you have an account or not -->
 	    	<div class="pubLinks">
@@ -62,6 +65,11 @@
 	    				<a class="linkPubFree" href="./publication?publication_type=serverFree"><fmt:message key="free"/></a>
 	    			</div>
 	    		</c:if>
+	    		<c:if test="${pubTest == true}">
+	    			<div class="divPubTest" style="${borderstyleTest}">
+	    				<a class="linkPubTest" href="./publication?publication_type=serverTest"><fmt:message key="test"/></a>
+	    			</div>
+	    		</c:if>
 	    	</div>
 	    	<br>
 	    	<div class="divCenter">
@@ -70,7 +78,7 @@
 	    		    		    	
 	    	<!-- VARS FOR THE FORM -->
 	  	  	<c:choose>
-				<c:when test="${(publication_type != 'serverFree' or pubFree == false) and publication_type != 'serverCas'}">
+				<c:when test="${(publication_type != 'serverFree' or pubFree == false) and publication_type != 'serverCas' and (publication_type != 'serverTest' or pubTest == false)}">
 					<c:set var="classField" value="txtDisabled" />
 					<c:set var="disabledField" value="disabled" />
 				</c:when>
@@ -96,7 +104,7 @@
 				</c:otherwise>
 			</c:choose>
 			<c:choose>
-				<c:when test="${(message!=null and restrictionuds==null) or (message==null && publication_type == 'serverFree' and pubFree == true)}">
+				<c:when test="${(message!=null and restrictionuds==null) or (message==null && publication_type == 'serverFree' and pubFree == true) or (message==null && publication_type == 'serverTest' and pubTest == true)}">
 					<c:set var="checkedRestUdsField" value="" />
 				</c:when>
 				<c:otherwise>
@@ -212,10 +220,20 @@
 						</td>
 					</tr>
 					
+					
 					<tr class="odd">
 						<td title="<fmt:message key="ib_code"/>"><fmt:message key="Code d'acc&egrave;s"/> : </td>
-						<td><input type="text" name="genre" class="${classField}" <c:out value="${disabledField}"/> value="${genre }"></td>
-					</tr>				
+						<c:choose>
+						<c:when test="${publication_type == 'serverTest' and pubTest == true}">
+							<td><input type="text" name="genre" class="txtDisabled" <c:out value="${disabledField}"/> readonly="readonly" value="${testKeyWord1}"></td>
+						</c:when>
+						<c:otherwise>
+							<td><input type="text" name="genre" class="${classField}" <c:out value="${disabledField}"/> value="${genre }"></td>
+						</c:otherwise>
+						</c:choose>
+					</tr>		
+										
+						
 					<tr class="even">
 				    	<td title="<fmt:message key="ib_tags"/>">Tags : </td>
 				  	  <td><input type="text" name="tags" class="${classField}" <c:out value="${disabledField}"/> value="${tags }"></td>

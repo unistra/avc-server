@@ -145,6 +145,8 @@ public class Application extends HttpServlet {
 
 	/** Publication free */
 	private static boolean pubFree;
+	/** Publication test */
+	private static boolean pubTest;
 	
 	/** The numbers of last courses to display */
 	private static int lastCourseNumber;
@@ -294,6 +296,8 @@ public class Application extends HttpServlet {
 
 			// Publication free
 			pubFree = Boolean.parseBoolean(p.getProperty("pubFree"));
+			// Publication test
+			pubTest = Boolean.parseBoolean(p.getProperty("pubTest"));
 			
 			// The numbers of courses to display at the same time
 			lastCourseNumber = Integer.parseInt(p.getProperty("lastCourseNumber"));
@@ -1228,12 +1232,20 @@ public class Application extends HttpServlet {
 
 		// publication free
 		request.setAttribute("pubFree", pubFree);
+		
+		// publication test
+		request.setAttribute("pubTest", pubTest);
 
 		// univ acronym
 		request.setAttribute("univAcronym", univAcronym);
 		// univ name
 		request.setAttribute("univName", univName);
+				
+		// testKeyWord1. Uncapitalize the fist char
+		request.setAttribute("testKeyWord1", (testKeyWord1.substring(0, 1).toLowerCase()+testKeyWord1.substring(1)));
 
+		
+		
 		/* Displays the view */ 
 		getServletContext().getRequestDispatcher("/WEB-INF/views/publication.jsp").forward(request, response);
 

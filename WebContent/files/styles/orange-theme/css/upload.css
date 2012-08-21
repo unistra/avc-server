@@ -76,7 +76,7 @@ img#process {
  
  /* Links for publication page */
  .pubLinks {
-	width: 235px;
+	width: 350px;
 	height: 35px;
 	margin-left: auto;
 	margin-right: auto;
@@ -100,9 +100,9 @@ img#process {
 	height: 35px;
 }
 
-.divPubFreeLock {
+.divPubTest {
 	float:left;
-	background-image: url(../img/btn_pub_bl.png);
+	background-image: url(../img/btn_pub.png);
 	background-repeat:no-repeat;
 	width: 115px;
 	height: 35px;
@@ -118,6 +118,15 @@ img#process {
 }
 
 .linkPubFree {
+	float:left;
+	width: 105px;
+	height: 28px;
+	margin-top:10px;
+	margin-left:6px;
+	color:white;		
+}
+
+.linkPubTest {
 	float:left;
 	width: 105px;
 	height: 28px;
