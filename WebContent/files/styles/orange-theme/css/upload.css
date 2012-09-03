@@ -76,7 +76,7 @@ img#process {
  
  /* Links for publication page */
  .pubLinks {
-	width: 350px;
+	width: 500px;
 	height: 35px;
 	margin-left: auto;
 	margin-right: auto;
@@ -108,6 +108,14 @@ img#process {
 	height: 35px;
 }
 
+.divPubLocal {
+	float:left;
+	background-image: url(../img/btn_pub.png);
+	background-repeat:no-repeat;
+	width: 115px;
+	height: 35px;
+}
+
 .linkPubCas {
 	float:left;
 	width: 105px;
@@ -127,6 +135,15 @@ img#process {
 }
 
 .linkPubTest {
+	float:left;
+	width: 105px;
+	height: 28px;
+	margin-top:10px;
+	margin-left:6px;
+	color:white;		
+}
+
+.linkPubLocal {
 	float:left;
 	width: 105px;
 	height: 28px;

@@ -65,9 +65,13 @@
 	    		<div class="btnUpload">
 	    			<a href="<c:url value="./myspace_upload" />" title="<fmt:message key="upload"/>" ><fmt:message key="upload"/></a>
 	    		</div>
-	    	<!--	<div class="btnModifierEmail">
-	    		<a href="<c:url value="./myemail" />" title="<fmt:message key="modifieremail"/>" ><fmt:message key="modifieremail"/></a>
-	    		</div> -->
+	    		
+	    		<!-- change mdp for local user -->
+	    		<c:if test="${$userLocalLogin != null}">
+	    			<div class="btnChangePass">
+	    				<a href="<c:url value="./myspace_changepass" />" title="<fmt:message key="changePass"/>" ><fmt:message key="changePass"/></a>
+	    			</div>
+	    		</c:if>
 	    	</div>
 	    	
 	    	<c:choose>

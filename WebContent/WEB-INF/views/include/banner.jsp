@@ -30,6 +30,10 @@
 	<c:param name="width" value="250"/>
 	<c:param name="height" value="150"/>
 </c:url>
+<c:url var="thick_myspace" scope="page" value="./thick_myspace">
+	<c:param name="width" value="370"/>
+	<c:param name="height" value="220"/>
+</c:url>
 
 <c:if test="${btnDeco}">
 	<div class="logout">
@@ -37,9 +41,24 @@
 	</div>
 </c:if>
 
-<div class="myspace">
-	<a href="<c:url value="./myspace_home" />" title="<fmt:message key="myspace"/>"><fmt:message key="myspace"/></a>
-</div>
+<c:choose>
+	<c:when test="${btnDeco}">
+		<div class="logout">
+			<a href="<c:url value="./logout" />" title="<fmt:message key="Logout"/>"><fmt:message key="Logout"/></a>
+		</div>
+		<div class="myspace">
+			<a href="<c:url value="./myspace_home" />" title="<fmt:message key="myspace"/>"><fmt:message key="myspace"/></a>
+		</div>
+
+	</c:when>
+	<c:otherwise>
+		<div class="myspace">
+			<a href="<c:url value="${thick_myspace}" />" title="<fmt:message key="myspace"/>" class="thickbox"><fmt:message key="myspace"/></a>
+		</div>
+	</c:otherwise>
+</c:choose>
+
+
 <div class="styles">
 	<a href="<c:out value="${thick_styles}" />" title="<fmt:message key="S&eacute;l&eacute;ction du th&egrave;me"/>" class="thickbox"><fmt:message key="style"/></a>
 </div>

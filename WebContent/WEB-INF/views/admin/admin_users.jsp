@@ -46,6 +46,15 @@
 		    	<c:import url="./links.jsp" />
 	    	</div>
 	    	
+	    	<div class="divCenter">	    	
+	    		<form name="input" action="./admin_users" method="post">
+					Login: <input type="text" name="login" />
+					<input type="submit" value="Submit" />
+				</form>
+			</div>
+			
+			<br />
+			
 	    	<display:table id="users" name="users" requestURI="${viewurl}" class="displaytag">
 	    		<display:column property="userid" title="N°" sortable="true"/>
 	    		<display:column property="login" title="Login" sortable="true"/>

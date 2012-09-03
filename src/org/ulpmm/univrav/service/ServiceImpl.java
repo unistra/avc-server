@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -806,8 +807,18 @@ public class ServiceImpl implements IService {
 	 * @param hash the hash code
 	 * @return the user
 	 */
-	public User getUserLocalByHash(String hash) {
+	/*public User getUserLocalByHash(String hash) {
 		return db.getUserLocalByHash(hash);
+	}*/
+	
+	/**
+	 * Gets user by login and hash(login is UNIQUE)
+	 * @param login the login of the user
+	 * @param login hash code
+	 * @return the user
+	 */
+	public User getUserLocal(String login, String hash) {
+		return db.getUserLocal(login,hash);
 	}
 	
 	/**
@@ -818,6 +829,26 @@ public class ServiceImpl implements IService {
 	 */
 	public synchronized void modifyUserPassword(String login, String hash, String hashtype) {
 		db.modifyUserPassword(login, hash, hashtype);
+	}
+	
+	/**
+	 * Modify reset code for a user
+	 * @param login the login
+	 * @param hash the reset code
+	 * @param hashtype the reset code type
+	 * @param dateResetCode the reset code date
+	 */
+	public void modifyUserResetCode(String login, String hash, String hashtype, Timestamp dateResetCode) {
+		db.modifyUserResetCode(login, hash, hashtype, dateResetCode);
+	}
+	
+	/**
+	 * Gets user by reset code
+	 * @param hash reset code
+	 * @return the user
+	 */
+	public User getUserLocalByResetCode(String hash) {
+		return db.getUserLocalByResetCode(hash);
 	}
 	
 	/**

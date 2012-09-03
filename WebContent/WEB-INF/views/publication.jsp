@@ -54,12 +54,18 @@
 	    	<c:if test="${publication_type == 'serverTest' and pubTest == true}">
 	    		<c:set var="borderstyleTest" value="border:2px dotted red;" />
 	    	</c:if>
+	    	<c:if test="${publication_type == 'serverLocal'}">
+	       		<c:set var="borderstyleLocal" value="border:2px dotted red;" />
+	    	</c:if>
 	    				
 	    	<!-- Choose if you have an account or not -->
 	    	<div class="pubLinks">
 	    		<div class="divPubCas" style="${borderstyleCas}">
 	    			<a class="linkPubCas" href="./authentication_cas?returnPage=publication"><fmt:message key="udsAccount"/> ${univAcronym}</a>
-	    		</div>	  
+	    		</div>	 
+	    		<div class="divPubLocal" style="${borderstyleLocal}">
+	    			<a class="linkPubLocal" href="./authentication_local?returnPage=publication"><fmt:message key="authLocalLink"/></a>
+	    		</div> 
 	    		<c:if test="${pubFree == true}">
 	    			<div class="divPubFree" style="${borderstyleFree}">
 	    				<a class="linkPubFree" href="./publication?publication_type=serverFree"><fmt:message key="free"/></a>
@@ -71,14 +77,16 @@
 	    			</div>
 	    		</c:if>
 	    	</div>
+	    	
 	    	<br>
+	    	
 	    	<div class="divCenter">
 	    		<p class="${messagetype}"><c:out value="${message}" /></p>
 	  	 	</div>
 	    		    		    	
 	    	<!-- VARS FOR THE FORM -->
 	  	  	<c:choose>
-				<c:when test="${(publication_type != 'serverFree' or pubFree == false) and publication_type != 'serverCas' and (publication_type != 'serverTest' or pubTest == false)}">
+				<c:when test="${(publication_type != 'serverFree' or pubFree == false) and publication_type != 'serverCas' and publication_type != 'serverLocal' and (publication_type != 'serverTest' or pubTest == false)}">
 					<c:set var="classField" value="txtDisabled" />
 					<c:set var="disabledField" value="disabled" />
 				</c:when>
@@ -104,7 +112,7 @@
 				</c:otherwise>
 			</c:choose>
 			<c:choose>
-				<c:when test="${(message!=null and restrictionuds==null) or (message==null && publication_type == 'serverFree' and pubFree == true) or (message==null && publication_type == 'serverTest' and pubTest == true)}">
+				<c:when test="${(message!=null and restrictionuds==null) or (message==null && publication_type == 'serverFree' and pubFree == true) or (message==null && publication_type == 'serverTest' and pubTest == true) or (message==null && publication_type == 'serverLocal')}">
 					<c:set var="checkedRestUdsField" value="" />
 				</c:when>
 				<c:otherwise>
@@ -127,11 +135,11 @@
 	    		<input type="hidden" name="publication_type" value="${publication_type}">
 	    								
 				<table>
-					 <c:if test="${publication_type == 'serverCas'}">
+					 <c:if test="${(publication_type == 'serverCas') or (publication_type == 'serverLocal')}">
 	   				 <tr class="odd">
 						<td title="<fmt:message key="ib_login"/>"><fmt:message key="login"/> : </td>
 						<c:choose>
-							<c:when test="${user != null and publication_type == 'serverCas'}">
+							<c:when test="${user != null and ((publication_type == 'serverCas') or (publication_type == 'serverLocal'))}">
 								<td><input type="text" name="login" class="txtDisabled" <c:out value="${disabledField}"/> readonly="readonly" value="${user.login }" > </td>
 							</c:when>
 							<c:otherwise>
@@ -142,7 +150,7 @@
 					<tr class="even">
 						<td title="<fmt:message key="ib_email"/>">E-mail : </td>
 						<c:choose>
-							<c:when test="${user != null and publication_type == 'serverCas'}">
+							<c:when test="${user != null and ((publication_type == 'serverCas') or (publication_type == 'serverLocal'))}">
 								<td><input type="text" name="email" class="txtDisabled" <c:out value="${disabledField}"/> readonly="readonly" value="${user.email }" > </td>
 							</c:when>
 							<c:otherwise>
@@ -168,7 +176,7 @@
 					<tr class="odd"> 
 						<td title="<fmt:message key="ib_name"/>"><fmt:message key="name"/><b class="boldStar">*</b> : </td>
 						<c:choose>
-							<c:when test="${user != null and publication_type == 'serverCas' and message==null}">
+							<c:when test="${user != null and ((publication_type == 'serverCas') or (publication_type == 'serverLocal')) and message==null}">
 								<td><input type="text" name="name" class="${classField}" <c:out value="${disabledField}"/> value="${user.lastname }" > </td>
 							</c:when>
 							<c:otherwise>
@@ -179,7 +187,7 @@
 					<tr class="even">
 						<td title="<fmt:message key="ib_firstname"/>"><fmt:message key="firstname"/> : </td>
 						<c:choose>
-							<c:when test="${user!=null and publication_type == 'serverCas' and message==null}">
+							<c:when test="${user!=null and ((publication_type == 'serverCas') or (publication_type == 'serverLocal')) and message==null}">
 								<td><input type="text" name="firstname" class="${classField}" <c:out value="${disabledField}"/> value="${user.firstname }" > </td>
 							</c:when>
 							<c:otherwise>

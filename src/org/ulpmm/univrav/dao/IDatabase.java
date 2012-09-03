@@ -1,5 +1,6 @@
 package org.ulpmm.univrav.dao;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import org.ulpmm.univrav.entities.Amphi;
@@ -358,7 +359,15 @@ public interface IDatabase {
 	 * @param hash the hash code
 	 * @return the user
 	 */
-	public User getUserLocalByHash(String hash);
+	//public User getUserLocalByHash(String hash);
+	
+	/**
+	 * Gets user by login and hash(login is UNIQUE)
+	 * @param login the login of the user
+	 * @param login hash code
+	 * @return the user
+	 */
+	public User getUserLocal(String login, String hash);
 	
 	/**
 	 * Modify a password for a user
@@ -367,6 +376,22 @@ public interface IDatabase {
 	 * @param hashtype the password type
 	 */
 	public void modifyUserPassword(String login, String hash, String hashtype);
+	
+	/**
+	 * Modify reset code for a user
+	 * @param login the login
+	 * @param hash the reset code
+	 * @param hashtype the reset code type
+	 * @param dateResetCode the reset code date
+	 */
+	public void modifyUserResetCode(String login, String hash, String hashtype, Timestamp dateResetCode);
+	
+	/**
+	 * Gets user by reset code
+	 * @param hash reset code
+	 * @return the user
+	 */
+	public User getUserLocalByResetCode(String hash);
 	
 	/**
 	 * Gets the id of the next user which will be uploaded

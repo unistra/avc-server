@@ -1,0 +1,85 @@
+/*  Div containing the "Live" button */
+.live {
+	background-image: url(../img/menu_off.png);
+}
+
+/*  Div containing the "Recorded" button */
+.recorded {
+	background-image: url(../img/menu_off.png);
+}
+
+/* Clickable zone, link to the "Live" page */
+.liveZone, .recordedZone {
+	color: #FFFFFF;
+}
+
+table {
+	margin-left: auto;
+	margin-right: auto;
+	color: #959595;
+}
+
+
+th, td {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+td {
+	padding: 5px;
+	border-width: 0px;
+}
+
+table tr td {
+	padding: 3px;
+}
+
+th a {
+	color: #FFFFFF;
+}
+
+/* A field of the html form */
+.field {
+	width: 300px;
+}
+
+/* Classes to alternate the color of the rows of the courses table */
+.odd {
+	background-color: #000000;
+}
+
+.even {
+	background-color: #404040;
+}
+
+
+.message {
+ 	text-align:left;
+ }
+
+ 
+.chpsObl {
+	font-size:12px;
+ 	color:white;
+ }
+ 
+/* 
+.txtDisabled {
+ 	background-color:#d3d3d3;
+ 	width: 300px;
+}
+*/
+ 
+ .error {
+ 	color: #ff5050;
+ }
+ 
+ .boldStar {
+	color:#FFFF99;
+}
+
+.textarea {
+	width: 300px;
+	height:150px;
+	
+}

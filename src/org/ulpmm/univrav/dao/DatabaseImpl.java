@@ -5,8 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -2266,7 +2269,7 @@ public class DatabaseImpl implements IDatabase {
 	 * @param hash the hash code
 	 * @return the user
 	 */
-	public User getUserLocalByHash(String hash) {
+	/*public User getUserLocalByHash(String hash) {
 		User u = null;
 		Connection cnt = null;
 		String sql = "SELECT * FROM \"user\" WHERE password = ? and type = ?" ;
@@ -2297,6 +2300,53 @@ public class DatabaseImpl implements IDatabase {
 		catch( SQLException sqle) {
 			logger.error("Error while retrieving the user",sqle);
 			throw new DaoException("Error while retrieving the user ");
+		}
+		finally {
+			close(rs,pstmt,cnt);
+		}
+		
+		return u;
+	}
+	*/
+	
+	/**
+	 * Gets user by login and hash(login is UNIQUE)
+	 * @param login the login of the user
+	 * @param login hash code
+	 * @return the user
+	 */
+	public User getUserLocal(String login, String hash) {
+		User u = null;
+		Connection cnt = null;
+		String sql = "SELECT * FROM \"user\" WHERE login = ? and password = ? and type = ?";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			pstmt.setString(1, login);
+			pstmt.setString(2, hash);
+			pstmt.setString(3, User.getTYPELOCAL());
+			rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				u = new User(
+					rs.getInt("userid"),
+					rs.getString("login"),
+					rs.getString("email"),
+					rs.getString("firstname"),
+					rs.getString("lastname"),
+					rs.getString("profile"),
+					rs.getString("establishment"),
+					rs.getString("type"),
+					rs.getBoolean("activate"),
+					rs.getString("etp")
+					
+				);
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the user " + login,sqle);
+			throw new DaoException("Error while retrieving the user " + login);
 		}
 		finally {
 			close(rs,pstmt,cnt);
@@ -2342,6 +2392,102 @@ public class DatabaseImpl implements IDatabase {
 			close(null,pstmt,cnt);
 		}
 		
+	}
+	
+	
+	/**
+	 * Modify reset code for a user
+	 * @param login the login
+	 * @param hash the reset code
+	 * @param hashtype the reset code type
+	 * @param dateResetCode the reset code date
+	 */
+	public void modifyUserResetCode(String login, String hash, String hashtype, Timestamp dateResetCode) {
+		
+		Connection cnt = null;
+		/* Creation of the SQL query string */
+		String sql = "UPDATE \"user\" SET resetcode = ?, resetcodetype = ?, dateresetcode = ? ";
+		sql += "WHERE login = ?";
+		
+		PreparedStatement pstmt = null;
+		
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			
+			/* Applies the parameters to the query */
+			pstmt.setString(1, hash);
+			pstmt.setString(2, hashtype);
+			pstmt.setTimestamp(3, dateResetCode);
+			pstmt.setString(4, login);
+						
+			if( pstmt.executeUpdate() == 0 ) {
+				logger.error("The user " + login + " has not been modified");
+				throw new DaoException("The user " + login + " has not been modified");
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while modifying the user " + login,sqle);
+			throw new DaoException("Error while modifying the user " + login);
+		}
+		finally {
+			close(null,pstmt,cnt);
+		}
+		
+	}
+	
+	
+	/**
+	 * Gets user by reset code
+	 * @param hash reset code
+	 * @return the user
+	 */
+	public User getUserLocalByResetCode(String hash) {
+		User u = null;
+		Connection cnt = null;
+		
+		// resetcode valid 1 hour		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.add(Calendar.HOUR_OF_DAY, -1);
+		Timestamp datemax = new Timestamp(cal.getTime().getTime());
+				
+		String sql = "SELECT * FROM \"user\" WHERE resetcode = ? and type = ? and dateresetcode >= ?";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			pstmt.setString(1, hash);
+			pstmt.setString(2, User.getTYPELOCAL());
+			pstmt.setTimestamp(3, datemax);
+			
+			rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				u = new User(
+					rs.getInt("userid"),
+					rs.getString("login"),
+					rs.getString("email"),
+					rs.getString("firstname"),
+					rs.getString("lastname"),
+					rs.getString("profile"),
+					rs.getString("establishment"),
+					rs.getString("type"),
+					rs.getBoolean("activate"),
+					rs.getString("etp")
+					
+				);
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the user by reset code " + hash,sqle);
+			throw new DaoException("Error while retrieving the user by reset code " + hash);
+		}
+		finally {
+			close(rs,pstmt,cnt);
+		}
+		
+		return u;
 	}
 	
 	/**

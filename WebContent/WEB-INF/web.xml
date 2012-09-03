@@ -8,6 +8,19 @@
 		<servlet-name>Application</servlet-name>
 		<servlet-class>org.ulpmm.univrav.web.Application</servlet-class>
 	</servlet>
+	<servlet> 
+  		<servlet-name>SimpleCaptcha</servlet-name>
+  		<servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>
+  		<init-param>
+    		<param-name>width</param-name>
+    		<param-value>250</param-value>
+  		</init-param>
+  		<init-param>
+    		<param-name>height</param-name>
+    		<param-value>75</param-value>
+  		</init-param>
+	</servlet>
+	
 	<servlet-mapping>
 		<servlet-name>Application</servlet-name>
 		<url-pattern>/avc/*</url-pattern>
@@ -16,6 +29,12 @@
 		<servlet-name>Application</servlet-name>
 		<url-pattern>/audiocours_v2/servlet/*</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+  		<servlet-name>SimpleCaptcha</servlet-name>
+  		<url-pattern>/captcha</url-pattern>
+	</servlet-mapping>
+	
+	
 	<error-page>
 		<exception-type>java.lang.Exception</exception-type>
 		<location>/WEB-INF/views/exception.jsp</location>
@@ -110,10 +129,20 @@
 			<url-pattern>/avc/publication</url-pattern>
 			<url-pattern>/avc/publication_validatepublication</url-pattern>
 			<url-pattern>/avc/authentication_cas</url-pattern>
+			<url-pattern>/avc/authentication_local</url-pattern>
+			<url-pattern>/avc/authentication_localvalid</url-pattern>
+			<url-pattern>/avc/authentication_accountrequest</url-pattern>
+			<url-pattern>/avc/authentication_accountrequestvalid</url-pattern>
+			<url-pattern>/avc/authentication_forgotpass</url-pattern>
+			<url-pattern>/avc/authentication_forgotpassvalid</url-pattern>
+			<url-pattern>/avc/authentication_resetpass</url-pattern>
+			<url-pattern>/avc/authentication_resetpassform</url-pattern>
 			<url-pattern>/avc/myspace_adddocupload</url-pattern>
 			<url-pattern>/avc/myspace_deleteadddoc</url-pattern>
 			<url-pattern>/avc/myspace_addsubtitles</url-pattern>
 			<url-pattern>/avc/myspace_deletesubtitles</url-pattern>
+			<url-pattern>/avc/myspace_changepass</url-pattern>
+			<url-pattern>/avc/myspace_changepassvalid</url-pattern>
 	</web-resource-collection>
 	<user-data-constraint>
    		<transport-guarantee>CONFIDENTIAL</transport-guarantee>

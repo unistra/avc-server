@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
 
@@ -32,6 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+
+import nl.captcha.Captcha;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -531,8 +534,22 @@ public class Application extends HttpServlet {
 			displayHomePage(request, response);
 		else if (page.equals("/authentication_cas")) 
 			authenticationCas(request,response);
-		else if (page.equals("/authentication")) 
-			authentication(request,response);
+		else if (page.equals("/authentication_local")) 
+			authenticationLocal(request,response);
+		else if( page.equals("/authentication_localvalid"))
+            validateAuthenticationLocal(request, response);
+		else if(page.equals("/authentication_accountrequest"))
+			displayAccountRequestForm(request, response);
+		else if(page.equals("/authentication_accountrequestvalid"))
+			validateAccountRequest(request,response);
+		else if(page.equals("/authentication_forgotpass"))
+			displayForgotPassForm(request,response);
+		else if(page.equals("/authentication_forgotpassvalid"))
+			validateForgotPassForm(request,response);	
+		else if(page.equals("/authentication_resetpass"))
+			displayResetPassForm(request,response);
+		else if(page.equals("/authentication_resetpassvalid"))
+			validateResetPassForm(request,response);	
 		else if (page.equals("/myspace_home")) 
 			displayMyspace(request,response);
 		else if(page.equals("/logout")) 
@@ -580,6 +597,10 @@ public class Application extends HttpServlet {
 			service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		    response.sendRedirect(response.encodeRedirectURL("./myspace_home"));
 		}
+		else if(page.equals("/myspace_changepass")) 
+			myspaceChangePass(request, response);
+		else if(page.equals("/myspace_changepassvalid")) 
+			myspaceChangePassValid(request, response);
 		else if( page.equals("/add") || page.equals("/UploadClient"))
 			addCourse(request, response);
 		else if(page.equals("/livestate") || page.equals("/LiveState"))
@@ -637,6 +658,11 @@ public class Application extends HttpServlet {
 			request.setAttribute("helpLink", helpLink);
 			request.setAttribute("docLink",docLink);
 			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_help.jsp").forward(request, response);
+		}
+		else if( page.equals("/thick_myspace")) {
+			request.setAttribute("univAcronym", univAcronym);	
+			request.setAttribute("univName", univName);
+			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_myspace.jsp").forward(request, response);
 		}
 		else if( page.equals("/liveslide"))
 			liveSlide(request, response);
@@ -727,8 +753,16 @@ public class Application extends HttpServlet {
 		else if( page.equals("/admin_validateamphi"))
 			validateAmphi(request, response,"./admin_amphis");
 		else if( page.equals("/admin_users")) {
-			request.setAttribute("viewurl", "./admin_users");
-			List<User> users = service.getAllUsers();
+			request.setAttribute("viewurl", "./admin_users");	
+			String login = request.getParameter("login");
+			List<User> users = new ArrayList<User>();
+			if(login!=null && login.equals("") )
+				users = service.getAllUsers();
+			else if(login!=null && !login.equals("")) {
+				User u = service.getUser(login);
+				if(u!=null)
+					users.add(u);
+			}
 			request.setAttribute("users", users );
 			request.setAttribute("number", users.size());
 			request.setAttribute("editurl", "./admin_edituser");
@@ -930,7 +964,7 @@ public class Application extends HttpServlet {
 	 * @throws ServletException if an error occurred
 	 * @throws IOException if an error occurred
 	 */
-	private void authentication(HttpServletRequest request, HttpServletResponse response)
+	/**private void authentication(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 		
 		if(request.getParameter("account")!=null) {
@@ -967,7 +1001,7 @@ public class Application extends HttpServlet {
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
 		}
 	}
-	
+	**/
 	
 	/**
 	 * Method to authenticate a cas user
@@ -1207,6 +1241,9 @@ public class Application extends HttpServlet {
 		if(casUser!=null) {
 			// Gets the user from the session
 			user=service.getUser(casUser);
+		}
+		else if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
 		}
 
 		// if user is present and activate
@@ -1872,7 +1909,7 @@ public class Application extends HttpServlet {
 				}
 				
 				// Hash email for free user
-				if(request.getParameter("publication_type")!=null && request.getParameter("publication_type").equals("serverFree") && email!=null && !email.equals("")) {
+				/*if(request.getParameter("publication_type")!=null && request.getParameter("publication_type").equals("serverFree") && email!=null && !email.equals("")) {
 					//  Check if a local user with this email adress exist
 					user = service.getUser(email);
 					if(user==null) {
@@ -1906,7 +1943,7 @@ public class Application extends HttpServlet {
 						service.sendMail(emailUserSubject,emailUserMessage,email);
 											
 					}
-				}
+				}*/
 			
 				// Create the course course										
 				c = new Course(
@@ -3866,5 +3903,592 @@ public class Application extends HttpServlet {
 	}
 	
 	
+	/**
+	 * Method to request a local account 
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void displayAccountRequestForm(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+		
 	
+		String forwardUrl = "/WEB-INF/views/authentication/accountrequestform.jsp";		
+		//request.setAttribute("gobackurl", "./authentication_local");
+		request.setAttribute("univName", univName);
+		session.setAttribute("previousPage", "/authentication_accountrequest");
+		
+		getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
+	}
+	
+	
+	/**
+	 * 
+	 * Method to validate the request of a local account
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void validateAccountRequest(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+		
+		//form valid
+		boolean formValid = true;
+		String err_message ="";
+		
+		// parameters
+		String email = request.getParameter("email");
+		String password = request.getParameter("password");
+		String repeatpassword = request.getParameter("repeatpassword");
+		String firstname = request.getParameter("firstname");
+		String lastname = request.getParameter("lastname");
+		String comment = request.getParameter("comment");
+		String captcha_answer = request.getParameter("captcha_answer");
+		
+		// email pattern
+		Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
+		//captcha
+		Captcha captcha = (Captcha) session.getAttribute(Captcha.NAME);
+		
+		// Check the form
+		if(email==null || email.equals("") || !p.matcher(email).matches()) {
+			formValid = false;
+			err_message = "err_email";
+		}
+		else if(password==null || password.equals("") || repeatpassword==null || repeatpassword.equals("") || !repeatpassword.equals(password)) {
+			formValid = false;
+			err_message = "err_password";
+		}
+		else if(firstname==null || firstname.equals("")) {
+			formValid = false;
+			err_message = "err_firstname";
+		}
+		else if(lastname==null || lastname.equals("")) {
+			formValid = false;
+			err_message = "err_lastname";
+		}
+		else if(comment==null || comment.equals("")) {
+			formValid = false;
+			err_message = "err_comment";
+		}
+		else if(captcha_answer==null || captcha_answer.equals("") || !captcha.isCorrect(captcha_answer)) {
+			formValid = false;
+			err_message = "err_captcha";
+		}
+		// vérification si l'user existe deja	
+		else if(service.getUser(email)!=null) {
+			formValid = false;
+			err_message = "err_user_exist";
+		}
+		
+		
+		// If the form is not valid
+		if(!formValid) {		
+			request.setAttribute("email", email);
+			request.setAttribute("firstname", firstname);
+			request.setAttribute("lastname", lastname);
+			request.setAttribute("comment", comment);		
+			
+			request.setAttribute("messagetype", "error");
+			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+			request.setAttribute("message", bundle.getString(err_message));
+			getServletContext().getRequestDispatcher("/avc/authentication_accountrequest").forward(request, response);
+		}
+		// If the formulaire is valid
+		else {
+			
+			// Add user to database
+			String hash = service.encrypt(password);
+			service.addUser(new User(0, email, email, firstname, lastname, null, null, User.getTYPELOCAL(), false, null));
+			service.modifyUserPassword(email, hash, "sha");
+						
+			// send email to admin
+			String emailAdminSubject = "a new account request on Audiovideocours";
+			String emailAdminMessage = "Dear Admin,\n\nA new account request has been sent to Audiovideocours:"
+			+ "\n\n--------------------"	
+			+ "\n\nEmail: " + email
+			+ "\nFirstname: " + firstname
+			+ "\nLastname: " + lastname
+			+ "\nComments: " + comment	
+			+ "\n\n--------------------"
+			+ "\n\nBest Regards,\n\nAudiovideocours Administrator";
+			
+			if(adminEmail1!=null && !adminEmail1.equals(""))
+				service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
+			if(adminEmail2!=null && !adminEmail2.equals(""))
+				service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail2);
+			if(adminEmail3!=null && !adminEmail3.equals(""))
+				service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail3);
+						
+			/* Done message */
+			String requestDispatcher = "/WEB-INF/views/message.jsp";
+			request.setAttribute("messagetype", "information");
+			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+			request.setAttribute("message", bundle.getString("valid_accountrequest"));
+			getServletContext().getRequestDispatcher(requestDispatcher).forward(request, response);
+			
+			
+		}
+		
+		
+	}
+	
+	
+	/**
+     * Method to authenticate a local user with a jsp page
+     * @param request the request send by the client to the server
+     * @param response the response send by the server to the client
+     * @throws ServletException if an error occurred
+     * @throws IOException if an error occurred
+     */
+	private void authenticationLocal(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+
+		String returnPage = request.getParameter("returnPage");
+
+		// If the local user is already authenticated
+		if(session.getAttribute("$userLocalLogin")!=null) {
+			
+			// redirect to return page (publication)
+			if(returnPage!=null && returnPage.equals("publication")) {
+				response.sendRedirect("./publication?publication_type=serverLocal");
+			}
+			// return home by default
+			else {
+				response.sendRedirect("./myspace_home");
+				
+			}
+		}
+		// Show authentication form
+		else {
+
+			request.setAttribute("createaccounturl", "./authentication_accountrequest");
+			request.setAttribute("forgotpassurl", "./authentication_forgotpass");
+			session.setAttribute("previousPage", "/authentication_local");
+
+			// add return page (publication)
+			if(returnPage!=null && returnPage.equals("publication")) {
+				request.setAttribute("gobackurl", "./publication");
+				request.setAttribute("posturl", "./authentication_localvalid?returnPage="+returnPage);
+			}
+			//by default, valid the form to go to myspace
+			else {				
+				request.setAttribute("gobackurl", "./home");
+				request.setAttribute("posturl", "./authentication_localvalid");
+			}
+
+			// Displays the view 
+			getServletContext().getRequestDispatcher("/WEB-INF/views/authentication/login.jsp").forward(request, response);
+		}
+	}
+
+	
+	
+	/**
+     * Method to validate authentication form
+     * 
+     * @param request the request send by the client to the server
+     * @param response the response send by the server to the client
+     * @throws ServletException if an error occurred
+     * @throws IOException if an error occurred
+     */
+    private void validateAuthenticationLocal(HttpServletRequest request, HttpServletResponse response) 
+    throws ServletException, IOException {
+
+    	ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+    	boolean captcha_valid = true;
+
+    	// If user cas not connected
+    	if(session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER)==null) {
+
+    		// Test form paramaters
+    		if( ! (request.getParameter("login").equals("") || request.getParameter("password").equals(""))) {
+
+    			// Test captcha
+    			if(session.getAttribute("loginAttempt")!=null && (Integer)session.getAttribute("loginAttempt") > 3) {
+    				//captcha
+    				Captcha captcha = (Captcha) session.getAttribute(Captcha.NAME);
+    				String captcha_answer = request.getParameter("captcha_answer");
+
+    				if(captcha_answer==null || captcha_answer.equals("") || !captcha.isCorrect(captcha_answer)) {
+    					captcha_valid = false;
+    				}
+
+    			}
+
+    			if(captcha_valid) {
+
+    				//encrypt the password into SHA1        
+    				String passSha = service.encrypt(request.getParameter("password"));
+    				//Gets the user
+    				User user = service.getUserLocal(request.getParameter("login"),passSha);
+
+    				//if the user is authenticate and activate
+    				if(user!=null) {
+    					if(user.isActivate()) {
+    						// Connection LOCAL
+    						// Disconnect user LOCAL if exist
+    						if(session.getAttribute("$userLocalLogin")!=null) {	
+    							session.removeAttribute("$userLocalLogin");
+    						}
+
+    						session.setAttribute("$userLocalLogin", user.getLogin());
+    						session.setAttribute("btnDeco", true);
+    						session.removeAttribute("loginAttempt");
+    						
+    						
+    						String returnPage = request.getParameter("returnPage");
+    						// publication redirect
+    						if(returnPage!=null && returnPage.equals("publication")) {
+    							response.sendRedirect("./publication?publication_type=serverLocal");
+    						}
+    						// by default
+    						else {
+    							response.sendRedirect("./myspace_home");
+    							
+    						}
+    						
+    						
+    					}
+    					else {
+    						request.setAttribute("messagetype", "error");
+    						request.setAttribute("message", bundle.getString("err_account_not_activated"));
+    						getServletContext().getRequestDispatcher("/avc/authentication_local").forward(request, response);			
+    					}
+    				}
+    				else {
+
+    					Integer loginAttempt = session.getAttribute("loginAttempt")!=null ? (Integer) session.getAttribute("loginAttempt") : 0;
+    					session.setAttribute("loginAttempt",(loginAttempt+1));
+
+    					request.setAttribute("messagetype", "error");
+    					request.setAttribute("message", bundle.getString("err_login_pass"));
+    					getServletContext().getRequestDispatcher("/avc/authentication_local").forward(request, response);			
+    				}
+    			}
+    			else {
+    				request.setAttribute("messagetype", "error");
+    				request.setAttribute("message", bundle.getString("err_captcha"));
+    				getServletContext().getRequestDispatcher("/avc/authentication_local").forward(request, response);
+    			}
+
+    		}
+    		else {
+    			request.setAttribute("messagetype", "error");
+    			request.setAttribute("message", bundle.getString("err_all_fields"));
+    			getServletContext().getRequestDispatcher("/avc/authentication_local").forward(request, response);
+    		}
+
+
+    	}
+    	else {
+    		request.setAttribute("messagetype", "error");
+    		request.setAttribute("message", bundle.getString("err_disconnect_cas"));
+    		getServletContext().getRequestDispatcher("/avc/authentication_local").forward(request, response);			
+    	}
+    }
+
+	/**
+     * Method display change password form
+     * 
+     * @param request the request send by the client to the server
+     * @param response the response send by the server to the client
+     * @throws ServletException if an error occurred
+     * @throws IOException if an error occurred
+     */
+    private void myspaceChangePass(HttpServletRequest request, HttpServletResponse response) 
+    throws ServletException, IOException {
+    	
+    	User user =null;
+    	ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+        
+    	// Only local user can change his password
+    	if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
+    	    	
+    	// Gets the user's login from the session		
+		if(user!=null && user.isActivate()) {
+
+			request.setAttribute("posturl", "./myspace_changepassvalid");
+	        request.setAttribute("gobackurl", "./myspace_home");
+	        session.setAttribute("previousPage", "/myspace_changepass");   
+	        // Displays the view 
+	        getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace_changepass.jsp").forward(request, response);
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", bundle.getString("err_acces"));
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+    	
+    	
+    }
+    
+    
+	/**
+     * Method to valid the change password form
+     * 
+     * @param request the request send by the client to the server
+     * @param response the response send by the server to the client
+     * @throws ServletException if an error occurred
+     * @throws IOException if an error occurred
+     */
+    private void myspaceChangePassValid(HttpServletRequest request, HttpServletResponse response) 
+    throws ServletException, IOException {
+    	
+    	User user =null;
+    	ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+        
+    	// Only local user can change his password
+    	if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
+    	    	
+    	// Gets the user's login from the session		
+		if(user!=null && user.isActivate()) {
+			
+			String currentPassword = request.getParameter("currentPassword");
+			String newPassword = request.getParameter("newPassword");
+			String confirmNewPass = request.getParameter("confirmNewPass");
+						
+			if(currentPassword==null || currentPassword.equals("") || newPassword==null || newPassword.equals("") || confirmNewPass==null || confirmNewPass.equals("") ) {	
+				request.setAttribute("messagetype", "error");
+    			request.setAttribute("message", bundle.getString("err_all_fields"));
+    			getServletContext().getRequestDispatcher("/avc/myspace_changepass").forward(request, response);			
+			}
+			else {
+				// check current password
+				//encrypt the password into SHA1        
+				String currentPasswordSha = service.encrypt(currentPassword);
+				User user_currentpass = service.getUserLocal(user.getLogin(),currentPasswordSha);
+				
+				// if current password is ok
+				if(user_currentpass!=null && newPassword.equals(confirmNewPass)) {
+					String newPasswordSha = service.encrypt(newPassword);
+					service.modifyUserPassword(user.getLogin(), newPasswordSha, "sha");
+					
+					
+					request.setAttribute("messagetype", "information");
+					request.setAttribute("message", bundle.getString("passchanged"));
+					getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);	
+					
+				}
+				else {
+					request.setAttribute("messagetype", "error");
+	    			request.setAttribute("message", bundle.getString("err_password"));
+	    			getServletContext().getRequestDispatcher("/avc/myspace_changepass").forward(request, response);		
+				}
+				
+				
+
+				
+    		}
+		
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", bundle.getString("err_acces"));
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+    	
+    	
+    }
+    
+    
+    /**
+     * Method to display forgot password form
+     * 
+     * @param request the request send by the client to the server
+     * @param response the response send by the server to the client
+     * @throws ServletException if an error occurred
+     * @throws IOException if an error occurred
+     */
+    private void displayForgotPassForm(HttpServletRequest request, HttpServletResponse response) 
+    throws ServletException, IOException {
+    	
+		getServletContext().getRequestDispatcher("/WEB-INF/views/authentication/forgotpass.jsp").forward(request, response);	
+    	
+    }
+    
+    
+    
+    /**
+     * Method to valid the forgot password form
+     * 
+     * @param request the request send by the client to the server
+     * @param response the response send by the server to the client
+     * @throws ServletException if an error occurred
+     * @throws IOException if an error occurred
+     */
+    private void validateForgotPassForm(HttpServletRequest request, HttpServletResponse response) 
+    throws ServletException, IOException {
+    	    	
+    	String email = request.getParameter("email");
+     	ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+     	Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
+     	
+    	if(email==null || email.equals("") || !p.matcher(email).matches()) {
+    		request.setAttribute("messagetype", "error");
+			request.setAttribute("message", bundle.getString("err_email"));
+			getServletContext().getRequestDispatcher("/avc/authentication_forgotpass").forward(request, response);
+
+    	}
+    	else {
+    		    		
+    		User user = service.getUser(email);    		
+    		if(user==null) {
+    			request.setAttribute("messagetype", "error");
+    			request.setAttribute("message", bundle.getString("err_forgotpass"));
+    			getServletContext().getRequestDispatcher("/avc/authentication_forgotpass").forward(request, response);
+
+    		}
+    		else {
+    			//TODO reinitialisation mot de pass VALIDATION 1 HEURE
+    			
+    			
+    			String pass = service.generatePassword(16);
+    			String hash = service.encrypt(email + pass);		
+    			service.modifyUserResetCode(email, hash, "sha", new Timestamp(new Date().getTime()));
+    	
+    			// Sending email for the user
+				String emailUserSubject = "Audiovideocours: Réinitialisation du mot de passe / Reset password";
+						
+						String emailUserMessageFr = "Bonjour,\n\nVous pouvez réinitialiser votre mot de passe avec l'url suivante. Cette url est valide une heure.\n"
+							+ serverUrl + "/avc/authentication_resetpass?hash=" + hash
+							+"\n\nPour toute question sur l'usage de la plateforme AudiovideoCours,"
+							+"\n- contactez le support : " + supportLink
+							+"\n- ou consultez la documentation : " + docLink
+							+ "\n\nBien cordialement,\n\nL'équipe Audiovideocours";
+												
+						String emailUserMessageEn = "Hello,\n\nYou can reset your password using the following url. This url is valid one hour.\n"
+						+ serverUrl + "/avc/authentication_resetpass?hash=" + hash
+						+"\n\nFor any question,"
+						+"\n- contact the support : " + supportLink
+						+"\n- or read the documentation : " + docLink
+						+ "\n\nBest Regards,\n\nAudiovideocours team";
+												
+						
+						String emailUserMessage = emailUserMessageFr + "\n\n\n********************\n\n\n" + emailUserMessageEn;
+						
+							
+						service.sendMail(emailUserSubject,emailUserMessage,email);
+						
+						
+						request.setAttribute("messagetype", "information");
+						request.setAttribute("message", bundle.getString("forgotpassmessage2"));
+						getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+				
+    		}
+    		
+    	}
+    	
+    }
+    
+    
+    
+    
+    /**
+     * Method to display reset password form
+     * 
+     * @param request the request send by the client to the server
+     * @param response the response send by the server to the client
+     * @throws ServletException if an error occurred
+     * @throws IOException if an error occurred
+     */
+    private void displayResetPassForm(HttpServletRequest request, HttpServletResponse response) 
+    throws ServletException, IOException {
+    	
+    	String hash = request.getParameter("hash");
+    	ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+        	    	
+    	if(hash!=null && !hash.equals("")) {
+    		User user = service.getUserLocalByResetCode(hash);
+    		if(user !=null) {
+    			
+    			request.setAttribute("hash", hash);
+    			getServletContext().getRequestDispatcher("/WEB-INF/views/authentication/resetpass.jsp").forward(request, response);	
+    		}
+    		else {
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", bundle.getString("wrongresetcode"));
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+
+    		}
+    		
+    	
+    	}
+    		
+    		
+    		
+    	
+    	
+    	
+    	
+    	
+    	//TODO
+      	
+    }
+    
+    
+    
+    /**
+     * Method to valid the reset password form
+     * 
+     * @param request the request send by the client to the server
+     * @param response the response send by the server to the client
+     * @throws ServletException if an error occurred
+     * @throws IOException if an error occurred
+     */
+    private void validateResetPassForm(HttpServletRequest request, HttpServletResponse response) 
+    throws ServletException, IOException {
+
+    	String hash = request.getParameter("hash");
+    	ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+
+    	if(hash!=null && !hash.equals("")) {
+    		User user = service.getUserLocalByResetCode(hash);
+
+    		// Gets the user's login from the session		
+    		if(user!=null && user.isActivate()) {
+
+    			String newPassword = request.getParameter("newPassword");
+    			String confirmNewPass = request.getParameter("confirmNewPass");
+
+    			if(newPassword==null || newPassword.equals("") || confirmNewPass==null || confirmNewPass.equals("") || !newPassword.equals(confirmNewPass) ) {	
+    				request.setAttribute("messagetype", "error");
+    				request.setAttribute("message", bundle.getString("err_password"));
+    				getServletContext().getRequestDispatcher("/avc/authentication_resetpass").forward(request, response);			
+    			}
+    			else {
+    				//change password
+    				String newPasswordSha = service.encrypt(newPassword);
+					service.modifyUserPassword(user.getLogin(), newPasswordSha, "sha");
+					//remove reset code
+					service.modifyUserResetCode(user.getLogin(), null, null, null);
+										
+					request.setAttribute("messagetype", "information");
+					request.setAttribute("message", bundle.getString("passchanged"));
+					getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);	
+		
+    			}
+    		}
+    		else {
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", bundle.getString("wrongresetcode"));
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+
+    		}
+
+
+    	}
+
+    }
+    
+    
+        	
 }
