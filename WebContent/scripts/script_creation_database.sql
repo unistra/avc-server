@@ -372,7 +372,7 @@ CREATE TABLE "user" (
     etp character varying,
     resetcode character varying,
 	resetcodetype character varying,
-	dateresetcode timestamp without time zone,
+	dateresetcode timestamp without time zone
 );
 
 
