@@ -369,7 +369,10 @@ CREATE TABLE "user" (
     passwordtype character varying,
     type character varying,
     activate boolean,
-    etp character varying
+    etp character varying,
+    resetcode character varying,
+	resetcodetype character varying,
+	dateresetcode timestamp without time zone,
 );
 
 
