@@ -103,6 +103,7 @@
 			<url-pattern>/avc/admin_deletediscipline</url-pattern>
 			<url-pattern>/avc/admin_addsubtitles</url-pattern>
 			<url-pattern>/avc/admin_deletesubtitles</url-pattern>
+			<url-pattern>/avc/admin_useractivate</url-pattern>
 			<http-method>GET</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>

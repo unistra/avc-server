@@ -60,12 +60,6 @@
 	    				
 	    	<!-- Choose if you have an account or not -->
 	    	<div class="pubLinks">
-	    		<div class="divPubCas" style="${borderstyleCas}">
-	    			<a class="linkPubCas" href="./authentication_cas?returnPage=publication"><fmt:message key="udsAccount"/> ${univAcronym}</a>
-	    		</div>	 
-	    		<div class="divPubLocal" style="${borderstyleLocal}">
-	    			<a class="linkPubLocal" href="./authentication_local?returnPage=publication"><fmt:message key="authLocalLink"/></a>
-	    		</div> 
 	    		<c:if test="${pubFree == true}">
 	    			<div class="divPubFree" style="${borderstyleFree}">
 	    				<a class="linkPubFree" href="./publication?publication_type=serverFree"><fmt:message key="free"/></a>
@@ -76,6 +70,12 @@
 	    				<a class="linkPubTest" href="./publication?publication_type=serverTest"><fmt:message key="test"/></a>
 	    			</div>
 	    		</c:if>
+	    		<div class="divPubCas" style="${borderstyleCas}">
+	    			<a class="linkPubCas" href="./authentication_cas?returnPage=publication"><fmt:message key="udsAccount"/> ${univAcronym}</a>
+	    		</div>	 
+	    		<div class="divPubLocal" style="${borderstyleLocal}">
+	    			<a class="linkPubLocal" href="./authentication_local?returnPage=publication"><fmt:message key="authLocalLink"/></a>
+	    		</div> 
 	    	</div>
 	    	
 	    	<br>

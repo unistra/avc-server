@@ -47,7 +47,7 @@
 				    		<td><input type="hidden" name="userid" value="${user.userid}">${user.userid}</td>
 			    		</tr>
 			    		<tr class="even">
-				    		<td>Login</td>
+				    		<td>Login<b class="boldStar">*</b></td>
 				    		<td><input type="text" name="login" value="${user.login}" class="field"></td>
 			    		</tr>
 			    		<tr class="odd">
@@ -72,7 +72,18 @@
 			    		</tr>
 			    		<tr class="even">
 				    		<td>Type</td>
-				    		<td><input type="text" name="type" value="${user.type}" class="field"></td>
+				    		<td>			    			
+				    			<select name="type">
+								<c:forEach var="t" items="${types}">
+									<c:if test="${user.type == t}">
+										<c:set var="selected" value="selected" />
+									</c:if>
+									<option value="${t}" title="${t}" ${selected}>${t}</option>
+									<c:remove var="selected"/>
+								</c:forEach>
+							</select>
+				    		</td>
+				    		
 			    		</tr>
 			    		<tr class="odd">
 				    		<td>Activate</td>

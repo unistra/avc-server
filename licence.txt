@@ -1,8 +1,8 @@
-Audiovideocours / Univ-r_av distributed under the terms of GPL License : http://www.gnu.org/licenses/gpl.html
+AudioVideoCast (Audiovideocours / Univ-r_av) distributed under the terms of GPL License : http://www.gnu.org/licenses/gpl.html
 
 #*****************************************************************************
 #
-#     AudioVideoCours
+#     AudioVideoCast
 #
 #    (c) Universite de Strasbourg  2006-2010
 #     Conception and development : eric.laemmer morgan.bohn [AT] unistra.fr

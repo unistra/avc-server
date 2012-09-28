@@ -436,9 +436,17 @@ public interface IDatabase {
 	
 	/**
 	 * Gets the list of all the users
+	 * @param number limit
+	 * @param start offset
 	 * @return the list of users
 	 */
-	public List<User> getAllUsers();
+	public List<User> getAllUsers(Integer number, Integer start);
+	
+	/**
+	 * Gets the number of all the users
+	 * @return the list of users
+	 */
+	public int getUsersNumber();
 	
 	/**
 	 * Add a new tag

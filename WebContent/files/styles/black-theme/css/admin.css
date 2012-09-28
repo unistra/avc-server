@@ -115,3 +115,45 @@ img#process,img#subprocess  {
 	color:#FFFF99;
 	TEXT-DECORATION:underline;
 }
+
+.boldStar {
+	color:#FFFF99;
+}
+
+/* Div containing the pagination links */
+.pagination {
+	color: #FFFFFF;
+	font-size: 12px;
+	text-align: center;
+	margin-top: 5px;
+}
+
+.currentnumpage {
+	color:#ff9602;
+	border-style:solid;
+	border-width:3px;
+	border-color:#606060;
+}
+
+.numpage {
+	border-style:solid;
+	border-width:3px;
+	border-color:#606060;
+}
+
+.numpage:hover {
+	border-color:white;
+	color:#606060;
+	background-color:white;
+}
+
+.pagination a {
+	color: #FFFFFF;
+	font-size: 12px;
+}
+
+.pTag {
+	background-image: url(../img/T_Middle.png);
+	color:white;
+	font-weight:bold;
+}

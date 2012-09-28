@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -753,23 +754,14 @@ public class Application extends HttpServlet {
 		else if( page.equals("/admin_validateamphi"))
 			validateAmphi(request, response,"./admin_amphis");
 		else if( page.equals("/admin_users")) {
-			request.setAttribute("viewurl", "./admin_users");	
-			String login = request.getParameter("login");
-			List<User> users = new ArrayList<User>();
-			if(login!=null && login.equals("") )
-				users = service.getAllUsers();
-			else if(login!=null && !login.equals("")) {
-				User u = service.getUser(login);
-				if(u!=null)
-					users.add(u);
-			}
-			request.setAttribute("users", users );
-			request.setAttribute("number", users.size());
-			request.setAttribute("editurl", "./admin_edituser");
-			request.setAttribute("deleteurl", "./admin_deleteuser");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_users.jsp").forward(request, response);
+			
+			adminUsers(request,response);
+			
+
 		}
-		else if( page.equals("/admin_edituser")) {
+		else if( page.equals("/admin_edituser")) {			
+			List<String> types = Arrays.asList("","ldap","local");
+			request.setAttribute("types",types);
 			request.setAttribute("action","edit"); 
 			request.setAttribute("user", service.getUser(Integer.parseInt(request.getParameter("id"))));
 			request.setAttribute("posturl", "./admin_validateuser");
@@ -791,8 +783,13 @@ public class Application extends HttpServlet {
 			}
 		}
 		else if( page.equals("/admin_adduser")) {
+			List<String> types = Arrays.asList("","ldap","local");
+			request.setAttribute("types",types);
 			request.setAttribute("action","add"); 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_edituser.jsp").forward(request, response);
+		}
+		else if(page.equals("/admin_useractivate")) {
+			userActivate(request,response);
 		}
 		else if( page.equals("/admin_selections")) {
 			request.setAttribute("viewurl", "./admin_selections");
@@ -1840,8 +1837,8 @@ public class Application extends HttpServlet {
 						
 		String title, description, mediapath, media, timing, name, firstname, formation, genre, login, email,tags,level,component;
 		boolean visible,restrictionuds, download;
-		String message, message2, ahref, ahref2;
-		message=message2=ahref=ahref2="";
+		String message, message2, ahref;
+		message=message2=ahref="";
 		String messageType = "information";
 		
 		/* The client sends parameters in the ISO8859-15 encoding */
@@ -1973,23 +1970,23 @@ public class Application extends HttpServlet {
 				service.addCourse(c, media, tags, serverUrl, sepEnc, coursesFolder);
 												
 				// Sending email for the user
-				String emailUserSubject = "Votre nouvel enregistrement sur Audiovideocours / Your new course on Audiovideocours";
+				String emailUserSubject = "Votre nouvel enregistrement sur AudioVideoCast / Your new course on AudioVideoCast";
 				
 				String emailUserMessageFr = "Bonjour,\n\nVotre enregistrement intitulé \"" + c.getTitle()
-				+"\" sera publié sur la plateforme Audiovideocours à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
+				+"\" sera publié sur la plateforme AudioVideoCast à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
 				+ "\nMerci de bien vouloir patienter quelques minutes avant la mise en ligne définitive du document, le processus de conversion durant environ 30 minutes pour chaque heure de vidéo."
-				+"\n\nPour toute question sur l'usage de la plateforme AudiovideoCours,"
+				+"\n\nPour toute question sur l'usage de la plateforme AudioVideoCast,"
 				+"\n- contactez le support : " + supportLink		
 				+"\n- ou consultez la documentation : " + docLink
-				+ "\n\nBien cordialement,\n\nL'équipe Audiovideocours";
+				+ "\n\nBien cordialement,\n\nL'équipe AudioVideoCast";
 				
 				String emailUserMessageEn = "Hello,\n\nYour recording entitled \"" + c.getTitle()
 				+"\" will be published on : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
 				+"\nPlease note that the conversion process of your document will take about 30 minutes for every hour of video."
-				+"\n\nFor any question regarding AudiovideoCours,"
+				+"\n\nFor any question regarding AudioVideoCast,"
 				+"\n- contact support team : " + supportLink
 				+"\n- or read the documentation : " + docLink
-				+ "\n\nBest Regards,\n\nAudiovideocours team";
+				+ "\n\nBest Regards,\n\nAudioVideoCast team";
 				
 				String emailUserMessage = emailUserMessageFr + "\n\n\n********************\n\n\n" + emailUserMessageEn;
 				
@@ -2006,8 +2003,8 @@ public class Application extends HttpServlet {
 				// If course is present in the recorded page
 				if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 					// Sending email for admins
-					String emailAdminSubject = "a new course on Audiovideocours";
-					String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (email!=null ? "\n\nEmail:"+email : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nAudiovideocours Administrator" ;
+					String emailAdminSubject = "a new course on AudioVideoCast";
+					String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (email!=null ? "\n\nEmail:"+email : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nAudioVideoCast Administrator" ;
 					if(adminEmail1!=null && !adminEmail1.equals(""))
 						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
 					if(adminEmail2!=null && !adminEmail2.equals(""))
@@ -2020,14 +2017,13 @@ public class Application extends HttpServlet {
 								
 				message = bundle.getString("addcourse_message1a")+" \"" + c.getTitle() +"\" "+bundle.getString("addcourse_message1b")+": ";
 				ahref = recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash";
-				message2 = bundle.getString("addcourse_message2")+": ";
-				ahref2 = serverUrl + "/avc/authentication_cas?returnPage=myspace";
+				message2 = bundle.getString("addcourse_message2");
 			
 				
 				request.setAttribute("messagetype2", messageType);
 				request.setAttribute("message2", message2);
 				request.setAttribute("ahref", ahref);
-				request.setAttribute("ahref2", ahref2);
+
 			}
 			catch( DaoException de) {
 				messageType = "error";
@@ -2312,23 +2308,23 @@ public class Application extends HttpServlet {
 								service.mediaUpload(c, item, tags, serverUrl,sepEnc,coursesFolder);
 
 								// Sending email for the user
-								String emailUserSubject = "Votre nouvel enregistrement sur Audiovideocours / Your new course on Audiovideocours";
+								String emailUserSubject = "Votre nouvel enregistrement sur AudioVideoCast / Your new course on AudioVideoCast";
 								
 								String emailUserMessageFr = "Bonjour,\n\nVotre enregistrement intitulé \"" + c.getTitle()
-								+"\" sera publié sur la plateforme Audiovideocours à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
+								+"\" sera publié sur la plateforme AudioVideoCast à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
 								+ "\nMerci de bien vouloir patienter quelques minutes avant la mise en ligne définitive du document, le processus de conversion durant environ 30 minutes pour chaque heure de vidéo."
-								+"\n\nPour toute question sur l'usage de la plateforme AudiovideoCours,"
+								+"\n\nPour toute question sur l'usage de la plateforme AudioVideoCast,"
 								+"\n- contactez le support : " + supportLink		
 								+"\n- ou consultez la documentation : " + docLink
-								+ "\n\nBien cordialement,\n\nL'équipe Audiovideocours";
+								+ "\n\nBien cordialement,\n\nL'équipe AudioVideoCast";
 								
 								String emailUserMessageEn = "Hello,\n\nYour recording entitled \"" + c.getTitle()
 								+"\" will be published on : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
 								+"\nPlease note that the conversion process of your document will take about 30 minutes for every hour of video."
-								+"\n\nFor any question regarding AudiovideoCours,"
+								+"\n\nFor any question regarding AudioVideoCast,"
 								+"\n- contact support team : " + supportLink
 								+"\n- or read the documentation : " + docLink
-								+ "\n\nBest Regards,\n\nAudiovideocours team";
+								+ "\n\nBest Regards,\n\nAudioVideoCast team";
 								
 								String emailUserMessage = emailUserMessageFr + "\n\n\n********************\n\n\n" + emailUserMessageEn;
 								
@@ -2340,8 +2336,8 @@ public class Application extends HttpServlet {
 								// If course is present in the recorded page
 								if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 									// Sending email for admins
-									String emailAdminSubject = "a new file on Audiovideocours";
-									String emailAdminMessage = "Dear Admin,\n\nA file named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (user!=null && user.getEmail()!=null ? "\n\nEmail:"+user.getEmail() : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nAudiovideocours Administrator" ;
+									String emailAdminSubject = "a new file on AudioVideoCast";
+									String emailAdminMessage = "Dear Admin,\n\nA file named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (user!=null && user.getEmail()!=null ? "\n\nEmail:"+user.getEmail() : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nAudioVideoCast Administrator" ;
 									if(!adminEmail1.equals(""))
 										service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
 									if(!adminEmail2.equals(""))
@@ -2531,9 +2527,16 @@ public class Application extends HttpServlet {
 			//To lock access of course with UDS account
 			User user = null;
 			if(c.isRestrictionuds()) {
-				String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+				String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);	
+				String localUser = session.getAttribute("$userLocalLogin")!=null ? (String) session.getAttribute("$userLocalLogin") : null;
 				if(casUser!=null) // Authentification CAS	
-					user=service.getUser(casUser); // Gets the user from the session		
+					user=service.getUser(casUser); // Gets the user from the session	
+				// Access authorized if the user is the course user
+				else if(localUser!=null) {
+					User userTmp = service.getUser(localUser);
+					if (userTmp.getUserid() == c.getUserid())
+						user = userTmp;
+				}
 			}
 					
 			// if the user is not authenticated, redirection to authentication_cas
@@ -3947,33 +3950,45 @@ public class Application extends HttpServlet {
 		String firstname = request.getParameter("firstname");
 		String lastname = request.getParameter("lastname");
 		String comment = request.getParameter("comment");
+		String establishment = request.getParameter("establishment");
+		String post = request.getParameter("post");
 		String captcha_answer = request.getParameter("captcha_answer");
 		
 		// email pattern
 		Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
 		//captcha
 		Captcha captcha = (Captcha) session.getAttribute(Captcha.NAME);
-		
+		// password pattern (The password must be at least 8 characters, 1 digit and 1 lowercase)
+		Pattern p_pwd = Pattern.compile("^(?=.*[0-9])(?=.*[a-z]).{8,}$");
+				
 		// Check the form
 		if(email==null || email.equals("") || !p.matcher(email).matches()) {
 			formValid = false;
 			err_message = "err_email";
 		}
-		else if(password==null || password.equals("") || repeatpassword==null || repeatpassword.equals("") || !repeatpassword.equals(password)) {
+		else if(password==null || password.equals("") || repeatpassword==null || repeatpassword.equals("") || !repeatpassword.equals(password) || !p_pwd.matcher(password).matches()) {
 			formValid = false;
 			err_message = "err_password";
 		}
 		else if(firstname==null || firstname.equals("")) {
 			formValid = false;
-			err_message = "err_firstname";
+			err_message = "err_firstname_local";
 		}
 		else if(lastname==null || lastname.equals("")) {
 			formValid = false;
-			err_message = "err_lastname";
+			err_message = "err_lastname_local";
 		}
 		else if(comment==null || comment.equals("")) {
 			formValid = false;
 			err_message = "err_comment";
+		}
+		else if(establishment==null || establishment.equals("")) {
+			formValid = false;
+			err_message = "err_establishment";
+		}
+		else if(post==null || post.equals("")) {
+			formValid = false;
+			err_message = "err_post";
 		}
 		else if(captcha_answer==null || captcha_answer.equals("") || !captcha.isCorrect(captcha_answer)) {
 			formValid = false;
@@ -3992,6 +4007,8 @@ public class Application extends HttpServlet {
 			request.setAttribute("firstname", firstname);
 			request.setAttribute("lastname", lastname);
 			request.setAttribute("comment", comment);		
+			request.setAttribute("establishment", establishment);		
+			request.setAttribute("post", post);	
 			
 			request.setAttribute("messagetype", "error");
 			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
@@ -4007,15 +4024,18 @@ public class Application extends HttpServlet {
 			service.modifyUserPassword(email, hash, "sha");
 						
 			// send email to admin
-			String emailAdminSubject = "a new account request on Audiovideocours";
-			String emailAdminMessage = "Dear Admin,\n\nA new account request has been sent to Audiovideocours:"
+			String emailAdminSubject = "a new account request on AudioVideoCast";
+			String emailAdminMessage = "Dear Admin,\n\nA new account request has been sent to AudioVideoCast:"
 			+ "\n\n--------------------"	
 			+ "\n\nEmail: " + email
 			+ "\nFirstname: " + firstname
 			+ "\nLastname: " + lastname
-			+ "\nComments: " + comment	
+			+ "\nEstablishment: " + establishment
+			+ "\nPost: " + post
+			+ "\nReason for request: " + comment	
 			+ "\n\n--------------------"
-			+ "\n\nBest Regards,\n\nAudiovideocours Administrator";
+			+ "\n\nTo activate the account: " + serverUrl + "/avc/admin_users?login=" + email
+			+ "\n\nBest Regards,\n\nAudioVideoCast Administrator";
 			
 			if(adminEmail1!=null && !adminEmail1.equals(""))
 				service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
@@ -4157,6 +4177,7 @@ public class Application extends HttpServlet {
     					else {
     						request.setAttribute("messagetype", "error");
     						request.setAttribute("message", bundle.getString("err_account_not_activated"));
+    						request.setAttribute("login", request.getParameter("login"));
     						getServletContext().getRequestDispatcher("/avc/authentication_local").forward(request, response);			
     					}
     				}
@@ -4167,12 +4188,14 @@ public class Application extends HttpServlet {
 
     					request.setAttribute("messagetype", "error");
     					request.setAttribute("message", bundle.getString("err_login_pass"));
+    					request.setAttribute("login", request.getParameter("login"));
     					getServletContext().getRequestDispatcher("/avc/authentication_local").forward(request, response);			
     				}
     			}
     			else {
     				request.setAttribute("messagetype", "error");
     				request.setAttribute("message", bundle.getString("err_captcha"));
+    				request.setAttribute("login", request.getParameter("login"));
     				getServletContext().getRequestDispatcher("/avc/authentication_local").forward(request, response);
     			}
 
@@ -4180,6 +4203,7 @@ public class Application extends HttpServlet {
     		else {
     			request.setAttribute("messagetype", "error");
     			request.setAttribute("message", bundle.getString("err_all_fields"));
+    			request.setAttribute("login", request.getParameter("login"));
     			getServletContext().getRequestDispatcher("/avc/authentication_local").forward(request, response);
     		}
 
@@ -4188,6 +4212,7 @@ public class Application extends HttpServlet {
     	else {
     		request.setAttribute("messagetype", "error");
     		request.setAttribute("message", bundle.getString("err_disconnect_cas"));
+    		request.setAttribute("login", request.getParameter("login"));
     		getServletContext().getRequestDispatcher("/avc/authentication_local").forward(request, response);			
     	}
     }
@@ -4348,7 +4373,7 @@ public class Application extends HttpServlet {
 
     		}
     		else {
-    			//TODO reinitialisation mot de pass VALIDATION 1 HEURE
+    			// reinitialisation mot de pass VALIDATION 1 HEURE
     			
     			
     			String pass = service.generatePassword(16);
@@ -4356,21 +4381,21 @@ public class Application extends HttpServlet {
     			service.modifyUserResetCode(email, hash, "sha", new Timestamp(new Date().getTime()));
     	
     			// Sending email for the user
-				String emailUserSubject = "Audiovideocours: Réinitialisation du mot de passe / Reset password";
+				String emailUserSubject = "AudioVideoCast: Réinitialisation du mot de passe / Reset password";
 						
 						String emailUserMessageFr = "Bonjour,\n\nVous pouvez réinitialiser votre mot de passe avec l'url suivante. Cette url est valide une heure.\n"
 							+ serverUrl + "/avc/authentication_resetpass?hash=" + hash
-							+"\n\nPour toute question sur l'usage de la plateforme AudiovideoCours,"
+							+"\n\nPour toute question sur l'usage de la plateforme AudioVideoCast,"
 							+"\n- contactez le support : " + supportLink
 							+"\n- ou consultez la documentation : " + docLink
-							+ "\n\nBien cordialement,\n\nL'équipe Audiovideocours";
+							+ "\n\nBien cordialement,\n\nL'équipe AudioVideoCast";
 												
 						String emailUserMessageEn = "Hello,\n\nYou can reset your password using the following url. This url is valid one hour.\n"
 						+ serverUrl + "/avc/authentication_resetpass?hash=" + hash
 						+"\n\nFor any question,"
 						+"\n- contact the support : " + supportLink
 						+"\n- or read the documentation : " + docLink
-						+ "\n\nBest Regards,\n\nAudiovideocours team";
+						+ "\n\nBest Regards,\n\nAudioVideoCast team";
 												
 						
 						String emailUserMessage = emailUserMessageFr + "\n\n\n********************\n\n\n" + emailUserMessageEn;
@@ -4423,15 +4448,6 @@ public class Application extends HttpServlet {
     	
     	}
     		
-    		
-    		
-    	
-    	
-    	
-    	
-    	
-    	//TODO
-      	
     }
     
     
@@ -4490,5 +4506,118 @@ public class Application extends HttpServlet {
     }
     
     
+    
+    
+    
+    /**
+	 * Method to change the user activation
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void userActivate(HttpServletRequest request, HttpServletResponse response)
+		throws ServletException, IOException {
+				
+		Integer userid = Integer.valueOf(request.getParameter("userid"));
+		String activate = request.getParameter("activate");
+		
+		/* Verifies that all parameters are sent and are not empty */
+		if( userid != null && activate != null && ! userid.equals("") && ! activate.equals("")) {
+			
+			/* Verifies that the "status" variable contains one of the two authorized strings */
+			if( activate.equals("true") || activate.equals("false")) {
+				
+				try {
+					
+					User u = service.getUser(userid);
+					u.setActivate(Boolean.valueOf(activate));
+					service.modifyUser(u);	
+										
+					request.setAttribute("messagetype", "information");
+					if(u.isActivate())
+						request.setAttribute("message", "Account of user " + u.getLogin() + " activated !");
+					else
+						request.setAttribute("message", "Account of user " + u.getLogin() + " desactivated !");
+					
+					request.setAttribute("message2", "Return to users list :");
+					request.setAttribute("ahref2", serverUrl + "/avc/admin_users");
+					getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+					
+				}
+				catch (Exception e) {
+					request.setAttribute("messagetype", "error");
+					request.setAttribute("message", "Error: can't change the user activation :" + e);
+					getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+				}
+				
+			}
+			else {
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "Error: possible status values for activate : {true ; false}");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+			}
+		} 
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Error: missing parameters: userid and activate must be sent");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+		}
+		
+		
+	}
+	
+	 /**
+	 * Method admin users list
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminUsers(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+
+		request.setAttribute("viewurl", "./admin_users");	
+		
+		int start = 0;
+		int pageNumber;
+		int usersnumber = 100;
+		
+		/* initializes the model */
+		if( request.getParameter("page") != null) {
+			pageNumber = Integer.parseInt( request.getParameter("page"));
+			start = usersnumber * (pageNumber - 1) ;
+		}
+		else
+			pageNumber = 1;
+		
+		String login = request.getParameter("login");
+		List<User> users = new ArrayList<User>();
+		if(login==null || login.equals("") ) {
+			users = service.getAllUsers(usersnumber,start);
+			request.setAttribute("items", service.getUsersNumber());
+		}
+		else if(login!=null && !login.equals("")) {
+			User u = service.getUser(login);
+			if(u!=null)
+				users.add(u);
+				request.setAttribute("items", 1);
+				request.setAttribute("login", login);
+		}
+		
+		request.setAttribute("page", pageNumber);
+		request.setAttribute("users", users );
+		request.setAttribute("resultPage", "admin_users");
+		request.setAttribute("number", usersnumber);
+		request.setAttribute("editurl", "./admin_edituser");
+		request.setAttribute("deleteurl", "./admin_deleteuser");
+		
+		session.setAttribute("previousPage", "./admin_users?page=" + pageNumber);
+		
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_users.jsp").forward(request, response);
+
+	}
         	
 }

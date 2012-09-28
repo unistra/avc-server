@@ -78,7 +78,7 @@ img#process {
  
   /* Links for publication page */
  .pubLinks {
-	width: 500px;
+	width: 560px;
 	height: 35px;
 	margin-left: auto;
 	margin-right: auto;
@@ -89,7 +89,7 @@ img#process {
 	float:left;
 	background-image: url(../img/btn_pub.png);
 	background-repeat:no-repeat;
-	width: 115px;
+	width: 130px;
 	height: 35px;	
 }
 
@@ -98,7 +98,7 @@ img#process {
 	float:left;
 	background-image: url(../img/btn_pub.png);
 	background-repeat:no-repeat;
-	width: 115px;
+	width: 130px;
 	height: 35px;
 }
 
@@ -106,7 +106,7 @@ img#process {
 	float:left;
 	background-image: url(../img/btn_pub.png);
 	background-repeat:no-repeat;
-	width: 115px;
+	width: 130px;
 	height: 35px;
 }
 
@@ -114,13 +114,13 @@ img#process {
 	float:left;
 	background-image: url(../img/btn_pub.png);
 	background-repeat:no-repeat;
-	width: 115px;
+	width: 130px;
 	height: 35px;
 }
 
 .linkPubCas {
 	float:left;
-	width: 105px;
+	width: 120px;
 	height: 28px;
 	margin-top:10px;
 	margin-left:6px;
@@ -129,7 +129,7 @@ img#process {
 
 .linkPubFree {
 	float:left;
-	width: 105px;
+	width: 120px;
 	height: 28px;
 	margin-top:10px;
 	margin-left:6px;
@@ -138,7 +138,7 @@ img#process {
 
 .linkPubTest {
 	float:left;
-	width: 105px;
+	width: 120px;
 	height: 28px;
 	margin-top:10px;
 	margin-left:6px;
@@ -147,7 +147,7 @@ img#process {
 
 .linkPubLocal {
 	float:left;
-	width: 105px;
+	width: 120px;
 	height: 28px;
 	margin-top:10px;
 	margin-left:6px;

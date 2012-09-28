@@ -588,7 +588,7 @@ public class ServiceImpl implements IService {
 		}
 		
 		//For the login
-		List<User> users = db.getAllUsers();
+		List<User> users = db.getAllUsers(null,null);
 		for(User u : users) {
 			courses = db.getCoursesByUser(u, null, null, true);	
 			rssPath = rssFolderPath + "/" + cleanFileName("lgn_" + u.getLogin()) + ".xml";
@@ -906,10 +906,20 @@ public class ServiceImpl implements IService {
 	
 	/**
 	 * Gets the list of all the users
+	 * @param number limit
+	 * @param start offset
 	 * @return the list of users
 	 */
-	public List<User> getAllUsers() {
-		return db.getAllUsers();
+	public List<User> getAllUsers(Integer number, Integer start) {
+		return db.getAllUsers(number, start);
+	}
+	
+	/**
+	 * Gets the number of all the users
+	 * @return the list of users
+	 */
+	public int getUsersNumber() {
+		return db.getUsersNumber();
 	}
 	
 	/**

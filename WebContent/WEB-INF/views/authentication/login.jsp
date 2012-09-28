@@ -46,7 +46,7 @@
 			    	<table>
 			    		<tr class="odd">
 				    		<td title="<fmt:message key="ib_email"/>"><fmt:message key="Votre e-mail"/></td>
-				    		<td><input type="text" name="login" class="field"></td>
+				    		<td><input type="text" name="login" class="field" value="${login }"></td>
 			    		</tr>
 			    		<tr class="even">
 				    		<td title="<fmt:message key="password"/>"><fmt:message key="password"/></td>

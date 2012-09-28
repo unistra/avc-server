@@ -1,6 +1,6 @@
 JW FLV Player
 
-You can download the version of the needed flash player for Audiovideocours at this url :
+You can download the version of the needed flash player for AudioVideoCast at this url :
 http://audiovideocours.u-strasbg.fr/releases/player.swf
 
 JW FLV Player Licensing :

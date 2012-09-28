@@ -4,6 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="pt" uri="/WEB-INF/pagination-taglib.tld" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
@@ -48,9 +49,13 @@
 	    	
 	    	<div class="divCenter">	    	
 	    		<form name="input" action="./admin_users" method="post">
-					Login: <input type="text" name="login" />
+					Login: <input type="text" name="login" value="${login}" />
 					<input type="submit" value="Submit" />
 				</form>
+			</div>
+			
+			<div class="divCenter">
+	    		<p class="message" id="message"><c:out value="${message}" /></p>
 			</div>
 			
 			<br />
@@ -66,6 +71,8 @@
 	    		<display:column property="type" title="Type" sortable="true"/>
 	    		<display:column title="Activate" sortable="true">
 					<input type="checkbox" disabled="disabled" ${users.activate == true ? 'checked' : '' } />
+					<a href="<c:url value="./admin_useractivate?userid=${users.userid}&activate=true" />">On</a> /
+					<a href="<c:url value="./admin_useractivate?userid=${users.userid}&activate=false" />">Off</a>
 				</display:column>
 				<display:column property="etp" title="Etp" sortable="true"/>
 				<display:column title="Rss" sortable="false">
@@ -79,12 +86,19 @@
 				</display:column>
 	    	</display:table>
 	    	
+	    	<c:if test="${items > 1}">
+	    	
+	    		<div class="pagination">
+	    			<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" />
+				</div>
+	    	</c:if>
+	    	
 	    	<br>
 	    	<div class="add">
 	    		<a href="<c:url value="./admin_adduser"/>">Add</a>	
 	    	</div>
 	    	<br>
-	    	<p id="nbr">${number} users</p>
+	    	<p id="nbr">${items} users</p>
 	    </div>
 	    	
 	    <div class="footer">

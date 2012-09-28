@@ -2736,14 +2736,21 @@ public class DatabaseImpl implements IDatabase {
 	
 	/**
 	 * Gets the list of all the users
+	 * @param number limit
+	 * @param start offset
 	 * @return the list of users
 	 */
-	public List<User> getAllUsers() {
+	public List<User> getAllUsers(Integer number, Integer start) {
 		
 		List<User> l = new ArrayList<User>();
 		
 		Connection cnt = null;
-		String sql = "SELECT * FROM \"user\"";
+		String sql = "SELECT * FROM \"user\" ORDER BY activate, type desc, firstname, lastname";
+		
+		if(number!=null && start!=null)
+			sql+=" LIMIT " + number + " OFFSET " + start;
+		
+		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -2776,6 +2783,41 @@ public class DatabaseImpl implements IDatabase {
 		}
 		
 		return l;
+	}
+	
+	
+	/**
+	 * Gets the number of all the users
+	 * @return the list of users
+	 */
+	public int getUsersNumber() {
+		
+		int number = 0;
+		
+		Connection cnt = null;
+		String sql = "SELECT count(*) FROM \"user\"";
+						
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				number = rs.getInt("count");
+
+			}
+		}	
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the number of users",sqle);
+			throw new DaoException("Error while retrieving the number of users");
+		}
+		finally {
+			close(rs,pstmt,cnt);
+		}
+		
+		return number;
 	}
 	
 	

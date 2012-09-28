@@ -39,8 +39,10 @@
 				<c:import url="../include/banner.jsp" />
 			</div>
 			
-			<div class="message">
-	    		<p><fmt:message key="accountrequestmessage1"/> ${univName} <fmt:message key="accountrequestmessage2"/></p>
+			<div class="divCenter">
+	    		<p><fmt:message key="accountrequestmessage1"/> ${univName}.</p>
+	    		<p><fmt:message key="accountrequestmessage2"/></p>
+	    		<p><fmt:message key="accountrequestmessage3"/></p>
 	    	</div>
 	    	
 	    	<br />
@@ -55,24 +57,32 @@
 			
 				<table>
 					<tr class="odd">
-						<td title="<fmt:message key="ib_email"/>"><fmt:message key="Votre e-mail"/><b class="boldStar">*</b></td> <!-- Login = Email -->
-						<td><input type="text" name="email" class="field" value="${email}"></td>
-					</tr>
-					<tr class="even">
-						<td title="<fmt:message key="password"/>"><fmt:message key="password"/><b class="boldStar">*</b></td>
-						<td><input type="password" name="password" class="field"></td>
-					</tr>
-					<tr class="odd">
-						<td title="<fmt:message key="repeatpassword"/>"><fmt:message key="repeatpassword"/><b class="boldStar">*</b></td>
-						<td><input type="password" name="repeatpassword" class="field"></td>
+						<td title="<fmt:message key="userlastname"/>"><fmt:message key="userlastname"/><b class="boldStar">*</b></td>
+						<td><input type="text" name="lastname" class="field" value="${lastname}"></td>
 					</tr>
 					<tr class="even">
 						<td title="<fmt:message key="userfirstname"/>"><fmt:message key="userfirstname"/><b class="boldStar">*</b></td>
 						<td><input type="text" name="firstname" class="field" value="${firstname}"></td>
 					</tr>
 					<tr class="odd">
-						<td title="<fmt:message key="userlastname"/>"><fmt:message key="userlastname"/><b class="boldStar">*</b></td>
-						<td><input type="text" name="lastname" class="field" value="${lastname}"></td>
+						<td title="<fmt:message key="ib_email_id"/>"><fmt:message key="Votre e-mail"/><b class="boldStar">*</b></td> <!-- Login = Email -->
+						<td><input type="text" name="email" class="field" value="${email}"></td>
+					</tr>
+					<tr class="even">
+						<td title="<fmt:message key="ib_password"/>"><fmt:message key="password"/><b class="boldStar">*</b></td>
+						<td><input type="password" name="password" class="field"></td>
+					</tr>
+					<tr class="odd">
+						<td title="<fmt:message key="ib_password"/>"><fmt:message key="repeatpassword"/><b class="boldStar">*</b></td>
+						<td><input type="password" name="repeatpassword" class="field"></td>
+					</tr>
+					<tr class="even">
+						<td title="<fmt:message key="establishment"/>"><fmt:message key="establishment"/><b class="boldStar">*</b></td>
+						<td><input type="text" name="establishment" class="field" value="${establishment}"></td>
+					</tr>
+					<tr class="odd">
+						<td title="<fmt:message key="post"/>"><fmt:message key="post"/><b class="boldStar">*</b></td>
+						<td><input type="text" name="post" class="field" value="${post}"></td>
 					</tr>
 					<tr class="even">
 						<td title="<fmt:message key="requestcomment"/>"><fmt:message key="requestcomment"/><b class="boldStar">*</b></td>
