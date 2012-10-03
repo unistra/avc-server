@@ -39,6 +39,12 @@
 		    	<c:import url="./links.jsp" />
 	    	</div>
 	    	
+	    	<div class="divCenter">
+	    		<p>For local user, login field must be an email adress (the same as the email field).</p>
+	    	</div>
+	    	
+	    	<br />
+	    	
 	    	<div class="editform">
 		    	<form method="POST" action="<c:url value="./admin_validateuser" />">
 			    	<table>
@@ -51,15 +57,15 @@
 				    		<td><input type="text" name="login" value="${user.login}" class="field"></td>
 			    		</tr>
 			    		<tr class="odd">
-				    		<td>Email</td>
+				    		<td>Email<b class="boldStar">*</b></td>
 				    		<td><input type="text" name="email" value="${user.email}" class="field"></td>
 			    		</tr>
 			    		<tr class="even">
-				    		<td>Firstname</td>
+				    		<td>Firstname<b class="boldStar">*</b></td>
 				    		<td><input type="text" name="firstname" value="${user.firstname}" class="field"></td>
 			    		</tr>
 			    		<tr class="odd">
-				    		<td>Lastname</td>
+				    		<td>Lastname<b class="boldStar">*</b></td>
 				    		<td><input type="text" name="lastname" value="${user.lastname}" class="field"></td>
 			    		</tr>
 			    		<tr class="even">
@@ -71,7 +77,7 @@
 				    		<td><input type="text" name="establishment" value="${user.establishment}" class="field"></td>
 			    		</tr>
 			    		<tr class="even">
-				    		<td>Type</td>
+				    		<td>Type<b class="boldStar">*</b></td>
 				    		<td>			    			
 				    			<select name="type">
 								<c:forEach var="t" items="${types}">
@@ -92,6 +98,9 @@
 			    		<tr class="even">
 				    		<td>Etp</td>
 				    		<td><input type="text" name="etp" value="${user.etp}" class="field"></td>
+			    		</tr>
+			    		<tr>
+			    			<td class="chpsObl"><b class="boldStar">*</b>: required fields</td>
 			    		</tr>
 			    	</table>
 			    	<br>

@@ -3003,7 +3003,7 @@ public class Application extends HttpServlet {
 	private void validateUser(HttpServletRequest request, HttpServletResponse response) 
 	throws ServletException, IOException {
 			
-		if( ! (request.getParameter("login").equals(""))) {
+		if( ! (request.getParameter("login").equals("") || request.getParameter("email").equals("") || request.getParameter("firstname").equals("") || request.getParameter("lastname").equals("") || request.getParameter("type").equals(""))) {
 			
 			int userid =  ! request.getParameter("userid").equals("") ? Integer.parseInt(request.getParameter("userid")) : 0;
 		
@@ -3019,16 +3019,27 @@ public class Application extends HttpServlet {
 					request.getParameter("activate") != null ? true : false,
 					request.getParameter("etp")
 			);
+			
+			try {
 						
-			if(request.getParameter("action").equals("edit"))
-				service.modifyUser(u);
-			else
-				service.addUser(u);
-			response.sendRedirect(response.encodeRedirectURL("./admin_users"));
+				if(request.getParameter("action").equals("edit"))
+					service.modifyUser(u);
+				else
+					service.addUser(u);
+				
+				response.sendRedirect(response.encodeRedirectURL("./admin_users"));
+			}
+			catch(DaoException e){
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "Can't add/modify user. Maybe another user already exists in the system with the same login name.");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+			}
+			
+			
 		}
 		else {
 			request.setAttribute("messagetype", "error");
-			request.setAttribute("message", "Login field must be completed");
+			request.setAttribute("message", "All required fields must be completed");
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 		}
 	}
