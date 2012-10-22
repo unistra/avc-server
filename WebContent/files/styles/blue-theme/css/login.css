@@ -71,7 +71,6 @@ th a {
 /* Zone to display a temporary message */
 .message {
 	width: 500px;
-	height: 18px;
 	margin-top: 8px;
 	margin-bottom: 8px;
 	text-align: left;

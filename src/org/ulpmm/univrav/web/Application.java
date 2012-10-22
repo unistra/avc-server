@@ -4291,8 +4291,10 @@ public class Application extends HttpServlet {
 			String currentPassword = request.getParameter("currentPassword");
 			String newPassword = request.getParameter("newPassword");
 			String confirmNewPass = request.getParameter("confirmNewPass");
+			// password pattern (The password must be at least 8 characters, 1 digit and 1 lowercase)
+			Pattern p_pwd = Pattern.compile("^(?=.*[0-9])(?=.*[a-z]).{8,}$");
 						
-			if(currentPassword==null || currentPassword.equals("") || newPassword==null || newPassword.equals("") || confirmNewPass==null || confirmNewPass.equals("") ) {	
+			if(currentPassword==null || currentPassword.equals("") || newPassword==null || newPassword.equals("") || confirmNewPass==null || confirmNewPass.equals("")) {	
 				request.setAttribute("messagetype", "error");
     			request.setAttribute("message", bundle.getString("err_all_fields"));
     			getServletContext().getRequestDispatcher("/avc/myspace_changepass").forward(request, response);			
@@ -4304,7 +4306,7 @@ public class Application extends HttpServlet {
 				User user_currentpass = service.getUserLocal(user.getLogin(),currentPasswordSha);
 				
 				// if current password is ok
-				if(user_currentpass!=null && newPassword.equals(confirmNewPass)) {
+				if(user_currentpass!=null && newPassword.equals(confirmNewPass) && p_pwd.matcher(newPassword).matches()) {
 					String newPasswordSha = service.encrypt(newPassword);
 					service.modifyUserPassword(user.getLogin(), newPasswordSha, "sha");
 					
@@ -4485,8 +4487,10 @@ public class Application extends HttpServlet {
 
     			String newPassword = request.getParameter("newPassword");
     			String confirmNewPass = request.getParameter("confirmNewPass");
+    			// password pattern (The password must be at least 8 characters, 1 digit and 1 lowercase)
+    			Pattern p_pwd = Pattern.compile("^(?=.*[0-9])(?=.*[a-z]).{8,}$");
 
-    			if(newPassword==null || newPassword.equals("") || confirmNewPass==null || confirmNewPass.equals("") || !newPassword.equals(confirmNewPass) ) {	
+    			if(newPassword==null || newPassword.equals("") || confirmNewPass==null || confirmNewPass.equals("") || !newPassword.equals(confirmNewPass) || !p_pwd.matcher(newPassword).matches()) {	
     				request.setAttribute("messagetype", "error");
     				request.setAttribute("message", bundle.getString("err_password"));
     				getServletContext().getRequestDispatcher("/avc/authentication_resetpass").forward(request, response);			
