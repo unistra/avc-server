@@ -814,7 +814,7 @@ public class ServiceImpl implements IService {
 	/**
 	 * Gets user by login and hash(login is UNIQUE)
 	 * @param login the login of the user
-	 * @param login hash code
+	 * @param hash hash code
 	 * @return the user
 	 */
 	public User getUserLocal(String login, String hash) {
