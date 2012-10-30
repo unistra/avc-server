@@ -18,7 +18,7 @@ fi
 
 if test -z "$2"
 then
-	echo "SRVURL is needed. Ex: http://audiovideocours.u-strasbg.fr"
+	echo "SRVURL is needed. Ex: http://audiovideocast.unistra.fr"
 	exit
 fi
 

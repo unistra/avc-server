@@ -204,7 +204,7 @@
 		</init-param> 
 		<init-param>                     
 			<param-name>edu.yale.its.tp.cas.client.filter.serverName</param-name>                     
-			<param-value>audiovideocours.u-strasbg.fr</param-value>
+			<param-value>localhost</param-value>
 		</init-param>
 	</filter>
 			

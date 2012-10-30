@@ -29,4 +29,4 @@ Disallow: /*.mov$
 Disallow: /*.mov
 Disallow: /*.mpg$
 Disallow: /*.mpg
-Sitemap: http://audiovideocours.u-strasbg.fr/sitemap.xml
+Sitemap: http://audiovideocast.unistra.fr/sitemap.xml
