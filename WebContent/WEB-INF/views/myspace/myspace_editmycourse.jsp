@@ -143,17 +143,10 @@
 				    		<td title="<fmt:message key="ib_restrictionuds"/> ${univName}"><fmt:message key="restrictionuds"/> ${univAcronym}</td>
 				    		<td><input type="checkbox" name="restrictionuds" ${course.restrictionuds == true ? 'checked' : ''} ><font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
 			    		</tr>	 
-			    		<c:choose>   
-			    		<c:when test="${fn:contains(mediaLst, 'addvideo')}">
-			    			<tr class="odd">
-								<td title="<fmt:message key="slidesoffset"/>"><fmt:message key="slidesoffset"/> : </td>
-								<td><input type="text" name="slidesoffset" value="${course.slidesoffset }" class="field"></td>
-							</tr>	
-						</c:when>
-		    			<c:otherwise>
-		    				<input type="hidden" name="slidesoffset" value="${course.slidesoffset}">
-		    			</c:otherwise>
-		   		 		</c:choose>
+			    		<tr class="odd">
+							<td title="<fmt:message key="slidesoffset"/>"><fmt:message key="slidesoffset"/> : </td>
+							<td><input type="text" name="slidesoffset" value="${course.slidesoffset }" class="field"></td>
+						</tr>	
 			    	</table>
 			    	<br>
 			    	<input type="submit" class="valider" name="valider" value="<fmt:message key="Valider"/> ">

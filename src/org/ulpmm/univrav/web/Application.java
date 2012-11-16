@@ -2659,21 +2659,22 @@ public class Application extends HttpServlet {
 								courseExtension = ".flv";
 
 							String courseurl = "";
-							List<Slide> slides = service.getSlides(c.getCourseid());
-							//if the course have an additional video, change the url of the main media, change timecodes
+							
+							//if the course have an additional video, change the url of the main media
 							if(c.isAvailable("addvideo")) {
 								courseurl = courseAccessUrl + c.getMediaFolder() + "/additional_video/addvideo_" + c.getMediasFileName() + ".mp4";
-																
-								// change time slide "à la volée"
-								if(c.getSlidesoffset() != null) {
-									for(Slide s : slides) {
-										int t = s.getSlidetime() + c.getSlidesoffset();
-										s.setSlidetime(t);
-									}					
-								}
 							}
 							else {
 								courseurl = courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + courseExtension;
+							}
+							
+							List<Slide> slides = service.getSlides(c.getCourseid());
+							// if offset, change time slide "à la volée"
+							if(c.getSlidesoffset() != null && c.getSlidesoffset()!=0) {
+								for(Slide s : slides) {
+									int t = s.getSlidetime() + c.getSlidesoffset();
+									s.setSlidetime(t);
+								}					
 							}
 							
 							request.setAttribute("courseurl", courseurl);
@@ -2801,21 +2802,22 @@ public class Application extends HttpServlet {
 					else if( type.equals("html5")) {
 						
 						String courseurl = "";
-						List<Slide> slides = service.getSlides(c.getCourseid());
+						
 						//if the course have an additional video, change the url of the main media
 						if(c.isAvailable("addvideo")) {
 							courseurl = courseAccessUrl + c.getMediaFolder() + "/additional_video/addvideo_" + c.getMediasFileName();
-						
-							// change time slide "à la volée"
-							if(c.getSlidesoffset() != null) {
-								for(Slide s : slides) {
-									int t = s.getSlidetime() + c.getSlidesoffset();
-									s.setSlidetime(t);
-								}					
-							}
 						}
 						else {
 							courseurl = courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName();
+						}
+						
+						List<Slide> slides = service.getSlides(c.getCourseid());
+						// if offset change time slide "à la volée"
+						if(c.getSlidesoffset() != null && c.getSlidesoffset()!=null) {
+							for(Slide s : slides) {
+								int t = s.getSlidetime() + c.getSlidesoffset();
+								s.setSlidetime(t);
+							}					
 						}
 						
 						request.setAttribute("courseurlnoext", courseurl);
