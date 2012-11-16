@@ -124,7 +124,14 @@ function setTimeFromSlide(slide) {
 function checkPageChange() {
 	var res = false;
 	
-	if( Math.ceil(currentSlide/numberPerPage) > pageNumber) { //next page
+	// correct a bug when no current slide
+	if(currentSlide==0) {
+		pageNumber = 1;
+		initTimeBar();
+		oldSlide = 0;
+		res = true;
+	}
+	else if( Math.ceil(currentSlide/numberPerPage) > pageNumber) { //next page
 		pageNumber = Math.ceil(currentSlide/numberPerPage);
 		initTimeBar();
 		oldSlide = 0;
