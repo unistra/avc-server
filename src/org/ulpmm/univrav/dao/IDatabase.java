@@ -578,15 +578,17 @@ public interface IDatabase {
 	 * Modify the job status
 	 * @param courseid course id
 	 * @param status job status
+	 * @param coursetype coursetype
 	 */
-	public void modifyJobStatus(int courseid,String status);
+	public void modifyJobStatus(int courseid,String status,String coursetype);
 	
 	/**
 	 * Get job by courseid 
 	 * @param courseid the courseid of the job
+	 * @param coursetype the job type
 	 * @return the job
 	 */
-	public Job getJob(int courseid);
+	public Job getJob(int courseid, String coursetype);
 	
 	/**
 	 * Gets the list of all discipline

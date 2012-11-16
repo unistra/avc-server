@@ -126,7 +126,8 @@ CREATE TABLE course (
     restrictionuds boolean DEFAULT false NOT NULL,
     mediatype integer,
     volume smallint DEFAULT 1 NOT NULL,
-    recorddate timestamp without time zone
+    recorddate timestamp without time zone,
+    slidesoffset integer
 );
 
 

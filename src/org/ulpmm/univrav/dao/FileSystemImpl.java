@@ -1181,4 +1181,44 @@ public class FileSystemImpl implements IFileSystem {
 	}
 	
 	
+	/**
+	 * Move the add video file
+	 * @param c the course to create
+	 * @param mediaFile the media file of the course to create
+	 * @param fileName the filename
+	 * @param extension the extension
+	 */
+	public void moveAddVideo(Course c, FileItem mediaFile, String fileName, String extension) {	
+
+		File addVideoFolder = new File(coursesFolder + c.getMediaFolder() +"/additional_video");
+		addVideoFolder.mkdirs();
+
+		try {
+			mediaFile.write(new File(addVideoFolder, "ori_addvideo_"+c.getMediasFileName() + "."+extension));
+		}
+		catch( Exception e) {
+			logger.error("Error while writing the media file " + fileName,e);
+		}
+
+	}
+	
+	/**
+	 * Delete the additional video of a course
+	 * @param mediafolder the mediafolder
+	 * @param courseid courseid
+	 */
+	public void deleteReplaceMedia(String mediafolder, int courseid) {
+		
+		File addvideofile = new File(coursesFolder + mediafolder +"/additional_video/");
+		
+		// Clean the additional_video repertory
+		if (addvideofile.isDirectory()) {
+			String[] children = addvideofile.list();
+			for (int i=0; i<children.length; i++) {
+				File f = new File(addvideofile, children[i]);
+				f.delete();
+			}
+		}
+		 		
+	}
 }

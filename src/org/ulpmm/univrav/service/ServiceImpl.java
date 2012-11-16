@@ -1179,18 +1179,28 @@ public class ServiceImpl implements IService {
 	 * Modify the job status
 	 * @param courseid course id
 	 * @param status job status
+	 * @param coursetype coursetype
 	 */
-	public synchronized void modifyJobStatus(int courseid,String status) {
-		db.modifyJobStatus(courseid, status);
+	public void modifyJobStatus(int courseid,String status,String coursetype) {
+		db.modifyJobStatus(courseid, status, coursetype);
+	}
+	
+	/**
+	 * Modify the job
+	 * @param j the job
+	 */
+	public synchronized void modifyJob(Job j) {
+		db.modifyJob(j);
 	}
 	
 	/**
 	 * Get job by courseid 
 	 * @param courseid the courseid of the job
+	 * @param coursetype the job type
 	 * @return the job
 	 */
-	public Job getJob(int courseid) {
-		return db.getJob(courseid);
+	public Job getJob(int courseid, String coursetype) {
+		return db.getJob(courseid, coursetype);
 	}
 	
 	/**
@@ -1693,6 +1703,34 @@ public class ServiceImpl implements IService {
 		}
 
 		return r;
+	}
+	
+	/**
+	 * Add a complementary video
+	 * @param c the course
+	 * @param slidesoffset offset
+	 * @param docFile the fileitem of the document
+	 * @param serverUrl the URL of the application on the server
+	 * @param sepEnc true if medias encodage is separated
+	 * @param coursesFolder the courses folder
+	 */
+	public synchronized void addVideo(Course c, Integer slidesoffset, FileItem docFile,String serverUrl, boolean sepEnc,String coursesFolder) {
+		AddVideo rm = new AddVideo(fs,c,slidesoffset,docFile,this,serverUrl,sepEnc,coursesFolder);
+		rm.start();		
+	}
+	
+	
+	/**
+	 * Delete the additional video of a course
+	 * @param c the course
+	 */
+	public synchronized void deleteReplaceMedia(Course c) {
+		
+		if(c.isAvailable("addvideo")) {
+			fs.deleteReplaceMedia(c.getMediaFolder(),c.getCourseid());
+			c.setmediatype(c.getmediatype()-Course.typeAddVideo);
+			db.modifyCourse(c);
+		}
 	}
 
 }

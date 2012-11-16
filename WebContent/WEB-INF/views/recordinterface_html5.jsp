@@ -44,7 +44,7 @@
 	
 	
 	<c:choose>
-	<c:when test="${course.type!='video'}">
+	<c:when test="${course.type!='video' && !fn:contains(mediaLst, 'addvideo')}">
 		<script type="text/javascript">var fileext = "mp3";</script>
 	</c:when>
 	<c:otherwise>
@@ -59,7 +59,8 @@
 	</c:otherwise>
 	</c:choose>
 		
-	<c:if test="${course.type!='video'}">
+	<c:choose>
+	<c:when test="${course.type!='video' && !fn:contains(mediaLst, 'addvideo')}">
 		<script type="text/javascript">
 		var flashvars =
 	 	{
@@ -69,8 +70,8 @@
 			image:					'../files/img/logo_audio.png' 			  
 		};
 		</script>
-	</c:if>
-	<c:if test="${course.type=='video'}">
+	</c:when>
+	<c:otherwise>
 		<script type="text/javascript">
 		var flashvars =
 	 	{
@@ -81,7 +82,8 @@
 			type:					'lighttpd'				  
 		};
 		</script>
-	</c:if>	
+	</c:otherwise>
+	</c:choose>
 		
 	
 	<script type="text/javascript">
@@ -133,7 +135,7 @@
 					<c:if test="${fn:length(slides) != 0}">
 					   				 		
    				 		<c:choose>
-   				 		<c:when test="${course.type!='video'}">
+   				 		<c:when test="${course.type!='video' && !fn:contains(mediaLst, 'addvideo')}">
    				 		   				 		
    				 			<audio id="playerhtml5" autoplay controls style="width:320px;height:260px;background-image:url(../files/img/logo_audio.png);">  
     				 			<source src="${courseurlnoext}.mp3" type="audio/mpeg"> <!-- chrome/safari -->
@@ -393,7 +395,7 @@
 					<td>
 								 						
  						<c:choose>
-   				 		<c:when test="${course.type!='video'}">
+   				 		<c:when test="${course.type!='video' && !fn:contains(mediaLst, 'addvideo')}">
    				 		   				 		
    				 			<audio id="playerhtml5" autoplay controls style="width:640px;">  
     				 			<source src="${courseurlnoext}.mp3" type="audio/mpeg"> <!-- chrome/safari -->

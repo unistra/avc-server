@@ -122,7 +122,7 @@ public class MediaUpload extends Thread {
 			service.createJob(c,mediatype,type,extension,coursesFolder);
 			
 			String job_line =c.getCourseid()+":"+"waiting"+":"+mediatype+":" + type + ":"+c.getMediaFolder()+":"+extension;
-			service.modifyJobStatus(c.getCourseid(), "processing");
+			service.modifyJobStatus(c.getCourseid(), "processing", type);
 			service.launchJob(serverUrl, job_line);				
 		}
 		else {

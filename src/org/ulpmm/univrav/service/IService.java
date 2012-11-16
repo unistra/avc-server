@@ -680,15 +680,23 @@ public interface IService {
 	 * Modify the job status
 	 * @param courseid course id
 	 * @param status job status
+	 * @param coursetype coursetype
 	 */
-	public void modifyJobStatus(int courseid,String status);
+	public void modifyJobStatus(int courseid,String status,String coursetype);
+	
+	/**
+	 * Modify the job
+	 * @param j the job
+	 */
+	public void modifyJob(Job j);
 	
 	/**
 	 * Get job by courseid 
 	 * @param courseid the courseid of the job
+	 * @param coursetype the job type
 	 * @return the job
 	 */
-	public Job getJob(int courseid);
+	public Job getJob(int courseid, String coursetype);
 	
 	/**
 	 * Gets the list of all jobs
@@ -824,4 +832,21 @@ public interface IService {
 	 * @param c the course
 	 */
 	public void deleteSubtitles(Course c);
+	
+	/**
+	 * Add a complementary video
+	 * @param c the course
+	 * @param slidesoffset offset
+	 * @param docFile the fileitem of the document
+	 * @param serverUrl the URL of the application on the server
+	 * @param sepEnc true if medias encodage is separated
+	 * @param coursesFolder the courses folder
+	 */
+	public void addVideo(Course c, Integer slidesoffset, FileItem docFile,String serverUrl, boolean sepEnc,String coursesFolder);
+	
+	/**
+	 * Delete the additional video of a course
+	 * @param c the course
+	 */
+	public void deleteReplaceMedia(Course c);
 }

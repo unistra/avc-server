@@ -128,13 +128,14 @@ public class CourseAddition extends Thread {
 			if(c.getType().equals("video")) {
 				service.createJob(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod,"CV","flv",coursesFolder);
 				job_line =c.getCourseid()+":"+"waiting"+":"+String.valueOf(Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod)+":CV:"+c.getMediaFolder()+":flv";
+				service.modifyJobStatus(c.getCourseid(), "processing", "CV");	
 			}
 			else {
 				service.createJob(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod,"CA","mp3",coursesFolder);
 				job_line =c.getCourseid()+":"+"waiting"+":"+String.valueOf(Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod)+":CA:"+c.getMediaFolder()+":mp3";
+				service.modifyJobStatus(c.getCourseid(), "processing", "CA");	
 			}
-			
-			service.modifyJobStatus(c.getCourseid(), "processing");					
+										
 			service.launchJob(serverUrl, job_line);		
 		}
 		else {

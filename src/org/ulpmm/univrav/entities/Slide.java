@@ -54,4 +54,22 @@ public class Slide {
 	public int getSlidetime() {
 		return slidetime;
 	}
+
+	/**
+	 * Set the course's id
+	 * @param courseid the course id
+	 */
+	public void setCourseid(int courseid) {
+		this.courseid = courseid;
+	}
+
+	/**
+	 * Set the slide's time
+	 * @param slidetime the slidetime
+	 */
+	public void setSlidetime(int slidetime) {
+		this.slidetime = slidetime;
+	}
+	
+	
 }

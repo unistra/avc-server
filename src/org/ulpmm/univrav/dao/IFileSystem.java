@@ -180,5 +180,21 @@ public interface IFileSystem {
 	 * @param c the course
 	 */
 	public void mediaRetag(Course c);
+	
+	/**
+	 * Move the add video file
+	 * @param c the course to create
+	 * @param mediaFile the media file of the course to create
+	 * @param fileName the filename
+	 * @param extension the extension
+	 */
+	public void moveAddVideo(Course c, FileItem mediaFile, String fileName, String extension);
+	
+	/**
+	 * Delete the additional video of a course
+	 * @param mediafolder the mediafolder
+	 * @param courseid courseid
+	 */
+	public void deleteReplaceMedia(String mediafolder, int courseid);
 }
 

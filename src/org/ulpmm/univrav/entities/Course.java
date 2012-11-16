@@ -81,6 +81,7 @@ public class Course {
 	public static final int typeHq = 128;
 	public static final int typeVideoslideIpod = 256;
 	public static final int typeSubtitles = 512;
+	public static final int typeAddVideo = 1024;
 	
 	/** volume (filesystem) */
 	private short volume;
@@ -90,6 +91,9 @@ public class Course {
 	
 	/** the course's record date */
 	private Timestamp recorddate; 
+	
+	/** the slide offset of addvideo **/
+	private Integer slidesoffset;
 	
 	/**
 	 * Default constructor
@@ -120,8 +124,9 @@ public class Course {
 	 * @param mediatype media type
 	 * @param volume the volume disk
 	 * @param recorddate the course's record date
+	 * @param slidesoffset the slides offest
 	 */
-	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, Integer userid, String adddocname, boolean download, boolean restrictionuds, int mediatype, short volume, Timestamp recorddate) {
+	public Course(int courseid, Timestamp date, String type, String title, String description, String formation, String name, String firstname, String ipaddress, int duration, String genre, boolean visible, int consultations, String timing, Integer userid, String adddocname, boolean download, boolean restrictionuds, int mediatype, short volume, Timestamp recorddate, Integer slidesoffset) {
 		this.courseid = courseid;
 		this.date = date;
 		this.type = type;
@@ -144,6 +149,7 @@ public class Course {
 		this.volume=volume;
 		this.mediafolder=FindMediaFolder();
 		this.recorddate=recorddate;
+		this.slidesoffset=slidesoffset;
 	}
 	
 	
@@ -530,6 +536,7 @@ public class Course {
 		else if(type.equals("video")) return ((typeHq & mediatype) > 0);
 		else if(type.equals("videoslideipod")) return ((typeVideoslideIpod & mediatype) > 0);
 		else if(type.equals("subtitles")) return ((typeSubtitles & mediatype) > 0);
+		else if(type.equals("addvideo")) return ((typeAddVideo & mediatype) > 0);
 		else return false;
 	}
 	
@@ -549,6 +556,7 @@ public class Course {
 		if ((typeHq & mediatype) > 0) lst.add("hq") ;		
 		if ((typeVideoslideIpod & mediatype) > 0) lst.add("videoslideipod") ;	
 		if ((typeSubtitles & mediatype) > 0) lst.add("subtitles") ;	
+		if ((typeAddVideo & mediatype) > 0) lst.add("addvideo") ;	
 		return lst;
 	}
 
@@ -616,6 +624,22 @@ public class Course {
 	public String getRecordDateString() {
     	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");	
 		return sdf.format(recorddate);
+	}
+
+	/** 
+	 * Get the slide offset
+	 * @return the silde offset
+	 */
+	public Integer getSlidesoffset() {
+		return slidesoffset;
+	}
+
+	/**
+	 * set the slideoffset
+	 * @param slidesoffset the slideoffset
+	 */
+	public void setSlidesoffset(Integer slidesoffset) {
+		this.slidesoffset = slidesoffset;
 	}
 	
 	

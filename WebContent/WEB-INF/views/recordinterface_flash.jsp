@@ -48,7 +48,8 @@
 		var slidesurl = "${slidesurl}";
 		var timing = ${timing};
 	</script>
-	<c:if test="${course.type!='video'}">
+	<c:choose>
+   	<c:when test="${course.type!='video' && !fn:contains(mediaLst, 'addvideo')}">
 		<script type="text/javascript">
      		var flashvars =
      	 	{
@@ -61,8 +62,8 @@
            		'captions.back':		'true'		  
      		};
      	</script>
-	</c:if>
-	<c:if test="${course.type=='video'}">
+	</c:when>
+   	<c:otherwise>
 		<script type="text/javascript">
     		var flashvars =
      	 	{
@@ -76,7 +77,9 @@
            		'captions.back':		'true'
      		};
      	</script>
-	</c:if>		          	    
+	</c:otherwise>
+   	</c:choose>
+   				 			          	    
 	<script type="text/javascript">
     	var params =
     	{

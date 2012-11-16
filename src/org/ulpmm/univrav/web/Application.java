@@ -602,6 +602,10 @@ public class Application extends HttpServlet {
 			myspaceChangePass(request, response);
 		else if(page.equals("/myspace_changepassvalid")) 
 			myspaceChangePassValid(request, response);
+		else if(page.equals("/myspace_replacemedia"))
+			myspaceReplaceMedia(request, response);	
+		else if(page.equals("/myspace_deletereplacemedia"))
+			myspaceDeleteReplaceMedia(request, response);	
 		else if( page.equals("/add") || page.equals("/UploadClient"))
 			addCourse(request, response);
 		else if(page.equals("/livestate") || page.equals("/LiveState"))
@@ -649,6 +653,8 @@ public class Application extends HttpServlet {
 		}
 		else if( page.equals("/thick_legal")) 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_legal.jsp").forward(request, response);
+		else if( page.equals("/thick_replacemedia")) 
+			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_replacemedia.jsp").forward(request, response);
 		else if( page.equals("/thick_download")) {
 			request.setAttribute("clientLink", clientLink);
 			request.setAttribute("tracLink", tracLink);
@@ -704,6 +710,36 @@ public class Application extends HttpServlet {
 			addSubtitles(request, response);
 		else if( page.equals("/admin_deletesubtitles"))
 			deleteSubtitles(request, response);
+		else if(page.equals("/admin_replacemedia")) {			
+			String courseid = request.getParameter("courseid");
+			Course c = service.getCourse(Integer.parseInt(courseid));
+			// If the course already have an additional video or if a job already running, don't lauch replace media
+			Job j = service.getJob(c.getCourseid(), "ADDV");
+			boolean notReplaceMedia =  c.isAvailable("addvideo") || (j!=null && !j.getStatus().equals("done"));
+			if (!notReplaceMedia) {
+				replaceMedia(request,response);
+			}
+			else {
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "Error: Add video job already in process");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+			}
+		}
+		else if(page.equals("/admin_deletereplacemedia")) {
+			String courseid = request.getParameter("courseid");
+			Course c = service.getCourse(Integer.parseInt(courseid));
+			// If the course don't have an additional video or if a job already running, don't lauch delete replace media
+			Job j = service.getJob(c.getCourseid(), "ADDV");
+			boolean notdeleteReplaceMedia =  !c.isAvailable("addvideo") || (j!=null && !j.getStatus().equals("done"));
+			if (!notdeleteReplaceMedia) {
+				deleteReplaceMedia(request, response);
+			}
+			else {
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "Error: Add video job already in process");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+			}
+		}
 		else if( page.equals("/admin_buildings")) {
 			request.setAttribute("buildings", service.getBuildings());
 			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_buildings.jsp").forward(request, response);
@@ -1719,8 +1755,34 @@ public class Application extends HttpServlet {
 
 				// Button disconnect
 				session.setAttribute("btnDeco", true);
-
-				validateCourse(request,response,redirectUrl);
+				
+				boolean formValid = true;
+				String message = "";
+				String returnUrl = request.getParameter("returnUrl");
+				ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+				
+				// Check the form
+				if(request.getParameter("slidesoffset")!=null && !request.getParameter("slidesoffset").equals("")) {
+									
+					try {
+						Integer.valueOf(request.getParameter("slidesoffset"));				
+					}
+					catch(NumberFormatException e) {
+						message = bundle.getString("error_offset");
+						formValid = false;
+					}	
+					
+				}	
+					
+				// validate course
+				if (formValid) {
+					validateCourse(request,response,redirectUrl);
+				}
+				else {
+					request.setAttribute("messagetype", "error");
+					request.setAttribute("message", message);
+					getServletContext().getRequestDispatcher(returnUrl).forward(request, response);			
+				}
 			}
 			else {
 				request.setAttribute("messagetype", "error");
@@ -1804,6 +1866,11 @@ public class Application extends HttpServlet {
 				
 				request.setAttribute("mediaLst", c.getMedias());
 				
+				// check if we have an additional video job in process
+				Job j = service.getJob(c.getCourseid(), "ADDV");
+				boolean addvinprocess = (j!=null && !j.getStatus().equals("done"));
+				request.setAttribute("addvinprocess", addvinprocess);
+								
 				/* Displays the view */
 				getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace_editmycourse.jsp").forward(request, response);
 
@@ -1964,7 +2031,8 @@ public class Application extends HttpServlet {
 						restrictionuds,
 						Course.typeFlash, // Other medias can't be set yet
 						volume,
-						null // The date recorded can't be set yet
+						null, // The date recorded can't be set yet
+						null
 				);
 					
 				service.addCourse(c, media, tags, serverUrl, sepEnc, coursesFolder);
@@ -2301,7 +2369,8 @@ public class Application extends HttpServlet {
 										restrictionuds,
 										0,
 										volume,
-										new Timestamp(new Date().getTime())
+										new Timestamp(new Date().getTime()),
+										null
 								);
 
 								/* Sends the creation of the course to the service layer */
@@ -2459,19 +2528,20 @@ public class Application extends HttpServlet {
 		String messageType = "information";
 				
 			/* Verifies that all parameters are sent and are not empty */
-			if( request.getParameter("courseid") != null && request.getParameter("mediatype") != null && ! request.getParameter("courseid").equals("") && ! request.getParameter("mediatype").equals("")) {
+			if( request.getParameter("courseid") != null && request.getParameter("mediatype") != null && request.getParameter("jobtype") != null && ! request.getParameter("courseid").equals("") && ! request.getParameter("mediatype").equals("") && ! request.getParameter("jobtype").equals("")) {
 
 				int courseid = Integer.parseInt(request.getParameter("courseid"));
 				int mediatype = Integer.parseInt(request.getParameter("mediatype"));		
 				int currentmt = service.getMediaType(courseid);
+				String jobtype = request.getParameter("jobtype");
 				
-				Job j = service.getJob(courseid);
+				Job j = service.getJob(courseid, jobtype);
 				
 			    // If job not already done				
 				if (j!=null && !j.getStatus().equals("done")) {
 					
 					//update the job status
-					service.modifyJobStatus(courseid, "done");
+					service.modifyJobStatus(courseid, "done", jobtype);
 
 					// Update the mediatype
 					service.modifyCourseMediatype(courseid, currentmt+mediatype);		
@@ -2579,14 +2649,31 @@ public class Application extends HttpServlet {
 							else if( c.getType().equals("video"))
 								courseExtension = ".flv";
 
-							request.setAttribute("courseurl", courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + courseExtension);
+							String courseurl = "";
+							List<Slide> slides = service.getSlides(c.getCourseid());
+							//if the course have an additional video, change the url of the main media, change timecodes
+							if(c.isAvailable("addvideo")) {
+								courseurl = courseAccessUrl + c.getMediaFolder() + "/additional_video/addvideo_" + c.getMediasFileName() + ".mp4";
+																
+								// change time slide "à la volée"
+								if(c.getSlidesoffset() != null) {
+									for(Slide s : slides) {
+										int t = s.getSlidetime() + c.getSlidesoffset();
+										s.setSlidetime(t);
+									}					
+								}
+							}
+							else {
+								courseurl = courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + courseExtension;
+							}
+							
+							request.setAttribute("courseurl", courseurl);
 							request.setAttribute("courseurlfolder", courseAccessUrl + c.getMediaFolder());
 							request.setAttribute("slidesurl", slidesurl);
 							request.setAttribute("course", c);
-							String showForm = service.getFormationFullName(c.getFormation());
-							request.setAttribute("formationfullname", showForm!=null ? showForm : c.getFormation());							
-							List<Slide> slides = service.getSlides(c.getCourseid());
 							request.setAttribute("slides", slides);
+							String showForm = service.getFormationFullName(c.getFormation());
+							request.setAttribute("formationfullname", showForm!=null ? showForm : c.getFormation());														
 							Amphi a = service.getAmphi(c.getIpaddress());
 							String amphi = a != null ? a.getName() : "";
 							String building = service.getBuildingName(c.getIpaddress());
@@ -2619,7 +2706,15 @@ public class Application extends HttpServlet {
 						}
 						// High Quality
 						else if( type.equals("hq")) {
-							request.setAttribute("courseurl", courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".mp4");
+							
+							String courseurl = "";
+							//if the course have an additional video, change the url of the main media
+							if(c.isAvailable("addvideo"))
+								courseurl = courseAccessUrl + c.getMediaFolder() + "/additional_video/addvideo_" + c.getMediasFileName() + ".mp4";
+							else
+								courseurl = courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName() + ".mp4";
+								
+							request.setAttribute("courseurl", courseurl);
 							request.setAttribute("courseurlfolder", courseAccessUrl + c.getMediaFolder());
 							request.setAttribute("course", c);					
 							Amphi a = service.getAmphi(c.getIpaddress());
@@ -2696,14 +2791,30 @@ public class Application extends HttpServlet {
 					// Html 5 test page
 					else if( type.equals("html5")) {
 						
+						String courseurl = "";
+						List<Slide> slides = service.getSlides(c.getCourseid());
+						//if the course have an additional video, change the url of the main media
+						if(c.isAvailable("addvideo")) {
+							courseurl = courseAccessUrl + c.getMediaFolder() + "/additional_video/addvideo_" + c.getMediasFileName();
 						
-						request.setAttribute("courseurlnoext", courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName());
+							// change time slide "à la volée"
+							if(c.getSlidesoffset() != null) {
+								for(Slide s : slides) {
+									int t = s.getSlidetime() + c.getSlidesoffset();
+									s.setSlidetime(t);
+								}					
+							}
+						}
+						else {
+							courseurl = courseAccessUrl + c.getMediaFolder() + "/" + c.getMediasFileName();
+						}
+						
+						request.setAttribute("courseurlnoext", courseurl);
 						request.setAttribute("slidesurl", slidesurl);
 						request.setAttribute("course", c);
-						String showForm = service.getFormationFullName(c.getFormation());
-						request.setAttribute("formationfullname", showForm!=null ? showForm : c.getFormation());							
-						List<Slide> slides = service.getSlides(c.getCourseid());
 						request.setAttribute("slides", slides);
+						String showForm = service.getFormationFullName(c.getFormation());
+						request.setAttribute("formationfullname", showForm!=null ? showForm : c.getFormation());													
 						Amphi a = service.getAmphi(c.getIpaddress());
 						String amphi = a != null ? a.getName() : "";
 						String building = service.getBuildingName(c.getIpaddress());
@@ -2888,7 +2999,8 @@ public class Application extends HttpServlet {
 			request.getParameter("restrictionuds") != null ? true : false,
 			Integer.parseInt(request.getParameter("mediatype")),
 			Short.parseShort(request.getParameter("volume")),
-			! request.getParameter("recorddate").equals("") ? new Timestamp(Long.parseLong(request.getParameter("recorddate"))) : null
+			! request.getParameter("recorddate").equals("") ? new Timestamp(Long.parseLong(request.getParameter("recorddate"))) : null,
+			! request.getParameter("slidesoffset").equals("") ? Integer.parseInt(request.getParameter("slidesoffset")) : null
 		);
 		service.modifyCourse(c);
 		
@@ -3140,6 +3252,11 @@ public class Application extends HttpServlet {
 		request.setAttribute("univAcronym", univAcronym);
 		
 		request.setAttribute("mediaLst", c.getMedias());
+		
+		// check if we have an additional video job in process
+		Job j = service.getJob(c.getCourseid(), "ADDV");
+		boolean addvinprocess = (j!=null && !j.getStatus().equals("done"));
+		request.setAttribute("addvinprocess", addvinprocess);
 		
 		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editcourse.jsp").forward(request, response);
 		
@@ -4634,5 +4751,259 @@ public class Application extends HttpServlet {
 		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_users.jsp").forward(request, response);
 
 	}
+	
+	
+	/**
+	 * Method to replace the main media of a course by a video
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void myspaceReplaceMedia(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+
+		User user = null;
+		// Authentification CAS	
+		if(casUser!=null) {
+			// Gets the user from the session
+			user=service.getUser(casUser);
+		}
+		// Authentification local
+		else if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
+
+		if(user!=null && user.isActivate()) {
+
+			String courseid = request.getParameter("courseid");
+
+			if(courseid!=null) {
+				// Get the course
+				Course c = service.getCourse(Integer.parseInt(courseid));
+
+				// Check user id
+				if(c.getUserid()==user.getUserid()) {
+					
+					// If the course already have an additional video or if a job already running, don't lauch replace media
+					Job j = service.getJob(c.getCourseid(), "ADDV");
+					boolean notReplaceMedia =  c.isAvailable("addvideo") || (j!=null && !j.getStatus().equals("done"));
+					if (!notReplaceMedia) {
+						replaceMedia(request,response);
+					}
+					else {
+						request.setAttribute("messagetype", "error");
+						request.setAttribute("message", "Error: Add video job already in process");
+						getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+					}
+				}
+				else { 
+					request.setAttribute("messagetype", "error");
+					request.setAttribute("message", "Error: You don't have access to this page");
+					getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+				}		
+
+			}
+			else { 
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "Error: You don't have access to this page");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+			}	
+
+		}
+		else { 
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Error: Wrong parameters");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+		}	
+	}
+	
+	
+	
+	/**
+	 * Method to replace media by a video
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	@SuppressWarnings("unchecked")
+	private void replaceMedia(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+
+		// Attribute
+		String courseid, fileName, slidesoffset, returnUrl;
+		courseid = fileName = slidesoffset = returnUrl = "";
+		String message = "";
+		String messageType = "information";
+		ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+				
+		if( ServletFileUpload.isMultipartContent(new ServletRequestContext(request)) ) {
+
+			try {
+				/* Prepares to parse the request to get the different elements of the POST */
+				FileItemFactory factory = new DiskFileItemFactory();
+				ServletFileUpload upload = new ServletFileUpload(factory);
+				List<FileItem> items = upload.parseRequest(request);
+
+				/* Processes the different elements */
+				Iterator<FileItem> iter = items.iterator();
+				while (iter.hasNext()) {
+					FileItem item = (FileItem) iter.next();
+
+					/* If the element is a form field, retrieves the info */
+					if (item.isFormField()) {
+
+						if(item.getFieldName().equals("courseid"))
+							courseid = item.getString("UTF8");
+						else if(item.getFieldName().equals("slidesoffset"))
+							slidesoffset = item.getString("UTF8");
+						else if(item.getFieldName().equals("returnUrl"))
+							returnUrl = item.getString("UTF8");
+						
+					} /* If the element is a file (the last element */
+					else {
+						fileName = item.getName();
+						String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()) : "";
+
+						/* Checks the extension of the item to have a supported file format */				
+						boolean isExtVal = extension.equals("avi") || extension.equals("divx") || extension.equals("mp4") || extension.equals("mpg") 
+						|| extension.equals("mpeg") || extension.equals("mov") || extension.equals("wmv") || extension.equals("mkv") || extension.equals("flv");
+																								
+						// Test the form
+						if(fileName==null || fileName.equals("")) {
+							messageType = "error";
+							message = bundle.getString("err_file");							
+						}
+						/* Checks the extension of the item to have a supported file format */
+						else if(!isExtVal) {
+							messageType = "error";
+							message = bundle.getString("err_fileformat")+ " : " + extension;
+						}
+						else {
+							// Get the course
+							Course c = service.getCourse(Integer.parseInt(courseid));
+							Integer offsetInt = 0;
+							
+							try {
+								offsetInt = (slidesoffset==null || slidesoffset.equals("")) ? 0 : Integer.valueOf(slidesoffset);
+														
+								// Replace media	
+								service.addVideo(c,offsetInt,item,serverUrl, sepEnc, coursesFolder);
+																		
+								messageType = "information";
+								message = bundle.getString("uploadaddvideo");
+															
+							}
+							catch(NumberFormatException e) {
+								messageType = "error";
+								message = bundle.getString("error_offset");
+							}						
+						}
+					}
+				}
+			}
+			catch( FileUploadException fue) {
+				messageType = "error";
+				message = "Error : File upload error";
+			}
+		}
+		else {
+			messageType = "error";
+			message = "Error: Incorrect file upload request";
+		}
+
+		/* Displays the result of the upload process */
+		request.setAttribute("messagetype", messageType);
+		request.setAttribute("message", message);
+		getServletContext().getRequestDispatcher(returnUrl).forward(request, response);
+	}
+	
+	
+	
+	/**
+	 * Methode to delete the additional video
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void myspaceDeleteReplaceMedia(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+	
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+
+		User user = null;
+		// Authentification CAS	
+		if(casUser!=null) {
+			// Gets the user from the session
+			user=service.getUser(casUser);
+		}
+		// Authentification local
+		else if(session.getAttribute("$userLocalLogin")!=null) {
+			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
+
+		if(user!=null && user.isActivate()) {
+			
+			// Get the course
+			Course c = service.getCourse(Integer.parseInt(request.getParameter("courseid")));
+			
+			// Check user id
+			if(c.getUserid()==user.getUserid()) {
+				// If the course don't have an additional video or if a job already running, don't lauch delete replace media
+				Job j = service.getJob(c.getCourseid(), "ADDV");
+				boolean notdeleteReplaceMedia =  !c.isAvailable("addvideo") || (j!=null && !j.getStatus().equals("done"));
+				if (!notdeleteReplaceMedia) {
+					deleteReplaceMedia(request, response);
+				}
+				else {
+					request.setAttribute("messagetype", "error");
+					request.setAttribute("message", "Error: Add video job already in process");
+					getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+				}
+			}
+			else { 
+				request.setAttribute("messagetype", "error");
+				request.setAttribute("message", "Error: You don't have access to this page");
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+			}		
+		}
+		else { 
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Error: You don't have access to this page");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+		}	
+		
+	}
+	
+	
+	/**
+	 * Methode to delete the additional video
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void deleteReplaceMedia(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+				
+		// Get the course
+		Course c = service.getCourse(Integer.parseInt(request.getParameter("courseid")));
+
+		// Delete the document to the course									
+		service.deleteReplaceMedia(c);
+		
+		/* Displays the result of the upload process */
+		getServletContext().getRequestDispatcher(request.getParameter("returnUrl")).forward(request, response);
+	}
+	
+	
         	
 }

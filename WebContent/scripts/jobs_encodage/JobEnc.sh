@@ -94,6 +94,10 @@ bash $PTHSCR/videoslide.sh $MediaFolder $CourseID
 #mp4Tag
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
+# flv to mp4 for html5
+bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $CourseID.$Extension $CourseID $PTHSCR/calculate_padding.sh true &> /dev/null
+# flv to ogv for html5
+ffmpeg2theora $MediaFolder/"$CourseID"_ipod.mp4 -o $MediaFolder/"$CourseID".ogv &> /dev/null
 ;;
 
 MUA)
@@ -174,31 +178,29 @@ bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $ORI$CourseID.$Extension $CourseID $
 bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $ORI$CourseID.$Extension $CourseID $PTHSCR/calculate_padding.sh true
 #mp4Tag for ipod
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
-
-;;
-
-esac
-
-# Maj du mediatype sur le serveur avc
-wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType"
-
-
-########################## HTML5 TESTS
-case $JobType in
-
-CV)
-# flv to mp4
-bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $ORI$CourseID.$Extension $CourseID $PTHSCR/calculate_padding.sh true &> /dev/null
-# flv to ogv
-ffmpeg2theora $MediaFolder/"$CourseID"_ipod.mp4 -o $MediaFolder/"$CourseID".ogv &> /dev/null
-;;
-
-MUV)
-# ogv
+# ogv for html5
 ffmpeg2theora $MediaFolder/"$CourseID".mp4 -o $MediaFolder/"$CourseID".ogv &> /dev/null
 ;;
 
+ADDV)
+FOLDER="additional_video"
+ORI="ori_"
+AV="addvideo_"
+#convertAllToMp3
+bash $PTHSCR/convertAll2Mp3.sh $MediaFolder/$FOLDER $ORI$AV$CourseID $Extension
+mv $MediaFolder/$FOLDER/$ORI$AV$CourseID.mp3 $MediaFolder/$FOLDER/$AV$CourseID.mp3 
+#videoHighQualityConvert
+bash $PTHSCR/convertAll2Mp4.sh $MediaFolder/$FOLDER $ORI$AV$CourseID.$Extension $AV$CourseID $PTHSCR/calculate_padding.sh false
+#mp4Tag
+/usr/bin/AtomicParsley $MediaFolder/$FOLDER/$AV$CourseID.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
+# ogv for html5
+ffmpeg2theora $MediaFolder/$FOLDER/"$AV$CourseID".mp4 -o $MediaFolder/$FOLDER/"$AV$CourseID".ogv &> /dev/null
+# remove original file
+rm $MediaFolder/$FOLDER/$ORI$AV$CourseID.$Extension
+rm $MediaFolder/$FOLDER/$AV$CourseID.mp3
 esac
-##########################
+
+# Maj du mediatype sur le serveur avc
+wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType&jobtype=$JobType"
 
 fi

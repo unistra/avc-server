@@ -149,7 +149,7 @@ public class DatabaseImpl implements IDatabase {
 	public void addCourse(Course c) {
 		
 		Connection cnt = null;
-		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";	
+		String sql = "INSERT INTO course values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";	
 		PreparedStatement pstmt = null;
 		
 		try {
@@ -224,6 +224,11 @@ public class DatabaseImpl implements IDatabase {
 			else
 				pstmt.setNull(21, Types.TIMESTAMP);
 			
+			if(c.getSlidesoffset() !=null)
+				pstmt.setInt(22, c.getSlidesoffset());
+			else
+				pstmt.setNull(22, Types.INTEGER);
+			
 			if( pstmt.executeUpdate() == 0) {
 				logger.error("The course " + c + " has not been added to the database");
 				throw new DaoException("The course " + c + " has not been added to the database");
@@ -293,7 +298,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
 					rs.getShort("volume"),
-					rs.getTimestamp("recorddate")
+					rs.getTimestamp("recorddate"),
+					rs.getInt("slidesoffset")
 				));
 			}
 		}
@@ -359,7 +365,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
 					rs.getShort("volume"),
-					rs.getTimestamp("recorddate")
+					rs.getTimestamp("recorddate"),
+					rs.getInt("slidesoffset")
 				));
 			}
 		}
@@ -429,7 +436,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
 					rs.getShort("volume"),
-					rs.getTimestamp("recorddate")
+					rs.getTimestamp("recorddate"),
+					rs.getInt("slidesoffset")
 				));
 			}
 		}
@@ -557,7 +565,8 @@ public class DatabaseImpl implements IDatabase {
 							rs.getBoolean("restrictionuds"),
 							rs.getInt("mediatype"),
 							rs.getShort("volume"),
-							rs.getTimestamp("recorddate")
+							rs.getTimestamp("recorddate"),
+							rs.getInt("slidesoffset")
 					));
 				}
 			}
@@ -630,7 +639,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getBoolean("restrictionuds"),
 						rs.getInt("mediatype"),
 						rs.getShort("volume"),
-						rs.getTimestamp("recorddate")
+						rs.getTimestamp("recorddate"),
+						rs.getInt("slidesoffset")
 				));
 			}
 		}
@@ -696,7 +706,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getBoolean("restrictionuds"),
 						rs.getInt("mediatype"),
 						rs.getShort("volume"),
-						rs.getTimestamp("recorddate")
+						rs.getTimestamp("recorddate"),
+						rs.getInt("slidesoffset")
 				));
 			}
 		}
@@ -752,7 +763,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
 					rs.getShort("volume"),
-					rs.getTimestamp("recorddate")
+					rs.getTimestamp("recorddate"),
+					rs.getInt("slidesoffset")
 				);
 			}
 			else
@@ -811,7 +823,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
 					rs.getShort("volume"),
-					rs.getTimestamp("recorddate")
+					rs.getTimestamp("recorddate"),
+					rs.getInt("slidesoffset")
 				);
 			}
 			else
@@ -1012,7 +1025,7 @@ public class DatabaseImpl implements IDatabase {
 		/* Creation of the SQL query string */
 		String sql = "UPDATE course SET date = ? , type = ? , title = ? , description = ? , ";
 		sql += "formation = ? , name = ? , firstname = ? , ipaddress = ? , duration = ? , ";
-		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, userid = ?, adddocname = ?, download = ?, restrictionuds = ?, mediatype = ?, volume = ?, recorddate = ? ";
+		sql += "genre = ? , visible = ? , consultations = ? , timing = ?, userid = ?, adddocname = ?, download = ?, restrictionuds = ?, mediatype = ?, volume = ?, recorddate = ?, slidesoffset = ? ";
 		sql += "WHERE courseid = ?";
 		
 		PreparedStatement pstmt = null;
@@ -1091,8 +1104,13 @@ public class DatabaseImpl implements IDatabase {
 			else
 				pstmt.setNull(20, Types.TIMESTAMP);
 			
+			if(c.getSlidesoffset() !=null && c.getSlidesoffset() !=0)
+				pstmt.setInt(21, c.getSlidesoffset());
+			else
+				pstmt.setNull(21, Types.INTEGER);
 			
-			pstmt.setInt(21, c.getCourseid());
+			
+			pstmt.setInt(22, c.getCourseid());
 			
 			
 			if( pstmt.executeUpdate() == 0 ) {
@@ -1249,7 +1267,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
 					rs.getShort("volume"),
-					rs.getTimestamp("recorddate")
+					rs.getTimestamp("recorddate"),
+					rs.getInt("slidesoffset")
 				));
 			}			
 		}
@@ -1319,7 +1338,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
 					rs.getShort("volume"),
-					rs.getTimestamp("recorddate")
+					rs.getTimestamp("recorddate"),
+					rs.getInt("slidesoffset")
 				));
 			}
 		}
@@ -2688,7 +2708,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
 					rs.getShort("volume"),
-					rs.getTimestamp("recorddate")
+					rs.getTimestamp("recorddate"),
+					rs.getInt("slidesoffset")
 				));
 			}
 		}	
@@ -3031,7 +3052,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
 					rs.getShort("volume"),
-					rs.getTimestamp("recorddate")
+					rs.getTimestamp("recorddate"),
+					rs.getInt("slidesoffset")
 				));
 			}
 		}
@@ -3146,7 +3168,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
 					rs.getShort("volume"),
-					rs.getTimestamp("recorddate")
+					rs.getTimestamp("recorddate"),
+					rs.getInt("slidesoffset")
 				));
 			}
 		}
@@ -3209,7 +3232,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getBoolean("restrictionuds"),
 					rs.getInt("mediatype"),
 					rs.getShort("volume"),
-					rs.getTimestamp("recorddate")
+					rs.getTimestamp("recorddate"),
+					rs.getInt("slidesoffset")
 				));
 			}
 		}
@@ -3548,13 +3572,14 @@ public class DatabaseImpl implements IDatabase {
 	 * Modify the job status
 	 * @param courseid course id
 	 * @param status job status
+	 * @param coursetype coursetype
 	 */
-	public void modifyJobStatus(int courseid,String status) {
+	public void modifyJobStatus(int courseid,String status,String coursetype) {
 		
 		Connection cnt = null;
 		/* Creation of the SQL query string */
 		String sql = "UPDATE job SET status = ? ";
-		sql += "WHERE courseid = ?";
+		sql += "WHERE courseid = ? AND coursetype = ?";
 		
 		PreparedStatement pstmt = null;
 		try {
@@ -3564,7 +3589,7 @@ public class DatabaseImpl implements IDatabase {
 			/* Applies the parameters to the query */
 			pstmt.setString(1, status);
 			pstmt.setInt(2, courseid);
-			
+			pstmt.setString(3, coursetype);
 						
 			if( pstmt.executeUpdate() == 0 ) {
 				logger.error("The job for course " + courseid + " has not been modified");
@@ -3585,18 +3610,21 @@ public class DatabaseImpl implements IDatabase {
 	/**
 	 * Get job by courseid 
 	 * @param courseid the courseid of the job
+	 * @param coursetype the job type
 	 * @return the job
 	 */
-	public Job getJob(int courseid) {
+	public Job getJob(int courseid, String coursetype) {
 		Job s = null;
 		Connection cnt = null;
-		String sql = "SELECT * FROM job WHERE courseid = ?";
+		String sql = "SELECT * FROM job WHERE courseid = ? AND coursetype = ?";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
 			cnt = datasrc.getConnection();
 			pstmt = cnt.prepareStatement(sql);
 			pstmt.setInt(1, courseid);
+			pstmt.setString(2, coursetype);
+			
 			rs = pstmt.executeQuery();
 			if( rs.next() ) {
 				s = new Job(
@@ -3969,7 +3997,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getBoolean("restrictionuds"),
 						rs.getInt("mediatype"),
 						rs.getShort("volume"),
-						rs.getTimestamp("recorddate")
+						rs.getTimestamp("recorddate"),
+						rs.getInt("slidesoffset")
 				));
 			}
 		}

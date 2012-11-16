@@ -39,10 +39,15 @@
 	    	<div class="banner">
 	    		<c:import url="../include/banner.jsp" />
 	    	</div>
+	    	
+	    	<div class="message">
+	    		<p class="${messagetype}"><c:out value="${message}" /></p>
+	    	</div>
 	    		    	
 	    	<div class="editform">
 		    	<form method="POST" action="<c:url value="${posturl}" />" class="subeditform" name="subeditform">
 		    	
+		    		<input type="hidden" name="returnUrl" value="/avc/myspace_editmycourse?id=${course.courseid}">
 		    		<input type="hidden" name="ipaddress" value="${course.ipaddress}">
 			    	<input type="hidden" name="duration" value="${course.duration}">
 			    	<input type="hidden" name="type" value="${course.type}">
@@ -137,7 +142,18 @@
 			    		<tr class="even">
 				    		<td title="<fmt:message key="ib_restrictionuds"/> ${univName}"><fmt:message key="restrictionuds"/> ${univAcronym}</td>
 				    		<td><input type="checkbox" name="restrictionuds" ${course.restrictionuds == true ? 'checked' : ''} ><font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
-			    		</tr>	    	
+			    		</tr>	 
+			    		<c:choose>   
+			    		<c:when test="${fn:contains(mediaLst, 'addvideo')}">
+			    			<tr class="odd">
+								<td title="<fmt:message key="slidesoffset"/>"><fmt:message key="slidesoffset"/> : </td>
+								<td><input type="text" name="slidesoffset" value="${course.slidesoffset }" class="field"></td>
+							</tr>	
+						</c:when>
+		    			<c:otherwise>
+		    				<input type="hidden" name="slidesoffset" value="${course.slidesoffset}">
+		    			</c:otherwise>
+		   		 		</c:choose>
 			    	</table>
 			    	<br>
 			    	<input type="submit" class="valider" name="valider" value="<fmt:message key="Valider"/> ">
@@ -184,8 +200,68 @@
 				</form>
 		    	</c:otherwise>
 		    </c:choose>
-		   
-		   <br>
+		    
+		    <br />
+			
+			<c:url var="thick_replacemedia" scope="page" value="./thick_replacemedia">
+				<c:param name="width" value="370"/>
+				<c:param name="height" value="150"/>
+			</c:url>
+			<c:choose>
+			    <c:when test="${addvinprocess}">
+		    		<table>
+						<tr class="tableheader">
+								<th colspan="1" class="replacemedia" id="replacemedia"><fmt:message key="replacemedia"/>&nbsp;<a href="${thick_replacemedia}" title="<fmt:message key="replacemedia"/>" id="replacemediahelp" class="thickbox"><fmt:message key="replacemediahelp"/></a></th>
+							</tr>
+						<tr class="odd">
+							<td><fmt:message key="processing"/></td>
+						</tr>
+					</table>
+			    </c:when>
+		    	<c:when test="${!fn:contains(mediaLst, 'addvideo')}">
+					<form action="<c:url value="./myspace_replacemedia?courseid=${course.courseid}"/>" method="post" enctype="multipart/form-data">
+						<input type="hidden" name="courseid" value="${course.courseid}">
+						<input type="hidden" name="returnUrl" value="/avc/myspace_editmycourse?id=${course.courseid}">
+						<table>
+							<tr class="tableheader">
+								<th colspan="2" class="replacemedia" id="replacemedia"><fmt:message key="replacemedia"/>&nbsp;<a href="${thick_replacemedia}" title="<fmt:message key="replacemedia"/>" id="replacemediahelp" class="thickbox"><fmt:message key="replacemediahelp"/></a></th>
+							</tr>
+							<tr class="odd">
+								<td title="<fmt:message key="slidesoffset"/>"><fmt:message key="slidesoffset"/> : </td>
+								<td><input type="text" name="slidesoffset" value="${course.slidesoffset }" class="field"></td>
+							</tr>
+							<tr class="even">
+								<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/> : </td>
+								<td><input type="file" name="media" class="field"> </td>
+							</tr>
+							<tr>
+								<td><input type="submit" name="valider" onclick="javascript:document.getElementById('process2').style.visibility='visible';document.subeditform.valider.disabled=true;" value="<fmt:message key="sendFile"/>"> </td>
+								<td><img id="process2" src="../files/img/squaresCircle.gif" /></td>
+							</tr>
+						</table>
+					</form>
+				</c:when>
+			<c:otherwise>
+		   		<form method="POST" action="<c:url value="./myspace_deletereplacemedia" />">	    	
+		    		<input type="hidden" name="courseid" value="${course.courseid}">
+		    		<input type="hidden" name="returnUrl" value="/avc/myspace_editmycourse?id=${course.courseid}">
+		    		<table>
+						<tr class="tableheader">
+							<th colspan="2" class="replacemedia" id="replacemedia"><fmt:message key="deletereplacemedia"/></th>
+						</tr>
+						<tr class="odd">
+							<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/> : </td>
+							<td><input type="text" name="media" class="fieldReplaceMedia" readonly="readonly" value="<fmt:message key="mediapresent"/>"></td>
+						</tr>
+						<tr>
+							<td><input type="submit" name="valider" value="<fmt:message key="deletefile"/>"> </td>
+						</tr>
+					</table>
+				</form>
+		    	</c:otherwise>
+		    </c:choose>
+		    
+		   <br />
 		   
 		      <c:choose>
 		    	<c:when test="${!fn:contains(mediaLst, 'subtitles')}">
@@ -194,7 +270,7 @@
 						<input type="hidden" name="returnUrl" value="/avc/myspace_editmycourse?id=${course.courseid}">
 						<table>
 						<tr class="tableheader">
-							<th colspan="2" class="thsubtitles" id="thsubtitles"><fmt:message key="uploadsubtitles"/>&nbsp<a class="captex" href="../files/jwflvplayer/caption_example.txt"><fmt:message key="examplesubtitles"/></a> </th>
+							<th colspan="2" class="thsubtitles" id="thsubtitles"><fmt:message key="uploadsubtitles"/>&nbsp;<a class="captex" href="../files/jwflvplayer/caption_example.txt"><fmt:message key="examplesubtitles"/></a> </th>
 						</tr>
 						<tr class="odd">
 							<td title="<fmt:message key="ib_file"/>"><fmt:message key="filexml"/> : </td>
