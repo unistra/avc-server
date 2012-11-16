@@ -1494,7 +1494,7 @@ public class DatabaseImpl implements IDatabase {
 		try {
 			cnt = datasrc.getConnection();
 			stmt = cnt.createStatement();
-			rs = stmt.executeQuery( "SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE visible = true AND title IS NOT NULL AND NOT (name IS NULL AND firstname IS NULL)");
+			rs = stmt.executeQuery( "SELECT DISTINCT (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) AS fullname FROM course WHERE visible = true AND title IS NOT NULL AND NOT (name IS NULL AND firstname IS NULL) ORDER BY fullname");
 			
 			while( rs.next() ) {
 				l.add(rs.getString("fullname"));
@@ -1605,7 +1605,7 @@ public class DatabaseImpl implements IDatabase {
 		try {
 			cnt = datasrc.getConnection();
 			stmt = cnt.createStatement();
-			rs = stmt.executeQuery( "SELECT DISTINCT formation from course WHERE visible = true AND formation IS NOT NULL");
+			rs = stmt.executeQuery( "SELECT DISTINCT formation from course WHERE visible = true AND formation IS NOT NULL ORDER BY formation");
 						
 			while( rs.next() ) {
 				l.add(rs.getString("formation"));
