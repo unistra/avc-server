@@ -2580,18 +2580,27 @@ public class Application extends HttpServlet {
 		throws ServletException, IOException {
 		
 		// Parameters
-		int courseid = Integer.parseInt( (String) request.getParameter("id"));
-		String genre = (String) request.getParameter("code");
+		int courseid = Integer.parseInt( (String) request.getParameter("id"));			
 		String type = (String) request.getParameter("type");
 		String courseAccessUrl = service.getCleanCoursesUrl(coursesUrl);
-		
 		Course c = null;
+		String genre = null;
+		
+		if(request.getParameter("code")!=null) // if code in url or form
+			genre = request.getParameter("code");
+		else if(session.getAttribute("code_"+courseid)!=null) // if code already in session
+			genre = (String) session.getAttribute("code_"+courseid);
 		
 		try {
-			if( genre == null)
+			if( genre == null) {
 				c = service.getCourse(courseid);
-			else
+			}
+			else {
 				c = service.getCourse(courseid, genre);
+				// if the code is correct, set the code in the session
+				if (c!=null && session.getAttribute("code_"+courseid)==null)
+					session.setAttribute("code_"+courseid, genre);
+			}
 			
 
 			//To lock access of course with UDS account
@@ -3023,6 +3032,11 @@ public class Application extends HttpServlet {
 		
 		/* Generation of the RSS files */
 		service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+		
+		// Remove access code in session (because user maybe change the code access 
+		if(session.getAttribute("code_"+c.getCourseid())!=null)
+			session.removeAttribute("code_"+c.getCourseid());
+		
 		response.sendRedirect(response.encodeRedirectURL(redirectUrl));
 	}
 	
