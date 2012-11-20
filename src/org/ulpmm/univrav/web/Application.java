@@ -2880,6 +2880,9 @@ public class Application extends HttpServlet {
 			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 			request.setAttribute("messagetype", "error");
 			request.setAttribute("message", bundle.getString("wrongAccessCode"));
+			if(session.getAttribute("code_"+courseid)!=null)
+				session.removeAttribute("code_"+courseid);
+			
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 		}
 	}
