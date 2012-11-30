@@ -24,7 +24,7 @@ HAUTEUR=$vidh
 LARGEUR=$vidw
 
 #Anamorphic pixels correction
-PAR=`ffmpeg -i "$2" 2>&1 | grep "Video:" | cut -d',' -f3 | cut -d' ' -f4`
+PAR=`ffmpeg -i "$2" 2>&1 | grep "Video:" | sed "s/.*PAR/PAR/g" | cut -d' ' -f2`
 if [[ $PAR == "" ]]
 then
 PAR="1:1"
