@@ -40,7 +40,7 @@
 			</div>
 			
 			<div class="divCenter">
-	    		<p><fmt:message key="accountrequestmessage1"/> ${univName}.</p>
+	    		<p><fmt:message key="accountrequestmessage1"/> ${univName} <fmt:message key="accountrequestmessage1b"/></p>
 	    		<p><fmt:message key="accountrequestmessage2"/></p>
 	    		<p><fmt:message key="accountrequestmessage3"/></p>
 	    	</div>
