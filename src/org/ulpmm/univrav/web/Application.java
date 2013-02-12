@@ -188,6 +188,9 @@ public class Application extends HttpServlet {
 	/** Additional document formats **/
 	private static String addDocFormats;
 	
+	/** Upload media formats **/
+	private static String uploadFormats;
+	
 	/** Link for support (help page) */
 	private static String supportLink;
 		
@@ -333,6 +336,9 @@ public class Application extends HttpServlet {
 			
 			//add doc formats
 			addDocFormats = p.getProperty("addDocFormats");
+			
+			//upload media formats
+			uploadFormats = p.getProperty("uploadFormats");
 			
 			// Link for support (help page)
 			supportLink = p.getProperty("supportLink");
@@ -2163,6 +2169,8 @@ public class Application extends HttpServlet {
 			request.setAttribute("err_file", bundle.getString("err_file"));
 			request.setAttribute("err_fileformat", bundle.getString("err_fileformat"));
 			
+			request.setAttribute("uploadFormats", uploadFormats);
+			
 			getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
 		}
 		else {
@@ -2285,6 +2293,13 @@ public class Application extends HttpServlet {
 							fileName = item.getName();
 							String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()).toLowerCase() : "";
 							
+							/* Checks the extension of the item to have a supported file format */				
+							StringTokenizer tokenMediaFormats = new StringTokenizer(uploadFormats);
+							boolean isExtVal = false;
+							while(tokenMediaFormats.hasMoreTokens() && !isExtVal) {
+								isExtVal = extension.equals(tokenMediaFormats.nextToken());
+							}
+							
 							// Test the form
 							if(fileName==null || fileName.equals("")) {
 								messageType = "error";
@@ -2293,9 +2308,7 @@ public class Application extends HttpServlet {
 								requestDispatcher="/avc/myspace_upload";								
 							}
 							/* Checks the extension of the item to have a supported file format */
-							else if( !extension.equals("mp3") && !extension.equals("ogg") && !extension.equals("wav") && !extension.equals("wma") && !extension.equals("avi") && !extension.equals("divx") 
-									 && !extension.equals("mp4") && !extension.equals("mpg") && !extension.equals("mpeg") && !extension.equals("mov") && !extension.equals("wmv") && !extension.equals("mkv") 
-									 && !extension.equals("flv") ) {
+							else if( !isExtVal ) {
 
 								messageType = "error";
 								ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
@@ -4889,9 +4902,12 @@ public class Application extends HttpServlet {
 						fileName = item.getName();
 						String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()) : "";
 
-						/* Checks the extension of the item to have a supported file format */				
-						boolean isExtVal = extension.equals("avi") || extension.equals("divx") || extension.equals("mp4") || extension.equals("mpg") 
-						|| extension.equals("mpeg") || extension.equals("mov") || extension.equals("wmv") || extension.equals("mkv") || extension.equals("flv");
+						/* Checks the extension of the item to have a supported file format */							
+						StringTokenizer tokenMediaFormats = new StringTokenizer(uploadFormats);
+						boolean isExtVal = false;
+						while(tokenMediaFormats.hasMoreTokens() && !isExtVal) {
+							isExtVal = extension.equals(tokenMediaFormats.nextToken());
+						}
 																								
 						// Test the form
 						if(fileName==null || fileName.equals("")) {

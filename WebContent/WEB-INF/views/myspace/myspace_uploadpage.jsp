@@ -25,8 +25,65 @@
 
 	<script type="text/javascript" src="../files/thickbox/jquery.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
-	<script type="text/javascript" src="../files/js/upload.js"></script>
-			
+	
+	<!-- to validate upload form -->
+	<script type="text/javascript">
+	
+		$(document).ready(function(){
+			$("#uploadform").submit(function(){
+				var erreur = 0;
+
+				if(document.uploadform.title.value=="") {
+			    	document.getElementById('error').innerHTML = "${err_title}";
+					erreur = 1;
+			    }
+			    else if(document.uploadform.name.value=="") {
+			    	document.getElementById('error').innerHTML = "${err_name}";
+					erreur = 1;
+			    }
+			    else if(document.uploadform.level.value=="") {
+			    	document.getElementById('error').innerHTML = "${err_lvl}";
+					erreur = 1;
+			    }
+			    else if(document.uploadform.component.value=="") {
+			    	document.getElementById('error').innerHTML = "${err_component}";
+					erreur = 1;
+			    }
+			    else if(document.uploadform.media.value=="") {
+					document.getElementById('error').innerHTML = "${err_file}";
+					erreur = 1;
+				}
+			    else {
+					var file = document.uploadform.media.value;
+					var uploadFormats = "${uploadFormats}"
+					var tokenUploadFormats = uploadFormats.split(" ");
+					var fichier = document.uploadform.media.value;
+					var ext = fichier.substring(fichier.lastIndexOf(".")+1,fichier.length).toLowerCase();
+					var isExtVal = false;
+					
+					for ( var i = 0; i < tokenUploadFormats.length; i++ ) {
+						if(!isExtVal) {
+							isExtVal = ext == tokenUploadFormats[i].toLowerCase();
+						}
+					}
+					
+					if(!isExtVal) {
+						document.getElementById('error').innerHTML = "${err_fileformat}";
+						erreur = 1;
+					}
+			    }
+					
+				if(erreur==1) {
+					javascript:document.getElementById('process').style.visibility='hidden';
+					return (false);
+				}
+				else {
+					return (true);
+				}		    
+			});
+		});
+	</script>
+				
 	<!-- google analytics -->
 	<c:import url="../include/google_analytics.jsp" />
 	
@@ -86,7 +143,7 @@
 			</c:choose>-->
 			
 	    	
-	    	<form action="<c:url value="./myspace_mediaupload"/>" method="post" enctype="multipart/form-data" name="uploadform" onsubmit="return verif_before_valid_form('${err_title}','${err_name}','${err_lvl}','${err_component}','${err_file}','${err_fileformat}')">
+	    	<form action="<c:url value="./myspace_mediaupload"/>" method="post" enctype="multipart/form-data" name="uploadform" id="uploadform">
 				<table>
 				<tr class="odd"> 
 					<td title="<fmt:message key="ib_login"/>"><fmt:message key="login"/> : </td>
@@ -198,7 +255,7 @@
 			   	</tr>-->
 				<tr class="even">
 					<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/><b class="boldStar">*</b> : </td>
-					<td><input type="file" name="media" class="field"> </td>
+					<td><input type="file" name="media" id="media" class="field"> </td>
 				</tr>
 				<tr>
 			    	<td class="chpsObl"><b class="boldStar">*</b>: <fmt:message key="requiredField"/></td>
