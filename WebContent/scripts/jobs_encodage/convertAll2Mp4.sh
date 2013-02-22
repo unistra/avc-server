@@ -8,9 +8,9 @@
 
 WIDTH=1280
 HEIGHT=720
-VPRE="-vpre normal"
+VPRE="-vpre medium"
 ASPECT="-aspect 16:9"
-AUDIO="-i $3.m4a -acodec copy"
+AUDIO="-acodec libvo_aacenc"
 SUFFNAME=""
 
 #for ipod
@@ -18,7 +18,7 @@ if [ $5 == 'true' ]
 then 
 	WIDTH=640
 	HEIGHT=480
-	VPRE="-vpre normal -vpre ipod640"
+	VPRE="-vpre medium -vpre ipod640"
 	ASPECT="-aspect 4:3"
 	SUFFNAME="_ipod"
 fi
@@ -38,18 +38,11 @@ then
 	AUDIO=""
 fi
 
-
-#extraction du son en wav puis fabrication de l'aac
-mplayer -really-quiet -vo null -vc null -ao pcm:fast:file=$3.wav $3.mp3 &> /dev/null
-faac -b 128k -w -o $3.m4a $3.wav &> /dev/null
-
 #Creation du fichier HD mp4
-#echo "/usr/bin/ffmpeg -v -1 $AUDIO -i "$2" -r 25 -vcodec libx264 -s "$L"x"$H" -padleft $PL -padright $PL -padtop $PHB -padbottom $PHB $ASPECT $VPRE -crf 27 -g 100 -threads 0 -y $3_tmp.mp4 &> /dev/null"
-/usr/bin/ffmpeg -v -1 $AUDIO -i "$2" -r 25 -vcodec libx264 -s "$L"x"$H" -padleft $PL -padright $PL -padtop $PHB -padbottom $PHB $ASPECT $VPRE -crf 27 -g 100 -threads 0 -y $3_tmp.mp4 &> /dev/null
+/usr/bin/ffmpeg -v -1 -i "$2" $AUDIO -r 25 -vcodec libx264 -s "$L"x"$H" -vf "pad=$WIDTH:$HEIGHT:$PL:$PHB:black" $ASPECT $VPRE -crf 27 -g 100 -threads 0 -y $3_tmp.mp4 &> /dev/null
 /usr/bin/qt-faststart $3_tmp.mp4 "$3""$SUFFNAME".mp4 &> /dev/null
 
 
 #suppression des fichiers temporaires
 rm $3_tmp.mp4 &> /dev/null
-rm $3.wav &> /dev/null
-rm $3.m4a &> /dev/null
+
