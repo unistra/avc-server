@@ -121,10 +121,10 @@
 	    		</div> 
 	    	</div>
 	    	
-	    	<table class="flashslide">
-	    	<tr>
-				<td id="cellule_flash">
-							   				 		
+	    	<div class="visumain"> 
+	    	
+	    		<div class="visuleft"> 
+	    								   				 		
    				 	<!-- player flash if slides not null -->
 					<c:if test="${fn:length(slides) != 0}">
 						<script type="text/javascript">
@@ -348,20 +348,19 @@
 					
 					</div>
 					
-	            </td>
+	            </div>
+	            
+	            <div class="visuright">
 	            
 	            <!-- current slide -->  
 	           	<c:if test="${fn:length(slides) != 0}">
-	           	 	<td id="cellule_dia">	
 	           			<div id="currentDia">          	           		
 	            			<img class="slide" id="slide" src="../files/img/DiaVide.png" width="620" height="472">
-						</div>		
-					</td>			
+						</div>			
 				</c:if>	
 				
 				<!-- player flash if no slides-->
 				<c:if test="${fn:length(slides) == 0}">     
-					<td>
 	            		<script type="text/javascript">
      			  			swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '640', '500', '9.0.124', false, flashvars, params, attributes);
    						</script>
@@ -377,12 +376,10 @@
 									<a href="<c:out value="${courseaccess}" />"><b><fmt:message key="Highquality"/></b></a>	
 								</div>
 							</c:if>
-					</td>
 				</c:if>	
 					
-				
-			</tr>
-			</table>
+				</div>
+			</div>
 			
 			<br>
 			

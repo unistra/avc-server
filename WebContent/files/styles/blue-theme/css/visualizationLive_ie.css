@@ -6,3 +6,8 @@
 	text-align: left; /* Enables to center "main" with IE */
 	width:expression(document.body.clientWidth <= 980? "980px": "100%"); /* min-widht with IE */
 }
+
+.contents {
+	position:relative;
+	overflow: hidden;
+}

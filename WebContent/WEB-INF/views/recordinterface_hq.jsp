@@ -50,7 +50,7 @@
 		    	<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
 	    	</div>
 	    			
-	        <div class="flashslide">
+	        <div class="visumain">
 	        	           				        	           			
 	        	<p id=textHqPlayer><a href="./courseaccess?id=${course.courseid}&amp;type=flash"><fmt:message key="Highqualityplayer"/></a></p>
 	        	

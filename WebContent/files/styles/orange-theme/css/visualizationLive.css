@@ -17,7 +17,6 @@
 	margin-right: 0;
 	padding-bottom: 100px;
 	overflow: hidden;
-	text-align:center;
 }
 
 /* First line containing the amphiteatre name and close button */
@@ -46,7 +45,7 @@
 	vertical-align: middle;
 }
 
-
+/*
 .tableliveslide {
 	float: left;	
 }
@@ -54,12 +53,23 @@
 .flashslide {
 	vertical-align: top;	
 }
+*/
+
+.visumain {
+	overflow: hidden;
+	width:100%;
+}
+
+.visuleft {
+	float:left;
+	text-align:left;
+}
+
+.visuright {
+	overflow:hidden;
+}
 
 div#liveslidediv {
 	margin-left:10px;
-}
-
-.linkplayersize {
-	float:left;
 }
 

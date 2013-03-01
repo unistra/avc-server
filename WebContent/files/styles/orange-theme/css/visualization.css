@@ -47,16 +47,32 @@
 }
 
 /* Div containing the flash video and the current slide */
-.flashslide {
+/*.flashslide {
 	position: relative;
 	width: 100%;
 	background-image: url("../../../img/bg_flash.png");
+}*/
+
+.visumain {
+	overflow: hidden;
+	width:100%;
+	background-image: url("../../../img/bg_flash.png");
 }
 
-td#cellule_flash {
+.visuleft {
+	float:left;
+	text-align:left;
+}
+
+.visuright {
+	overflow:hidden;
+}
+
+
+/*td#cellule_flash {
 	vertical-align: top;
 	width: 320px;
-}
+}*/
 
 .flash {
 	

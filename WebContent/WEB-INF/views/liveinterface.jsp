@@ -59,10 +59,9 @@
 	    	</div>	
 	    	
 	    	
-	    	<table class="tableliveslide">   	
-	    	<tr>
+	    	<div class="visumain"> 
 	    	
-	    	<td class="flashslide">
+	    		<div class="visuleft">
 						
 		    	<script type="text/javascript">
      				 var flashvars =
@@ -98,9 +97,9 @@
    				 
    				 <a id="linkplayersize2" class="linkplayersize2" href="javascript:modifyPlayerSize();" style="display:none;"><img src="../files/styles/${sessionScope.style}/img/btn_red.png"></a>
    				 
-   			</td>
-	    	
-	    	<td>    		    		    	    	
+   			</div>
+   			
+   			<div class="visuright"> 		    		    	    	
 	    	
 	    	<!-- dia div -->	    	    	
 	    	<div class="liveslidediv" id="liveslidediv"></div>
@@ -110,13 +109,11 @@
 	    		loadLiveslide();
 	    	</script>
 	    	
-	    	
-	    	</td>	
-	    	
-	    	</tr>
-	    	</table>	 
+	    	</div>
 	    	 				 
    				 
+    	</div>
+    	
     	</div>
 	    	
 	    <div class="footer">

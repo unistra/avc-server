@@ -127,9 +127,9 @@
 	    		</div> 
 	    	</div>
 	    	
-	    	<table class="flashslide">
-	    	<tr>
-				<td id="cellule_flash">
+	    	<div class="visumain"> 
+	    	
+	    		<div class="visuleft">
 							   				 		
    				 	<!-- player flash if slides not null -->
 					<c:if test="${fn:length(slides) != 0}">
@@ -379,21 +379,19 @@
 					
 					</div>
 					
-	            </td>
+	            </div>
+	            
+	            <div class="visuright">
 	            
 	            <!-- current slide -->  
 	           	<c:if test="${fn:length(slides) != 0}">
-	           	 	<td id="cellule_dia">	
 	           			<div id="currentDia">          	           		
 	            			<img class="slide" id="slide" src="../files/img/DiaVide.png" width="620" height="472">
-						</div>		
-					</td>			
+						</div>				
 				</c:if>	
 				
 				<!-- player flash if no slides-->
-				<c:if test="${fn:length(slides) == 0}">     
-					<td>
-								 						
+				<c:if test="${fn:length(slides) == 0}">     								 						
  						<c:choose>
    				 		<c:when test="${course.type!='video' && !fn:contains(mediaLst, 'addvideo')}">
    				 		   				 		
@@ -423,12 +421,11 @@
    				 		</c:otherwise>
    				 		</c:choose>
 
-					</td>
 				</c:if>	
 					
 				
-			</tr>
-			</table>
+				</div>
+			</div>
 			
 			<br>
 			
