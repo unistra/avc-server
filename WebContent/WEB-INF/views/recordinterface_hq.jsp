@@ -24,6 +24,14 @@
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 	
+	<!-- Redirection to html5 for mobile -->
+	<script type="text/javascript" src="../files/js/mobile_detection.js"></script>
+	<script type="text/javascript">
+		if (isMobile.any()) {
+			document.location = "./courseaccess?id=${course.courseid}&type=html5";
+		}
+	</script>
+	
 	<script type="text/javascript" src="../files/jwflvplayer/swfobject.js"></script>
 	<!-- <script type="text/javascript" src="../files/js/ieupdate.js"></script> -->
 	<!--<script type="text/javascript" src="../files/js/recordinterface_flash.js"></script>

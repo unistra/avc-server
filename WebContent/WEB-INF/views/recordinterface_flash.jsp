@@ -31,11 +31,12 @@
 		</c:if>
 	</c:forEach>
 	
-	<!-- Redirection to html5 for ipad, ipod and iphone -->
-	<script type="text/javascript"> // <![CDATA[
-		if ((navigator.userAgent.indexOf('iPhone') != -1) || (navigator.userAgent.indexOf('iPod') != -1) || (navigator.userAgent.indexOf('iPad') != -1)) {
+	<!-- Redirection to html5 for mobile -->
+	<script type="text/javascript" src="../files/js/mobile_detection.js"></script>
+	<script type="text/javascript">
+		if (isMobile.any()) {
 			document.location = "./courseaccess?id=${course.courseid}&type=html5";
-		} // ]]>
+		}
 	</script>
 	
 	<script type="text/javascript" src="../files/js/details.js"></script>
