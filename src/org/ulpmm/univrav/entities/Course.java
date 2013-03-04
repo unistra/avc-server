@@ -82,6 +82,7 @@ public class Course {
 	public static final int typeVideoslideIpod = 256;
 	public static final int typeSubtitles = 512;
 	public static final int typeAddVideo = 1024;
+	public static final int typeWebm = 2048;
 	
 	/** volume (filesystem) */
 	private short volume;
@@ -537,6 +538,7 @@ public class Course {
 		else if(type.equals("videoslideipod")) return ((typeVideoslideIpod & mediatype) > 0);
 		else if(type.equals("subtitles")) return ((typeSubtitles & mediatype) > 0);
 		else if(type.equals("addvideo")) return ((typeAddVideo & mediatype) > 0);
+		else if(type.equals("webm")) return ((typeWebm & mediatype) > 0);
 		else return false;
 	}
 	
@@ -557,6 +559,7 @@ public class Course {
 		if ((typeVideoslideIpod & mediatype) > 0) lst.add("videoslideipod") ;	
 		if ((typeSubtitles & mediatype) > 0) lst.add("subtitles") ;	
 		if ((typeAddVideo & mediatype) > 0) lst.add("addvideo") ;	
+		if ((typeWebm & mediatype) > 0) lst.add("webm") ;
 		return lst;
 	}
 
