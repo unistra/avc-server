@@ -1876,6 +1876,9 @@ public class Application extends HttpServlet {
 				Job j = service.getJob(c.getCourseid(), "ADDV");
 				boolean addvinprocess = (j!=null && !j.getStatus().equals("done"));
 				request.setAttribute("addvinprocess", addvinprocess);
+				
+				// show additional video block if the record is from the client
+				request.setAttribute("showAddVidBlock", c.isAudioClient() || c.isVideoClient());
 								
 				/* Displays the view */
 				getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace_editmycourse.jsp").forward(request, response);
@@ -3289,6 +3292,9 @@ public class Application extends HttpServlet {
 		Job j = service.getJob(c.getCourseid(), "ADDV");
 		boolean addvinprocess = (j!=null && !j.getStatus().equals("done"));
 		request.setAttribute("addvinprocess", addvinprocess);
+		
+		// show additional video block if the record is from the client
+		request.setAttribute("showAddVidBlock", c.isAudioClient() || c.isVideoClient());
 		
 		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editcourse.jsp").forward(request, response);
 		

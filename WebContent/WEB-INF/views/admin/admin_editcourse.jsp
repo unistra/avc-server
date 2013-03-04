@@ -227,6 +227,9 @@
 		    </c:choose>
 		    		    		    
 		    <br />
+		    
+		    <!-- show this block if the record is from the client -->
+			<c:if test="${showAddVidBlock}">
 			
 			<c:url var="thick_replacemedia" scope="page" value="./thick_replacemedia">
 				<c:param name="width" value="370"/>
@@ -287,6 +290,7 @@
 		    </c:choose>		    		    
 		   
 		   <br />
+		   </c:if>
 		   
 		    <c:choose>
 		    	<c:when test="${!fn:contains(mediaLst, 'subtitles')}">

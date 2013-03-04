@@ -645,5 +645,36 @@ public class Course {
 		this.slidesoffset = slidesoffset;
 	}
 	
+	/**
+	 * Return true if the record is an audio record from the client
+	 * @return boolean
+	 */
+	public boolean isAudioClient() {
+		return this.type.equals("audio") && this.isAvailable("zip");
+	}
+	
+	/**
+	 * Return true if the record is a video record from the client
+	 * @return boolean
+	 */
+	public boolean isVideoClient() {
+		return this.type.equals("video") && this.isAvailable("zip");
+	}
+	
+	/**
+	 * Return true if the record is an audio from the upload page (myspace)
+	 * @return boolean
+	 */
+	public boolean isAudioUpload() {
+		return this.type.equals("audio") && !this.isAvailable("zip");
+	}
+	
+	/**
+	 * Return true if the record is a video from the upload page (myspace)
+	 * @return boolean
+	 */
+	public boolean isVideoUpload() {
+		return this.type.equals("video") && !this.isAvailable("zip");
+	}
 	
 }
