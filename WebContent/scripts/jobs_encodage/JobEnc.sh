@@ -69,8 +69,10 @@ python $PTHSCR/CreatePDF.py $MediaFolder $CourseID
 bash $PTHSCR/convertAll2Ogg.sh $MediaFolder $CourseID "mp3"
 #oggTag
 /usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg &> /dev/null
-#videoslideCreation $MediaFolder $CourseID
+#videoslideCreation
 bash $PTHSCR/videoslide.sh $MediaFolder $CourseID
+#convert videoslide to webm
+bash $PTHSCR/convertAll2Webm.sh $MediaFolder "$CourseID"_videoslide mp4
 #mp4Tag
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
@@ -89,8 +91,10 @@ python $PTHSCR/CreatePDF.py $MediaFolder $CourseID
 bash $PTHSCR/convertAll2Ogg.sh $MediaFolder $CourseID "mp3"
 #oggTag
 /usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg &> /dev/null
-#videoslideCreation(c.getMediaFolder(), c.getMediasFileName()); // VS
+#videoslideCreation
 bash $PTHSCR/videoslide.sh $MediaFolder $CourseID
+#convert videoslide to webm
+bash $PTHSCR/convertAll2Webm.sh $MediaFolder "$CourseID"_videoslide mp4
 #mp4Tag
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
