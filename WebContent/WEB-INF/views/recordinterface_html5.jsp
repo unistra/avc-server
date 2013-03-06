@@ -58,53 +58,12 @@
 		</c:choose>
 	</c:otherwise>
 	</c:choose>
-		
-	<c:choose>
-	<c:when test="${course.type!='video' && !fn:contains(mediaLst, 'addvideo')}">
-		<script type="text/javascript">
-		var flashvars =
-	 	{
-			file:					'${courseurlnoext}.'+fileext, 
-			id:						'flashvideo', 
-			autostart:				'true',
-			image:					'../files/img/logo_audio.png' 			  
-		};
-		</script>
-	</c:when>
-	<c:otherwise>
-		<script type="text/javascript">
-		var flashvars =
-	 	{
-			file:					'${courseurlnoext}.'+fileext, 
-			id:						'flashvideo', 
-			autostart:				'true',
-			image:					'../files/img/logo_audio.png', 		
-			type:					'lighttpd'				  
-		};
-		</script>
-	</c:otherwise>
-	</c:choose>
-		
-	
-	<script type="text/javascript">
-    	var params =
-    	{
-    		allowfullscreen:		'true', 
-       		allowscriptaccess:		'always'
-     	 };
-
-      	var attributes =
-     	 {
-     		id:						'flashvideo', 
-       		name:					'flashvideo'
-     	}; 		
-	</script>
-	
+			
 	<meta name="keywords" content="${course.name},${course.title},${formationfullname}">
 	<META NAME=”robots” CONTENT=”nofollow”>
 
 	<!-- google analytics -->
-	
+	<c:import url="include/google_analytics.jsp" />
 		
   </head>
   
@@ -140,11 +99,7 @@
    				 			<audio id="playerhtml5" autoplay controls style="width:320px;height:260px;background-image:url(../files/img/logo_audio.png);">  
     				 			<source src="${courseurlnoext}.mp3" type="audio/mpeg"> <!-- chrome/safari -->
     				 			<source src="${courseurlnoext}.ogg" type="audio/ogg"> <!-- firefox/opera -->		
-    				 			<!-- ie8 does not support html5 -->
-    				 			<script type="text/javascript">  
-								swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '320', '260', '9.0.124', false, flashvars, params, attributes);
-   				 				</script>		 
-   				 				<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>	
+    				 			<p>Your browser doesn't support html5. Use the flash page.</p>
  							</audio>  
    				 		   				 		
    				 		</c:when>
@@ -153,11 +108,8 @@
    				 			<video id="playerhtml5" autoplay controls style="width:320px;height:260px;">  
     				 			<source src="${courseurlnoext}_ipod.mp4" type="video/mp4"> <!-- safari/chrome -->
     							<source src="${courseurlnoext}.ogv" type="video/ogg"> <!-- firefox/opera support ogv, not mp4 -->
-    				 			<!-- ie8 does not support html5 -->	
-       							<script type="text/javascript">  
-									swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '320', '260', '9.0.124', false, flashvars, params, attributes);
-   				 				</script>		 
-   				 				<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>	
+    				 			<source src="${courseurlnoext}.webm" type="video/webm"> <!-- firefox 4, opera 10, chrome 6, IE 9 -->
+    				 			<p>Your browser doesn't support html5. Use the flash page.</p>
  							</video>
    				 		
    				 		</c:otherwise>
@@ -398,11 +350,7 @@
    				 			<audio id="playerhtml5" autoplay controls style="width:640px;">  
     				 			<source src="${courseurlnoext}.mp3" type="audio/mpeg"> <!-- chrome/safari -->
     				 			<source src="${courseurlnoext}.ogg" type="audio/ogg"> <!-- firefox/opera -->		
-    				 			<!-- ie8 does not support html5 -->
-    				 			<script type="text/javascript">  
-								swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '640', '500', '9.0.124', false, flashvars, params, attributes);
-   				 				</script>		 
-   				 				<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>	
+    				 			<p>Your browser doesn't support html5. Use the flash page.</p>
  							</audio>  
    				 		   				 		
    				 		</c:when>
@@ -411,11 +359,8 @@
    				 			<video id="playerhtml5" autoplay controls style="width:720px;">  
     							<source src="${courseurlnoext}.mp4" type="video/mp4"> <!-- safari/chrome -->
     							<source src="${courseurlnoext}.ogv" type="video/ogg"> <!-- firefox/opera support ogv, not mp4 -->
-    							<!-- ie8 does not support html5 -->	
-    							<script type="text/javascript">
-     			  					swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '640', '500', '9.0.124', false, flashvars, params, attributes);
-   								</script>
-   								<p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p> 
+    							<source src="${courseurlnoext}.webm" type="video/webm"> <!-- firefox 4, opera 10, chrome 6, IE 9 -->
+    							<p>Your browser doesn't support html5. Use the flash page.</p>
  							</video>      
    				 		
    				 		</c:otherwise>
