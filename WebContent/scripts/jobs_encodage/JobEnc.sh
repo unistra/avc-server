@@ -186,6 +186,8 @@ bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $ORI$CourseID.$Extension $CourseID $
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 # ogv for html5
 ffmpeg2theora $MediaFolder/"$CourseID".mp4 -o $MediaFolder/"$CourseID".ogv &> /dev/null
+# webm for html5
+bash $PTHSCR/convertAll2Webm.sh $MediaFolder $CourseID mp4
 ;;
 
 ADDV)
@@ -204,6 +206,9 @@ ffmpeg2theora $MediaFolder/$FOLDER/"$AV$CourseID".mp4 -o $MediaFolder/$FOLDER/"$
 # remove original file
 rm $MediaFolder/$FOLDER/$ORI$AV$CourseID.$Extension
 rm $MediaFolder/$FOLDER/$AV$CourseID.mp3
+# webm for html5
+bash $PTHSCR/convertAll2Webm.sh $MediaFolder/$FOLDER $AV$CourseID mp4
+;;
 esac
 
 # Maj du mediatype sur le serveur avc
