@@ -102,6 +102,8 @@ bash $PTHSCR/convertAll2Webm.sh $MediaFolder "$CourseID"_videoslide mp4
 bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $CourseID.$Extension $CourseID $PTHSCR/calculate_padding.sh true &> /dev/null
 # flv to ogv for html5
 ffmpeg2theora $MediaFolder/"$CourseID"_ipod.mp4 -o $MediaFolder/"$CourseID".ogv &> /dev/null
+# convert flv to webm for html5
+bash $PTHSCR/convertAll2Webm.sh $MediaFolder $CourseID flv
 ;;
 
 MUA)
