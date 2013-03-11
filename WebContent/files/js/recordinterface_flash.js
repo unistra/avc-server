@@ -83,8 +83,11 @@ function updateTimeBar(time) {
 			}
    				
 			// changes the current slide
-			document.getElementById("currentDia").innerHTML = '<a target="external" href="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg"><img class="slide" src="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg" width="'+tabwimg[i]+'" height="'+tabhimg[i]+'"/></a>';
-			
+			data = '<a target="external" href="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg"><img class="slide" src="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg" width="'+tabwimg[i]+'" height="'+tabhimg[i]+'"/></a>';
+			$('#currentDia').fadeOut(function() { 
+	            $(this).html(data).fadeIn();
+			});
+
 			if(oldSlide > 0)
 				document.getElementById('time' + oldSlide).className="otherThumb";
 			
@@ -189,3 +192,18 @@ function nextPage() {
 		initTimeBar();
 	}
 }
+
+//preload images
+function preloadimages() {
+	var firstslide = 1;
+	var i;
+	for(i=1;i < timecodes.length+1;i++) {
+		var num = firstslide + i;
+		var img = slidesurl + 'D' + num + '.jpg';
+		(new Image()).src = img;
+	}
+}
+
+$(function() {
+	preloadimages();
+});

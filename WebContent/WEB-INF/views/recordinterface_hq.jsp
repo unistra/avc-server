@@ -14,6 +14,7 @@
 
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/visualization.css">
+	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
 	
 	<!--[if IE]>
    		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
@@ -24,6 +25,8 @@
 		<script defer type="text/javascript" src="../files/js/pngfix.js"></script>
 	<![endif]-->
 	
+	<script type="text/javascript" src="../files/js/jquery.min.js"></script>
+
 	<!-- Redirection to html5 for mobile -->
 	<script type="text/javascript" src="../files/js/mobile_detection.js"></script>
 	<script type="text/javascript">
@@ -32,6 +35,7 @@
 		}
 	</script>
 	
+	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
 	<script type="text/javascript" src="../files/jwflvplayer/swfobject.js"></script>
 	<!-- <script type="text/javascript" src="../files/js/ieupdate.js"></script> -->
 	<!--<script type="text/javascript" src="../files/js/recordinterface_flash.js"></script>

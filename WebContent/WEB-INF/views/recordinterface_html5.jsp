@@ -15,6 +15,7 @@
 
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/visualization.css">
+	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
 	
 	<!--[if IE]>
    		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
@@ -31,10 +32,12 @@
 		</c:if>
 	</c:forEach>
 	
+	<script type="text/javascript" src="../files/js/jquery.min.js"></script>
 	<script type="text/javascript" src="../files/js/details.js"></script>
 	<script type="text/javascript" src="../files/jwflvplayer/swfobject.js"></script>
 	<!-- <script type="text/javascript" src="../files/js/ieupdate.js"></script> -->
 	<script type="text/javascript" src="../files/js/recordinterface_flash.js"></script>
+	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
 	<script type="text/javascript">
 		var timecodes = ${slides};
 		var style = "${sessionScope.style}";
