@@ -100,6 +100,9 @@ bash $PTHSCR/convertAll2Webm.sh $MediaFolder "$CourseID"_videoslide mp4
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 # flv to mp4 for html5
 bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $CourseID.$Extension $CourseID $PTHSCR/calculate_padding.sh true &> /dev/null
+ln -s $MediaFolder/"$CourseID"_ipod.mp4 $MediaFolder/"$CourseID".mp4
+#mp4Tag for ipod
+/usr/bin/AtomicParsley $MediaFolder/"$CourseID"_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 # flv to ogv for html5
 ffmpeg2theora $MediaFolder/"$CourseID"_ipod.mp4 -o $MediaFolder/"$CourseID".ogv &> /dev/null
 # convert flv to webm for html5
