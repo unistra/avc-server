@@ -6,11 +6,11 @@
 # Four argument: the script to calculate padding
 
 # Calculate padding
-donnees=`bash $4 $1 $2 320 240`
+donnees=`bash $4 $1 $2 640 480`
 L=`echo $donnees | cut -d: -f1`
 H=`echo $donnees | cut -d: -f2`
 PL=`echo $donnees | cut -d: -f3`
 PHB=`echo $donnees | cut -d: -f4`
 
 cd $1
-/usr/bin/ffmpeg -v -1 -i "$2" -ac 2 -ar 44100 -b 400000 -s "$L"x"$H" -vf "pad=320:240:$PL:$PHB:black" -aspect 4:3 -y "$3".flv &> /dev/null
+/usr/bin/ffmpeg -v -1 -i "$2" -ac 2 -ar 44100 -b 400000 -s "$L"x"$H" -vf "pad=640:480:$PL:$PHB:black" -aspect 4:3 -y "$3".flv &> /dev/null
