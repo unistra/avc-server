@@ -84,10 +84,15 @@ function updateTimeBar(time) {
    				
 			// changes the current slide
 			data = '<a target="external" href="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg"><img class="slide" src="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg" width="'+tabwimg[i]+'" height="'+tabhimg[i]+'"/></a>';
-			$('#currentDia').fadeOut(function() { 
-	            $(this).html(data).fadeIn();
+			
+			// change the front slide
+			$('#frontslide').fadeOut(10,function() { 
+	            $(this).html(data).fadeIn(500, function() { 
+	            	// add the current front slide to the back slide
+	            	$('#backslide').html(data);
+				});
 			});
-
+			
 			if(oldSlide > 0)
 				document.getElementById('time' + oldSlide).className="otherThumb";
 			

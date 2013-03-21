@@ -143,10 +143,14 @@ td#cellule_dia {
 	horizontal-align: center;
 }
 
-div#currentDia {
-	text-align:center;
+#currentDia {
+	position:relative;
+	left: 10px;
 }
 
+#frontslide {
+	position:absolute;	
+}
 
 /* Line containing the timecodes points */
 div#videoLine {

@@ -340,9 +340,10 @@
 	            
 	            <!-- current slide -->  
 	           	<c:if test="${fn:length(slides) != 0}">
-	           			<div id="currentDia">          	           		
-	            			<img class="slide" id="slide" src="../files/img/DiaVide.png" width="620" height="472">
-						</div>				
+						<div id="currentDia">
+							<div id="frontslide"></div>
+							<div id="backslide"></div>
+						</div>	
 				</c:if>	
 				
 				<!-- player flash if no slides-->
