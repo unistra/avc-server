@@ -1464,6 +1464,10 @@ public class ServiceImpl implements IService {
 	        			elMediatype.setTextContent(String.valueOf(course.getmediatype()));
 	        			item.appendChild(elMediatype);
 	        			
+	        			Element elVisible= document.createElement("visible");
+	        			elVisible.setTextContent(course.isVisible() ? "true" : "false");
+	        			item.appendChild(elVisible);
+	        			
 	        			Element elTags= document.createElement("tags");
 	        			String tags="";
 	        			List<Tag> listTags = db.getTagsByCourse(course);
