@@ -22,6 +22,9 @@ function initPlayerHtml5() {
 	//init player html5 exist (no flash)
 	if(document.getElementById("playerhtml5").currentTime == 0) {
 		html5 = true;
+		//block right click
+		$('#playerhtml5').bind('contextmenu',function() { return false; });
+		//add listeners
 		player = document.getElementById("playerhtml5");
 		player.addEventListener("seeked", function() { player.play(); }, true);  
 		player.addEventListener("timeupdate",function () { updateTimeBar(player.currentTime); },true);	
