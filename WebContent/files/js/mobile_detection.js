@@ -5,7 +5,7 @@ var isMobile = {
         return navigator.userAgent.match(/Android/i);
     },
     BlackBerry: function() {
-        return navigator.userAgent.match(/BlackBerry/i);
+        return navigator.userAgent.match(/BlackBerry|BB10/i);
     },
     iOS: function() {
         return navigator.userAgent.match(/iPhone|iPad|iPod/i);
@@ -13,7 +13,10 @@ var isMobile = {
     Windows: function() {
         return navigator.userAgent.match(/IEMobile/i);
     },
+    Nokia: function() {
+        return navigator.userAgent.match(/Nokia/i);
+    },
     any: function() {
-        return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
+        return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows() || isMobile.Nokia());
     }
 };
