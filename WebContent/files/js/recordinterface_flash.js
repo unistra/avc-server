@@ -86,7 +86,7 @@ function updateTimeBar(time) {
 			}
    				
 			// changes the current slide
-			data = '<a target="external" href="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg"><img class="slide" src="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg" width="'+tabwimg[i]+'" height="'+tabhimg[i]+'"/></a>';
+			data = '<img class="slide" src="' + slidesurl + 'D' + (currentSlide + timing) + '.jpg" width="'+tabwimg[i]+'" height="'+tabhimg[i]+'"/>';
 			
 			// change the front slide
 			$('#frontslide').fadeOut(10,function() { 
@@ -212,6 +212,20 @@ function preloadimages() {
 	}
 }
 
+//fullscreen on dia click
+function fullScreen() {	
+	$('#currentDia').click(function() {
+		$("#currentDia").colorbox({
+			inline:true, 
+			href:"#currentDia",
+			scrolling:true,
+			width:"95%",
+			height:"95%"
+		}); 
+	});
+}
+
 $(function() {
+	fullScreen();
 	preloadimages();
 });

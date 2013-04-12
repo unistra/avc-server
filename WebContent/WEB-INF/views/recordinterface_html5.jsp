@@ -7,7 +7,7 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html>
 <html>
   <head>
     
@@ -38,6 +38,9 @@
 	<!-- <script type="text/javascript" src="../files/js/ieupdate.js"></script> -->
 	<script type="text/javascript" src="../files/js/recordinterface_flash.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
+	<script type="text/javascript" src="../files/colorbox/jquery.colorbox-min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../files/colorbox/colorbox.css" media="screen">
+	
 	<script type="text/javascript">
 		var timecodes = ${slides};
 		var style = "${sessionScope.style}";

@@ -16,6 +16,7 @@ body {
 .contents {
 	text-align:center;
 	overflow:visible;
+    background-color:#606060;
 }
 
 .banner {
@@ -42,6 +43,8 @@ body {
 
 .footer {
 	text-align:center;
+    position:relative;
+    background-color:#606060;
 }
 
 /*** Home and Recorded pages ***/

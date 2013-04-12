@@ -242,3 +242,29 @@ a:hover .otherThumb, a:hover .currentThumb {
 .tdalign {
 	vertical-align:top;
 }
+
+/*
+Dia fullscreen functionnality 
+*/
+
+#currentDia:hover {
+	cursor: pointer;
+}
+
+#cboxContent #frontslide {
+	width: 100%; /* for firefox */
+}
+
+#cboxContent #frontslide img {	
+	height: auto;
+	width: auto;
+	max-width: 100%;
+	/*min-height: 100%;*/
+}
+
+#cboxContent #backslide img {
+	height: auto;
+	width: auto;
+	max-width: 100%;
+	/*min-height: 100%;*/
+}

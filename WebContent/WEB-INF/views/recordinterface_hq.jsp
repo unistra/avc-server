@@ -83,7 +83,8 @@
      				 var params =
      				 {
        			     	allowfullscreen:		'true', 
-       					allowscriptaccess:		'always'
+       					allowscriptaccess:		'always',
+       					wmode:					'transparent'
      				 };
 
       				var attributes =
