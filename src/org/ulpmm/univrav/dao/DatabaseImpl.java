@@ -3915,7 +3915,7 @@ public class DatabaseImpl implements IDatabase {
 		Set<String> keys = params.keySet();
 
 		/* Creation of the SQL query string */
-		String sql = "SELECT * FROM course c WHERE visible = true OR visible = false ";
+		String sql = "SELECT * FROM course c WHERE (visible = true OR visible = false) ";
 
 		if(!params.isEmpty() ) {
 
@@ -4029,7 +4029,7 @@ public class DatabaseImpl implements IDatabase {
 		Set<String> keys = params.keySet();
 
 		/* Creation of the SQL query string */
-		String sql = "SELECT count(*) as nbcourses, sum(c.duration) as nbduration, sum(c.consultations) as nbviews, count(DISTINCT (COALESCE(INITCAP(c.name),'') || COALESCE(INITCAP(' ' || c.firstname),''))) AS nbauthors FROM course c WHERE visible = true OR visible = false ";
+		String sql = "SELECT count(*) as nbcourses, sum(c.duration) as nbduration, sum(c.consultations) as nbviews, count(DISTINCT (COALESCE(INITCAP(c.name),'') || COALESCE(INITCAP(' ' || c.firstname),''))) AS nbauthors FROM course c WHERE (visible = true OR visible = false) ";
 
 		if(!params.isEmpty() ) {
 
