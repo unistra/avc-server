@@ -16,6 +16,7 @@
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles.css">
 	<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/visualization.css">
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="../files/colorbox/colorbox.css">
 	
 	<!--[if IE]>
    		<link rel="stylesheet" type="text/css" href="../files/styles/${sessionScope.style}/css/styles_ie.css" media="screen" />
@@ -48,8 +49,7 @@
 	<script type="text/javascript" src="../files/js/recordinterface_flash.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
 	<script type="text/javascript" src="../files/colorbox/jquery.colorbox-min.js"></script>
-	<link rel="stylesheet" type="text/css" href="../files/colorbox/colorbox.css">
-
+	
 	<script type="text/javascript">
 		var timecodes = ${slides};
 		var style = "${sessionScope.style}";

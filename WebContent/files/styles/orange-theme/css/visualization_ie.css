@@ -10,6 +10,7 @@
 .contents {
 	position:relative;
 	overflow: hidden;
+	background-color:#606060;
 }
 
 
@@ -29,6 +30,13 @@
 	height: 100%;
 	width:100%;	
 	text-align: left;
+}
+
+/* bug with loose doctype (for colorbox) */
+.footer {
+	text-align:center;
+    position:relative;
+    background-color:#606060;
 }
 
 

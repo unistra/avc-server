@@ -219,8 +219,8 @@ function fullScreen() {
 			inline:true, 
 			href:"#currentDia",
 			scrolling:true,
-			width:"95%",
-			height:"95%"
+			width:"100%",
+			height:"100%"
 		}); 
 	});
 }

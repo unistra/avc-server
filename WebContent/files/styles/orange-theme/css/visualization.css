@@ -234,6 +234,10 @@ Dia fullscreen functionnality
 	cursor: pointer;
 }
 
+#cboxContent #currentDia {
+	left:0;
+}
+
 #cboxContent #frontslide {
 	width: 100%; /* for firefox */
 }
