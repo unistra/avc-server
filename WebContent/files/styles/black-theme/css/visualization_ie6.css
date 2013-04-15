@@ -13,3 +13,7 @@ div#videoLine {
 	background-image: url("../img/next.gif");
 	background-repeat:no-repeat;
 }
+
+.visuright {
+	display:inline-block;
+}
