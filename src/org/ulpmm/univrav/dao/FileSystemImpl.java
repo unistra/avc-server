@@ -134,13 +134,13 @@ public class FileSystemImpl implements IFileSystem {
 		setCourseType(c);
 		
 		if( c.getType().equals("audio")) {
-			renameFile(c.getMediaFolder(), defaultMp3File, c.getMediasFileName() + ".mp3");
-			setCourseDuration(c, c.getMediaFolder(), c.getMediasFileName(),"mp3");
+			renameFile(c.getMediafolder(), defaultMp3File, c.getMediasFileName() + ".mp3");
+			setCourseDuration(c, c.getMediafolder(), c.getMediasFileName(),"mp3");
 		}
 		else if( c.getType().equals("video")) {
-			renameFile(c.getMediaFolder(), defaultFlashFile, c.getMediasFileName() + ".flv");
-			injectMetadata(c.getMediaFolder(), c.getMediasFileName(), "flv");
-			setCourseDuration(c, c.getMediaFolder(), c.getMediasFileName(),"flv");
+			renameFile(c.getMediafolder(), defaultFlashFile, c.getMediasFileName() + ".flv");
+			injectMetadata(c.getMediafolder(), c.getMediasFileName(), "flv");
+			setCourseDuration(c, c.getMediafolder(), c.getMediasFileName(),"flv");
 		}	
 		
 		createDescriptionFile(c);
@@ -153,7 +153,7 @@ public class FileSystemImpl implements IFileSystem {
 	public void convertMediasMacToMp3(Course c) {
 
 		try {
-			Process p = r.exec("bash convertMediasMacToMp3.sh "  + coursesFolder + c.getMediaFolder() + " " + defaultMp3File + " " + defaultAudioMacFile1 + " " + defaultAudioMacFile2, null, new File(scriptsFolder));
+			Process p = r.exec("bash convertMediasMacToMp3.sh "  + coursesFolder + c.getMediafolder() + " " + defaultMp3File + " " + defaultAudioMacFile1 + " " + defaultAudioMacFile2, null, new File(scriptsFolder));
 			if( p.waitFor() != 0 ) {
 				logger.error("Error while convert medias from client mac to mp3 - courseid : " + c.getCourseid());
 				throw new DaoException("Error while convert medias from client mac to mp3 - courseid : " + c.getCourseid());
@@ -175,7 +175,7 @@ public class FileSystemImpl implements IFileSystem {
 		
 		try {
 			/* creates the .txt description file */
-			File descriptionFile = new File(coursesFolder + c.getMediaFolder() + "/description.txt");
+			File descriptionFile = new File(coursesFolder + c.getMediafolder() + "/description.txt");
 			if(!descriptionFile.exists()) {
 				descriptionFile.createNewFile();
 			}
@@ -213,12 +213,12 @@ public class FileSystemImpl implements IFileSystem {
 		// Rename all upload file into courseid.extension and calculate duration
 		
 		if(c.getType().equals("video") && !extension.equals("flv")) {
-			renameFile(c.getMediaFolder(), fileName, "ori_"+c.getMediasFileName() + "."+extension);
-			setCourseDuration(c, c.getMediaFolder(), "ori_"+c.getMediasFileName(),extension);	
+			renameFile(c.getMediafolder(), fileName, "ori_"+c.getMediasFileName() + "."+extension);
+			setCourseDuration(c, c.getMediafolder(), "ori_"+c.getMediasFileName(),extension);	
 		}
 		else {
-			renameFile(c.getMediaFolder(), fileName, c.getMediasFileName() + "."+extension);
-			setCourseDuration(c, c.getMediaFolder(), c.getMediasFileName(),extension);		
+			renameFile(c.getMediafolder(), fileName, c.getMediasFileName() + "."+extension);
+			setCourseDuration(c, c.getMediafolder(), c.getMediasFileName(),extension);		
 		}
 		
 		// create the description file
@@ -539,35 +539,35 @@ public class FileSystemImpl implements IFileSystem {
 			        coursPubDate.setTextContent(sdf.format(d));
 			        item.appendChild(coursPubDate);
 			        
-			        String courseMediaUrl = getCleanCoursesUrl(coursesUrl) + course.getMediaFolder() + "/" + course.getMediasFileName();
+			        String courseMediaUrl = getCleanCoursesUrl(coursesUrl) + course.getMediafolder() + "/" + course.getMediasFileName();
 			        		        
 			        if(course.getGenre()==null && !course.isRestrictionuds()) {
 			        	if(course.isAvailable("mp3")) {
 			        		Element coursEnclosure = document.createElement("enclosure");
 			        		coursEnclosure.setAttribute("url",courseMediaUrl + ".mp3");
 			        		coursEnclosure.setAttribute("type","audio/mpeg");
-			        		coursEnclosure.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".mp3")));
+			        		coursEnclosure.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediafolder() + "/" + course.getMediasFileName() + ".mp3")));
 			        		item.appendChild(coursEnclosure);
 			        	}
 			        	if(course.isAvailable("ogg")) {			        		
 			        		Element coursEnclosure2 = document.createElement("enclosure");
 			        		coursEnclosure2.setAttribute("url",courseMediaUrl + ".ogg");
 			        		coursEnclosure2.setAttribute("type","application/ogg");
-			        		coursEnclosure2.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".ogg")));
+			        		coursEnclosure2.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediafolder() + "/" + course.getMediasFileName() + ".ogg")));
 			        		item.appendChild(coursEnclosure2);
 			        	}
 			        	if(course.isAvailable("pdf")) {
 			        		Element coursEnclosure3 = document.createElement("enclosure");
 			        		coursEnclosure3.setAttribute("url",courseMediaUrl + ".pdf");
 			        		coursEnclosure3.setAttribute("type","application/pdf");
-			        		coursEnclosure3.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".pdf")));
+			        		coursEnclosure3.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediafolder() + "/" + course.getMediasFileName() + ".pdf")));
 			        		item.appendChild(coursEnclosure3);
 			        	}
 			        	if(course.isAvailable("zip")) {
 			        		Element coursEnclosure4 = document.createElement("enclosure");
 			        		coursEnclosure4.setAttribute("url",courseMediaUrl + ".zip");
 			        		coursEnclosure4.setAttribute("type","application/zip");
-			        		coursEnclosure4.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".zip")));
+			        		coursEnclosure4.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediafolder() + "/" + course.getMediasFileName() + ".zip")));
 			        		item.appendChild(coursEnclosure4);
 			        	}
 			        }
@@ -625,7 +625,7 @@ public class FileSystemImpl implements IFileSystem {
 			        		else
 			        			coursEnclosure5.setAttribute("url",courseMediaUrl + "_videoslide.mp4");
 			        		coursEnclosure5.setAttribute("type","video/mp4");
-			        		coursEnclosure5.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + "_videoslide.mp4")));
+			        		coursEnclosure5.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediafolder() + "/" + course.getMediasFileName() + "_videoslide.mp4")));
 			        		item2.appendChild(coursEnclosure5);
 			        	}
 
@@ -673,7 +673,7 @@ public class FileSystemImpl implements IFileSystem {
 			        		Element coursEnclosure5 = document.createElement("enclosure");
 			        		coursEnclosure5.setAttribute("url",courseMediaUrl + "_ipod.mp4");
 			        		coursEnclosure5.setAttribute("type","video/mp4");
-			        		coursEnclosure5.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediaFolder() + "/" + course.getMediasFileName() + ".mp4")));
+			        		coursEnclosure5.setAttribute("length", Long.toString(getContentLength(coursesFolder + course.getMediafolder() + "/" + course.getMediasFileName() + ".mp4")));
 			        		item2.appendChild(coursEnclosure5);
 			        	}
 
@@ -738,7 +738,7 @@ public class FileSystemImpl implements IFileSystem {
 		if( courseArchive.length() > 3) {
 			extension = courseArchive.substring(courseArchive.length()-4, courseArchive.length());
 			String tmpMediaFolder = courseArchive.substring(0,courseArchive.lastIndexOf(".")); //uncompressed media folder
-			String mf=c.getMediaFolder();
+			String mf=c.getMediafolder();
 			
 			// Create all folders			
 			File mediaFolder = new File(coursesFolder, mf.substring(0,mf.lastIndexOf('/')));
@@ -788,7 +788,7 @@ public class FileSystemImpl implements IFileSystem {
 	private static void moveArchive(Course c, String courseArchive) {	
 		Process p;
 		try {
-			p = r.exec("cp " + ftpFolder + courseArchive + " "+c.getCourseid()+".zip" , null, new File(coursesFolder + c.getMediaFolder()));
+			p = r.exec("cp " + ftpFolder + courseArchive + " "+c.getCourseid()+".zip" , null, new File(coursesFolder + c.getMediafolder()));
 			if( p.waitFor() != 0) {
 				logger.error("The course archive " + courseArchive + " has not been renamed");
 				throw new DaoException("The course archive " + courseArchive + " has not been renamed");
@@ -808,13 +808,13 @@ public class FileSystemImpl implements IFileSystem {
 	 */
 	private static void setCourseType(Course c) {
 		
-		if( new File(coursesFolder + c.getMediaFolder() + "/" + defaultMp3File).exists()) 
+		if( new File(coursesFolder + c.getMediafolder() + "/" + defaultMp3File).exists()) 
 			c.setType("audio");
-		else if(new File(coursesFolder + c.getMediaFolder() + "/" + defaultFlashFile).exists())
+		else if(new File(coursesFolder + c.getMediafolder() + "/" + defaultFlashFile).exists())
 			c.setType("video");
 		else {
-			logger.error("No course media file found in the " + coursesFolder + c.getMediaFolder() + " folder");
-			throw new DaoException("No course media file found in the " + coursesFolder + c.getMediaFolder() + " folder");
+			logger.error("No course media file found in the " + coursesFolder + c.getMediafolder() + " folder");
+			throw new DaoException("No course media file found in the " + coursesFolder + c.getMediafolder() + " folder");
 		}
 	}
 	
@@ -966,7 +966,7 @@ public class FileSystemImpl implements IFileSystem {
 	 */
 	private static void mediaFolderCreation( Course c, FileItem mediaFile, String fileName) {
 						
-		File mediaFolder = new File(coursesFolder, c.getMediaFolder());
+		File mediaFolder = new File(coursesFolder, c.getMediafolder());
 		mediaFolder.mkdirs();
 				
 		try {
@@ -1161,7 +1161,7 @@ public class FileSystemImpl implements IFileSystem {
 	public void mediaRetag(Course c) {
 		createDescriptionFile(c);
 		
-		String[] command_array = {"bash","retag.sh",coursesFolder + c.getMediaFolder(),String.valueOf(c.getCourseid()), String.valueOf(c.getmediatype())};
+		String[] command_array = {"bash","retag.sh",coursesFolder + c.getMediafolder(),String.valueOf(c.getCourseid()), String.valueOf(c.getmediatype())};
 		
 		try {
 			Process p = r.exec(command_array, null, new File(scriptsFolder));
@@ -1190,7 +1190,7 @@ public class FileSystemImpl implements IFileSystem {
 	 */
 	public void moveAddVideo(Course c, FileItem mediaFile, String fileName, String extension) {	
 
-		File addVideoFolder = new File(coursesFolder + c.getMediaFolder() +"/additional_video");
+		File addVideoFolder = new File(coursesFolder + c.getMediafolder() +"/additional_video");
 		addVideoFolder.mkdirs();
 
 		try {

@@ -102,7 +102,7 @@ public class AddVideo extends Thread {
 		
 		// If medias encodage isnt separated
 		if(!sepEnc) {
-			String job_line =c.getCourseid()+":"+"waiting"+":"+mediatype+":" + type + ":"+c.getMediaFolder()+":"+extension;
+			String job_line =c.getCourseid()+":"+"waiting"+":"+mediatype+":" + type + ":"+c.getMediafolder()+":"+extension;
 			service.modifyJobStatus(c.getCourseid(), "processing", type);
 			service.launchJob(serverUrl, job_line);				
 		}

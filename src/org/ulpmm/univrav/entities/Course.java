@@ -599,7 +599,7 @@ public class Course {
 	 * Gets the mediafolder
 	 * @return the mediafolder
 	 */
-	public String getMediaFolder() {
+	public String getMediafolder() {
 		return mediafolder;
 	}
 

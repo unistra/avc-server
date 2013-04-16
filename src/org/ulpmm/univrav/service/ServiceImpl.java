@@ -341,7 +341,7 @@ public class ServiceImpl implements IService {
 					
 		// delete course in file system
 		for( Course c : tests) {
-			fs.deleteCourse(c.getMediaFolder());
+			fs.deleteCourse(c.getMediafolder());
 		}
 	}
 	
@@ -1147,7 +1147,7 @@ public class ServiceImpl implements IService {
 	 * @param docFile the fileitem of the document
 	 */
 	public synchronized void addAdditionalDoc(Course c, FileItem docFile) {
-		fs.addAdditionalDoc(c.getMediaFolder(),docFile);
+		fs.addAdditionalDoc(c.getMediafolder(),docFile);
 		c.setAdddocname(FilenameUtils.getName(docFile.getName()));	
 		if(!c.isAvailable("adddoc"))
 			c.setmediatype(c.getmediatype()+Course.typeAdddoc);
@@ -1159,7 +1159,7 @@ public class ServiceImpl implements IService {
 	 * @param c the course
 	 */
 	public synchronized void deleteAdditionalDoc(Course c) {
-		fs.deleteAdditionalDoc(c.getMediaFolder(),c.getAdddocname());
+		fs.deleteAdditionalDoc(c.getMediafolder(),c.getAdddocname());
 		c.setAdddocname(null);
 		if(c.isAvailable("adddoc"))
 			c.setmediatype(c.getmediatype()-Course.typeAdddoc);
@@ -1223,7 +1223,7 @@ public class ServiceImpl implements IService {
 				"waiting",
 				mediatype,
 				type,
-				c.getMediaFolder(),
+				c.getMediafolder(),
 				extension
 				
 		);
@@ -1477,7 +1477,7 @@ public class ServiceImpl implements IService {
 	        			item.appendChild(elTags);	  
 	        			
 	        			Element elUrlFolder= document.createElement("urlfolder");
-	        			elUrlFolder.setTextContent(String.valueOf(getCleanCoursesUrl(coursesUrl)+course.getMediaFolder()));
+	        			elUrlFolder.setTextContent(String.valueOf(getCleanCoursesUrl(coursesUrl)+course.getMediafolder()));
 	        			item.appendChild(elUrlFolder);
 	        		}
 	        	}
@@ -1650,7 +1650,7 @@ public class ServiceImpl implements IService {
 	 * @param docFile the fileitem of the document
 	 */
 	public synchronized void addSubtitles(Course c, FileItem docFile) {
-		fs.addSubtitles(c.getMediaFolder(),docFile,c.getCourseid());
+		fs.addSubtitles(c.getMediafolder(),docFile,c.getCourseid());
 		
 		if(!c.isAvailable("subtitles"))
 			c.setmediatype(c.getmediatype()+Course.typeSubtitles);
@@ -1662,7 +1662,7 @@ public class ServiceImpl implements IService {
 	 * @param c the course
 	 */
 	public synchronized void deleteSubtitles(Course c) {
-		fs.deleteSubtitles(c.getMediaFolder(),c.getCourseid());
+		fs.deleteSubtitles(c.getMediafolder(),c.getCourseid());
 		
 		if(c.isAvailable("subtitles"))
 			c.setmediatype(c.getmediatype()-Course.typeSubtitles);
@@ -1731,7 +1731,7 @@ public class ServiceImpl implements IService {
 	public synchronized void deleteReplaceMedia(Course c) {
 		
 		if(c.isAvailable("addvideo")) {
-			fs.deleteReplaceMedia(c.getMediaFolder(),c.getCourseid());
+			fs.deleteReplaceMedia(c.getMediafolder(),c.getCourseid());
 			c.setmediatype(c.getmediatype()-Course.typeAddVideo);
 			db.modifyCourse(c);
 		}

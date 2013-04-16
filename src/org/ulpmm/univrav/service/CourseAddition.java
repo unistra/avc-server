@@ -83,7 +83,7 @@ public class CourseAddition extends Thread {
 		db.addCourse(c);
 		
 		// Adding slides
-		ArrayList<String> list = fs.getTimecodes(c.getMediaFolder());
+		ArrayList<String> list = fs.getTimecodes(c.getMediafolder());
 		int time;
 		/* Determines if the times of the slides must be changed or not */
 		if( c.getTiming().equals("n") ) {
@@ -127,12 +127,12 @@ public class CourseAddition extends Thread {
 						
 			if(c.getType().equals("video")) {
 				service.createJob(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm,"CV","flv",coursesFolder);
-				job_line =c.getCourseid()+":"+"waiting"+":"+String.valueOf(Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm)+":CV:"+c.getMediaFolder()+":flv";
+				job_line =c.getCourseid()+":"+"waiting"+":"+String.valueOf(Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm)+":CV:"+c.getMediafolder()+":flv";
 				service.modifyJobStatus(c.getCourseid(), "processing", "CV");	
 			}
 			else {
 				service.createJob(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm,"CA","mp3",coursesFolder);
-				job_line =c.getCourseid()+":"+"waiting"+":"+String.valueOf(Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm)+":CA:"+c.getMediaFolder()+":mp3";
+				job_line =c.getCourseid()+":"+"waiting"+":"+String.valueOf(Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm)+":CA:"+c.getMediafolder()+":mp3";
 				service.modifyJobStatus(c.getCourseid(), "processing", "CA");	
 			}
 										
