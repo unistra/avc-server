@@ -46,6 +46,8 @@ import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.json.JSONObject;
+import org.json.XML;
 import org.ulpmm.univrav.dao.DaoException;
 import org.ulpmm.univrav.dao.DatabaseImpl;
 import org.ulpmm.univrav.dao.FileSystemImpl;
@@ -3721,9 +3723,10 @@ public class Application extends HttpServlet {
 		// Return results
 		if(datatype!=null && datatype.toUpperCase().equals("JSON")) {
 			//Convert Xml to Json
-			request.setAttribute("xmlstring", results);
-			getServletContext().getRequestDispatcher("/WEB-INF/views/json.jsp").forward(request, response);
-		
+			JSONObject jsonObj = XML.toJSONObject(results);
+			String json = jsonObj.toString();
+			response.setContentType("application/json;charset=UTF-8");
+			response.getOutputStream().print(new String(json.getBytes("UTF8"),"8859_1"));		
 		}
 		//into XML by default
 		else {
@@ -3846,10 +3849,11 @@ public class Application extends HttpServlet {
 				
 		// Return results
 		if(datatype!=null && datatype.toUpperCase().equals("JSON")) {
-			// Convert Xml to json
-			request.setAttribute("xmlstring", results);
-			getServletContext().getRequestDispatcher("/WEB-INF/views/json.jsp").forward(request, response);
-		
+			//Convert Xml to Json
+			JSONObject jsonObj = XML.toJSONObject(results);
+			String json = jsonObj.toString();
+			response.setContentType("application/json;charset=UTF-8");
+			response.getOutputStream().print(new String(json.getBytes("UTF8"),"8859_1"));		
 		}
 		//into XML by default
 		else {
