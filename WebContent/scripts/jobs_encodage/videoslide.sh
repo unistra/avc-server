@@ -32,7 +32,7 @@ done
 cd workingVS
 
 # Convert original video into avi
-cat *.jpg | /usr/bin/ffmpeg -v -1 -f image2pipe -r 1 -vcodec mjpeg -i - -vcodec libx264 -y ../$2_tmp.avi &> /dev/null
+cat *.jpg | /usr/bin/ffmpeg -v -1 -f image2pipe -r 1 -vcodec mjpeg -i - -y ../$2_tmp.avi &> /dev/null
 
 # Convert avi+aac into mp4 ipod
 /usr/bin/ffmpeg -v -1 -i ./../$2.mp3 -i ../$2_tmp.avi -acodec libvo_aacenc -f mp4 -vcodec libx264 -vpre medium -vpre ipod640 -crf 27 -s 640x480 -y ./../$2_videoslide_tmp_ipod.mp4 &> /dev/null
