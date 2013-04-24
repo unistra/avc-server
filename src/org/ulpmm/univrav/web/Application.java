@@ -644,11 +644,6 @@ public class Application extends HttpServlet {
 			/* Regeneration of the RSS files */
 			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 		}
-		else if( page.equals("/thick_codeform")) {
-			request.setAttribute("id", request.getParameter("id"));
-			request.setAttribute("type", request.getParameter("type"));
-			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_codeform.jsp").forward(request, response);
-		}
 		else if( page.equals("/thick_styles")) {
 			List<String> styles = service.getStyles(getServletContext().getRealPath("/") + "files/styles/");
 			request.setAttribute("styles", styles );

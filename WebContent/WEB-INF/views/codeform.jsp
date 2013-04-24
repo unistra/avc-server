@@ -39,7 +39,7 @@
 	    	<div id="codeForm">
 		    	<form method="post" action="./courseaccess?id=${id}">
 					<legend><fmt:message key="Code d'acc&egrave;s"/></legend>
-					<input type="text" name="code">
+					<input type="password" name="code">
 					<input type="hidden" name="type" value="${type}">
 					<br><br>
 					<input type="submit" value="<fmt:message key="Valider"/>">
