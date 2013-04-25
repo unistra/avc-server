@@ -62,6 +62,7 @@
 .visuleft {
 	float:left;
 	text-align:left;
+	width: 330px;
 }
 
 .visuright {
