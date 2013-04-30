@@ -113,7 +113,6 @@
    				 		   				 		
    				 			<video id="playerhtml5" autoplay controls style="width:320px;height:260px;">  
     				 			<source src="${courseurlnoext}_ipod.mp4" type="video/mp4"> <!-- safari/chrome -->
-    							<source src="${courseurlnoext}.ogv" type="video/ogg"> <!-- firefox/opera support ogv, not mp4 -->
     				 			<source src="${courseurlnoext}.webm" type="video/webm"> <!-- firefox 4, opera 10, chrome 6, IE 9 -->
     				 			<p>Your browser doesn't support html5. Use the flash page.</p>
  							</video>
@@ -365,7 +364,6 @@
    				 		   				 		
    				 			<video id="playerhtml5" autoplay controls style="width:720px;">  
     							<source src="${courseurlnoext}.mp4" type="video/mp4"> <!-- safari/chrome -->
-    							<source src="${courseurlnoext}.ogv" type="video/ogg"> <!-- firefox/opera support ogv, not mp4 -->
     							<source src="${courseurlnoext}.webm" type="video/webm"> <!-- firefox 4, opera 10, chrome 6, IE 9 -->
     							<p>Your browser doesn't support html5. Use the flash page.</p>
  							</video>      
