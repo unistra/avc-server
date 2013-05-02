@@ -10,6 +10,8 @@
 import sys
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import cm, mm, inch
+from reportlab.platypus import Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 
 class CreatePDF:
     """
@@ -24,15 +26,36 @@ class CreatePDF:
         """
         Onitialize the PDF (A4) and reade the timecode file
         """
-        self.pdf = Canvas(workingDirectory+"/"+pdfName+".pdf")
-        timecode= open(workingDirectory+"/timecode.csv",'r')
-        self.slides=[]
-        for line in timecode:
-            #print "Found slide at t (seconds) = "+line
-            self.slides.append(line)
-        #self.slides=self.slides[1:]#Don't use the first slide
-        print "\nNumber of slides to process :", len(self.slides)
-        print "\nPlease wait while processing ..."
+        try:
+            self.pdf = Canvas(workingDirectory+"/"+pdfName+".pdf")
+            timecode= open(workingDirectory+"/timecode.csv",'r')
+            self.slides=[]
+            for line in timecode:
+                self.slides.append(line)
+            print "\nNumber of slides to process :", len(self.slides)
+            print "\nPlease wait while processing ..."
+        
+            # Get informations from the description file
+            self.author = self.title = self.formation = self.subject = self.date = ""
+            description = open("%s/description.txt" % workingDirectory,'r')
+            for line in description:
+                line = line.replace('\n','').split(':')
+                if len(line) == 2 and line[0] == "Author":
+                    self.author = line[1]
+                elif len(line) == 2 and line[0] == "Title":
+                    self.title = line[1]
+                elif len(line) == 2 and line[0] == "Formation":
+                    self.formation = line[1]
+                elif len(line) == 2 and line[0] == "Subject":
+                    self.subject = line[1]
+                elif len(line) == 2 and line[0] == "Date":
+                    self.date = line[1]
+        except Exception:
+            print "An error occurred during the initialization of the pdf"
+        else:
+            timecode.close()
+            description.close()
+
         
     def timeToHMS(self,t):
         """ 
@@ -50,18 +73,37 @@ class CreatePDF:
         Draw in the PDF the screenshots and datas
         (2 screenshots per page : Up and Down)
         """
+
+        #print title and author
+        intro = "<font name=Courier size=14>\
+                <b>Title:</b> %s<br /><br />\
+                <b>Author:</b> %s<br /><br />\
+                <b>Formation:</b> %s<br /><br />\
+                <b>Subject:</b> %s<br /><br />\
+                <b>Date:</b> %s\
+                </font>" % (self.title, self.author, self.formation, self.subject, self.date)
+
+        styles = getSampleStyleSheet()
+        p = Paragraph(intro,styles["Normal"])
+        p.wrapOn(self.pdf,15*cm, 20*cm)
+        p.drawOn(self.pdf, 3*cm, 28*cm-p.height)
+        self.pdf.showPage()
+
+        #print slides
         d=2
         # Slides Positions
         SUx,SUy=3*cm,3*cm # upper slide
         SDx,SDy=3*cm,16*cm #Slide Down (bottom)
         Swidth,Sheight= 16*cm,11*cm
-        
+
         while d <= len(self.slides):
-            
+            #define font     
             self.pdf.setFont("Courier", 10)
-            #self.pdf.setStrokeColorRGB(1,1,0)
             self.pdf.setStrokeColor("grey")
-            self.pdf.setLineWidth(2) 
+            self.pdf.setLineWidth(2)
+
+            #footer
+            self.pdf.drawString(3*cm,1*cm,"Author: %s" % (self.author,))
         
             if d % 2 != 0: # Upper slide
                 captureTime =self.timeToHMS(self.slides[d-2])
@@ -87,6 +129,7 @@ class CreatePDF:
             d+=1
         if len (self.slides)>= 1: print "\nPDF File saved"
         if len(self.slides)<1: print "\nNo slides to process : No PDF produced"
+
 if __name__ == "__main__":
     
     if sys.argv[1]!="":
