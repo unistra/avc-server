@@ -6,4 +6,4 @@
 
 cd $1
 
-/usr/bin/ffmpeg -v -1 -i $2.$3 -threads 0 -f webm -vcodec libvpx -g 120 -level 216 -profile 0 -qmax 42 -qmin 10 -acodec libvorbis -aq 90 -ac 2 $2.webm &> /dev/null
+/usr/bin/ffmpeg -v -1 -i $2.$3 -threads 0 -f webm -vcodec libvpx -g 120 -level 216 -profile 0 -qmax 42 -qmin 10 -acodec libvorbis -aq 90 -ac 2 -y $2.webm &> /dev/null
