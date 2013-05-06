@@ -168,6 +168,8 @@ function initTimeBar() {
 	// adds each time point and corresponding thumb
 	for( i=0 ; i< numberPerPage && (firstSlide + i <= timecodes.length) ; i++) {
 		document.getElementById("videoLine").innerHTML += '<a href="javascript:setTimeFromSlide(' + (firstSlide + i)  + ')"><img id="time' + (firstSlide + i)  + '" class="otherThumb" src="' + slidesurl + 'D' + (firstSlide + i + timing) + '-thumb.jpg"></a>';
+		// preload full image
+		(new Image()).src = slidesurl + 'D' + (firstSlide + i + timing) + ".jpg";
 	}
 }
 
@@ -201,17 +203,6 @@ function nextPage() {
 	}
 }
 
-//preload images
-function preloadimages() {
-	var firstslide = 1;
-	var i;
-	for(i=1;i < timecodes.length+1;i++) {
-		var num = firstslide + i;
-		var img = slidesurl + 'D' + num + '.jpg';
-		(new Image()).src = img;
-	}
-}
-
 //fullscreen on dia click
 function fullScreen() {	
 	$('#currentDia').click(function() {
@@ -227,5 +218,4 @@ function fullScreen() {
 
 $(function() {
 	fullScreen();
-	preloadimages();
 });
