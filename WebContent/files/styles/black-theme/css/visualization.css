@@ -273,3 +273,13 @@ Dia fullscreen functionnality
 	max-width: 100%;
 	/*min-height: 100%;*/
 }
+
+.linkhtml5, .linkflash {
+	margin-left:15px;
+	font-size: 12px;
+	border-color: #FF9;
+	border-style: solid;
+	border-width: 1px;
+	text-align: center;
+	width: 130px;
+}

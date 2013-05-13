@@ -321,20 +321,27 @@
 					</table>
 					</div>
 					
-					
-					<br>
-					
-					<div class="info">
-					
 					<c:if test="${fn:contains(mediaLst, 'adddoc') && course.adddocname !=null}">
 						<c:url var="courseaccess" scope="page" value="./courseaccess">
-								<c:param name="id" value="${course.courseid}"/>
-								<c:param name="type" value="adddoc"/>
-							</c:url>
-						<b>Supplément: </b><a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.adddoc']);">${course.adddocname }</a>	
+							<c:param name="id" value="${course.courseid}"/>
+							<c:param name="type" value="adddoc"/>
+						</c:url>
+						<br />
+						<div class="info">	
+							<b>Supplément: </b><a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.adddoc']);">${course.adddocname }</a>	
+						</div>
 					</c:if>
 					
-					</div>
+					<c:if test="${fn:contains(mediaLst, 'flash')}">			
+	            		<c:url var="courseaccess" scope="page" value="./courseaccess">
+							<c:param name="id" value="${course.courseid}"/>
+							<c:param name="type" value="flash"/>
+						</c:url>
+						<br />
+						<div class="linkflash"> 
+							<a href="<c:out value="${courseaccess}" />"><b><fmt:message key="linkflash"/></b></a>
+						</div>	
+					</c:if>
 					
 	            </div>
 	            
