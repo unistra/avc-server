@@ -1137,9 +1137,25 @@ public class FileSystemImpl implements IFileSystem {
 		}
 		catch( Exception e) {
 			logger.error("Error while writing the doc file " + courseid+"_captions.xml",e);
-		}		
+		}
 		
+		//convert tt file (flash) to srt (html5 js)
+		String[] command_array = {"python","to_srt.py","-t",coursesFolder + mediafolder +"/additional_docs/" + courseid+"_captions.xml",coursesFolder + mediafolder +"/additional_docs/" + courseid+"_captions.srt"};
 		
+		try {
+			Process p = r.exec(command_array, null, new File(scriptsFolder));
+						
+			if( p.waitFor() != 0 ) {
+				logger.error("Error while convert tt to srt from course " + courseid);
+				throw new DaoException("Error while convert tt to srt from course " + courseid);
+			}
+		}
+		catch(IOException ioe) {
+			logger.error("Error while convert tt to srt from course " + courseid,ioe);
+		}
+		catch(InterruptedException ie) {
+			logger.error("Error while convert tt to srt from course " + courseid,ie);
+		}
 	}
 	
 	/**
@@ -1148,10 +1164,14 @@ public class FileSystemImpl implements IFileSystem {
 	 * @param courseid courseid
 	 */
 	public void deleteSubtitles(String mediafolder, int courseid) {
-		
+		// tt file
 		File SubtitlesFile = new File(coursesFolder + mediafolder +"/additional_docs/" + courseid+"_captions.xml");
 		File newSubtitlesFile = new File(coursesFolder + mediafolder +"/additional_docs/" + new Date().getTime() + "." + courseid+"_captions.xml");
 		SubtitlesFile.renameTo(newSubtitlesFile);
+		//srt
+		File srtFile = new File(coursesFolder + mediafolder +"/additional_docs/" + courseid+"_captions.srt");
+		File newsrtFile = new File(coursesFolder + mediafolder +"/additional_docs/" + new Date().getTime() + "." + courseid+"_captions.srt");
+		srtFile.renameTo(newsrtFile);
 	}
 	
 	/**

@@ -2834,6 +2834,7 @@ public class Application extends HttpServlet {
 						}
 						
 						request.setAttribute("courseurlnoext", courseurl);
+						request.setAttribute("courseurlfolder", courseAccessUrl + c.getMediafolder());
 						request.setAttribute("slidesurl", slidesurl);
 						request.setAttribute("course", c);
 						request.setAttribute("slides", slides);

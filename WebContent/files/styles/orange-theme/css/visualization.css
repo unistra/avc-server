@@ -266,3 +266,12 @@ Dia fullscreen functionnality
 	text-align: center;
 	width: 130px;
 }
+
+#playerhtml5 {
+	margin-left:15px;
+}
+
+.srt {
+	margin-left:15px;
+	padding: 0.5em;
+}

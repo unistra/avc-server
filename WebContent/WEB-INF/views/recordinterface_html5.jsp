@@ -40,6 +40,9 @@
 	<script type="text/javascript" src="../files/js/recordinterface_flash.js"></script>
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
 	<script type="text/javascript" src="../files/colorbox/jquery.colorbox-min.js"></script>
+	<c:if test="${fn:contains(mediaLst, 'subtitles')}">
+		<script type="text/javascript" src="../files/js/jquery.srt.js"></script>
+	</c:if>
 		
 	<script type="text/javascript">
 		var timecodes = ${slides};
@@ -106,8 +109,10 @@
     				 			<source src="${courseurlnoext}.mp3" type="audio/mpeg"> <!-- chrome/safari -->
     				 			<source src="${courseurlnoext}.ogg" type="audio/ogg"> <!-- firefox/opera -->		
     				 			<p>Your browser doesn't support html5. Use the flash page.</p>
- 							</audio>  
-   				 		   				 		
+ 							</audio>
+ 							<c:if test="${fn:contains(mediaLst, 'subtitles')}">
+ 								<div class="srt" data-video="playerhtml5" data-srt="${courseurlfolder}/additional_docs/${course.courseid}_captions.srt"></div>
+   				 		   	</c:if>
    				 		</c:when>
    				 		<c:otherwise>
    				 		   				 		
@@ -116,6 +121,9 @@
     				 			<source src="${courseurlnoext}.webm" type="video/webm"> <!-- firefox 4, opera 10, chrome 6, IE 9 -->
     				 			<p>Your browser doesn't support html5. Use the flash page.</p>
  							</video>
+ 							<c:if test="${fn:contains(mediaLst, 'subtitles')}">
+ 								<div class="srt" data-video="playerhtml5" data-srt="${courseurlfolder}/additional_docs/${course.courseid}_captions.srt"></div>
+   				 		   	</c:if>
    				 		
    				 		</c:otherwise>
    				 		</c:choose>
@@ -360,11 +368,14 @@
  						<c:choose>
    				 		<c:when test="${course.type!='video' && !fn:contains(mediaLst, 'addvideo')}">
    				 		   				 		
-   				 			<audio id="playerhtml5" poster="../files/img/logo_audio.png" autoplay controls style="width:640px;">  
-    				 			<source src="${courseurlnoext}.mp3" type="audio/mpeg"> <!-- chrome/safari -->
+  				 			<audio id="playerhtml5" poster="../files/img/logo_audio.png" autoplay controls style="width:320px;height:260px;background-image:url(../files/img/logo_audio.png);">  
+     				 			<source src="${courseurlnoext}.mp3" type="audio/mpeg"> <!-- chrome/safari -->
     				 			<source src="${courseurlnoext}.ogg" type="audio/ogg"> <!-- firefox/opera -->		
     				 			<p>Your browser doesn't support html5. Use the flash page.</p>
- 							</audio>  
+ 							</audio>
+ 							<c:if test="${fn:contains(mediaLst, 'subtitles')}">
+ 								<div class="srt" data-video="playerhtml5" data-srt="${courseurlfolder}/additional_docs/${course.courseid}_captions.srt"></div>
+   				 		   	</c:if>
    				 		   				 		
    				 		</c:when>
    				 		<c:otherwise>
@@ -373,7 +384,10 @@
     							<source src="${courseurlnoext}.mp4" type="video/mp4"> <!-- safari/chrome -->
     							<source src="${courseurlnoext}.webm" type="video/webm"> <!-- firefox 4, opera 10, chrome 6, IE 9 -->
     							<p>Your browser doesn't support html5. Use the flash page.</p>
- 							</video>      
+ 							</video>
+ 							<c:if test="${fn:contains(mediaLst, 'subtitles')}">
+ 								<div class="srt" data-video="playerhtml5" data-srt="${courseurlfolder}/additional_docs/${course.courseid}_captions.srt"></div>
+   				 		   	</c:if>
    				 		
    				 		</c:otherwise>
    				 		</c:choose>
