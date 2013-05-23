@@ -42,7 +42,6 @@
 	<!-- URL of the public course -->
 	<c:url var="courseaccess" scope="page" value="./courseaccess">
 		<c:param name="id" value="${course.courseid}"/>
-		<c:param name="type" value="flash"/>
 	</c:url>
 		
 	<tr class="${class}">			

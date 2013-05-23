@@ -40,7 +40,9 @@
 		    	<form method="post" action="./courseaccess?id=${id}">
 					<legend><fmt:message key="Code d'acc&egrave;s"/></legend>
 					<input type="password" name="code">
-					<input type="hidden" name="type" value="${type}">
+					<c:if test="${not empty type}">
+						<input type="hidden" name="type" value="${type}">
+					</c:if>
 					<br><br>
 					<input type="submit" value="<fmt:message key="Valider"/>">
 				</form>

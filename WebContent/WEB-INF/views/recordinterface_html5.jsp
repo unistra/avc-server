@@ -108,7 +108,7 @@
    				 			<audio id="playerhtml5" poster="../files/img/logo_audio.png" autoplay controls style="width:320px;height:260px;background-image:url(../files/img/logo_audio.png);">  
     				 			<source src="${courseurlnoext}.mp3" type="audio/mpeg"> <!-- chrome/safari -->
     				 			<source src="${courseurlnoext}.ogg" type="audio/ogg"> <!-- firefox/opera -->		
-    				 			<p>Your browser doesn't support html5. Use the flash page.</p>
+    				 			<p class="nohtml5">Warning! Your browser doesn't support html5. Upgrade your browser or use the FLASH page.</p>
  							</audio>
  							<c:if test="${fn:contains(mediaLst, 'subtitles')}">
  								<div class="srt" data-video="playerhtml5" data-srt="${courseurlfolder}/additional_docs/${course.courseid}_captions.srt"></div>
@@ -119,7 +119,7 @@
    				 			<video id="playerhtml5" poster="../files/img/logo_audio.png" autoplay controls style="width:320px;height:260px;">  
     				 			<source src="${courseurlnoext}_ipod.mp4" type="video/mp4"> <!-- safari/chrome -->
     				 			<source src="${courseurlnoext}.webm" type="video/webm"> <!-- firefox 4, opera 10, chrome 6, IE 9 -->
-    				 			<p>Your browser doesn't support html5. Use the flash page.</p>
+    				 			<p class="nohtml5">Warning! Your browser doesn't support html5. Upgrade your browser or use the FLASH page.</p>
  							</video>
  							<c:if test="${fn:contains(mediaLst, 'subtitles')}">
  								<div class="srt" data-video="playerhtml5" data-srt="${courseurlfolder}/additional_docs/${course.courseid}_captions.srt"></div>
@@ -170,7 +170,6 @@
 					<div class="permalien">						
 						<c:url var="permacourseaccess" scope="page" value="${serverUrl}/avc/courseaccess">
 							<c:param name="id" value="${course.courseid}"/>
-							<c:param name="type" value="flash"/>
 						</c:url>
 						<b>URL:</b> <input id="permalieninput" type="text" value="${permacourseaccess}" onClick="javascript:focus();select();" readonly>
 						<br>
@@ -341,9 +340,9 @@
 					</c:if>
 					
 					<c:if test="${fn:contains(mediaLst, 'flash')}">			
-	            		<c:url var="courseaccess" scope="page" value="./courseaccess">
-							<c:param name="id" value="${course.courseid}"/>
-							<c:param name="type" value="flash"/>
+	            		<c:url var="courseaccess" scope="page" value="./changeinterface">
+							<c:param name="courseid" value="${course.courseid}"/>
+							<c:param name="recordinterface" value="flash"/>
 						</c:url>
 						<br />
 						<div class="linkflash"> 
@@ -371,7 +370,7 @@
   				 			<audio id="playerhtml5" poster="../files/img/logo_audio.png" autoplay controls style="width:320px;height:260px;background-image:url(../files/img/logo_audio.png);">  
      				 			<source src="${courseurlnoext}.mp3" type="audio/mpeg"> <!-- chrome/safari -->
     				 			<source src="${courseurlnoext}.ogg" type="audio/ogg"> <!-- firefox/opera -->		
-    				 			<p>Your browser doesn't support html5. Use the flash page.</p>
+    				 			<p class="nohtml5">Warning! Your browser doesn't support html5. Upgrade your browser or use the FLASH page.</p>
  							</audio>
  							<c:if test="${fn:contains(mediaLst, 'subtitles')}">
  								<div class="srt" data-video="playerhtml5" data-srt="${courseurlfolder}/additional_docs/${course.courseid}_captions.srt"></div>
@@ -383,7 +382,7 @@
    				 			<video id="playerhtml5" poster="../files/img/logo_audio.png" autoplay controls style="width:720px;">  
     							<source src="${courseurlnoext}.mp4" type="video/mp4"> <!-- safari/chrome -->
     							<source src="${courseurlnoext}.webm" type="video/webm"> <!-- firefox 4, opera 10, chrome 6, IE 9 -->
-    							<p>Your browser doesn't support html5. Use the flash page.</p>
+    							<p class="nohtml5">Warning! Your browser doesn't support html5. Upgrade your browser or use the FLASH page.</p>
  							</video>
  							<c:if test="${fn:contains(mediaLst, 'subtitles')}">
  								<div class="srt" data-video="playerhtml5" data-srt="${courseurlfolder}/additional_docs/${course.courseid}_captions.srt"></div>

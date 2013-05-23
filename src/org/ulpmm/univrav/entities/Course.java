@@ -525,8 +525,9 @@ public class Course {
 	 * @param type media type(mp3,ogg,...)
 	 * @return true if the media is available
 	 */
-	public boolean isAvailable(String type) {			
-		if(type == null || type.equals("flash")) return ((typeFlash & mediatype) > 0);
+	public boolean isAvailable(String type) {
+		if(type == null || type.equals("")) return false;
+		else if(type.equals("flash")) return ((typeFlash & mediatype) > 0);
 		else if(type.equals("mp3")) return ((typeMp3 & mediatype) > 0);
 		else if(type.equals("ogg")) return ((typeOgg & mediatype) > 0);
 		else if(type.equals("pdf")) return ((typePdf & mediatype) > 0);
@@ -539,6 +540,12 @@ public class Course {
 		else if(type.equals("subtitles")) return ((typeSubtitles & mediatype) > 0);
 		else if(type.equals("addvideo")) return ((typeAddVideo & mediatype) > 0);
 		else if(type.equals("webm")) return ((typeWebm & mediatype) > 0);
+		else if(type.equals("html5")) {
+			if(this.type.equals("audio"))
+				return ((typeOgg & mediatype) > 0) && ((typeMp3 & mediatype) > 0);
+			else
+				return ((typeWebm & mediatype) > 0);
+		}
 		else return false;
 	}
 	
@@ -560,6 +567,10 @@ public class Course {
 		if ((typeSubtitles & mediatype) > 0) lst.add("subtitles") ;	
 		if ((typeAddVideo & mediatype) > 0) lst.add("addvideo") ;	
 		if ((typeWebm & mediatype) > 0) lst.add("webm") ;
+		if(this.type.equals("audio") && ((typeOgg & mediatype) > 0) && ((typeMp3 & mediatype) > 0))
+			lst.add("html5") ;
+		else if (this.type.equals("video") && ((typeWebm & mediatype) > 0))
+			lst.add("html5") ;
 		return lst;
 	}
 

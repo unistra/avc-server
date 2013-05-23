@@ -231,6 +231,9 @@ public class Application extends HttpServlet {
 	/** To separate medias encodage **/
 	private static boolean sepEnc;
 	
+	/** default record interface (flash or html5) **/
+	private static String defaultRecordInterface;
+	
 	/** Logger log4j */
 	private static final Logger logger = Logger.getLogger(Application.class);
 	
@@ -371,6 +374,8 @@ public class Application extends HttpServlet {
 			/* to separate medias encodage */
 			sepEnc = Boolean.parseBoolean(p.getProperty("sepEnc"));
 			
+			// default record interface (flash or html5)
+			defaultRecordInterface = p.getProperty("defaultRecordInterface");
 										
 			/* Datasource retrieving */
 			
@@ -485,6 +490,7 @@ public class Application extends HttpServlet {
 		
 		String style = null;
 		String language = null;
+		String recordinterface = null;
 		
 		/* If the session didn't exist and has just been created */
 		if( session.isNew() || session.getAttribute("session")==null) {
@@ -504,6 +510,8 @@ public class Application extends HttpServlet {
 						style=cookies[i].getValue();
 					else if( cookieName.equals("language") ) 
 						language = cookies[i].getValue();
+					else if(cookieName.equals("recordinterface"))
+						recordinterface = cookies[i].getValue();
 				}
 			}
 			
@@ -523,9 +531,17 @@ public class Application extends HttpServlet {
 				response.addCookie(languageCookie);
 			}
 			
+			if(recordinterface == null){
+				recordinterface = defaultRecordInterface;
+				Cookie recordinterfaceCookie = new Cookie("recordinterface", recordinterface);
+				recordinterfaceCookie.setMaxAge(31536000);
+				response.addCookie(recordinterfaceCookie);
+			}
+			
 			/* Store them in the session */
 			session.setAttribute("style", style);
 			session.setAttribute("language", language);
+			session.setAttribute("recordinterface", recordinterface);
 			
 			// Button disconnect
 			session.setAttribute("btnDeco", false);		
@@ -638,6 +654,8 @@ public class Application extends HttpServlet {
 			changeStyle(request, response);
 		else if( page.equals("/changelanguage"))
 			changeLanguage(request, response);
+		else if( page.equals("/changeinterface"))
+			changeInterface(request, response);
 		else if( page.equals("/deletetests")) {
 			service.deleteTests(testKeyWord1);
 			service.hideTests(testKeyWord2, testKeyWord3);
@@ -1116,7 +1134,7 @@ public class Application extends HttpServlet {
 					int courseid = Integer.parseInt( (String) request.getParameter("id"));
 					String type = (String) request.getParameter("type");
 					//getServletContext().getRequestDispatcher("/avc/courseaccess").forward(request, response);
-					response.sendRedirect("./courseaccess?id="+courseid+"&type="+type);
+					response.sendRedirect("./courseaccess?id="+courseid+(type != null ? "&type="+ type : ""));
 				}
 				//Live access for medicine
 				else if(request.getParameter("returnPage")!=null && request.getParameter("returnPage").equals("liveaccess")) {
@@ -2047,7 +2065,7 @@ public class Application extends HttpServlet {
 				String emailUserSubject = "Votre nouvel enregistrement sur AudioVideoCast / Your new course on AudioVideoCast";
 				
 				String emailUserMessageFr = "Bonjour,\n\nVotre enregistrement intitulé \"" + c.getTitle()
-				+"\" sera publié sur la plateforme AudioVideoCast à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
+				+"\" sera publié sur la plateforme AudioVideoCast à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()
 				+ "\nMerci de bien vouloir patienter quelques minutes avant la mise en ligne définitive du document, le processus de conversion durant environ 30 minutes pour chaque heure de vidéo."
 				+"\n\nPour toute question sur l'usage de la plateforme AudioVideoCast,"
 				+"\n- contactez le support : " + supportLink		
@@ -2055,7 +2073,7 @@ public class Application extends HttpServlet {
 				+ "\n\nBien cordialement,\n\nL'équipe AudioVideoCast";
 				
 				String emailUserMessageEn = "Hello,\n\nYour recording entitled \"" + c.getTitle()
-				+"\" will be published on : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
+				+"\" will be published on : "+ recordedInterfaceUrl + "?id="+c.getCourseid()
 				+"\nPlease note that the conversion process of your document will take about 30 minutes for every hour of video."
 				+"\n\nFor any question regarding AudioVideoCast,"
 				+"\n- contact support team : " + supportLink
@@ -2078,7 +2096,7 @@ public class Application extends HttpServlet {
 				if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 					// Sending email for admins
 					String emailAdminSubject = "a new course on AudioVideoCast";
-					String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (email!=null ? "\n\nEmail:"+email : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nAudioVideoCast Administrator" ;
+					String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid() + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (email!=null ? "\n\nEmail:"+email : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nAudioVideoCast Administrator" ;
 					if(adminEmail1!=null && !adminEmail1.equals(""))
 						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
 					if(adminEmail2!=null && !adminEmail2.equals(""))
@@ -2090,7 +2108,7 @@ public class Application extends HttpServlet {
 				ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 								
 				message = bundle.getString("addcourse_message1a")+" \"" + c.getTitle() +"\" "+bundle.getString("addcourse_message1b")+": ";
-				ahref = recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash";
+				ahref = recordedInterfaceUrl + "?id="+c.getCourseid();
 				message2 = bundle.getString("addcourse_message2");
 			
 				
@@ -2393,7 +2411,7 @@ public class Application extends HttpServlet {
 								String emailUserSubject = "Votre nouvel enregistrement sur AudioVideoCast / Your new course on AudioVideoCast";
 								
 								String emailUserMessageFr = "Bonjour,\n\nVotre enregistrement intitulé \"" + c.getTitle()
-								+"\" sera publié sur la plateforme AudioVideoCast à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
+								+"\" sera publié sur la plateforme AudioVideoCast à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()
 								+ "\nMerci de bien vouloir patienter quelques minutes avant la mise en ligne définitive du document, le processus de conversion durant environ 30 minutes pour chaque heure de vidéo."
 								+"\n\nPour toute question sur l'usage de la plateforme AudioVideoCast,"
 								+"\n- contactez le support : " + supportLink		
@@ -2401,7 +2419,7 @@ public class Application extends HttpServlet {
 								+ "\n\nBien cordialement,\n\nL'équipe AudioVideoCast";
 								
 								String emailUserMessageEn = "Hello,\n\nYour recording entitled \"" + c.getTitle()
-								+"\" will be published on : "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" 
+								+"\" will be published on : "+ recordedInterfaceUrl + "?id="+c.getCourseid()
 								+"\nPlease note that the conversion process of your document will take about 30 minutes for every hour of video."
 								+"\n\nFor any question regarding AudioVideoCast,"
 								+"\n- contact support team : " + supportLink
@@ -2419,7 +2437,7 @@ public class Application extends HttpServlet {
 								if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 									// Sending email for admins
 									String emailAdminSubject = "a new file on AudioVideoCast";
-									String emailAdminMessage = "Dear Admin,\n\nA file named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid()+"&type=flash" + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (user!=null && user.getEmail()!=null ? "\n\nEmail:"+user.getEmail() : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nAudioVideoCast Administrator" ;
+									String emailAdminMessage = "Dear Admin,\n\nA file named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid() + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (user!=null && user.getEmail()!=null ? "\n\nEmail:"+user.getEmail() : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nAudioVideoCast Administrator" ;
 									if(!adminEmail1.equals(""))
 										service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
 									if(!adminEmail2.equals(""))
@@ -2633,20 +2651,16 @@ public class Application extends HttpServlet {
 					
 			// if the user is not authenticated, redirection to authentication_cas
 			if(c.isRestrictionuds() && user==null) {
-				response.sendRedirect("./authentication_cas?returnPage=courseaccess&id="+courseid+"&type="+(type != null ? type : "flash")+(genre !=null ? "&code="+genre:""));
+				response.sendRedirect("./authentication_cas?returnPage=courseaccess&id="+courseid+(type != null ? "&type="+ type : "")+(genre !=null ? "&code="+genre:""));
 			}
-			/*else if(c.isRestrictionuds() && user!=null && !user.isActivate()) {
-				request.setAttribute("messagetype", "error");
-				request.setAttribute("message", "You don't have access to this page");
-				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
-			}*/
 			else {
 
 				if( genre == null && c.getGenre() != null) { // The user tries to access to the protected course directly via the URL
 
 					/* Redirects the client to the access code typing form */
 					request.setAttribute("id", courseid);
-					request.setAttribute("type", type != null ? type : "flash");
+					if(type != null && !type.equals(""))
+						request.setAttribute("type", type);
 					getServletContext().getRequestDispatcher("/WEB-INF/views/codeform.jsp").forward(request, response);
 				}
 				else {
@@ -2660,10 +2674,22 @@ public class Application extends HttpServlet {
 
 					service.incrementConsultations(c);
 
+					// default access : set html5 or flash
+					if(type == null || type.equals("")) {
+						// if audio with mp3 and ogg, or video with webm-mp4, go to html5 page, else, go to flash
+						String recordinterface = (String) session.getAttribute("recordinterface");
+						if(recordinterface.equals("html5") && ((c.getType().equals("audio") && c.isAvailable("ogg") && c.isAvailable("mp3")) || (c.getType().equals("video") && c.isAvailable("webm")))) {
+							type = "html5";
+						}
+						else {
+							type = "flash";
+						}
+					}
+										
 					// Check the media availability
-					if(c.isAvailable(type)) {
+					if(type != null && !type.equals("") && c.isAvailable(type)) {
 						
-						if( type == null || type.equals("flash")) {
+						if( type.equals("flash")) {
 							/* redirection to the FlvPlay JS interface */
 							String courseExtension = "";
 							if( c.getType().equals("audio"))
@@ -2808,69 +2834,68 @@ public class Application extends HttpServlet {
 							/* Sends the file */
 							OutputStream out = response.getOutputStream();
 							service.returnFile(filename, out);
-						}
-					}
-					
-					// Html 5 test page
-					else if( type.equals("html5")) {
-						
-						String courseurl = "";
-						
-						//if the course have an additional video, change the url of the main media
-						if(c.isAvailable("addvideo")) {
-							courseurl = courseAccessUrl + c.getMediafolder() + "/additional_video/addvideo_" + c.getMediasFileName();
-						}
-						else {
-							courseurl = courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName();
-						}
-						
-						List<Slide> slides = service.getSlides(c.getCourseid());
-						// if offset change time slide "à la volée"
-						if(c.getSlidesoffset() != null && c.getSlidesoffset()!=null) {
-							for(Slide s : slides) {
-								int t = s.getSlidetime() + c.getSlidesoffset();
-								s.setSlidetime(t);
-							}					
-						}
-						
-						request.setAttribute("courseurlnoext", courseurl);
-						request.setAttribute("courseurlfolder", courseAccessUrl + c.getMediafolder());
-						request.setAttribute("slidesurl", slidesurl);
-						request.setAttribute("course", c);
-						request.setAttribute("slides", slides);
-						String showForm = service.getFormationFullName(c.getFormation());
-						request.setAttribute("formationfullname", showForm!=null ? showForm : c.getFormation());													
-						Amphi a = service.getAmphi(c.getIpaddress());
-						String amphi = a != null ? a.getName() : "";
-						String building = service.getBuildingName(c.getIpaddress());
-						request.setAttribute("amphi", amphi);
-						request.setAttribute("building", building);
-						if( c.getTiming().equals("n-1"))
-							request.setAttribute("timing", 1);
-						else
-							request.setAttribute("timing", 0);
+						}					
+						// Html 5 page
+						else if( type.equals("html5")) {
 
-						request.setAttribute("serverUrl",serverUrl);
-						request.setAttribute("tags", service.getTagsByCourse(c));
-						request.setAttribute("rssfiles", service.getRssCourseFileList(c));
-						request.setAttribute("mediaLst", c.getMedias());
-						
-						// Sets embed objects
-						if(c.isDownload() && !c.isRestrictionuds() && c.getGenre()==null) {
-							if(c.isAvailable("videoslide"))
-								request.setAttribute("embedvs", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='640' height='480' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+"_videoslide.mp4&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='640' height='480' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+"_videoslide.mp4&type=lighttpd' /></object>");
-							if(c.isAvailable("mp3"))
-								request.setAttribute("embedaudio", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='320' height='20' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+".mp3'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='320' height='20' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+".mp3' /></object>");
-							if(c.getType().equals("video"))
-								request.setAttribute("embedvideo", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='320' height='240' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+".flv&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='320' height='240' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+".flv&type=lighttpd' /></object>");
-							if(c.isAvailable("hq"))
-								request.setAttribute("embedhq", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='1024' height='576' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+".mp4&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='1024' height='576' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+".mp4&type=lighttpd' /></object>");
-						}
-						
-	
-						/* displays the .jsp view */
-						getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_html5.jsp").forward(request, response);
+							String courseurl = "";
 
+							//if the course have an additional video, change the url of the main media
+							if(c.isAvailable("addvideo")) {
+								courseurl = courseAccessUrl + c.getMediafolder() + "/additional_video/addvideo_" + c.getMediasFileName();
+							}
+							else {
+								courseurl = courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName();
+							}
+
+							List<Slide> slides = service.getSlides(c.getCourseid());
+							// if offset change time slide "à la volée"
+							if(c.getSlidesoffset() != null && c.getSlidesoffset()!=null) {
+								for(Slide s : slides) {
+									int t = s.getSlidetime() + c.getSlidesoffset();
+									s.setSlidetime(t);
+								}					
+							}
+
+							request.setAttribute("courseurlnoext", courseurl);
+							request.setAttribute("courseurlfolder", courseAccessUrl + c.getMediafolder());
+							request.setAttribute("slidesurl", slidesurl);
+							request.setAttribute("course", c);
+							request.setAttribute("slides", slides);
+							String showForm = service.getFormationFullName(c.getFormation());
+							request.setAttribute("formationfullname", showForm!=null ? showForm : c.getFormation());													
+							Amphi a = service.getAmphi(c.getIpaddress());
+							String amphi = a != null ? a.getName() : "";
+							String building = service.getBuildingName(c.getIpaddress());
+							request.setAttribute("amphi", amphi);
+							request.setAttribute("building", building);
+							if( c.getTiming().equals("n-1"))
+								request.setAttribute("timing", 1);
+							else
+								request.setAttribute("timing", 0);
+
+							request.setAttribute("serverUrl",serverUrl);
+							request.setAttribute("tags", service.getTagsByCourse(c));
+							request.setAttribute("rssfiles", service.getRssCourseFileList(c));
+							request.setAttribute("mediaLst", c.getMedias());
+
+							// Sets embed objects
+							if(c.isDownload() && !c.isRestrictionuds() && c.getGenre()==null) {
+								if(c.isAvailable("videoslide"))
+									request.setAttribute("embedvs", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='640' height='480' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+"_videoslide.mp4&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='640' height='480' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+"_videoslide.mp4&type=lighttpd' /></object>");
+								if(c.isAvailable("mp3"))
+									request.setAttribute("embedaudio", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='320' height='20' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+".mp3'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='320' height='20' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+".mp3' /></object>");
+								if(c.getType().equals("video"))
+									request.setAttribute("embedvideo", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='320' height='240' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+".flv&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='320' height='240' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+".flv&type=lighttpd' /></object>");
+								if(c.isAvailable("hq"))
+									request.setAttribute("embedhq", "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='1024' height='576' id='player1' name='player1'><param name='movie' value='"+serverUrl+"/files/jwflvplayer/player.swf'><param name='allowfullscreen' value='true'><param name='allowscriptaccess' value='always'><param name='flashvars' value='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+".mp4&type=lighttpd'><embed id='player1' name='player1' src='"+serverUrl+"/files/jwflvplayer/player.swf' width='1024' height='576' allowscriptaccess='always' allowfullscreen='true' flashvars='file="+courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName()+".mp4&type=lighttpd' /></object>");
+							}
+
+
+							/* displays the .jsp view */
+							getServletContext().getRequestDispatcher("/WEB-INF/views/recordinterface_html5.jsp").forward(request, response);
+
+						}
 					}
 					else {
 						// For media upload during process
@@ -5045,6 +5070,27 @@ public class Application extends HttpServlet {
 		getServletContext().getRequestDispatcher(request.getParameter("returnUrl")).forward(request, response);
 	}
 	
-	
+	/**
+	 * Method to change the interface (flash or html5) of the website
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void changeInterface(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		String recordinterface = request.getParameter("recordinterface");
+		/* Stores the language in the session */
+		session.setAttribute("recordinterface", recordinterface);
+		/* Stores the language in the cookies */
+		Cookie recordinterfaceCookie = new Cookie("recordinterface", recordinterface);
+		recordinterfaceCookie.setMaxAge(31536000);
+		response.addCookie(recordinterfaceCookie);
+				
+		// return to the course access page
+		String courseid = request.getParameter("courseid");
+		response.sendRedirect("./courseaccess?id="+courseid);
+	}
         	
 }

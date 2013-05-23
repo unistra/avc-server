@@ -291,3 +291,7 @@ Dia fullscreen functionnality
 	margin-left:15px;
 	padding: 0.5em;
 }
+
+.nohtml5 {
+	color:red;
+}

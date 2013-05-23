@@ -532,7 +532,7 @@ public class FileSystemImpl implements IFileSystem {
 			        item.appendChild(coursCategory);
 			        
 			        Element coursLink = document.createElement("link");
-			        coursLink.setTextContent(recordedInterfaceUrl + "?id=" + course.getCourseid() + "&type=flash");
+			        coursLink.setTextContent(recordedInterfaceUrl + "?id=" + course.getCourseid());
 			        item.appendChild(coursLink);
 			        
 			        Element coursPubDate = document.createElement("pubDate");
