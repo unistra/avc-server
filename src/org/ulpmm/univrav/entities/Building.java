@@ -85,5 +85,64 @@ public class Building {
 	public String toString() {
 		return this.name;
 	}
+	
+	/**
+	 * set the building id
+	 * @param buildingid the building id
+	 */
+	public void setBuildingid(int buildingid) {
+		this.buildingid = buildingid;
+	}
+
+	/**
+	 * set the name
+	 * @param name the name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * set the image file
+	 * @param imageFile the image file
+	 */
+	public void setImageFile(String imageFile) {
+		this.imageFile = imageFile;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + buildingid;
+		result = prime * result
+				+ ((imageFile == null) ? 0 : imageFile.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Building other = (Building) obj;
+		if (buildingid != other.buildingid)
+			return false;
+		if (imageFile == null) {
+			if (other.imageFile != null)
+				return false;
+		} else if (!imageFile.equals(other.imageFile))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
 		
 }
