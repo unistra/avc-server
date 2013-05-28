@@ -1,0 +1,5 @@
+org.ulpmm.univrav.dao
+org.ulpmm.univrav.entities
+org.ulpmm.univrav.service
+org.ulpmm.univrav.test
+org.ulpmm.univrav.web
