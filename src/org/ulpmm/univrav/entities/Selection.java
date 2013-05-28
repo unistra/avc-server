@@ -83,6 +83,46 @@ public class Selection {
 		this.formationcollection = formationcollection;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((formationcollection == null) ? 0 : formationcollection
+						.hashCode());
+		result = prime
+				* result
+				+ ((idcourseselection == null) ? 0 : idcourseselection
+						.hashCode());
+		result = prime * result + position;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Selection other = (Selection) obj;
+		if (formationcollection == null) {
+			if (other.formationcollection != null)
+				return false;
+		} else if (!formationcollection.equals(other.formationcollection))
+			return false;
+		if (idcourseselection == null) {
+			if (other.idcourseselection != null)
+				return false;
+		} else if (!idcourseselection.equals(other.idcourseselection))
+			return false;
+		if (position != other.position)
+			return false;
+		return true;
+	}
+
 	
 	
 }

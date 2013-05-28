@@ -42,9 +42,27 @@
 	<copy todir="${build.dir}/org/ulpmm/univrav/language">
 		<fileset dir="${src.dir}/org/ulpmm/univrav/language" includes="*.properties"/>
 	</copy>
+	
+	<!-- Junit -->
+	<path id="test.classpath">
+		<pathelement location="${build.dir}" />
+		<path refid="compile.classpath" />
+	</path>
+	<target name="test" depends="compile">
+		<junit failureProperty="test.failure">
+			<classpath refid="test.classpath" />
+			<batchtest> 
+				<formatter type="brief" usefile="false" />
+				<fileset dir="${src.dir}"> 
+					<include name="org/ulpmm/univrav/test/*Test.class"/> 
+				</fileset> 
+			</batchtest> 
+		</junit>
+		<fail message="test failed" if="test.failure" />
+	</target>
 
 	<!-- Création du war -->
-	<target name="makeWar" depends="init,compile" description="compile the source and make a war file" >
+	<target name="makeWar" depends="init,compile,test" description="compile the source and make a war file" >
 		<echo message="Création de l'archive ${warName}.war dans ${warLocation}"/>
 		<war destfile="${warLocation}/${warName}.war" webxml="WebContent/WEB-INF/web.xml" update="true">
 		<fileset dir="WebContent">

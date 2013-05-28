@@ -166,6 +166,61 @@ public class Job {
 	public void setExtension(String extension) {
 		this.extension = extension;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + courseid;
+		result = prime * result
+				+ ((coursetype == null) ? 0 : coursetype.hashCode());
+		result = prime * result
+				+ ((extension == null) ? 0 : extension.hashCode());
+		result = prime * result + jobid;
+		result = prime * result
+				+ ((mediapath == null) ? 0 : mediapath.hashCode());
+		result = prime * result + mediatype;
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Job other = (Job) obj;
+		if (courseid != other.courseid)
+			return false;
+		if (coursetype == null) {
+			if (other.coursetype != null)
+				return false;
+		} else if (!coursetype.equals(other.coursetype))
+			return false;
+		if (extension == null) {
+			if (other.extension != null)
+				return false;
+		} else if (!extension.equals(other.extension))
+			return false;
+		if (jobid != other.jobid)
+			return false;
+		if (mediapath == null) {
+			if (other.mediapath != null)
+				return false;
+		} else if (!mediapath.equals(other.mediapath))
+			return false;
+		if (mediatype != other.mediatype)
+			return false;
+		if (status == null) {
+			if (other.status != null)
+				return false;
+		} else if (!status.equals(other.status))
+			return false;
+		return true;
+	}
 	
 	
 	

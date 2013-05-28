@@ -123,5 +123,53 @@ public class Discipline {
 	public void setNamedom(String namedom) {
 		this.namedom = namedom;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((codecomp == null) ? 0 : codecomp.hashCode());
+		result = prime * result + ((codedom == null) ? 0 : codedom.hashCode());
+		result = prime * result + disciplineid;
+		result = prime * result
+				+ ((namecomp == null) ? 0 : namecomp.hashCode());
+		result = prime * result + ((namedom == null) ? 0 : namedom.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Discipline other = (Discipline) obj;
+		if (codecomp == null) {
+			if (other.codecomp != null)
+				return false;
+		} else if (!codecomp.equals(other.codecomp))
+			return false;
+		if (codedom == null) {
+			if (other.codedom != null)
+				return false;
+		} else if (!codedom.equals(other.codedom))
+			return false;
+		if (disciplineid != other.disciplineid)
+			return false;
+		if (namecomp == null) {
+			if (other.namecomp != null)
+				return false;
+		} else if (!namecomp.equals(other.namecomp))
+			return false;
+		if (namedom == null) {
+			if (other.namedom != null)
+				return false;
+		} else if (!namedom.equals(other.namedom))
+			return false;
+		return true;
+	}
 	
 }

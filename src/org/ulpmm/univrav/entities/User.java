@@ -231,6 +231,82 @@ public class User {
 	 */
 	public void setEtp(String etp) {
 		this.etp = etp;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (activate ? 1231 : 1237);
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result
+				+ ((establishment == null) ? 0 : establishment.hashCode());
+		result = prime * result + ((etp == null) ? 0 : etp.hashCode());
+		result = prime * result
+				+ ((firstname == null) ? 0 : firstname.hashCode());
+		result = prime * result
+				+ ((lastname == null) ? 0 : lastname.hashCode());
+		result = prime * result + ((login == null) ? 0 : login.hashCode());
+		result = prime * result + ((profile == null) ? 0 : profile.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + userid;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (activate != other.activate)
+			return false;
+		if (email == null) {
+			if (other.email != null)
+				return false;
+		} else if (!email.equals(other.email))
+			return false;
+		if (establishment == null) {
+			if (other.establishment != null)
+				return false;
+		} else if (!establishment.equals(other.establishment))
+			return false;
+		if (etp == null) {
+			if (other.etp != null)
+				return false;
+		} else if (!etp.equals(other.etp))
+			return false;
+		if (firstname == null) {
+			if (other.firstname != null)
+				return false;
+		} else if (!firstname.equals(other.firstname))
+			return false;
+		if (lastname == null) {
+			if (other.lastname != null)
+				return false;
+		} else if (!lastname.equals(other.lastname))
+			return false;
+		if (login == null) {
+			if (other.login != null)
+				return false;
+		} else if (!login.equals(other.login))
+			return false;
+		if (profile == null) {
+			if (other.profile != null)
+				return false;
+		} else if (!profile.equals(other.profile))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		if (userid != other.userid)
+			return false;
+		return true;
 	}	
 	
 	

@@ -687,5 +687,139 @@ public class Course {
 	public boolean isVideoUpload() {
 		return this.type.equals("video") && !this.isAvailable("zip");
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((adddocname == null) ? 0 : adddocname.hashCode());
+		result = prime * result + consultations;
+		result = prime * result + courseid;
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result
+				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + (download ? 1231 : 1237);
+		result = prime * result + duration;
+		result = prime * result
+				+ ((firstname == null) ? 0 : firstname.hashCode());
+		result = prime * result
+				+ ((formation == null) ? 0 : formation.hashCode());
+		result = prime * result + ((genre == null) ? 0 : genre.hashCode());
+		result = prime * result
+				+ ((ipaddress == null) ? 0 : ipaddress.hashCode());
+		result = prime * result + mediatype;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((recorddate == null) ? 0 : recorddate.hashCode());
+		result = prime * result + (restrictionuds ? 1231 : 1237);
+		result = prime * result
+				+ ((slidesoffset == null) ? 0 : slidesoffset.hashCode());
+		result = prime * result + ((timing == null) ? 0 : timing.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((userid == null) ? 0 : userid.hashCode());
+		result = prime * result + (visible ? 1231 : 1237);
+		result = prime * result + volume;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Course other = (Course) obj;
+		if (adddocname == null) {
+			if (other.adddocname != null)
+				return false;
+		} else if (!adddocname.equals(other.adddocname))
+			return false;
+		if (consultations != other.consultations)
+			return false;
+		if (courseid != other.courseid)
+			return false;
+		if (date == null) {
+			if (other.date != null)
+				return false;
+		} else if (!date.equals(other.date))
+			return false;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (download != other.download)
+			return false;
+		if (duration != other.duration)
+			return false;
+		if (firstname == null) {
+			if (other.firstname != null)
+				return false;
+		} else if (!firstname.equals(other.firstname))
+			return false;
+		if (formation == null) {
+			if (other.formation != null)
+				return false;
+		} else if (!formation.equals(other.formation))
+			return false;
+		if (genre == null) {
+			if (other.genre != null)
+				return false;
+		} else if (!genre.equals(other.genre))
+			return false;
+		if (ipaddress == null) {
+			if (other.ipaddress != null)
+				return false;
+		} else if (!ipaddress.equals(other.ipaddress))
+			return false;
+		if (mediatype != other.mediatype)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (recorddate == null) {
+			if (other.recorddate != null)
+				return false;
+		} else if (!recorddate.equals(other.recorddate))
+			return false;
+		if (restrictionuds != other.restrictionuds)
+			return false;
+		if (slidesoffset == null) {
+			if (other.slidesoffset != null)
+				return false;
+		} else if (!slidesoffset.equals(other.slidesoffset))
+			return false;
+		if (timing == null) {
+			if (other.timing != null)
+				return false;
+		} else if (!timing.equals(other.timing))
+			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		if (userid == null) {
+			if (other.userid != null)
+				return false;
+		} else if (!userid.equals(other.userid))
+			return false;
+		if (visible != other.visible)
+			return false;
+		if (volume != other.volume)
+			return false;
+		return true;
+	}
 	
 }

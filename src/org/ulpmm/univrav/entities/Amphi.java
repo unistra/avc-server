@@ -178,5 +178,112 @@ public class Amphi implements Comparable<Amphi>{
 		this.restrictionuds = restrictionuds;
 	}
 
+	/**
+	 * set amphi id
+	 * @param amphiid the amphi id
+	 */
+	public void setAmphiid(int amphiid) {
+		this.amphiid = amphiid;
+	}
+
+	/**
+	 * set building id
+	 * @param buildingid the building id
+	 */
+	public void setBuildingid(int buildingid) {
+		this.buildingid = buildingid;
+	}
+
+	/**
+	 * set the name
+	 * @param name the name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * set the ip adress
+	 * @param ipAddress the ip adress
+	 */
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
+	/**
+	 * set the status
+	 * @param status the status
+	 */
+	public void setStatus(boolean status) {
+		this.status = status;
+	}
+
+	/**
+	 * set the gmap url
+	 * @param gmapurl the gmap url
+	 */
+	public void setGmapurl(String gmapurl) {
+		this.gmapurl = gmapurl;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + amphiid;
+		result = prime * result + buildingid;
+		result = prime * result + ((gmapurl == null) ? 0 : gmapurl.hashCode());
+		result = prime * result
+				+ ((ipAddress == null) ? 0 : ipAddress.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + number;
+		result = prime * result + (restrictionuds ? 1231 : 1237);
+		result = prime * result + (status ? 1231 : 1237);
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Amphi other = (Amphi) obj;
+		if (amphiid != other.amphiid)
+			return false;
+		if (buildingid != other.buildingid)
+			return false;
+		if (gmapurl == null) {
+			if (other.gmapurl != null)
+				return false;
+		} else if (!gmapurl.equals(other.gmapurl))
+			return false;
+		if (ipAddress == null) {
+			if (other.ipAddress != null)
+				return false;
+		} else if (!ipAddress.equals(other.ipAddress))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (number != other.number)
+			return false;
+		if (restrictionuds != other.restrictionuds)
+			return false;
+		if (status != other.status)
+			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
+			return false;
+		return true;
+	}
+
 	
 }

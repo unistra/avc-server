@@ -70,6 +70,31 @@ public class Slide {
 	public void setSlidetime(int slidetime) {
 		this.slidetime = slidetime;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + courseid;
+		result = prime * result + slidetime;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Slide other = (Slide) obj;
+		if (courseid != other.courseid)
+			return false;
+		if (slidetime != other.slidetime)
+			return false;
+		return true;
+	}
 	
 	
 }

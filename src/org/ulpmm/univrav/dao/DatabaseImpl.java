@@ -2131,6 +2131,11 @@ public class DatabaseImpl implements IDatabase {
 				sql = "UPDATE course SET ipaddress='"+ a.getIpAddress() + 
 					"' WHERE ipaddress='" + oldAmphiip + "'";
 				pstmt = cnt.prepareStatement(sql);
+				
+				if( pstmt.executeUpdate() == 0 ) {
+					logger.error("The courses of amphi " + a + " has not been modified");
+					throw new DaoException("The courses of amphi " + a + " has not been modified");
+				}
 			}
 		}
 		catch( SQLException sqle) {
@@ -2548,7 +2553,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addUser(User u) {
 		
-		String sql = "INSERT INTO \"user\"(\"login\",email,firstname,lastname,profile,establishment,type,activate,etp) values(?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO \"user\"(login,email,firstname,lastname,profile,establishment,type,activate,etp) values(?,?,?,?,?,?,?,?,?)";
 		PreparedStatement pstmt = null;
 		Connection cnt = null;
 		
