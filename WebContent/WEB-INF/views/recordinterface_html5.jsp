@@ -367,7 +367,7 @@
  						<c:choose>
    				 		<c:when test="${course.type!='video' && !fn:contains(mediaLst, 'addvideo')}">
    				 		   				 		
-  				 			<audio id="playerhtml5" poster="../files/img/logo_audio.png" autoplay controls style="width:320px;height:260px;background-image:url(../files/img/logo_audio.png);">  
+  				 			<audio id="playerhtml5" poster="../files/img/logo_audio640.png" autoplay controls style="width:640px;height:480px;background-image:url(../files/img/logo_audio640.png);">  
      				 			<source src="${courseurlnoext}.mp3" type="audio/mpeg"> <!-- chrome/safari -->
     				 			<source src="${courseurlnoext}.ogg" type="audio/ogg"> <!-- firefox/opera -->		
     				 			<p class="nohtml5">Warning! Your browser doesn't support html5. Upgrade your browser or use the FLASH page.</p>
@@ -379,7 +379,7 @@
    				 		</c:when>
    				 		<c:otherwise>
    				 		   				 		
-   				 			<video id="playerhtml5" poster="../files/img/logo_audio.png" autoplay controls style="width:720px;">  
+   				 			<video id="playerhtml5" poster="../files/img/logo_audio640.png" autoplay controls width="640" height="480">  
     							<source src="${courseurlnoext}.mp4" type="video/mp4"> <!-- safari/chrome -->
     							<source src="${courseurlnoext}.webm" type="video/webm"> <!-- firefox 4, opera 10, chrome 6, IE 9 -->
     							<p class="nohtml5">Warning! Your browser doesn't support html5. Upgrade your browser or use the FLASH page.</p>
