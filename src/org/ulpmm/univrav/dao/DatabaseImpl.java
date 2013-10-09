@@ -23,6 +23,7 @@ import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Discipline;
 import org.ulpmm.univrav.entities.Job;
 import org.ulpmm.univrav.entities.Level;
+import org.ulpmm.univrav.entities.LogUserAction;
 import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Tag;
@@ -4099,5 +4100,104 @@ public class DatabaseImpl implements IDatabase {
 		return hm;
 	}
 	
+	/**
+	 * Add a log user action
+	 * @param log the log
+	 */
+	public void addLogUserAction(LogUserAction log) {
+		
+		Connection cnt = null;
+		String sql = "INSERT INTO log_user_action(date, userid, courseid, action, url, type, information) values(?,?,?,?,?,?,?)";
+		PreparedStatement pstmt = null;
+
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			pstmt.setTimestamp(1, log.getDate());
+			
+			if(log.getUserid() != null)
+				pstmt.setInt(2, log.getUserid());
+			else
+				pstmt.setNull(2, Types.INTEGER);
+			
+			if(log.getCourseid() != null)
+				pstmt.setInt(3, log.getCourseid());
+			else
+				pstmt.setNull(3, Types.INTEGER);
+				
+			pstmt.setString(4, log.getAction());
+			pstmt.setString(5, log.getUrl());
+			pstmt.setString(6, log.getType());
+			
+			if(log.getInformation() != null)
+				pstmt.setString(7, log.getInformation());
+			else
+				pstmt.setNull(7, Types.VARCHAR);
+				
+			if( pstmt.executeUpdate() == 0 ) {
+				logger.error("The logUserAction has not been added");
+				throw new DaoException("The logUserAction has not been added");
+			}
+		}
+		catch(SQLException sqle){
+			logger.error("Error while adding the logUserAction",sqle);
+			throw new DaoException("Error while adding the logUserAction");
+		}
+		finally {
+			close(null,pstmt,cnt);
+		}		
+	}
+	
+	/**
+	 * get log user actions by user
+	 * @param userid the user
+	 * @return list of log
+	 */
+	public List<LogUserAction> getLogUserActionByUser(Integer userid) {
+
+		Connection cnt = null;
+		List<LogUserAction> l = new ArrayList<LogUserAction>();
+		String sql = "SELECT * FROM log_user_action WHERE ";
+		
+		if(userid != null)
+			sql+="userid = ? ORDER BY date";
+		else
+			sql+="userid is null ORDER BY date";
+				
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			
+			if(userid != null)
+				pstmt.setInt(1, userid);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				l.add(new LogUserAction(
+					rs.getTimestamp("date"), 
+					rs.getInt("userid") == 0 ? null : rs.getInt("userid"), 
+					rs.getInt("courseid") == 0 ? null : rs.getInt("courseid"), 
+					rs.getString("action"), 
+					rs.getString("url"), 
+					rs.getString("type"), 
+					rs.getString("information")
+				));
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the slides list",sqle);
+			throw new DaoException("Error while retrieving the slides list");
+		}
+		finally {
+			close(rs,pstmt,cnt);
+		}
+
+		return l;		
+		
+	}
 	
 }

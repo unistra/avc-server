@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,6 +17,8 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Map.Entry;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,6 +44,7 @@ import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Discipline;
 import org.ulpmm.univrav.entities.Job;
 import org.ulpmm.univrav.entities.Level;
+import org.ulpmm.univrav.entities.LogUserAction;
 import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Tag;
@@ -1737,4 +1741,58 @@ public class ServiceImpl implements IService {
 		}
 	}
 
+	/**
+	 * Add a log user action
+	 * @param request the request
+	 * @param user the user
+	 * @param course the course
+	 * @param logtype the logtype
+	 * @param information the information
+	 */
+	public void addLogUserAction(HttpServletRequest request, User user, Course course, String logtype, String information ) {
+		
+		LogUserAction log = new LogUserAction(
+				new Timestamp(new Date().getTime()), 
+				user!=null ? user.getUserid() : null, 
+				course!=null ? course.getCourseid() : null, 
+				request.getRequestURI(), 
+				request.getRequestURL() + (request.getQueryString()!=null ? "?" + request.getQueryString() : ""), 
+				logtype, 
+				information
+		);
+		
+		db.addLogUserAction(log);
+	}
+	
+	/**
+	 * get log user actions by user
+	 * @param userid the user
+	 * @return list of log
+	 */
+	public List<LogUserAction> getLogUserActionByUser(Integer userid) {
+		return db.getLogUserActionByUser(userid);
+	}
+	
+	/**
+	 * Get the user from the session
+	 * @param session the current session
+	 * @return the session user
+	 */
+	public User getSessionUser(HttpSession session) {
+		
+		User user = null;
+		
+		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
+		// Authentification CAS	
+		if(casUser!=null) {
+			// Gets the user from the session
+			user=this.getUser(casUser);
+		}
+		// Authentification local
+		else if(session.getAttribute("$userLocalLogin")!=null) {
+			user=this.getUser(session.getAttribute("$userLocalLogin").toString());
+		}
+		
+		return user;
+	}
 }

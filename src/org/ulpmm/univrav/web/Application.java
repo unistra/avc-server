@@ -57,6 +57,7 @@ import org.ulpmm.univrav.entities.Building;
 import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Discipline;
 import org.ulpmm.univrav.entities.Job;
+import org.ulpmm.univrav.entities.LogUserAction;
 import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Tag;
@@ -174,9 +175,6 @@ public class Application extends HttpServlet {
 	/** The keyword to identify the tests to hide (title begins with this keyword) */
 	private static String testKeyWord3;
 	
-	/** The client port for the Univ-R integration */
-	//private static int clientSocketPort;
-	
 	/** Admin email for notification */
 	private static String adminEmail1;
 	/** Admin email for notification */
@@ -233,6 +231,9 @@ public class Application extends HttpServlet {
 	
 	/** default record interface (flash or html5) **/
 	private static String defaultRecordInterface;
+	
+	/** private static boolean log user action stats **/
+	private static boolean logstats;
 	
 	/** Logger log4j */
 	private static final Logger logger = Logger.getLogger(Application.class);
@@ -327,10 +328,7 @@ public class Application extends HttpServlet {
 			
 			// The default style
 			defaultStyle = p.getProperty("defaultStyle");
-			
-			// The client port for the Univ-R integration
-			//clientSocketPort = Integer.parseInt(p.getProperty("clientSocketPort"));
-			
+						
 			// Admin email for notification
 			adminEmail1 = p.getProperty("adminEmail1");
 			adminEmail2 = p.getProperty("adminEmail2");
@@ -376,6 +374,9 @@ public class Application extends HttpServlet {
 			
 			// default record interface (flash or html5)
 			defaultRecordInterface = p.getProperty("defaultRecordInterface");
+			
+			// log stats
+			logstats = Boolean.parseBoolean(p.getProperty("logstats"));
 										
 			/* Datasource retrieving */
 			
@@ -611,17 +612,8 @@ public class Application extends HttpServlet {
 			myspaceAddSubtitles(request, response);
 		else if( page.equals("/myspace_deletesubtitles"))
 			myspaceDeleteSubtitles(request, response);
-		else if( page.equals("/myspace_deletecourse")) {
-		    int courseid = Integer.parseInt(request.getParameter("id"));
-		    Course c = service.getCourse(courseid);
-		    service.deleteTag(courseid);
-		    service.deleteCourse(courseid, c.getMediafolder(),false);
-		    /* Regeneration of the RSS files */
-		    //service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
-		    /* Generation of the RSS files */
-			service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
-		    response.sendRedirect(response.encodeRedirectURL("./myspace_home"));
-		}
+		else if( page.equals("/myspace_deletecourse"))
+			myspaceDeleteCourse(request, response);
 		else if(page.equals("/myspace_changepass")) 
 			myspaceChangePass(request, response);
 		else if(page.equals("/myspace_changepassvalid")) 
@@ -640,12 +632,8 @@ public class Application extends HttpServlet {
 			courseAccess(request, response);
 		else if( page.equals("/liveaccess"))
 			liveAccess(request, response);
-		else if( page.equals("/contactUs")) {
-			/* Saves the page for the style selection thickbox return */
-			session.setAttribute("previousPage", "/contactUs");
-			request.setAttribute("posturl", "/avc/contactUsSendMail");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/contactUs.jsp").forward(request, response);
-		}
+		else if( page.equals("/contactUs"))
+			contactUs(request,response);
 		else if( page.equals("/contactUsSendMail"))
 			sendMailContactUs(request, response);
 		else if( page.equals("/test"))
@@ -656,71 +644,32 @@ public class Application extends HttpServlet {
 			changeLanguage(request, response);
 		else if( page.equals("/changeinterface"))
 			changeInterface(request, response);
-		else if( page.equals("/deletetests")) {
-			service.deleteTests(testKeyWord1);
-			service.hideTests(testKeyWord2, testKeyWord3);
-			/* Regeneration of the RSS files */
-			service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
-		}
-		else if( page.equals("/thick_styles")) {
-			List<String> styles = service.getStyles(getServletContext().getRealPath("/") + "files/styles/");
-			request.setAttribute("styles", styles );
-			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_styles.jsp").forward(request, response);
-		}
-		else if( page.equals("/thick_languages")) {
-			List<String> languages = service.getLanguages(getServletContext().getRealPath("/") + "WEB-INF/classes/org/ulpmm/univrav/language");
-			request.setAttribute("languages", languages );
-			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_languages.jsp").forward(request, response);
-		}
-		else if( page.equals("/thick_legal")) 
-			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_legal.jsp").forward(request, response);
+		else if( page.equals("/deletetests"))
+			deleteTests(request, response);
+		else if( page.equals("/thick_styles"))
+			thickStyles(request, response);
+		else if( page.equals("/thick_languages"))
+			thickLanguages(request, response);
+		else if( page.equals("/thick_legal"))
+			thickLegal(request, response);
 		else if( page.equals("/thick_replacemedia")) 
-			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_replacemedia.jsp").forward(request, response);
-		else if( page.equals("/thick_download")) {
-			request.setAttribute("clientLink", clientLink);
-			request.setAttribute("tracLink", tracLink);
-			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_download.jsp").forward(request, response);
-		}
-		else if( page.equals("/thick_help")) {
-			request.setAttribute("supportLink", supportLink);
-			request.setAttribute("helpLink", helpLink);
-			request.setAttribute("docLink",docLink);
-			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_help.jsp").forward(request, response);
-		}
-		else if( page.equals("/thick_myspace")) {
-			request.setAttribute("univAcronym", univAcronym);	
-			request.setAttribute("univName", univName);
-			getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_myspace.jsp").forward(request, response);
-		}
+			thickReplacemedia(request, response);
+		else if( page.equals("/thick_download"))
+			thickDownload(request, response);
+		else if( page.equals("/thick_help"))
+			thickHelp(request, response);
+		else if( page.equals("/thick_myspace"))
+			thickMyspace(request, response);
 		else if( page.equals("/liveslide"))
 			liveSlide(request, response);
-		else if( page.equals("/admin_home")) {
-			/* Saves the page for the style selection thickbox return */
-			session.setAttribute("previousPage", "/admin_home");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_home.jsp").forward(request, response);
-		}
-		else if( page.equals("/admin_courses")) {
-			List<Course> courses = service.getAllCourses(false,false,null);
-			request.setAttribute("courses",courses);
-			request.setAttribute("number", courses.size());
-			request.setAttribute("viewurl", "./admin_courses");
-			request.setAttribute("editurl", "./admin_editcourse");
-			request.setAttribute("deleteurl", "./admin_deletecourse");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_courses.jsp").forward(request, response);
-		}
-		else if( page.equals("/admin_editcourse")) {
+		else if( page.equals("/admin_home"))
+			adminHome(request, response);
+		else if( page.equals("/admin_courses"))
+			adminCourse(request, response);
+		else if( page.equals("/admin_editcourse"))
 			DisplayAdminEditCourse(request,response);
-		}
-		else if( page.equals("/admin_deletecourse")) {
-			int courseid = Integer.parseInt(request.getParameter("id"));
-			Course c = service.getCourse(courseid);
-			service.deleteTag(courseid);
-			service.deleteCourse(courseid, c.getMediafolder(),true);
-			/* Regeneration of the RSS files */
-			//service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
-			service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
-			response.sendRedirect(response.encodeRedirectURL("./admin_courses"));
-		}
+		else if( page.equals("/admin_deletecourse"))
+			adminDeletecourse(request, response);
 		else if( page.equals("/admin_validatecourse"))
 			validateCourse(request, response, "./admin_courses");
 		else if( page.equals("/admin_adddocupload"))
@@ -731,223 +680,78 @@ public class Application extends HttpServlet {
 			addSubtitles(request, response);
 		else if( page.equals("/admin_deletesubtitles"))
 			deleteSubtitles(request, response);
-		else if(page.equals("/admin_replacemedia")) {			
-			String courseid = request.getParameter("courseid");
-			Course c = service.getCourse(Integer.parseInt(courseid));
-			// If the course already have an additional video or if a job already running, don't lauch replace media
-			Job j = service.getJob(c.getCourseid(), "ADDV");
-			boolean notReplaceMedia =  c.isAvailable("addvideo") || (j!=null && !j.getStatus().equals("done"));
-			if (!notReplaceMedia) {
-				replaceMedia(request,response);
-			}
-			else {
-				request.setAttribute("messagetype", "error");
-				request.setAttribute("message", "Error: Add video job already in process");
-				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
-			}
-		}
-		else if(page.equals("/admin_deletereplacemedia")) {
-			String courseid = request.getParameter("courseid");
-			Course c = service.getCourse(Integer.parseInt(courseid));
-			// If the course don't have an additional video or if a job already running, don't lauch delete replace media
-			Job j = service.getJob(c.getCourseid(), "ADDV");
-			boolean notdeleteReplaceMedia =  !c.isAvailable("addvideo") || (j!=null && !j.getStatus().equals("done"));
-			if (!notdeleteReplaceMedia) {
-				deleteReplaceMedia(request, response);
-			}
-			else {
-				request.setAttribute("messagetype", "error");
-				request.setAttribute("message", "Error: Add video job already in process");
-				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
-			}
-		}
-		else if( page.equals("/admin_buildings")) {
-			request.setAttribute("buildings", service.getBuildings());
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_buildings.jsp").forward(request, response);
-		}
-		else if( page.equals("/admin_addbuilding")) {
-			request.setAttribute("action","add"); 
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editbuilding.jsp").forward(request, response);
-		}
-		else if( page.equals("/admin_editbuilding")) {
-			request.setAttribute("action","edit"); 
-			request.setAttribute("building", service.getBuilding(Integer.parseInt(request.getParameter("id"))));
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editbuilding.jsp").forward(request, response);
-		}
-		else if( page.equals("/admin_deletebuilding")) {
-			int buildingid = Integer.parseInt(request.getParameter("id"));
-			service.deleteBuilding(buildingid);
-			response.sendRedirect(response.encodeRedirectURL("./admin_buildings"));
-		}
+		else if(page.equals("/admin_replacemedia"))
+			adminReplacemedia(request, response);
+		else if(page.equals("/admin_deletereplacemedia"))
+			adminDeleteReplacemedia(request, response);
+		else if( page.equals("/admin_buildings"))
+			adminBuildings(request, response);
+		else if( page.equals("/admin_addbuilding"))
+			adminAddBuilding(request, response);
+		else if( page.equals("/admin_editbuilding"))
+			adminEditBuilding(request, response);
+		else if( page.equals("/admin_deletebuilding"))
+			adminDeleteBuilding(request, response);
 		else if( page.equals("/admin_validatebuilding"))
 			validateBuilding(request, response,"./admin_buildings");
-		else if( page.equals("/admin_amphis")) {
-			request.setAttribute("buildingId", request.getParameter("buildingId"));
-			request.setAttribute("buildingName", service.getBuilding(Integer.parseInt(request.getParameter("buildingId"))).getName());
-			request.setAttribute("amphis", service.getAmphis(Integer.parseInt(request.getParameter("buildingId"))));
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_amphis.jsp").forward(request, response);
-		}
-		else if( page.equals("/admin_addamphi")) {
-			request.setAttribute("buildingId", request.getParameter("buildingId"));
-			request.setAttribute("action","add"); 
-			// univ acronym
-			request.setAttribute("univAcronym", univAcronym);
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editamphi.jsp").forward(request, response);
-		}
-		else if( page.equals("/admin_editamphi")) {
-			request.setAttribute("buildingId", request.getParameter("buildingId"));
-			request.setAttribute("buildingName", service.getBuilding(Integer.parseInt(request.getParameter("buildingId"))).getName());
-			request.setAttribute("action","edit"); 
-			request.setAttribute("amphi", service.getAmphi(Integer.parseInt(request.getParameter("id"))));
-			// univ acronym
-			request.setAttribute("univAcronym", univAcronym);
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editamphi.jsp").forward(request, response);
-		}
-		else if( page.equals("/admin_deleteamphi")) {
-			int amphiid = Integer.parseInt(request.getParameter("id"));
-			service.deleteAmphi(amphiid);
-			response.sendRedirect(response.encodeRedirectURL("./admin_amphis?buildingId=" + request.getParameter("buildingId")));
-		}
+		else if( page.equals("/admin_amphis"))
+			adminAmphis(request, response);
+		else if( page.equals("/admin_addamphi"))
+			adminAddAmphi(request, response);
+		else if( page.equals("/admin_editamphi"))
+			adminEditAmphi(request, response);
+		else if( page.equals("/admin_deleteamphi"))
+			adminDeleteAmphi(request, response);
 		else if( page.equals("/admin_validateamphi"))
 			validateAmphi(request, response,"./admin_amphis");
-		else if( page.equals("/admin_users")) {
-			
+		else if( page.equals("/admin_users"))
 			adminUsers(request,response);
-			
-
-		}
-		else if( page.equals("/admin_edituser")) {			
-			List<String> types = Arrays.asList("","ldap","local");
-			request.setAttribute("types",types);
-			request.setAttribute("action","edit"); 
-			request.setAttribute("user", service.getUser(Integer.parseInt(request.getParameter("id"))));
-			request.setAttribute("posturl", "./admin_validateuser");
-			request.setAttribute("gobackurl", "./admin_users");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_edituser.jsp").forward(request, response);
-		}
+		else if( page.equals("/admin_edituser"))
+			adminEditUser(request, response);
 		else if( page.equals("/admin_validateuser"))
 			validateUser(request, response);
-		else if( page.equals("/admin_deleteuser")) {
-			Integer userid = request.getParameter("id")!=null ? Integer.parseInt(request.getParameter("id")) : null;
-			if(service.getCourseNumber(service.getUser(userid))==0) {
-				service.deleteUser(userid);
-				response.sendRedirect(response.encodeRedirectURL("./admin_users"));
-			}
-			else {
-				request.setAttribute("messagetype", "error");
-				request.setAttribute("message", "You cannot delete this user because he have courses");
-				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
-			}
-		}
-		else if( page.equals("/admin_adduser")) {
-			List<String> types = Arrays.asList("","ldap","local");
-			request.setAttribute("types",types);
-			request.setAttribute("action","add"); 
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_edituser.jsp").forward(request, response);
-		}
-		else if(page.equals("/admin_useractivate")) {
+		else if( page.equals("/admin_deleteuser"))
+			adminDeleteUser(request, response);
+		else if( page.equals("/admin_adduser"))
+			adminAddUser(request, response);
+		else if(page.equals("/admin_useractivate"))
 			userActivate(request,response);
-		}
-		else if( page.equals("/admin_selections")) {
-			request.setAttribute("viewurl", "./admin_selections");
-			List<Selection> selections = service.getAllSelections();
-			request.setAttribute("selections", selections );
-			request.setAttribute("number", selections.size());
-			request.setAttribute("editurl", "./admin_editselection");
-			request.setAttribute("deleteurl", "./admin_deleteselection");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_selections.jsp").forward(request, response);
-		}
-		else if( page.equals("/admin_editselection")) {
-			request.setAttribute("action","edit"); 
-			request.setAttribute("selection", service.getSelection(Integer.parseInt(request.getParameter("id"))));
-			request.setAttribute("posturl", "./admin_validateselection");
-			request.setAttribute("gobackurl", "./admin_selections");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editselection.jsp").forward(request, response);
-		}
+		else if( page.equals("/admin_selections"))
+			adminSelections(request, response);
+		else if( page.equals("/admin_editselection"))
+			adminEditSelection(request, response);
 		else if( page.equals("/admin_validateselection"))
 			validateSelection(request, response);
-		else if( page.equals("/admin_deleteselection")) {
-			Integer selectionid = request.getParameter("id")!=null ? Integer.parseInt(request.getParameter("id")) : null;
-			service.deleteSelection(selectionid);
-			response.sendRedirect(response.encodeRedirectURL("./admin_selections"));
-		}
-		else if( page.equals("/admin_addselection")) {
-			request.setAttribute("action","add"); 
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editselection.jsp").forward(request, response);
-		}
-		else if( page.equals("/admin_teachers")) {
-			request.setAttribute("viewurl", "./admin_teachers");
-			List<Teacher> teachers = service.getAllTeachers();
-			request.setAttribute("teachers", teachers );
-			request.setAttribute("number", teachers.size());
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_teachers.jsp").forward(request, response);
-		}
-		else if( page.equals("/admin_stats")) {
-			request.setAttribute("diskspaceinfo", service.getDiskSpaceInfo());
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_stats.jsp").forward(request, response);
-		}
-		else if (page.equals("/admin_jobs")) {
-			request.setAttribute("viewurl", "./admin_jobs");
-			List<Job> jobs = service.getAllJobs();
-			request.setAttribute("jobs", jobs );
-			request.setAttribute("number", jobs.size());
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_jobs.jsp").forward(request, response);
-		}
-		else if (page.equals("/admin_disciplines")) {
-			request.setAttribute("viewurl", "./admin_disciplines");
-			List<Discipline> disciplines = service.getAllDiscipline();
-			request.setAttribute("disciplines", disciplines );
-			request.setAttribute("number", disciplines.size());
-			request.setAttribute("editurl", "./admin_editdiscipline");
-			request.setAttribute("deleteurl", "./admin_deletediscipline");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_disciplines.jsp").forward(request, response);
-		}
-		else if( page.equals("/admin_adddiscipline")) {
-			request.setAttribute("action","add"); 
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editdiscipline.jsp").forward(request, response);
-		}
+		else if( page.equals("/admin_deleteselection"))
+			adminDeleteSelection(request, response);
+		else if( page.equals("/admin_addselection"))
+			adminAddSelection(request, response);
+		else if( page.equals("/admin_teachers"))
+			adminTeachers(request, response);
+		else if( page.equals("/admin_stats"))
+			adminStats(request, response);
+		else if (page.equals("/admin_jobs"))
+			adminJobs(request, response);
+		else if (page.equals("/admin_disciplines"))
+			adminDisciplines(request, response);
+		else if( page.equals("/admin_adddiscipline"))
+			adminAddDiscipline(request, response);
 		else if( page.equals("/admin_validatediscipline"))
 			validateDiscipline(request, response);
-		else if( page.equals("/admin_editdiscipline")) {
-			request.setAttribute("action","edit"); 
-			request.setAttribute("discipline", service.getDiscipline(Integer.parseInt(request.getParameter("id"))));
-			request.setAttribute("posturl", "./admin_validatediscipline");
-			request.setAttribute("gobackurl", "./admin_disciplines");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editdiscipline.jsp").forward(request, response);
-		}
-		else if( page.equals("/admin_deletediscipline")) {
-			Integer disciplineid = request.getParameter("id")!=null ? Integer.parseInt(request.getParameter("id")) : null;
-			service.deleteDiscipline(disciplineid);
-			response.sendRedirect(response.encodeRedirectURL("./admin_disciplines"));
-		}
-		else if( page.equals("/gp_home")) {
-			/* Saves the page for the style selection thickbox return */
-			session.setAttribute("previousPage", "/gp_home");
-			request.setAttribute("buildings", service.getBuildings());
-			getServletContext().getRequestDispatcher("/WEB-INF/views/gp/gp_home.jsp").forward(request, response);
-		}
-		else if( page.equals("/gp_editbuilding")) {
-			request.setAttribute("action","edit"); 
-			request.setAttribute("building", service.getBuilding(Integer.parseInt(request.getParameter("id"))));
-			getServletContext().getRequestDispatcher("/WEB-INF/views/gp/gp_editbuilding.jsp").forward(request, response);
-		}
+		else if( page.equals("/admin_editdiscipline"))
+			adminEditDiscipline(request, response);
+		else if( page.equals("/admin_deletediscipline"))
+			adminDeleteDiscipline(request, response);
+		else if( page.equals("/gp_home"))
+			gpHome(request, response);
+		else if( page.equals("/gp_editbuilding"))
+			gpEditBuilding(request, response);
 		else if( page.equals("/gp_validatebuilding"))
 			validateBuilding(request, response,"./gp_home");
-		else if( page.equals("/gp_amphis")) {
-			request.setAttribute("buildingId", request.getParameter("buildingId"));
-			request.setAttribute("buildingName", service.getBuilding(Integer.parseInt(request.getParameter("buildingId"))).getName());
-			request.setAttribute("amphis", service.getAmphis(Integer.parseInt(request.getParameter("buildingId"))));
-			getServletContext().getRequestDispatcher("/WEB-INF/views/gp/gp_amphis.jsp").forward(request, response);
-		}
-		else if( page.equals("/gp_editamphi")) {
-			request.setAttribute("buildingId", request.getParameter("buildingId"));
-			request.setAttribute("buildingName", service.getBuilding(Integer.parseInt(request.getParameter("buildingId"))).getName());
-			request.setAttribute("action","edit"); 
-			request.setAttribute("amphi", service.getAmphi(Integer.parseInt(request.getParameter("id"))));
-			// univ acronym
-			request.setAttribute("univAcronym", univAcronym);
-			getServletContext().getRequestDispatcher("/WEB-INF/views/gp/gp_editamphi.jsp").forward(request, response);
-		}
+		else if( page.equals("/gp_amphis"))
+			gpAmphis(request, response);
+		else if( page.equals("/gp_editamphi"))
+			gpEditAmphi(request, response);
 		else if( page.equals("/gp_validateamphi"))
 			validateAmphi(request, response,"./gp_amphis");
 		else if(page.equals("/findTracks"))
@@ -955,7 +759,7 @@ public class Application extends HttpServlet {
 		else if(page.equals("/findStats"))
 			displayFindStats(request, response);
 		else
-			displayHomePage(request, response);
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 	}
 
 	/**
@@ -1005,57 +809,15 @@ public class Application extends HttpServlet {
 		/* Saves the page for the style selection thickbox return */
 		session.setAttribute("previousPage", "/home");
 		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
 		/* Displays the view */
 		getServletContext().getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
 	}
 	
-	
-	
-	/**
-	 * Method to authenticate a local user
-	 * @param request the request send by the client to the server
-	 * @param response the response send by the server to the client
-	 * @throws ServletException if an error occurred
-	 * @throws IOException if an error occurred
-	 */
-	/**private void authentication(HttpServletRequest request, HttpServletResponse response)
-	throws ServletException, IOException {
-		
-		if(request.getParameter("account")!=null) {
-			
-			String hash = request.getParameter("account");
-			User user = service.getUserLocalByHash(hash);
-						
-			if(user!=null) {
-								
-				// If user cas not connected
-				if(session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER)==null) {
-					
-					// Connection LOCAL
-					session.setAttribute("$userLocalLogin", user.getLogin());
-					session.setAttribute("btnDeco", true);
-					response.sendRedirect("./myspace_home");
-				}
-				else {
-					request.setAttribute("messagetype", "error");
-					request.setAttribute("message", "Disconnect your account uds first");
-					getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
-				}
-				
-			}
-			else {
-				request.setAttribute("messagetype", "error");
-				request.setAttribute("message", "You don't have access to this page");
-				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
-			}
-		}
-		else {
-			request.setAttribute("messagetype", "error");
-			request.setAttribute("message", "Wrong parameters");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
-		}
-	}
-	**/
 	
 	/**
 	 * Method to authenticate a cas user
@@ -1119,6 +881,11 @@ public class Application extends HttpServlet {
 							
 				session.setAttribute("btnDeco", true);
 				
+				// log stats
+				if(logstats) {
+					service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeLogin, null);
+				}	
+				
 				//REDIRECTION
 				// Publication
 				if(request.getParameter("returnPage")!=null && request.getParameter("returnPage").equals("publication")) {
@@ -1168,18 +935,7 @@ public class Application extends HttpServlet {
 	private void displayMyspace(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 				
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-		
-		User user = null;
-		// Authentification CAS	
-		if(casUser!=null) {
-			// Gets the user from the session
-			user=service.getUser(casUser);
-		}
-		// Authentification local
-		else if(session.getAttribute("$userLocalLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
-		}
+		User user = service.getSessionUser(session);
 		
 		// if the user is not authenticated, redirection to authentication_cas
 		if(user==null) {
@@ -1215,6 +971,11 @@ public class Application extends HttpServlet {
 			// Button disconnect
 			session.setAttribute("btnDeco", true);
 
+			// log stats
+			if(logstats) {
+				service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+			}	
+			
 			/* Displays the view */ 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace_home.jsp").forward(request, response);
 		}
@@ -1239,6 +1000,11 @@ public class Application extends HttpServlet {
 		
 		// Button disconnect
 		session.setAttribute("btnDeco", false);
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeLogout, null);
+		}	
 		
 		// Authentication CAS
 		if(session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER)!=null) {		
@@ -1288,17 +1054,7 @@ public class Application extends HttpServlet {
 		request.setAttribute("discSelected", request.getParameter("component"));
 		//request.setAttribute("permission", request.getParameter("permission"));
 
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-
-		User user = null;
-		// Authentification CAS	
-		if(casUser!=null) {
-			// Gets the user from the session
-			user=service.getUser(casUser);
-		}
-		else if(session.getAttribute("$userLocalLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
-		}
+		User user = service.getSessionUser(session);
 
 		// if user is present and activate
 		if(user!=null && user.isActivate()) {
@@ -1335,7 +1091,10 @@ public class Application extends HttpServlet {
 		// testKeyWord1. Uncapitalize the fist char
 		request.setAttribute("testKeyWord1", (testKeyWord1.substring(0, 1).toLowerCase()+testKeyWord1.substring(1)));
 
-		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
 		
 		/* Displays the view */ 
 		getServletContext().getRequestDispatcher("/WEB-INF/views/publication.jsp").forward(request, response);
@@ -1384,14 +1143,14 @@ public class Application extends HttpServlet {
 			request.setAttribute("message", bundle.getString("err_component"));
 			getServletContext().getRequestDispatcher("/avc/publication").forward(request, response);
 		}
-		/*else if(request.getParameter("permission")==null || request.getParameter("permission").equals("")) {
-			request.setAttribute("messagetype", "error");
-			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
-			request.setAttribute("message", bundle.getString("err_permission"));
-			getServletContext().getRequestDispatcher("/avc/publication").forward(request, response);
-		}*/
 		// If the formulaire is valid
 		else {
+			
+			// log stats
+			if(logstats) {
+				service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+			}	
+			
 			getServletContext().getRequestDispatcher("/avc/UploadClient").forward(request, response);
 		}
 	}
@@ -1412,7 +1171,12 @@ public class Application extends HttpServlet {
 		
 		/* Saves the page for the style selection thickbox return */
 		session.setAttribute("previousPage", "/live");
-				
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
 		/* Displays the view */ 
 		getServletContext().getRequestDispatcher("/WEB-INF/views/live.jsp").forward(request, response);
 	}
@@ -1455,6 +1219,11 @@ public class Application extends HttpServlet {
 		/* Saves the page for the style selection thickbox return */
 		session.setAttribute("previousPage", "/recorded?page=" + pageNumber);
 		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
 		/* Displays the view */
 		getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
 	}
@@ -1476,6 +1245,11 @@ public class Application extends HttpServlet {
 		request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName, false));
 		// Server Url
 		request.setAttribute("serverUrl", serverUrl);
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
 				
 		/* Displays the view */ 
 		getServletContext().getRequestDispatcher("/WEB-INF/views/rss.jsp").forward(request, response);
@@ -1518,6 +1292,11 @@ public class Application extends HttpServlet {
 		
 		/* Saves the page for the style selection thickbox return */
 		session.setAttribute("previousPage", "/test?page=" + pageNumber);
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
 		
 		/* Displays the view */
 		getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
@@ -1646,6 +1425,11 @@ public class Application extends HttpServlet {
 			
 			// params url
 			request.setAttribute("paramsUrl", paramsUrl);
+			
+			// log stats
+			if(logstats) {
+				service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+			}	
 
 			/* Displays the view */
 			getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
@@ -1675,6 +1459,11 @@ public class Application extends HttpServlet {
 			paramsUrl = paramsUrl + "&level=" + service.getLevelCodeByFormation(formation) + "&discipline=" +  service.getComponentCodeByFormation(formation);
 			
 		}
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
 				
 		String redirect = "./search"+paramsUrl;
 		response.sendRedirect(redirect);
@@ -1733,6 +1522,11 @@ public class Application extends HttpServlet {
 			
 			listTags=null; //set list null for memory
 			st = null;
+			
+			// log stats
+			if(logstats) {
+				service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+			}	
 						
 			/* Displays the view */
 			getServletContext().getRequestDispatcher("/WEB-INF/views/recorded.jsp").forward(request, response);
@@ -1753,18 +1547,7 @@ public class Application extends HttpServlet {
 	private void validateMyCourse(HttpServletRequest request, HttpServletResponse response, String redirectUrl) 
 	throws ServletException, IOException {	
 						
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-		
-		User user = null;
-		// Authentification CAS	
-		if(casUser!=null) {
-			// Gets the user from the session
-			user=service.getUser(casUser);
-		}
-		// Authentification local
-		else if(session.getAttribute("$userLocalLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
-		}
+		User user = service.getSessionUser(session);
 		
 		if(user!=null && user.isActivate()) {
 
@@ -1829,18 +1612,7 @@ public class Application extends HttpServlet {
 	private void displayEditMyCourses(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 				
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-		
-		User user = null;
-		// Authentification CAS	
-		if(casUser!=null) {
-			// Gets the user from the session
-			user=service.getUser(casUser);
-		}
-		// Authentification local
-		else if(session.getAttribute("$userLocalLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
-		}
+		User user = service.getSessionUser(session);
 		
 		if(user!=null && user.isActivate()) {
 
@@ -1894,7 +1666,12 @@ public class Application extends HttpServlet {
 				
 				// show additional video block if the record is from the client
 				request.setAttribute("showAddVidBlock", c.isAudioClient() || c.isVideoClient());
-								
+				
+				// log stats
+				if(logstats) {
+					service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeAccess, null);
+				}	
+				
 				/* Displays the view */
 				getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace_editmycourse.jsp").forward(request, response);
 
@@ -1995,44 +1772,7 @@ public class Application extends HttpServlet {
 					// getting the user
 					user = service.getUser(login);
 				}
-				
-				// Hash email for free user
-				/*if(request.getParameter("publication_type")!=null && request.getParameter("publication_type").equals("serverFree") && email!=null && !email.equals("")) {
-					//  Check if a local user with this email adress exist
-					user = service.getUser(email);
-					if(user==null) {
-						String pass = service.generatePassword(16);
-						String hash = service.encrypt(email + pass);
-						service.addUser(new User(0, email, email, null, null, null, null, User.getTYPELOCAL(), true,null));
-						service.modifyUserPassword(email, hash, "sha");
-						user = service.getUser(email);
-						
-						// Sending email for the user
-						String emailUserSubject = "Votre espace Audiovideocours / Your Audiovideocours space";
-						
-						String emailUserMessageFr = "Bonjour,\n\nVous pouvez accéder à votre espace avec l'url suivante. Ne perdez pas ce mail.\n"
-							+ serverUrl + "/avc/authentication?account=" + hash
-							+"\n\nPour toute question sur l'usage de la plateforme AudiovideoCours,"
-							+"\n- contactez le support : " + supportLink
-							+"\n- ou consultez la documentation : " + docLink
-							+ "\n\nBien cordialement,\n\nL'équipe Audiovideocours";
-												
-						String emailUserMessageEn = "Hello,\n\nYou can access in your space with the following url. Don't lost this mail.\n"
-						+ serverUrl + "/avc/authentication?account=" + hash
-						+"\n\nFor any question,"
-						+"\n- contact the support : " + supportLink
-						+"\n- or read the documentation : " + docLink
-						+ "\n\nBest Regards,\n\nAudiovideocours team";
-												
-						
-						String emailUserMessage = emailUserMessageFr + "\n\n\n********************\n\n\n" + emailUserMessageEn;
-						
 							
-						service.sendMail(emailUserSubject,emailUserMessage,email);
-											
-					}
-				}*/
-			
 				// Create the course course										
 				c = new Course(
 						service.getNextCoursId(),
@@ -2087,10 +1827,6 @@ public class Application extends HttpServlet {
 				if(email!=null && !email.equals("")) {
 					service.sendMail(emailUserSubject,emailUserMessage,email);
 				}
-				// If the user is not anonymous and his email is present and different of email
-			//	if(user!=null && user.getEmail()!=null && !user.getEmail().equals("") && !user.getEmail().equals(email)) {
-			//		service.sendMail(emailUserSubject,emailUserMessage,user.getEmail());
-			//	}
 								
 				// If course is present in the recorded page
 				if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
@@ -2115,6 +1851,11 @@ public class Application extends HttpServlet {
 				request.setAttribute("messagetype2", messageType);
 				request.setAttribute("message2", message2);
 				request.setAttribute("ahref", ahref);
+				
+				// log stats
+				if(logstats) {
+					service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeAdd, media);
+				}	
 
 			}
 			catch( DaoException de) {
@@ -2146,18 +1887,8 @@ public class Application extends HttpServlet {
 
 		String forwardUrl = "/WEB-INF/views/myspace/myspace_uploadpage.jsp";
 		
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-		
-		User user = null;
-		// Authentification CAS	
-		if(casUser!=null) {
-			// Gets the user from the session
-			user=service.getUser(casUser);
-		}
-		// Authentification local
-		else if(session.getAttribute("$userLocalLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
-		}
+		User user = service.getSessionUser(session);
+
 
 		// Gets the user's login from the session		
 		if(user!=null && user.isActivate()) {
@@ -2188,6 +1919,11 @@ public class Application extends HttpServlet {
 			request.setAttribute("err_fileformat", bundle.getString("err_fileformat"));
 			
 			request.setAttribute("uploadFormats", uploadFormats);
+			
+			// log stats
+			if(logstats) {
+				service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+			}	
 			
 			getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
 		}
@@ -2225,18 +1961,7 @@ public class Application extends HttpServlet {
 		Date d = new Date();
 		boolean continuer=true;
 
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-
-		User user = null;
-		// Authentification CAS	
-		if(casUser!=null) {
-			// Gets the user from the session
-			user=service.getUser(casUser);
-		}
-		// Authentification local
-		else if(session.getAttribute("$userLocalLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
-		}
+		User user = service.getSessionUser(session);
 
 		if(user!=null && user.isActivate()) {
 
@@ -2450,6 +2175,11 @@ public class Application extends HttpServlet {
 																
 								message = bundle.getString("upload_valmsg1");
 								message += bundle.getString("upload_valmsg2");
+								
+								// log stats
+								if(logstats) {
+									service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeAdd, fileName);
+								}	
 							}
 						}
 					}
@@ -2527,6 +2257,11 @@ public class Application extends HttpServlet {
 					service.setAmphiStatus(recordingPlace, status.equals("begin"));
 				}
 				message = "Amphi : " + recordingPlace + " : " + status;
+				
+				// log stats
+				if(logstats) {
+					service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeEdit, recordingPlace + " : " + status);
+				}	
 			}
 			else {
 				messageType = "error";
@@ -2582,6 +2317,10 @@ public class Application extends HttpServlet {
 					if( c.getGenre() == null)
 						service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
 
+					// log stats
+					if(logstats) {
+						service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeEdit, null);
+					}	
 				}
 				else {
 					messageType = "error";
@@ -2688,6 +2427,12 @@ public class Application extends HttpServlet {
 										
 					// Check the media availability
 					if(type != null && !type.equals("") && c.isAvailable(type)) {
+						
+						// log stats
+						if(logstats) {
+							String logUserActionType = type.equals("html5") || type.equals("flash") || type.equals("hq") ? LogUserAction.typeRead : LogUserAction.typeDownload;
+							service.addLogUserAction(request, service.getSessionUser(session), c, logUserActionType, type);
+						}	
 						
 						if( type.equals("flash")) {
 							/* redirection to the FlvPlay JS interface */
@@ -2959,11 +2704,6 @@ public class Application extends HttpServlet {
 		if(a!=null && a.isRestrictionuds() && user==null) {
 			response.sendRedirect("./authentication_cas?returnPage=liveaccess&amphi="+ip);
 		}
-		/*else if(a!=null && a.isRestrictionuds() && user!=null && !user.isActivate()) {
-			request.setAttribute("messagetype", "error");
-			request.setAttribute("message", "You don't have access to this page");
-			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
-		}*/
 		else {
 			
 			request.setAttribute("amphi", amphi);
@@ -2971,6 +2711,11 @@ public class Application extends HttpServlet {
 			request.setAttribute("ip", ip);
 			request.setAttribute("streamerUrl", streamerUrl);
 			request.setAttribute("fileUrl", fileUrl);
+			
+			// log stats
+			if(logstats) {
+				service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeRead, ip);
+			}	
 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/liveinterface.jsp").forward(request, response);
 
@@ -2987,6 +2732,8 @@ public class Application extends HttpServlet {
 	 */
 	private void liveSlide(HttpServletRequest request, HttpServletResponse response) 
 		throws ServletException, IOException {
+		
+		//don't log this method because it's used by javascript
 		
 		String ip = request.getParameter("ip");
 		String url = "../../live/" + ip.replace('.','_') + ".jpg";
@@ -3081,6 +2828,11 @@ public class Application extends HttpServlet {
 		if(session.getAttribute("code_"+c.getCourseid())!=null)
 			session.removeAttribute("code_"+c.getCourseid());
 		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeEdit, null);
+		}	
+		
 		response.sendRedirect(response.encodeRedirectURL(redirectUrl));
 	}
 	
@@ -3106,10 +2858,23 @@ public class Application extends HttpServlet {
 				request.getParameter("imagefile")
 			);
 			
-			if(request.getParameter("action").equals("edit"))
+			if(request.getParameter("action").equals("edit")) {
 				service.modifyBuilding(b);
-			else
+				
+				// log stats
+				if(logstats) {
+					service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeEdit, "Building : " + buildingId);
+				}	
+			}
+			else {
 				service.addBuilding(b);
+				
+				// log stats
+				if(logstats) {
+					service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAdd, "Building : " + buildingId);
+				}	
+			}
+			
 			response.sendRedirect(response.encodeRedirectURL(responseredirect));
 		}
 		else {
@@ -3149,10 +2914,23 @@ public class Application extends HttpServlet {
 			
 			String oldAmphiip = request.getParameter("oldAmphiip");
 			
-			if(request.getParameter("action").equals("edit"))
+			if(request.getParameter("action").equals("edit")) {
 				service.modifyAmphi(a, oldAmphiip);
-			else
+				
+				// log stats
+				if(logstats) {
+					service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeEdit, "Amphi : " + amphiId);
+				}	
+			}
+			else {
 				service.addAmphi(a);
+				
+				// log stats
+				if(logstats) {
+					service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAdd, "Amphi : " + amphiId);
+				}	
+			}
+			
 			response.sendRedirect(response.encodeRedirectURL(responseredirect+"?buildingId=" + request.getParameter("buildingid")));
 		}
 		else {
@@ -3192,10 +2970,22 @@ public class Application extends HttpServlet {
 			
 			try {
 						
-				if(request.getParameter("action").equals("edit"))
+				if(request.getParameter("action").equals("edit")) {
 					service.modifyUser(u);
-				else
+					
+					// log stats
+					if(logstats) {
+						service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeEdit, "User : " + userid);
+					}	
+				}
+				else {
 					service.addUser(u);
+					
+					// log stats
+					if(logstats) {
+						service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAdd, "User : " + userid );
+					}	
+				}
 				
 				response.sendRedirect(response.encodeRedirectURL("./admin_users"));
 			}
@@ -3236,6 +3026,12 @@ public class Application extends HttpServlet {
 		String previousPage = (String) session.getAttribute("previousPage");
 		if( previousPage == null)
 			previousPage = "/home";
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
 		response.sendRedirect(response.encodeRedirectURL("." + previousPage));
 	}
 	
@@ -3261,6 +3057,12 @@ public class Application extends HttpServlet {
 		String previousPage = (String) session.getAttribute("previousPage");
 		if( previousPage == null)
 			previousPage = "/home";
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
 		response.sendRedirect(response.encodeRedirectURL("." + previousPage));
 	}
 		
@@ -3319,6 +3121,11 @@ public class Application extends HttpServlet {
 		// show additional video block if the record is from the client
 		request.setAttribute("showAddVidBlock", c.isAudioClient() || c.isVideoClient());
 		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeAccess, null);
+		}	
+		
 		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editcourse.jsp").forward(request, response);
 		
 	
@@ -3343,10 +3150,23 @@ public class Application extends HttpServlet {
 					request.getParameter("formationcollection")
 			);
 						
-			if(request.getParameter("action").equals("edit"))
+			if(request.getParameter("action").equals("edit")) {
 				service.modifySelection(s);
-			else
+				
+				// log stats
+				if(logstats) {
+					service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeEdit, "Selection : " + position);
+				}	
+			}
+			else {
 				service.addSelection(s);
+				
+				// log stats
+				if(logstats) {
+					service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAdd, "Selection : " + position);
+				}	
+			}
+			
 			response.sendRedirect(response.encodeRedirectURL("./admin_selections"));	
 	}
 		
@@ -3362,18 +3182,7 @@ public class Application extends HttpServlet {
 	private void myspaceAddDocUpload(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-
-		User user = null;
-		// Authentification CAS	
-		if(casUser!=null) {
-			// Gets the user from the session
-			user=service.getUser(casUser);
-		}
-		// Authentification local
-		else if(session.getAttribute("$userLocalLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
-		}
+		User user = service.getSessionUser(session);
 
 		if(user!=null && user.isActivate()) {
 
@@ -3420,18 +3229,7 @@ public class Application extends HttpServlet {
 	private void myspaceDeleteAddDoc(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 	
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-
-		User user = null;
-		// Authentification CAS	
-		if(casUser!=null) {
-			// Gets the user from the session
-			user=service.getUser(casUser);
-		}
-		// Authentification local
-		else if(session.getAttribute("$userLocalLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
-		}
+		User user = service.getSessionUser(session);
 
 		if(user!=null && user.isActivate()) {
 			
@@ -3525,6 +3323,11 @@ public class Application extends HttpServlet {
 							// Add the document to the course									
 							service.addAdditionalDoc(c,item);
 							requestDispatcher=returnUrl;
+							
+							// log stats
+							if(logstats) {
+								service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeAdd, fileName);
+							}	
 						}
 					}
 				}
@@ -3563,6 +3366,11 @@ public class Application extends HttpServlet {
 		// Delete the document to the course									
 		service.deleteAdditionalDoc(c);
 		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeRemove, null);
+		}	
+		
 		/* Displays the result of the upload process */
 		getServletContext().getRequestDispatcher(request.getParameter("returnUrl")).forward(request, response);
 	}
@@ -3591,6 +3399,12 @@ public class Application extends HttpServlet {
 			service.sendMail(subject,"from: " + useremail + "\n\n" + yourmessage,adminEmail3);
 		request.setAttribute("messagetype", "info");
 		request.setAttribute("message", "E-mail successfully sent !");
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
 		getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 
 	
@@ -3620,10 +3434,23 @@ public class Application extends HttpServlet {
 					request.getParameter("namedom")
 			);
 						
-			if(request.getParameter("action").equals("edit"))
+			if(request.getParameter("action").equals("edit")) {
 				service.modifyDiscipline(d);
-			else
+				
+				// log stats
+				if(logstats) {
+					service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeEdit, "Discipline : " + disciplineid);
+				}	
+			}
+			else {
 				service.addDiscipline(d);
+				
+				// log stats
+				if(logstats) {
+					service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAdd, "Discipline : " + disciplineid);
+				}	
+			}
+			
 			response.sendRedirect(response.encodeRedirectURL("./admin_disciplines"));
 		}
 		else {
@@ -3895,18 +3722,7 @@ public class Application extends HttpServlet {
 	private void myspaceAddSubtitles(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-
-		User user = null;
-		// Authentification CAS	
-		if(casUser!=null) {
-			// Gets the user from the session
-			user=service.getUser(casUser);
-		}
-		// Authentification local
-		else if(session.getAttribute("$userLocalLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
-		}
+		User user = service.getSessionUser(session);
 
 		if(user!=null && user.isActivate()) {
 
@@ -3953,18 +3769,7 @@ public class Application extends HttpServlet {
 	private void myspaceDeleteSubtitles(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 	
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-
-		User user = null;
-		// Authentification CAS	
-		if(casUser!=null) {
-			// Gets the user from the session
-			user=service.getUser(casUser);
-		}
-		// Authentification local
-		else if(session.getAttribute("$userLocalLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
-		}
+		User user = service.getSessionUser(session);
 
 		if(user!=null && user.isActivate()) {
 			
@@ -3988,6 +3793,31 @@ public class Application extends HttpServlet {
 		}	
 	}
 	
+	/**
+	 * Methode to delete a course from myspace
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void myspaceDeleteCourse(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+		
+	    int courseid = Integer.parseInt(request.getParameter("id"));
+	    Course c = service.getCourse(courseid);
+	    service.deleteTag(courseid);
+	    service.deleteCourse(courseid, c.getMediafolder(),false);
+	    /* Generation of the RSS files */
+		service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+	    
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeRemove, null);
+		}	
+		
+		response.sendRedirect(response.encodeRedirectURL("./myspace_home"));
+	}
 	
 	/**
 	 * Method to upload a subtitles xml
@@ -4054,6 +3884,11 @@ public class Application extends HttpServlet {
 							// Add the document to the course									
 							service.addSubtitles(c,item);
 							requestDispatcher=returnUrl;
+							
+							// log stats
+							if(logstats) {
+								service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeAdd, fileName);
+							}	
 						}
 					}
 				}
@@ -4092,6 +3927,11 @@ public class Application extends HttpServlet {
 		// Delete the document to the course									
 		service.deleteSubtitles(c);
 		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeRemove, null);
+		}	
+		
 		/* Displays the result of the upload process */
 		getServletContext().getRequestDispatcher(request.getParameter("returnUrl")).forward(request, response);
 	}
@@ -4113,6 +3953,11 @@ public class Application extends HttpServlet {
 		//request.setAttribute("gobackurl", "./authentication_local");
 		request.setAttribute("univName", univName);
 		session.setAttribute("previousPage", "/authentication_accountrequest");
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
 		
 		getServletContext().getRequestDispatcher(forwardUrl).forward(request, response);
 	}
@@ -4234,7 +4079,12 @@ public class Application extends HttpServlet {
 				service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail2);
 			if(adminEmail3!=null && !adminEmail3.equals(""))
 				service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail3);
-						
+			
+			// log stats
+			if(logstats) {
+				service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+			}	
+			
 			/* Done message */
 			String requestDispatcher = "/WEB-INF/views/message.jsp";
 			request.setAttribute("messagetype", "information");
@@ -4291,6 +4141,11 @@ public class Application extends HttpServlet {
 				request.setAttribute("gobackurl", "./home");
 				request.setAttribute("posturl", "./authentication_localvalid");
 			}
+			
+			// log stats
+			if(logstats) {
+				service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+			}	
 
 			// Displays the view 
 			getServletContext().getRequestDispatcher("/WEB-INF/views/authentication/login.jsp").forward(request, response);
@@ -4351,6 +4206,10 @@ public class Application extends HttpServlet {
     						session.setAttribute("btnDeco", true);
     						session.removeAttribute("loginAttempt");
     						
+    						// log stats
+    						if(logstats) {
+    							service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeLogin, null);
+    						}	
     						
     						String returnPage = request.getParameter("returnPage");
     						// publication redirect
@@ -4433,6 +4292,12 @@ public class Application extends HttpServlet {
 			request.setAttribute("posturl", "./myspace_changepassvalid");
 	        request.setAttribute("gobackurl", "./myspace_home");
 	        session.setAttribute("previousPage", "/myspace_changepass");   
+	        
+	        // log stats
+	        if(logstats) {
+	        	service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+	        }	
+	        
 	        // Displays the view 
 	        getServletContext().getRequestDispatcher("/WEB-INF/views/myspace/myspace_changepass.jsp").forward(request, response);
 		}
@@ -4490,31 +4355,27 @@ public class Application extends HttpServlet {
 					String newPasswordSha = service.encrypt(newPassword);
 					service.modifyUserPassword(user.getLogin(), newPasswordSha, "sha");
 					
+					// log stats
+					if(logstats) {
+						service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+					}	
 					
 					request.setAttribute("messagetype", "information");
 					request.setAttribute("message", bundle.getString("passchanged"));
-					getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);	
-					
+					getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
 				}
 				else {
 					request.setAttribute("messagetype", "error");
 	    			request.setAttribute("message", bundle.getString("err_password"));
 	    			getServletContext().getRequestDispatcher("/avc/myspace_changepass").forward(request, response);		
 				}
-				
-				
-
-				
     		}
-		
 		}
 		else {
 			request.setAttribute("messagetype", "error");
 			request.setAttribute("message", bundle.getString("err_acces"));
 			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
 		}
-    	
-    	
     }
     
     
@@ -4528,6 +4389,11 @@ public class Application extends HttpServlet {
      */
     private void displayForgotPassForm(HttpServletRequest request, HttpServletResponse response) 
     throws ServletException, IOException {
+    	
+    	// log stats
+    	if(logstats) {
+    		service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+    	}	
     	
 		getServletContext().getRequestDispatcher("/WEB-INF/views/authentication/forgotpass.jsp").forward(request, response);	
     	
@@ -4596,6 +4462,10 @@ public class Application extends HttpServlet {
 							
 						service.sendMail(emailUserSubject,emailUserMessage,email);
 						
+						// log stats
+						if(logstats) {
+							service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+						}	
 						
 						request.setAttribute("messagetype", "information");
 						request.setAttribute("message", bundle.getString("forgotpassmessage2"));
@@ -4627,6 +4497,11 @@ public class Application extends HttpServlet {
     	if(hash!=null && !hash.equals("")) {
     		User user = service.getUserLocalByResetCode(hash);
     		if(user !=null) {
+    			
+    			// log stats
+    			if(logstats) {
+    				service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+    			}	
     			
     			request.setAttribute("hash", hash);
     			getServletContext().getRequestDispatcher("/WEB-INF/views/authentication/resetpass.jsp").forward(request, response);	
@@ -4681,6 +4556,11 @@ public class Application extends HttpServlet {
 					service.modifyUserPassword(user.getLogin(), newPasswordSha, "sha");
 					//remove reset code
 					service.modifyUserResetCode(user.getLogin(), null, null, null);
+					
+					// log stats
+					if(logstats) {
+						service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+					}	
 										
 					request.setAttribute("messagetype", "information");
 					request.setAttribute("message", bundle.getString("passchanged"));
@@ -4725,6 +4605,11 @@ public class Application extends HttpServlet {
 			if( activate.equals("true") || activate.equals("false")) {
 				
 				try {
+					
+					// log stats
+					if(logstats) {
+						service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, "User : " + userid);
+					}	
 					
 					User u = service.getUser(userid);
 					u.setActivate(Boolean.valueOf(activate));
@@ -4811,6 +4696,11 @@ public class Application extends HttpServlet {
 		
 		session.setAttribute("previousPage", "./admin_users?page=" + pageNumber);
 		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
 		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_users.jsp").forward(request, response);
 
 	}
@@ -4827,18 +4717,7 @@ public class Application extends HttpServlet {
 	private void myspaceReplaceMedia(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-
-		User user = null;
-		// Authentification CAS	
-		if(casUser!=null) {
-			// Gets the user from the session
-			user=service.getUser(casUser);
-		}
-		// Authentification local
-		else if(session.getAttribute("$userLocalLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
-		}
+		User user = service.getSessionUser(session);
 
 		if(user!=null && user.isActivate()) {
 
@@ -4963,6 +4842,11 @@ public class Application extends HttpServlet {
 																		
 								messageType = "information";
 								message = bundle.getString("uploadaddvideo");
+								
+								// log stats
+								if(logstats) {
+									service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeAdd, fileName);
+								}	
 															
 							}
 							catch(NumberFormatException e) {
@@ -5002,18 +4886,7 @@ public class Application extends HttpServlet {
 	private void myspaceDeleteReplaceMedia(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 	
-		String casUser = (String) session.getAttribute(edu.yale.its.tp.cas.client.filter.CASFilter.CAS_FILTER_USER);		
-
-		User user = null;
-		// Authentification CAS	
-		if(casUser!=null) {
-			// Gets the user from the session
-			user=service.getUser(casUser);
-		}
-		// Authentification local
-		else if(session.getAttribute("$userLocalLogin")!=null) {
-			user=service.getUser(session.getAttribute("$userLocalLogin").toString());
-		}
+		User user = service.getSessionUser(session);
 
 		if(user!=null && user.isActivate()) {
 			
@@ -5066,6 +4939,11 @@ public class Application extends HttpServlet {
 		// Delete the document to the course									
 		service.deleteReplaceMedia(c);
 		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeRemove, null);
+		}	
+		
 		/* Displays the result of the upload process */
 		getServletContext().getRequestDispatcher(request.getParameter("returnUrl")).forward(request, response);
 	}
@@ -5087,10 +4965,957 @@ public class Application extends HttpServlet {
 		Cookie recordinterfaceCookie = new Cookie("recordinterface", recordinterface);
 		recordinterfaceCookie.setMaxAge(31536000);
 		response.addCookie(recordinterfaceCookie);
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, recordinterface);
+		}	
 				
 		// return to the course access page
 		String courseid = request.getParameter("courseid");
 		response.sendRedirect("./courseaccess?id="+courseid);
 	}
-        	
+	
+	/**
+	 * Method to contact us
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void contactUs(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+
+		/* Saves the page for the style selection thickbox return */
+		session.setAttribute("previousPage", "/contactUs");
+		request.setAttribute("posturl", "/avc/contactUsSendMail");
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		getServletContext().getRequestDispatcher("/WEB-INF/views/contactUs.jsp").forward(request, response);
+	}
+	
+	/**
+	 * Method to delete tests
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void deleteTests(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+
+		service.deleteTests(testKeyWord1);
+		service.hideTests(testKeyWord2, testKeyWord3);
+		/* Regeneration of the RSS files */
+		service.generateRss(getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+	}
+	
+	/**
+	 * Thick style
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void thickStyles(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		List<String> styles = service.getStyles(getServletContext().getRealPath("/") + "files/styles/");
+		request.setAttribute("styles", styles );
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}			
+		
+		getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_styles.jsp").forward(request, response);
+	}
+	
+	
+	/**
+	 * Thick languages
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void thickLanguages(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		List<String> languages = service.getLanguages(getServletContext().getRealPath("/") + "WEB-INF/classes/org/ulpmm/univrav/language");
+		request.setAttribute("languages", languages );
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_languages.jsp").forward(request, response);
+		
+	}
+	
+	/**
+	 * Thick legal
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void thickLegal(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_legal.jsp").forward(request, response);
+	}
+      
+	/**
+	 * Thick Replacemedia
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void thickReplacemedia(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_replacemedia.jsp").forward(request, response);
+
+	}
+	
+	/**
+	 * Thick download
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void thickDownload(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		request.setAttribute("clientLink", clientLink);
+		request.setAttribute("tracLink", tracLink);
+		getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_download.jsp").forward(request, response);
+
+	}
+
+
+	/**
+	 * Thick help
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void thickHelp(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		request.setAttribute("supportLink", supportLink);
+		request.setAttribute("helpLink", helpLink);
+		request.setAttribute("docLink",docLink);
+		getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_help.jsp").forward(request, response);
+	}
+
+	/**
+	 * Thick myspace
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void thickMyspace(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		request.setAttribute("univAcronym", univAcronym);	
+		request.setAttribute("univName", univName);
+		getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_myspace.jsp").forward(request, response);
+	}
+	
+	/**
+	 * Admin home
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminHome(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}
+		
+		/* Saves the page for the style selection thickbox return */
+		session.setAttribute("previousPage", "/admin_home");
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_home.jsp").forward(request, response);
+
+	}
+	
+	/**
+	 * Admin course
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminCourse(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		List<Course> courses = service.getAllCourses(false,false,null);
+		request.setAttribute("courses",courses);
+		request.setAttribute("number", courses.size());
+		request.setAttribute("viewurl", "./admin_courses");
+		request.setAttribute("editurl", "./admin_editcourse");
+		request.setAttribute("deleteurl", "./admin_deletecourse");
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_courses.jsp").forward(request, response);
+
+	}
+	
+	/**
+	 * Admin delete course
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminDeletecourse(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		int courseid = Integer.parseInt(request.getParameter("id"));
+		Course c = service.getCourse(courseid);
+		service.deleteTag(courseid);
+		service.deleteCourse(courseid, c.getMediafolder(),true);
+		/* Regeneration of the RSS files */
+		service.generateRss(c, getServletContext().getRealPath("/rss"), rssName, rssTitle, rssDescription, serverUrl, rssImageUrl, recordedInterfaceUrl, language, rssCategory, itunesAuthor, itunesSubtitle, itunesSummary, itunesImage, itunesCategory, itunesKeywords);
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeRemove, null);
+		}	
+		
+		response.sendRedirect(response.encodeRedirectURL("./admin_courses"));
+
+	}
+
+	/**
+	 * Admin replace media
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminReplacemedia(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		String courseid = request.getParameter("courseid");
+		Course c = service.getCourse(Integer.parseInt(courseid));
+		// If the course already have an additional video or if a job already running, don't lauch replace media
+		Job j = service.getJob(c.getCourseid(), "ADDV");
+		boolean notReplaceMedia =  c.isAvailable("addvideo") || (j!=null && !j.getStatus().equals("done"));
+		if (!notReplaceMedia) {
+			replaceMedia(request,response);
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Error: Add video job already in process");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+		}
+
+	}
+
+	/**
+	 * Admin delete replace media
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminDeleteReplacemedia(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		String courseid = request.getParameter("courseid");
+		Course c = service.getCourse(Integer.parseInt(courseid));
+		// If the course don't have an additional video or if a job already running, don't lauch delete replace media
+		Job j = service.getJob(c.getCourseid(), "ADDV");
+		boolean notdeleteReplaceMedia =  !c.isAvailable("addvideo") || (j!=null && !j.getStatus().equals("done"));
+		if (!notdeleteReplaceMedia) {
+			deleteReplaceMedia(request, response);
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "Error: Add video job already in process");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);
+		}
+
+	}
+	
+	/**
+	 * Admin buildings
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminBuildings(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		request.setAttribute("buildings", service.getBuildings());
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_buildings.jsp").forward(request, response);
+
+	}
+
+	/**
+	 * Admin add building
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminAddBuilding(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		request.setAttribute("action","add"); 
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editbuilding.jsp").forward(request, response);
+
+	}
+	
+	/**
+	 * Admin edit building
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminEditBuilding(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, "Building : " + request.getParameter("id"));
+		}	
+		
+		request.setAttribute("action","edit"); 
+		request.setAttribute("building", service.getBuilding(Integer.parseInt(request.getParameter("id"))));
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editbuilding.jsp").forward(request, response);
+
+	}
+	
+	/**
+	 * Admin delete building
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminDeleteBuilding(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeRemove, "Building : " + request.getParameter("id"));
+		}	
+		
+		int buildingid = Integer.parseInt(request.getParameter("id"));
+		service.deleteBuilding(buildingid);
+		response.sendRedirect(response.encodeRedirectURL("./admin_buildings"));
+
+	}
+
+	/**
+	 * Admin amphis
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminAmphis(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, "Building : " + request.getParameter("buildingId"));
+		}	
+		
+		request.setAttribute("buildingId", request.getParameter("buildingId"));
+		request.setAttribute("buildingName", service.getBuilding(Integer.parseInt(request.getParameter("buildingId"))).getName());
+		request.setAttribute("amphis", service.getAmphis(Integer.parseInt(request.getParameter("buildingId"))));
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_amphis.jsp").forward(request, response);
+
+	}
+
+	/**
+	 * Admin add amphi
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminAddAmphi(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, "Building : " + request.getParameter("buildingId"));
+		}	
+		
+		request.setAttribute("buildingId", request.getParameter("buildingId"));
+		request.setAttribute("action","add"); 
+		// univ acronym
+		request.setAttribute("univAcronym", univAcronym);
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editamphi.jsp").forward(request, response);
+
+	}
+
+	/**
+	 * Admin edit amphi
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminEditAmphi(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, "Building : " + request.getParameter("buildingId"));
+		}	
+		
+		request.setAttribute("buildingId", request.getParameter("buildingId"));
+		request.setAttribute("buildingName", service.getBuilding(Integer.parseInt(request.getParameter("buildingId"))).getName());
+		request.setAttribute("action","edit"); 
+		request.setAttribute("amphi", service.getAmphi(Integer.parseInt(request.getParameter("id"))));
+		// univ acronym
+		request.setAttribute("univAcronym", univAcronym);
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editamphi.jsp").forward(request, response);
+
+	}
+
+	/**
+	 * Admin delete amphi
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminDeleteAmphi(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeRemove, "Amphi : " + request.getParameter("id"));
+		}	
+		
+		int amphiid = Integer.parseInt(request.getParameter("id"));
+		service.deleteAmphi(amphiid);
+		response.sendRedirect(response.encodeRedirectURL("./admin_amphis?buildingId=" + request.getParameter("buildingId")));
+
+	}
+
+	/**
+	 * Admin edit user
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminEditUser(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, "User : " + request.getParameter("id"));
+		}	
+		
+		List<String> types = Arrays.asList("","ldap","local");
+		request.setAttribute("types",types);
+		request.setAttribute("action","edit"); 
+		request.setAttribute("user", service.getUser(Integer.parseInt(request.getParameter("id"))));
+		request.setAttribute("posturl", "./admin_validateuser");
+		request.setAttribute("gobackurl", "./admin_users");
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_edituser.jsp").forward(request, response);
+
+	}
+
+	/**
+	 * Admin delete user
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminDeleteUser(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		Integer userid = request.getParameter("id")!=null ? Integer.parseInt(request.getParameter("id")) : null;
+		if(service.getCourseNumber(service.getUser(userid))==0) {
+			service.deleteUser(userid);
+			
+			// log stats
+			if(logstats) {
+				service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeRemove, "User : " + userid);
+			}	
+			
+			response.sendRedirect(response.encodeRedirectURL("./admin_users"));
+		}
+		else {
+			request.setAttribute("messagetype", "error");
+			request.setAttribute("message", "You cannot delete this user because he have courses");
+			getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+		}
+
+	}
+
+	/**
+	 * Admin add user
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminAddUser(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		List<String> types = Arrays.asList("","ldap","local");
+		request.setAttribute("types",types);
+		request.setAttribute("action","add"); 
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_edituser.jsp").forward(request, response);
+
+		
+	}
+
+	/**
+	 * Admin selections
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminSelections(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		request.setAttribute("viewurl", "./admin_selections");
+		List<Selection> selections = service.getAllSelections();
+		request.setAttribute("selections", selections );
+		request.setAttribute("number", selections.size());
+		request.setAttribute("editurl", "./admin_editselection");
+		request.setAttribute("deleteurl", "./admin_deleteselection");
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_selections.jsp").forward(request, response);
+
+	}
+	
+	/**
+	 * Admin edit selection
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminEditSelection(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, "Selection : " + request.getParameter("id"));
+		}	
+		
+		request.setAttribute("action","edit"); 
+		request.setAttribute("selection", service.getSelection(Integer.parseInt(request.getParameter("id"))));
+		request.setAttribute("posturl", "./admin_validateselection");
+		request.setAttribute("gobackurl", "./admin_selections");
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editselection.jsp").forward(request, response);
+
+	}
+
+	/**
+	 * Admin delete selection
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminDeleteSelection(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+					
+		Integer selectionid = request.getParameter("id")!=null ? Integer.parseInt(request.getParameter("id")) : null;
+		service.deleteSelection(selectionid);
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeRemove, "Selection : " + selectionid);
+		}	
+				
+		response.sendRedirect(response.encodeRedirectURL("./admin_selections"));
+
+	}
+
+	/**
+	 * Admin add selection
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminAddSelection(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		request.setAttribute("action","add"); 
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editselection.jsp").forward(request, response);
+
+	}
+	
+	/**
+	 * Admin teachers
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminTeachers(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		request.setAttribute("viewurl", "./admin_teachers");
+		List<Teacher> teachers = service.getAllTeachers();
+		request.setAttribute("teachers", teachers );
+		request.setAttribute("number", teachers.size());
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_teachers.jsp").forward(request, response);
+
+	}
+
+	/**
+	 * Admin stats
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminStats(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		request.setAttribute("diskspaceinfo", service.getDiskSpaceInfo());
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_stats.jsp").forward(request, response);
+
+	}
+	
+	/**
+	 * Admin jobs
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminJobs(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		request.setAttribute("viewurl", "./admin_jobs");
+		List<Job> jobs = service.getAllJobs();
+		request.setAttribute("jobs", jobs );
+		request.setAttribute("number", jobs.size());
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_jobs.jsp").forward(request, response);
+
+	}
+
+	/**
+	 * Admin jobs
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminDisciplines(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		request.setAttribute("viewurl", "./admin_disciplines");
+		List<Discipline> disciplines = service.getAllDiscipline();
+		request.setAttribute("disciplines", disciplines );
+		request.setAttribute("number", disciplines.size());
+		request.setAttribute("editurl", "./admin_editdiscipline");
+		request.setAttribute("deleteurl", "./admin_deletediscipline");
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_disciplines.jsp").forward(request, response);
+
+	}
+
+	/**
+	 * Admin add discipline
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminAddDiscipline(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		request.setAttribute("action","add"); 
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editdiscipline.jsp").forward(request, response);
+
+	}
+
+	/**
+	 * Admin edit discipline
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminEditDiscipline(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, "Discipline : " + request.getParameter("id"));
+		}	
+		
+		request.setAttribute("action","edit"); 
+		request.setAttribute("discipline", service.getDiscipline(Integer.parseInt(request.getParameter("id"))));
+		request.setAttribute("posturl", "./admin_validatediscipline");
+		request.setAttribute("gobackurl", "./admin_disciplines");
+		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_editdiscipline.jsp").forward(request, response);
+
+	}
+
+	/**
+	 * Admin delete discipline
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void adminDeleteDiscipline(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		Integer disciplineid = request.getParameter("id")!=null ? Integer.parseInt(request.getParameter("id")) : null;
+		service.deleteDiscipline(disciplineid);
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeRemove, "Discipline : " + disciplineid);
+		}	
+		
+		response.sendRedirect(response.encodeRedirectURL("./admin_disciplines"));
+
+	}
+	
+	
+	/**
+	 * gp home
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void gpHome(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}	
+		
+		/* Saves the page for the style selection thickbox return */
+		session.setAttribute("previousPage", "/gp_home");
+		request.setAttribute("buildings", service.getBuildings());
+		getServletContext().getRequestDispatcher("/WEB-INF/views/gp/gp_home.jsp").forward(request, response);
+
+	}
+	
+	/**
+	 * gp edit building
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void gpEditBuilding(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, "Building : " + request.getParameter("id"));
+		}	
+		
+		request.setAttribute("action","edit"); 
+		request.setAttribute("building", service.getBuilding(Integer.parseInt(request.getParameter("id"))));
+		getServletContext().getRequestDispatcher("/WEB-INF/views/gp/gp_editbuilding.jsp").forward(request, response);
+
+	}
+
+	/**
+	 * gp amphis
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void gpAmphis(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, "Building : " + request.getParameter("buildingId"));
+		}	
+		
+		request.setAttribute("buildingId", request.getParameter("buildingId"));
+		request.setAttribute("buildingName", service.getBuilding(Integer.parseInt(request.getParameter("buildingId"))).getName());
+		request.setAttribute("amphis", service.getAmphis(Integer.parseInt(request.getParameter("buildingId"))));
+		getServletContext().getRequestDispatcher("/WEB-INF/views/gp/gp_amphis.jsp").forward(request, response);
+
+	}
+	
+	/**
+	 * gp edit amphi
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void gpEditAmphi(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, "Building : " + request.getParameter("buildingId"));
+		}	
+		
+		request.setAttribute("buildingId", request.getParameter("buildingId"));
+		request.setAttribute("buildingName", service.getBuilding(Integer.parseInt(request.getParameter("buildingId"))).getName());
+		request.setAttribute("action","edit"); 
+		request.setAttribute("amphi", service.getAmphi(Integer.parseInt(request.getParameter("id"))));
+		// univ acronym
+		request.setAttribute("univAcronym", univAcronym);
+		getServletContext().getRequestDispatcher("/WEB-INF/views/gp/gp_editamphi.jsp").forward(request, response);
+
+	}
+
+	
+	
+
 }

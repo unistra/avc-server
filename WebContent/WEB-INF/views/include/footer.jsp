@@ -6,7 +6,7 @@
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
 <p>
-  	<fmt:message key="R&eacute;alisation du site par ULP Multim&eacute;dia - 2007"/> <br>
+  	<fmt:message key="Footer"/> <br>
   	<c:url var="thick_legal" scope="page" value="./thick_legal">
 		<c:param name="width" value="240"/>
 		<c:param name="height" value="115"/>

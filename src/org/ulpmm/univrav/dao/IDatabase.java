@@ -9,6 +9,7 @@ import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Discipline;
 import org.ulpmm.univrav.entities.Job;
 import org.ulpmm.univrav.entities.Level;
+import org.ulpmm.univrav.entities.LogUserAction;
 import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Tag;
@@ -648,5 +649,18 @@ public interface IDatabase {
 	 * @return a list of stats
 	 */
 	public HashMap<String, Integer> getStats(HashMap<String, String> params);
+	
+	/**
+	 * Add a log user action
+	 * @param log the log
+	 */
+	public void addLogUserAction(LogUserAction log);
+	
+	/**
+	 * get log user actions by user
+	 * @param userid the user
+	 * @return list of log
+	 */
+	public List<LogUserAction> getLogUserActionByUser(Integer userid);
 
 }

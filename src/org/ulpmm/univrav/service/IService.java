@@ -7,6 +7,9 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.fileupload.FileItem;
 import org.ulpmm.univrav.entities.Amphi;
 import org.ulpmm.univrav.entities.Building;
@@ -14,6 +17,7 @@ import org.ulpmm.univrav.entities.Course;
 import org.ulpmm.univrav.entities.Discipline;
 import org.ulpmm.univrav.entities.Job;
 import org.ulpmm.univrav.entities.Level;
+import org.ulpmm.univrav.entities.LogUserAction;
 import org.ulpmm.univrav.entities.Selection;
 import org.ulpmm.univrav.entities.Slide;
 import org.ulpmm.univrav.entities.Tag;
@@ -849,4 +853,28 @@ public interface IService {
 	 * @param c the course
 	 */
 	public void deleteReplaceMedia(Course c);
+	
+	/**
+	 * Add a log user action
+	 * @param request the request
+	 * @param user the user
+	 * @param course the course
+	 * @param logtype the logtype
+	 * @param information the information
+	 */
+	public void addLogUserAction(HttpServletRequest request, User user, Course course, String logtype, String information );
+	
+	/**
+	 * get log user actions by user
+	 * @param userid the user
+	 * @return list of log
+	 */
+	public List<LogUserAction> getLogUserActionByUser(Integer userid);
+	
+	/**
+	 * Get the user from the session
+	 * @param session the current session
+	 * @return the session user
+	 */
+	public User getSessionUser(HttpSession session);
 }
