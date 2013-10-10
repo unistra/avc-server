@@ -35,6 +35,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+import org.ulpmm.univrav.dao.DaoException;
 import org.ulpmm.univrav.dao.IDatabase;
 import org.ulpmm.univrav.dao.IFileSystem;
 import org.ulpmm.univrav.dao.ILdapAccess;
@@ -1750,8 +1751,9 @@ public class ServiceImpl implements IService {
 	 * @param information the information
 	 */
 	public void addLogUserAction(HttpServletRequest request, User user, Course course, String logtype, String information ) {
-		
-		LogUserAction log = new LogUserAction(
+		try {
+			
+			LogUserAction log = new LogUserAction(
 				new Timestamp(new Date().getTime()), 
 				user!=null ? user.getUserid() : null, 
 				course!=null ? course.getCourseid() : null, 
@@ -1759,9 +1761,13 @@ public class ServiceImpl implements IService {
 				request.getRequestURL() + (request.getQueryString()!=null ? "?" + request.getQueryString() : ""), 
 				logtype, 
 				information
-		);
+			);
 		
-		db.addLogUserAction(log);
+			db.addLogUserAction(log);
+		}
+		catch(DaoException e) {
+			logger.error(e.getMessage());
+		}
 	}
 	
 	/**
