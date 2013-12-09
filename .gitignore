@@ -1,0 +1,10 @@
+work
+*.class
+WebContent/rss/*.xml
+WebContent/files/jwflvplayer/player.swf
+WebContent/files/js/flexcroll.js
+WebContent/conf/univrav.properties.prod
+WebContent/conf/univrav.properties.test
+.pydevproject
+.settings/
+WebContent/WEB-INF/classes/
