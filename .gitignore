@@ -8,3 +8,5 @@ WebContent/conf/univrav.properties.test
 .pydevproject
 .settings/
 WebContent/WEB-INF/classes/
+.classpath
+.tomcatplugin
