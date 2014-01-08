@@ -167,7 +167,14 @@
 					</c:if>
 					<tr class="odd">
 						<td title="<fmt:message key="ib_title"/>"><fmt:message key="title"/><b class="boldStar">*</b> : </td>
-						<td><input type="text" name="title" class="${classField}" <c:out value="${disabledField}"/> value="${title}"> </td>
+						<c:choose>
+						<c:when test="${publication_type == 'serverTest' and pubTest == true and title == null}">
+							<td><input type="text" name="title" class="${classField}" <c:out value="${disabledField}"/> value="test"> </td>
+						</c:when>
+						<c:otherwise>
+							<td><input type="text" name="title" class="${classField}" <c:out value="${disabledField}"/> value="${title}"> </td>
+						</c:otherwise>
+						</c:choose>
 					</tr>
 					<tr class="even">
 						<td title="<fmt:message key="ib_desc"/>"><fmt:message key="description"/> : </td>
@@ -178,6 +185,9 @@
 						<c:choose>
 							<c:when test="${user != null and ((publication_type == 'serverCas') or (publication_type == 'serverLocal')) and message==null}">
 								<td><input type="text" name="name" class="${classField}" <c:out value="${disabledField}"/> value="${user.lastname }" > </td>
+							</c:when>
+							<c:when test="${publication_type == 'serverTest' and pubTest == true and name == null}">
+								<td><input type="text" name="name" class="${classField}" <c:out value="${disabledField}"/> value="test"> </td>
 							</c:when>
 							<c:otherwise>
 								<td><input type="text" name="name" class="${classField}" <c:out value="${disabledField}"/> value="${name}"> </td>
@@ -201,10 +211,15 @@
 						<td>
 							<select name="level" <c:out value="${disabledField}"/> >
 								<option value=""></option>
-								<c:forEach var="levels" items="${levels}">
-									<c:if test="${levelSelected == levels.code}">
-										<c:set var="selected" value="selected" />
-									</c:if>
+								<c:forEach var="levels" items="${levels}" varStatus="status">
+									<c:choose>
+										<c:when test="${publication_type == 'serverTest' and pubTest == true and levelSelected == null and status.count == 1}">
+											<c:set var="selected" value="selected" />
+										</c:when>
+										<c:when test="${levelSelected == levels.code}">
+											<c:set var="selected" value="selected" />
+										</c:when>
+									</c:choose>
 									<option value="${levels.code}" title="${levels.name}" ${selected}>${levels.name}</option>
 									<c:remove var="selected"/>
 								</c:forEach>
@@ -217,10 +232,15 @@
 						<td>
 							<select name="component" <c:out value="${disabledField}"/> >
 								<option value=""></option>
-								<c:forEach var="discipline" items="${disciplines}">
-									<c:if test="${discSelected == discipline.codecomp}">
+								<c:forEach var="discipline" items="${disciplines}" varStatus="status">
+									<c:choose>
+									<c:when test="${publication_type == 'serverTest' and pubTest == true and discSelected == null and status.count == 1}">
+											<c:set var="selected" value="selected" />
+										</c:when>
+									<c:when test="${discSelected == discipline.codecomp}">
 										<c:set var="selected" value="selected" />
-									</c:if>
+									</c:when>
+									</c:choose>
 									<option value="${discipline.codecomp}" title="${discipline.namecomp}" ${selected}>${discipline.namecomp}</option>
 									<c:remove var="selected"/>
 								</c:forEach>
