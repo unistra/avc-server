@@ -899,6 +899,19 @@ public class ServiceImpl implements IService {
 	public List<Course> getCoursesByUser(User u, Integer number, Integer start, boolean onlyvisible) {
 		return db.getCoursesByUser(u,number,start,onlyvisible);
 	}
+
+	/**
+	 * Gets a list of courses by providing its user with search keywords
+	 * @param keywords the keywords
+	 * @param u the user of the course
+	 * @param number the number of courses
+	 * @param start the start number of courses
+	 * @param onlyvisible true to get only visible courses
+	 * @return the list of course
+	 */
+	public List<Course> getCoursesByUser(String keywords, User u, Integer number, Integer start, boolean onlyvisible) {
+		return db.getCoursesByUser(keywords, u, number, start, onlyvisible);
+	}
 	
 	/**
 	 * Gets the total number of courses
@@ -907,6 +920,16 @@ public class ServiceImpl implements IService {
 	 */
 	public int getCourseNumber(User u) {
 		return db.getCourseNumber(u);
+	}
+
+	/**
+	 * Gets the total number of courses
+	 * @param keywords the keywords
+	 * @param u the user
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(String keywords, User u) {
+		return db.getCourseNumber(keywords,u);
 	}
 	
 	/**

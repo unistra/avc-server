@@ -2729,6 +2729,96 @@ public class DatabaseImpl implements IDatabase {
 		
 		return l;
 	}
+
+	/**
+	 * Gets a list of courses by providing its user with search keywords
+	 * @param keywords the keywords
+	 * @param u the user of the course
+	 * @param number the number of courses
+	 * @param start the start number of courses
+	 * @param onlyvisible true to get only visible courses
+	 * @return the list of course
+	 */
+	public List<Course> getCoursesByUser(String keywords, User u, Integer number, Integer start, boolean onlyvisible) {
+		
+		List<Course> l = new ArrayList<Course>();
+		Connection cnt = null;
+
+		if( keywords != null && !keywords.equals("")) {
+
+			String sql = "SELECT * FROM course WHERE userid = ? ";
+			
+			if(onlyvisible)
+				sql+="AND visible=true ";
+
+			//keywords
+			sql += "AND (UPPER(title) LIKE UPPER(?) OR UPPER(description) LIKE UPPER(?) OR UPPER(name) LIKE UPPER(?) OR UPPER(firstname) LIKE UPPER(?) ";
+			sql += "OR courseid IN(SELECT courseid FROM course WHERE SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1))) IN (SELECT codecomp FROM discipline WHERE UPPER(namecomp) LIKE UPPER(?))) ";
+			sql += "OR courseid IN(SELECT courseid FROM tag WHERE UPPER(tag) LIKE UPPER(?))) ";
+					
+			sql+="ORDER BY date DESC, courseid ";		
+			
+			if(number!=null && start!=null)
+				sql = sql + "DESC LIMIT " + number + " OFFSET " + start;
+			
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			
+			try {
+				cnt = datasrc.getConnection();
+				pstmt = cnt.prepareStatement(sql);
+				pstmt.setInt(1, u.getUserid());
+				pstmt.setString(2, "%"+keywords+"%");
+				pstmt.setString(3, "%"+keywords+"%");
+				pstmt.setString(4, "%"+keywords+"%");
+				pstmt.setString(5, "%"+keywords+"%");
+				pstmt.setString(6, "%"+keywords+"%");
+				pstmt.setString(7, "%"+keywords+"%");
+				rs = pstmt.executeQuery();
+				
+				String formation =null;
+				while(rs.next()) {
+					formation = getFormationFullName(rs.getString("formation"));
+					l.add( new Course(
+						rs.getInt("courseid"),
+						rs.getTimestamp("date"),
+						rs.getString("type"),
+						rs.getString("title"),
+						rs.getString("description"),
+						formation!=null ? formation : rs.getString("formation"),
+						rs.getString("name"),
+						rs.getString("firstname"),
+						rs.getString("ipaddress"),
+						rs.getInt("duration"),
+						rs.getString("genre"),
+						rs.getBoolean("visible"),
+						rs.getInt("consultations"),
+						rs.getString("timing"),
+						rs.getInt("userid"),
+						rs.getString("adddocname"),
+						rs.getBoolean("download"),
+						rs.getBoolean("restrictionuds"),
+						rs.getInt("mediatype"),
+						rs.getShort("volume"),
+						rs.getTimestamp("recorddate"),
+						rs.getInt("slidesoffset")
+					));
+				}
+			}	
+			catch( SQLException sqle) {
+				logger.error("Error while retrieving the course with user " + u.getUserid(),sqle);
+				throw new DaoException("Error while retrieving the course with user " + u.getUserid());
+			}
+			finally {
+				close(rs,pstmt,cnt);
+			}
+		}
+		else {
+			l = getCoursesByUser(u, number, start, onlyvisible);
+		}
+		
+		return l;
+	}
 	
 	/**
 	 * Gets the total number of courses
@@ -2756,6 +2846,56 @@ public class DatabaseImpl implements IDatabase {
 		}
 		finally {
 			close(rs,stmt,cnt);
+		}
+
+		return number;
+	}
+
+	/**
+	 * Gets the total number of courses
+	 * @param keywords the keywords
+	 * @param u the user
+	 * @return the number of courses
+	 */
+	public int getCourseNumber(String keywords, User u) {
+		int number = 0;
+		String sql = "SELECT COUNT(*) FROM course WHERE userid=? ";
+		ResultSet rs = null;
+		PreparedStatement pstmt = null;
+		Connection cnt = null;
+		
+		if( keywords != null && ! keywords.equals("")) {
+
+			//keywords
+			sql += "AND (UPPER(title) LIKE UPPER(?) OR UPPER(description) LIKE UPPER(?) OR UPPER(name) LIKE UPPER(?) OR UPPER(firstname) LIKE UPPER(?) ";
+			sql += "OR courseid IN(SELECT courseid FROM course WHERE SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1))) IN (SELECT codecomp FROM discipline WHERE UPPER(namecomp) LIKE UPPER(?))) ";
+			sql += "OR courseid IN(SELECT courseid FROM tag WHERE UPPER(tag) LIKE UPPER(?))) ";
+							
+			try {
+				cnt = datasrc.getConnection();
+				pstmt = cnt.prepareStatement(sql);
+				pstmt.setInt(1, u.getUserid());
+				pstmt.setString(2, "%"+keywords+"%");
+				pstmt.setString(3, "%"+keywords+"%");
+				pstmt.setString(4, "%"+keywords+"%");
+				pstmt.setString(5, "%"+keywords+"%");
+				pstmt.setString(6, "%"+keywords+"%");
+				pstmt.setString(7, "%"+keywords+"%");
+				rs = pstmt.executeQuery();
+				
+				if(rs.next()) 
+					number = rs.getInt("count");
+			}
+			catch( SQLException sqle) {
+				logger.error("Error while retrieving the course number",sqle);
+				throw new DaoException("Error while retrieving the course number");
+			}
+			finally {
+				close(rs,pstmt,cnt);
+			}
+		}
+		else {
+			number = getCourseNumber(u);
 		}
 
 		return number;

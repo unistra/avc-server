@@ -203,6 +203,11 @@ a, .linkText, .helpText, h5, .buildingName, .searchText {
 	margin:auto;
 }
 
+.divLeft {
+	text-align:left;
+	margin-left:3%;
+}
+
 .littleFont {
 	font-size:12px;
  	color:black;

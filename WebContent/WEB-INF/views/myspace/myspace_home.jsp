@@ -73,6 +73,14 @@
 	    			</div>
 	    		</c:if>
 	    	</div>
+
+	    	<br />
+	    	<div class="divLeft">	    	
+	    		<form name="input" action="./myspace_home" method="post">
+					<p><fmt:message key="Recherche"/>: <input type="text" name="keywords" value="${keywords}" />
+					<input type="submit" value="<fmt:message key="Valider"/>" />
+				</form>
+			</div>
 	    	
 	    	<c:choose>
 			<c:when test="${!empty courses}">	
@@ -86,7 +94,7 @@
 						<c:import url="./mycourselist.jsp" />
 					</table>
 	    			<div class="pagination">
-	    				<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" />
+	    				<pt:PaginationTag currentPage="${page}" itemsNumber="${items}" numberPerPage="${number}" resultPageName="${resultPage}" paramsUrl="${paramsUrl}"/>
 					</div>
 				</div>
 				</c:when>

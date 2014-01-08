@@ -956,17 +956,29 @@ public class Application extends HttpServlet {
 				pageNumber = 1;
 
 			request.setAttribute("page", pageNumber);
-			//request.setAttribute("teachers", service.getTeachers());
-			//request.setAttribute("formations", service.getFormations());
+
+
+		String keywords = service.encodeString(request.getParameter("keywords"));
+		String paramsUrl = "";
+		if(keywords==null || keywords.equals("") ) {
 			request.setAttribute("courses", service.getCoursesByUser(user,recordedCourseNumber,start,false));
 			request.setAttribute("items", service.getCourseNumber(user));
+		}
+		else {
+			request.setAttribute("courses", service.getCoursesByUser(keywords, user,recordedCourseNumber,start,false));
+			request.setAttribute("items", service.getCourseNumber(keywords, user));
+			request.setAttribute("keywords", keywords);
+			paramsUrl = "?keywords=" + keywords;
+			request.setAttribute("paramsUrl", paramsUrl);
+		}
+
 			request.setAttribute("number", recordedCourseNumber);
 			request.setAttribute("resultPage", "myspace_home");
 			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName, true));
 			request.setAttribute("user", user);
 
 			/* Saves the page for the style selection thickbox return */
-			session.setAttribute("previousPage", "/myspace_home?page=" + pageNumber);
+			session.setAttribute("previousPage", "/myspace_home" + paramsUrl +"&page=" + pageNumber);
 
 			// Button disconnect
 			session.setAttribute("btnDeco", true);
