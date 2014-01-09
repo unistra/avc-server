@@ -74,6 +74,9 @@ public class FileSystemImpl implements IFileSystem {
 	/** Default Flash filename in the archive sent by the client */
 	private static String defaultFlashFile;
 	
+	/** Default Flash filename in the archive sent by the client */
+	private static String defaultMp4File;
+	
 	/** Default Audio filename 1 in the archive sent by the MAC client */
 	private static String defaultAudioMacFile1;
 	
@@ -100,11 +103,14 @@ public class FileSystemImpl implements IFileSystem {
 	 * @param coursesUrl The URL of courses
 	 * @param defaultMp3File Default MP3 filename in the archive sent by the client
 	 * @param defaultFlashFile Default Flash filename in the archive sent by the client
+	 * @param defaultMp4File Default mp4 filename in the archive sent by the client
+	 * @param defaultAudioMacFile1 Default defaultAudioMacFile1 filename in the archive sent by the client
+	 * @param defaultAudioMacFile2 Default defaultAudioMacFile2 filename in the archive sent by the client
 	 * @param comment Copyright comment
 	 */
 	@SuppressWarnings("static-access")
 	public FileSystemImpl(String scriptsFolder, String ftpFolder, String coursesFolder, 
-		String liveFolder, String coursesUrl, String defaultMp3File, String defaultFlashFile, 
+		String liveFolder, String coursesUrl, String defaultMp3File, String defaultFlashFile, String defaultMp4File,
 		String defaultAudioMacFile1, String defaultAudioMacFile2, String comment, IDatabase db) {
 		
 		r = Runtime.getRuntime();
@@ -114,6 +120,7 @@ public class FileSystemImpl implements IFileSystem {
 		this.coursesUrl = coursesUrl;
 		this.defaultMp3File = defaultMp3File;
 		this.defaultFlashFile = defaultFlashFile;
+		this.defaultMp4File = defaultMp4File;
 		this.defaultAudioMacFile1 = defaultAudioMacFile1;
 		this.defaultAudioMacFile2 = defaultAudioMacFile2;
 		this.comment = comment;
@@ -134,13 +141,23 @@ public class FileSystemImpl implements IFileSystem {
 		setCourseType(c);
 		
 		if( c.getType().equals("audio")) {
+			c.setmediatype(Course.typeFlash); // flash available before encoding
 			renameFile(c.getMediafolder(), defaultMp3File, c.getMediasFileName() + ".mp3");
 			setCourseDuration(c, c.getMediafolder(), c.getMediasFileName(),"mp3");
 		}
 		else if( c.getType().equals("video")) {
-			renameFile(c.getMediafolder(), defaultFlashFile, c.getMediasFileName() + ".flv");
-			injectMetadata(c.getMediafolder(), c.getMediasFileName(), "flv");
-			setCourseDuration(c, c.getMediafolder(), c.getMediasFileName(),"flv");
+			// for mp4
+			if(new File(coursesFolder + c.getMediafolder() + "/" + defaultMp4File).exists()) {
+				renameFile(c.getMediafolder(), defaultMp4File, c.getMediasFileName() + ".mp4");
+				setCourseDuration(c, c.getMediafolder(), c.getMediasFileName(),"mp4");
+			}
+			//for flv
+			else {
+				c.setmediatype(Course.typeFlash); // flash available before encoding
+				renameFile(c.getMediafolder(), defaultFlashFile, c.getMediasFileName() + ".flv");
+				injectMetadata(c.getMediafolder(), c.getMediasFileName(), "flv");
+				setCourseDuration(c, c.getMediafolder(), c.getMediasFileName(),"flv");
+			}
 		}	
 		
 		createDescriptionFile(c);
@@ -810,7 +827,7 @@ public class FileSystemImpl implements IFileSystem {
 		
 		if( new File(coursesFolder + c.getMediafolder() + "/" + defaultMp3File).exists()) 
 			c.setType("audio");
-		else if(new File(coursesFolder + c.getMediafolder() + "/" + defaultFlashFile).exists())
+		else if(new File(coursesFolder + c.getMediafolder() + "/" + defaultFlashFile).exists() || new File(coursesFolder + c.getMediafolder() + "/" + defaultMp4File).exists())
 			c.setType("video");
 		else {
 			logger.error("No course media file found in the " + coursesFolder + c.getMediafolder() + " folder");

@@ -206,6 +206,43 @@ rm $MediaFolder/$FOLDER/$AV$CourseID.mp3
 # webm for html5
 bash $PTHSCR/convertAll2Webm.sh $MediaFolder/$FOLDER $AV$CourseID mp4
 ;;
+
+
+CVMP4)
+#convert mp4 to flv for flash
+bash $PTHSCR/convertAll2Flv.sh $MediaFolder $ORI$CourseID.$Extension $CourseID $PTHSCR/calculate_padding.sh
+#injectMetadata
+bash $PTHSCR/injectMetadata.sh $MediaFolder $CourseID "flv"
+#convertAllToMp3
+bash $PTHSCR/convertAll2Mp3.sh $MediaFolder $CourseID "mp4"
+#mp3Tag
+#/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3 &> /dev/null
+#mp3 tag image
+/usr/bin/eyeD3 -t "$TITLE" -a "$AUTHOR" -Y "$DATE" -A "$FORMATION" -c "::$COMMENT" --to-v2.3 --add-image=$PTHSCR/cover.jpg:FRONT_COVER $MediaFolder/$CourseID.mp3 &> /dev/null
+#pdfCreation(c.getMediaFolder(), c.getMediasFileName()); // PDF
+python $PTHSCR/CreatePDF.py $MediaFolder $CourseID
+#mp3ToOgg
+bash $PTHSCR/convertAll2Ogg.sh $MediaFolder $CourseID "mp3"
+#oggTag
+/usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg &> /dev/null
+#videoslideCreation
+bash $PTHSCR/videoslide.sh $MediaFolder $CourseID
+#convert videoslide to webm
+bash $PTHSCR/convertAll2Webm.sh $MediaFolder "$CourseID"_videoslide mp4
+#mp4Tag
+/usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
+/usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
+# link ipod
+ln -s $MediaFolder/"$CourseID".mp4 $MediaFolder/"$CourseID"_ipod.mp4
+# qt faststart for mp4
+/usr/bin/qt-faststart $MediaFolder/"$CourseID".mp4 $MediaFolder/"$CourseID"_tmp.mp4 &> /dev/null
+mv $MediaFolder/"$CourseID"_tmp.mp4 $MediaFolder/"$CourseID".mp4
+#mp4Tag
+/usr/bin/AtomicParsley $MediaFolder/"$CourseID".mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
+# convert mp4 to webm for html5
+bash $PTHSCR/convertAll2Webm.sh $MediaFolder $CourseID mp4
+;;
+
 esac
 
 # Maj du mediatype sur le serveur avc

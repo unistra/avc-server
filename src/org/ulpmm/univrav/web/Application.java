@@ -102,6 +102,8 @@ public class Application extends HttpServlet {
 	private static String defaultMp3File;
 	/** Default Flash filename in the archive sent by the client */
 	private static String defaultFlashFile;
+	/** Default Mp4 filename in the archive sent by the client */
+	private static String defaultMp4File;
 	/** Default Audio filename 1 in the archive sent by the MAC client */
 	private static String defaultAudioMacFile1;
 	/** Default Audio filename 2 in the archive sent by the MAC client */
@@ -274,6 +276,7 @@ public class Application extends HttpServlet {
 			// Default media filenames in the archive sent by the client
 			defaultMp3File = p.getProperty("defaultMp3File");
 			defaultFlashFile = p.getProperty("defaultFlashFile");
+			defaultMp4File = p.getProperty("defaultMp4File");
 			defaultAudioMacFile1 = p.getProperty("defaultAudioMacFile1");
 			defaultAudioMacFile2 = p.getProperty("defaultAudioMacFile2");
 						
@@ -426,7 +429,7 @@ public class Application extends HttpServlet {
 			FileSystemImpl fs = new FileSystemImpl(
 					getServletContext().getRealPath("/") + "scripts",
 					ftpFolder, coursesFolder, liveFolder, coursesUrl,
-					defaultMp3File, defaultFlashFile, defaultAudioMacFile1, defaultAudioMacFile2, comment, db
+					defaultMp3File, defaultFlashFile, defaultMp4File, defaultAudioMacFile1, defaultAudioMacFile2, comment, db
 			);
 			
 			LdapAccessImpl ldap = new LdapAccessImpl(
@@ -1809,7 +1812,7 @@ public class Application extends HttpServlet {
 						null,
 						download,
 						restrictionuds,
-						Course.typeFlash, // Other medias can't be set yet
+						0, // mediatype can't be set yet
 						volume,
 						null, // The date recorded can't be set yet
 						null

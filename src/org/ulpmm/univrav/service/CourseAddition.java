@@ -126,9 +126,18 @@ public class CourseAddition extends Thread {
 			String job_line ="";
 						
 			if(c.getType().equals("video")) {
-				service.createJob(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm,"CV","flv",coursesFolder);
-				job_line =c.getCourseid()+":"+"waiting"+":"+String.valueOf(Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm)+":CV:"+c.getMediafolder()+":flv";
-				service.modifyJobStatus(c.getCourseid(), "processing", "CV");	
+				// if the flv is not available, it's mp4
+				if(!c.isAvailable("flash")) {
+					service.createJob(c,Course.typeFlash+Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm,"CVMP4","mp4",coursesFolder);
+					job_line =c.getCourseid()+":"+"waiting"+":"+String.valueOf(Course.typeFlash+Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm)+":CVMP4:"+c.getMediafolder()+":mp4";
+					service.modifyJobStatus(c.getCourseid(), "processing", "CVMP4");
+				}
+				//else flv
+				else {
+					service.createJob(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm,"CV","flv",coursesFolder);
+					job_line =c.getCourseid()+":"+"waiting"+":"+String.valueOf(Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm)+":CV:"+c.getMediafolder()+":flv";
+					service.modifyJobStatus(c.getCourseid(), "processing", "CV");
+				}
 			}
 			else {
 				service.createJob(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm,"CA","mp3",coursesFolder);
@@ -140,7 +149,14 @@ public class CourseAddition extends Thread {
 		}
 		else {
 			if(c.getType().equals("video")) {
-				service.createJob(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm,"CV","flv",coursesFolder);
+				// if the flv is not available, it's mp4
+				if(!c.isAvailable("flash")) {
+					service.createJob(c,Course.typeFlash+Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm,"CVMP4","mp4",coursesFolder);
+				}
+				//else flv
+				else {
+					service.createJob(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm,"CV","flv",coursesFolder);
+				}
 			}
 			else {
 				service.createJob(c,Course.typeMp3+Course.typeOgg+Course.typePdf+Course.typeZip+Course.typeVideoslide+Course.typeVideoslideIpod + Course.typeWebm,"CA","mp3",coursesFolder);
