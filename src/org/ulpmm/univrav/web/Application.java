@@ -599,7 +599,7 @@ public class Application extends HttpServlet {
 		else if (page.equals("/myspace_editmycourse"))
 			displayEditMyCourses(request, response);
 		else if( page.equals("/myspace_validatemycourse"))
-			validateMyCourse(request, response, "./myspace_home");
+			validateMyCourse(request, response);
 		else if( page.equals("/myspace_upload"))
 			uploadAccess(request, response);
 		else if( page.equals("/myspace_mediaupload"))
@@ -963,6 +963,7 @@ public class Application extends HttpServlet {
 		if(keywords==null || keywords.equals("") ) {
 			request.setAttribute("courses", service.getCoursesByUser(user,recordedCourseNumber,start,false));
 			request.setAttribute("items", service.getCourseNumber(user));
+			session.setAttribute("previousPage", "/myspace_home?page=" + pageNumber);
 		}
 		else {
 			request.setAttribute("courses", service.getCoursesByUser(keywords, user,recordedCourseNumber,start,false));
@@ -970,6 +971,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("keywords", keywords);
 			paramsUrl = "?keywords=" + keywords;
 			request.setAttribute("paramsUrl", paramsUrl);
+			session.setAttribute("previousPage", "/myspace_home" + paramsUrl +"&page=" + pageNumber);
 		}
 
 			request.setAttribute("number", recordedCourseNumber);
@@ -977,8 +979,7 @@ public class Application extends HttpServlet {
 			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName, true));
 			request.setAttribute("user", user);
 
-			/* Saves the page for the style selection thickbox return */
-			session.setAttribute("previousPage", "/myspace_home" + paramsUrl +"&page=" + pageNumber);
+			
 
 			// Button disconnect
 			session.setAttribute("btnDeco", true);
@@ -1556,7 +1557,7 @@ public class Application extends HttpServlet {
 	 * @throws ServletException if an error occurred
 	 * @throws IOException if an error occurred
 	 */
-	private void validateMyCourse(HttpServletRequest request, HttpServletResponse response, String redirectUrl) 
+	private void validateMyCourse(HttpServletRequest request, HttpServletResponse response) 
 	throws ServletException, IOException {	
 						
 		User user = service.getSessionUser(session);
@@ -1592,6 +1593,8 @@ public class Application extends HttpServlet {
 					
 				// validate course
 				if (formValid) {
+					String redirectUrl = session.getAttribute("previousPage")!=null ?
+						"."+session.getAttribute("previousPage") : "./myspace_home";
 					validateCourse(request,response,redirectUrl);
 				}
 				else {
@@ -1647,7 +1650,8 @@ public class Application extends HttpServlet {
 				request.setAttribute("tags", tags);
 				request.setAttribute("course", c);
 				request.setAttribute("posturl", "./myspace_validatemycourse");
-				request.setAttribute("gobackurl", "./myspace_home");
+				request.setAttribute("gobackurl", session.getAttribute("previousPage")!=null ?
+					"."+session.getAttribute("previousPage") : "./myspace_home");
 
 				// Button disconnect
 				session.setAttribute("btnDeco", true);
@@ -3828,7 +3832,8 @@ public class Application extends HttpServlet {
 			service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeRemove, null);
 		}	
 		
-		response.sendRedirect(response.encodeRedirectURL("./myspace_home"));
+		response.sendRedirect(response.encodeRedirectURL(session.getAttribute("previousPage")!=null ?
+						"."+session.getAttribute("previousPage") : "./myspace_home"));
 	}
 	
 	/**
