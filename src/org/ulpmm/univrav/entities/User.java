@@ -28,6 +28,8 @@ public class User {
 	private boolean activate;
 	/** etp code for students **/
 	private String etp;
+	/** institute **/
+	private String institute;
 	
 	private static final String TYPELDAP = "ldap";
 	private static final String TYPELOCAL = "local";
@@ -58,9 +60,10 @@ public class User {
 	 * @param type the user type
 	 * @param activate account activation
 	 * @param etp etp code for student
+	 * @param institute institute
 	 */
 	public User(int userid,String login, String email,String firstname, String lastname,String profile,
-			String establishment,String type,boolean activate,String etp) {
+			String establishment,String type,boolean activate,String etp,String institute) {
 		this.userid=userid;
 		this.login=login;
 		this.email=email;
@@ -71,6 +74,7 @@ public class User {
 		this.type=type;
 		this.activate=activate;
 		this.etp=etp;
+		this.institute=institute;
 	}
 
 	/**
@@ -307,6 +311,14 @@ public class User {
 		if (userid != other.userid)
 			return false;
 		return true;
+	}
+
+	public String getInstitute() {
+		return institute;
+	}
+
+	public void setInstitute(String institute) {
+		this.institute = institute;
 	}	
 	
 	

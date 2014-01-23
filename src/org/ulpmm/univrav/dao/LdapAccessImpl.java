@@ -115,6 +115,14 @@ public class LdapAccessImpl implements ILdapAccess {
 				String profile = ldapinfos.get(3)!=null ? searchResult.getAttributes().get(ldapinfos.get(3)).get().toString() : "";
 				String establishment = ldapinfos.get(4)!=null ? searchResult.getAttributes().get(ldapinfos.get(4)).get().toString() : "";
 				String etpPrimaryCode = ldapinfos.get(5)!=null ? (searchResult.getAttributes().get(ldapinfos.get(5))!=null ? searchResult.getAttributes().get(ldapinfos.get(5)).get().toString() : "") : "";
+				String institute = "";
+				if(ldapinfos.get(6)!=null && searchResult.getAttributes().get(ldapinfos.get(6))!=null) {
+					institute = searchResult.getAttributes().get(ldapinfos.get(6)).get().toString();
+				}
+				else if(ldapinfos.get(7)!=null && searchResult.getAttributes().get(ldapinfos.get(7))!=null) {
+					institute = searchResult.getAttributes().get(ldapinfos.get(7)).get().toString();
+				}
+				
 				
 				userInfos = new ArrayList<String>();
 				userInfos.add(email!=null ? email : "");
@@ -123,6 +131,7 @@ public class LdapAccessImpl implements ILdapAccess {
 				userInfos.add(profile!=null ? profile : "");
 				userInfos.add(establishment!=null ? establishment : "");	
 				userInfos.add(etpPrimaryCode!=null ? etpPrimaryCode : "");
+				userInfos.add(institute!=null ? institute : "");
 			}
 		}
 		catch(NamingException e) {

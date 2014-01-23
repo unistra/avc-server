@@ -75,6 +75,7 @@
 					<a href="<c:url value="./admin_useractivate?userid=${users.userid}&activate=false" />">Off</a>
 				</display:column>
 				<display:column property="etp" title="Etp" sortable="true"/>
+				<display:column property="institute" title="Institute" sortable="true"/>
 				<display:column title="Rss" sortable="false">
 					<a href="../rss/lgn_${fn:replace(users.login,'.','_')}.xml">Link</a>
 				</display:column>

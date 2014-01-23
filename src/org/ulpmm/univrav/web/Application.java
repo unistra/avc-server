@@ -224,6 +224,10 @@ public class Application extends HttpServlet {
 	private static String ldapAffectation;
 	/** ldap code etp */
 	private static String ldapEtpPrimaryCode;
+	/** Primary ldap institute code */
+	private static String ldapPrimaryInstitute;
+	/** Secondary institute code */
+	private static String ldapSecondaryInstitute;
 		
 	/** volume number for filesystem **/
 	private static Short volume;	
@@ -362,6 +366,8 @@ public class Application extends HttpServlet {
 			ldapProfile = p.getProperty("ldapProfile");
 			ldapAffectation = p.getProperty("ldapAffectation");
 			ldapEtpPrimaryCode = p.getProperty("ldapEtpPrimaryCode");
+			ldapPrimaryInstitute = p.getProperty("ldapPrimaryInstitute");
+			ldapSecondaryInstitute = p.getProperty("ldapSecondaryInstitute");
 			
 			List<String> ldapinfos = new ArrayList<String>(6);
 			ldapinfos.add(0,ldapMail);
@@ -370,6 +376,8 @@ public class Application extends HttpServlet {
 			ldapinfos.add(3,ldapProfile);
 			ldapinfos.add(4,ldapAffectation);
 			ldapinfos.add(5,ldapEtpPrimaryCode);
+			ldapinfos.add(6,ldapPrimaryInstitute);
+			ldapinfos.add(7,ldapSecondaryInstitute);
 
 						
 			/* to separate medias encodage */
@@ -848,9 +856,9 @@ public class Application extends HttpServlet {
 				if(user==null) {
 
 					if (userInfos!=null && !userInfos.isEmpty())
-						service.addUser(new User(0,casUser,userInfos.get(0),userInfos.get(1),userInfos.get(2),userInfos.get(3),userInfos.get(4),"ldap",true,userInfos.get(5)));
+						service.addUser(new User(0,casUser,userInfos.get(0),userInfos.get(1),userInfos.get(2),userInfos.get(3),userInfos.get(4),"ldap",true,userInfos.get(5),userInfos.get(6)));
 					else 
-						service.addUser(new User(0,casUser,null,null,null,null,null,"ldap",true,null));
+						service.addUser(new User(0,casUser,null,null,null,null,null,"ldap",true,null,null));
 				}
 				else {
 					if (userInfos!=null && !userInfos.isEmpty()) {
@@ -2984,7 +2992,9 @@ public class Application extends HttpServlet {
 					request.getParameter("establishment"),
 					request.getParameter("type"),
 					request.getParameter("activate") != null ? true : false,
-					request.getParameter("etp")
+					request.getParameter("etp"),
+					request.getParameter("institute")
+					
 			);
 			
 			try {
@@ -4076,7 +4086,7 @@ public class Application extends HttpServlet {
 			
 			// Add user to database
 			String hash = service.encrypt(password);
-			service.addUser(new User(0, email, email, firstname, lastname, null, null, User.getTYPELOCAL(), false, null));
+			service.addUser(new User(0, email, email, firstname, lastname, null, null, User.getTYPELOCAL(), false, null, null));
 			service.modifyUserPassword(email, hash, "sha");
 						
 			// send email to admin

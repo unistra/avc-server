@@ -99,6 +99,10 @@
 				    		<td>Etp</td>
 				    		<td><input type="text" name="etp" value="${user.etp}" class="field"></td>
 			    		</tr>
+			    		<tr class="odd">
+				    		<td>Institute</td>
+				    		<td><input type="text" name="institute" value="${user.institute}" class="field"></td>
+			    		</tr>
 			    		<tr>
 			    			<td class="chpsObl"><b class="boldStar">*</b>: required fields</td>
 			    		</tr>

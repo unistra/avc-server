@@ -2231,7 +2231,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("establishment"),
 					rs.getString("type"),
 					rs.getBoolean("activate"),
-					rs.getString("etp")
+					rs.getString("etp"),
+					rs.getString("institute")
 					
 				);
 			}
@@ -2275,7 +2276,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getString("establishment"),
 						rs.getString("type"),
 						rs.getBoolean("activate"),
-						rs.getString("etp")
+						rs.getString("etp"),
+						rs.getString("institute")
 				);
 			}
 		}
@@ -2290,50 +2292,6 @@ public class DatabaseImpl implements IDatabase {
 		return u;
 	}
 	
-	/**
-	 * Gets local user by hash code (hash is unique)
-	 * @param hash the hash code
-	 * @return the user
-	 */
-	/*public User getUserLocalByHash(String hash) {
-		User u = null;
-		Connection cnt = null;
-		String sql = "SELECT * FROM \"user\" WHERE password = ? and type = ?" ;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			cnt = datasrc.getConnection();
-			pstmt = cnt.prepareStatement(sql);
-			pstmt.setString(1, hash);
-			pstmt.setString(2, User.getTYPELOCAL());
-			rs = pstmt.executeQuery();
-			if( rs.next() ) {
-				u = new User(
-					rs.getInt("userid"),
-					rs.getString("login"),
-					rs.getString("email"),
-					rs.getString("firstname"),
-					rs.getString("lastname"),
-					rs.getString("profile"),
-					rs.getString("establishment"),
-					rs.getString("type"),
-					rs.getBoolean("activate"),
-					rs.getString("etp")
-					
-				);
-			}
-		}
-		catch( SQLException sqle) {
-			logger.error("Error while retrieving the user",sqle);
-			throw new DaoException("Error while retrieving the user ");
-		}
-		finally {
-			close(rs,pstmt,cnt);
-		}
-		
-		return u;
-	}
-	*/
 	
 	/**
 	 * Gets user by login and hash(login is UNIQUE)
@@ -2365,7 +2323,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("establishment"),
 					rs.getString("type"),
 					rs.getBoolean("activate"),
-					rs.getString("etp")
+					rs.getString("etp"),
+					rs.getString("institute")
 					
 				);
 			}
@@ -2500,7 +2459,8 @@ public class DatabaseImpl implements IDatabase {
 					rs.getString("establishment"),
 					rs.getString("type"),
 					rs.getBoolean("activate"),
-					rs.getString("etp")
+					rs.getString("etp"),
+					rs.getString("institute")
 					
 				);
 			}
@@ -2554,7 +2514,7 @@ public class DatabaseImpl implements IDatabase {
 	 */
 	public void addUser(User u) {
 		
-		String sql = "INSERT INTO \"user\"(login,email,firstname,lastname,profile,establishment,type,activate,etp) values(?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO \"user\"(login,email,firstname,lastname,profile,establishment,type,activate,etp,institute) values(?,?,?,?,?,?,?,?,?,?)";
 		PreparedStatement pstmt = null;
 		Connection cnt = null;
 		
@@ -2570,6 +2530,7 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setString(7, u.getType());
 			pstmt.setBoolean(8, u.isActivate());
 			pstmt.setString(9, u.getEtp());
+			pstmt.setString(10, u.getInstitute());
 			
 			if( pstmt.executeUpdate() == 0) {
 				logger.error("The User " + u + " has not been added to the database");
@@ -2594,7 +2555,7 @@ public class DatabaseImpl implements IDatabase {
 		Connection cnt = null;
 		/* Creation of the SQL query string */
 		String sql = "UPDATE \"user\" SET userid = ?, login = ? , email = ?, firstname = ?,lastname = ?," +
-				"profile = ?,establishment = ?,type = ?,activate = ?,etp = ? ";
+				"profile = ?,establishment = ?,type = ?,activate = ?,etp = ?,institute = ? ";
 		sql += "WHERE userid = ?";
 		
 		PreparedStatement pstmt = null;
@@ -2614,7 +2575,8 @@ public class DatabaseImpl implements IDatabase {
 			pstmt.setString(8, u.getType());
 			pstmt.setBoolean(9, u.isActivate());
 			pstmt.setString(10, u.getEtp());
-			pstmt.setInt(11, u.getUserid());
+			pstmt.setString(11, u.getInstitute());
+			pstmt.setInt(12, u.getUserid());
 						
 			if( pstmt.executeUpdate() == 0 ) {
 				logger.error("The user " + u + " has not been modified");
@@ -2936,7 +2898,8 @@ public class DatabaseImpl implements IDatabase {
 						rs.getString("establishment"),
 						rs.getString("type"),
 						rs.getBoolean("activate"),
-						rs.getString("etp")
+						rs.getString("etp"),
+						rs.getString("institute")
 					
 				));
 			}
