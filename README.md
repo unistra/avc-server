@@ -1,6 +1,6 @@
 # Audiovideocast - server
 
-Version 2.53 of the Audiovideocast server. It works on Ubuntu 12.04.
+Version 2.54 of the Audiovideocast server. It works on Ubuntu 12.04.
 
 ## Install
 
