@@ -209,10 +209,6 @@
 							<b><fmt:message key="Embed"/> Video:</b> <input id="permalieninput" type="text" value="${embedvideo}" onClick="javascript:focus();select();" readonly>
 							<br>
 							</c:if>
-							<c:if test="${embedhq!=null}">
-							<b><fmt:message key="Embed"/> HD:</b> <input id="permalieninput" type="text" value="${embedhq}" onClick="javascript:focus();select();" readonly>
-							<br>
-							</c:if>
 														
 							<a href="javascript:switchDetails('permalien')"><fmt:message key="[-] moins de détails"/></a>
 						</div> 
