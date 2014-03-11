@@ -35,7 +35,7 @@
 		</select>
 		<br>
 		<label><fmt:message key="level"/></label>
-		<select class="field" name="level"title="<fmt:message key="level"/>">
+		<select class="field" name="level" title="<fmt:message key="level"/>">
 			<option value="*"><fmt:message key="Tous"/></option>
 			<c:forEach var="levels" items="${levels}">
 				<c:if test="${levelSelected == levels.code}">

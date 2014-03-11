@@ -7,9 +7,12 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
   <head>
+
+  	<meta charset="utf-8">
+  	<meta name="keywords" content="flash, cours audio, cours video, cours live, cours en direct, synchronisation de médias, audiocours, videocours">
     
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/> - <fmt:message key="Cours enregistr&eacute;s"/></title>
 
@@ -53,10 +56,10 @@
 	     		<c:forEach var="rssfile" varStatus="status2" items="${rssfiles}" begin="0" end="0">	     		
 	     		<p> 
 	     		<fmt:message key="AbonnementAudiovidecours"/>
-	     		<a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/rss_abo.png" alt="rss_icon"></a>
+	     		<a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}"><img src="../files/img/rss_abo.png" alt="rss_icon"></a>
 				
 				<c:url value="itpc://${fn:substringAfter(serverUrl,\"://\")}/${fn:substringAfter(rssfile.value,\"../\")}" var="variableURL"></c:url>
-				<a href="${variableURL}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/itunes_abo.png" alt="itunes_icon"></a>
+				<a href="${variableURL}" rel="alternate" type="application/rss+xml" title="${rssfile.key}"><img src="../files/img/itunes_abo.png" alt="itunes_icon"></a>
 				</p>
 				</c:forEach>
 			</div>
@@ -78,10 +81,10 @@
 	     				<c:forEach var="rssfile" varStatus="status2" items="${rssfiles}" begin="1" end="${nbrTeachersRss}">
 	     				<tr class="${class}">
 							<td><p>${rssfile.key}<p></td>
-							<td><a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/rss_abo.png" alt="rss_icon"></a></td>
+							<td><a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}"><img src="../files/img/rss_abo.png" alt="rss_icon"></a></td>
 							
 							<c:url value="itpc://${fn:substringAfter(serverUrl,\"://\")}/${fn:substringAfter(rssfile.value,\"../\")}" var="variableURL"></c:url>
-							<td><a href="${variableURL}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/itunes_abo.png" alt="itunes_icon"></a></td>
+							<td><a href="${variableURL}" rel="alternate" type="application/rss+xml" title="${rssfile.key}"><img src="../files/img/itunes_abo.png" alt="itunes_icon"></a></td>
 						</tr>
 						
 						<c:choose>
@@ -111,10 +114,10 @@
 	     				<c:forEach var="rssfile" varStatus="status2" items="${rssfiles}" begin="${nbrTeachersRss+1}">
 	     				<tr class="${class}">
 							<td><p>${rssfile.key}<p></td>
-							<td><a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/rss_abo.png" alt="rss_icon"></a></td>
+							<td><a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}"><img src="../files/img/rss_abo.png" alt="rss_icon"></a></td>
 							
 							<c:url value="itpc://${fn:substringAfter(serverUrl,\"://\")}/${fn:substringAfter(rssfile.value,\"../\")}" var="variableURL"></c:url>
-							<td><a href="${variableURL}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/itunes_abo.png" alt="itunes_icon"></a></td>
+							<td><a href="${variableURL}" rel="alternate" type="application/rss+xml" title="${rssfile.key}"><img src="../files/img/itunes_abo.png" alt="itunes_icon"></a></td>
 						</tr>
 						
 						<c:choose>
