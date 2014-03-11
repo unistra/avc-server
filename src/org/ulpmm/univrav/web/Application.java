@@ -241,6 +241,12 @@ public class Application extends HttpServlet {
 	/** private static boolean log user action stats **/
 	private static boolean logstats;
 	
+	/** google analytics account **/
+	private static String googleAnalyticsAccount;
+	
+	/** show contact us **/
+	private static boolean contactUs;
+	
 	/** Logger log4j */
 	private static final Logger logger = Logger.getLogger(Application.class);
 	
@@ -388,6 +394,12 @@ public class Application extends HttpServlet {
 			
 			// log stats
 			logstats = Boolean.parseBoolean(p.getProperty("logstats"));
+			
+			// google analytics account
+			googleAnalyticsAccount = p.getProperty("googleAnalyticsAccount");
+			
+			// show contactUs
+			contactUs = Boolean.parseBoolean(p.getProperty("contactUs"));
 										
 			/* Datasource retrieving */
 			
@@ -560,6 +572,9 @@ public class Application extends HttpServlet {
 			
 			//university link for banner
 			session.setAttribute("univLink", univLink);	
+			
+			//google analytics
+			session.setAttribute("googleAnalyticsAccount", googleAnalyticsAccount);
 		}
 								
 		/* Retrieves the path info from the browser's URL */
@@ -5177,6 +5192,7 @@ public class Application extends HttpServlet {
 		request.setAttribute("supportLink", supportLink);
 		request.setAttribute("helpLink", helpLink);
 		request.setAttribute("docLink",docLink);
+		request.setAttribute("contactUs", contactUs);
 		getServletContext().getRequestDispatcher("/WEB-INF/views/include/thick_help.jsp").forward(request, response);
 	}
 

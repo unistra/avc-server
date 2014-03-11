@@ -1,5 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
@@ -17,8 +18,11 @@
 		<a href="${helpLink}"><fmt:message key="helpLink"/></a>
 		<br><br>
 		<a href="${supportLink}"><fmt:message key="supportLink"/></a>
-		<br><br>
-		<a href="./contactUs"><fmt:message key="contactUs"/></a>
+		
+		<c:if test="${contactUs}">
+			<br><br>
+			<a href="./contactUs"><fmt:message key="contactUs"/></a>
+		</c:if>
 		
 	</body>
 </html>
