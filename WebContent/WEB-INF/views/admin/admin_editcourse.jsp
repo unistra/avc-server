@@ -6,9 +6,11 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
   <head>
+
+  	<meta charset="utf-8">
     
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/></title>
 
@@ -158,7 +160,7 @@
 			    		</tr>
 			    		<tr class="odd">
 				    		<td><fmt:message key="restrictionuds"/> ${univAcronym}</td>
-				    		<td><input type="checkbox" name="restrictionuds" ${course.restrictionuds == true ? 'checked' : ''} ><font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
+				    		<td><input type="checkbox" name="restrictionuds" ${course.restrictionuds == true ? 'checked' : ''} ><span class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</span></td>
 			    		</tr>
 			    		<tr class="even">
 			    			<td>MediaType</td>
@@ -201,7 +203,7 @@
 						</tr>
 						<tr>
 							<td><input type="submit" name="valider" onclick="javascript:document.getElementById('process').style.visibility='visible';document.subeditform.valider.disabled=true;" value="<fmt:message key="sendFile"/>"> </td>
-							<td><img id="process" src="../files/img/squaresCircle.gif" /></td>
+							<td><img id="process" src="../files/img/squaresCircle.gif" alt="process..." /></td>
 						</tr>
 						</table>
 					</form>
@@ -239,7 +241,7 @@
 				<c:when test="${addvinprocess}">
 		    		<table>
 						<tr class="tableheader">
-								<th colspan="1" class="replacemedia" id="replacemedia"><fmt:message key="replacemedia"/>&nbsp;<a href="${thick_replacemedia}" title="<fmt:message key="replacemedia"/>" id="replacemediahelp" class="thickbox"><fmt:message key="replacemediahelp"/></a></th>
+								<th colspan="1" class="replacemedia" id="replacemedia"><fmt:message key="replacemedia"/>&nbsp;<a href="<c:out value="${thick_replacemedia}" />" title="<fmt:message key="replacemedia"/>" id="replacemediahelp" class="thickbox"><fmt:message key="replacemediahelp"/></a></th>
 							</tr>
 						<tr class="odd">
 							<td><fmt:message key="processing"/></td>
@@ -252,7 +254,7 @@
 						<input type="hidden" name="returnUrl" value="/avc/admin_editcourse?id=${course.courseid}">
 						<table>
 							<tr class="tableheader">
-								<th colspan="2" class="replacemedia" id="replacemedia"><fmt:message key="replacemedia"/>&nbsp;<a href="${thick_replacemedia}" title="<fmt:message key="replacemedia"/>" id="replacemediahelp" class="thickbox"><fmt:message key="replacemediahelp"/></a></th>
+								<th colspan="2" class="replacemedia" id="replacemedia"><fmt:message key="replacemedia"/>&nbsp;<a href="<c:out value="${thick_replacemedia}" />" title="<fmt:message key="replacemedia"/>" id="replacemediahelp" class="thickbox"><fmt:message key="replacemediahelp"/></a></th>
 							</tr>
 							<tr class="odd">
 								<td title="<fmt:message key="slidesoffset"/>"><fmt:message key="slidesoffset"/> : </td>
@@ -264,7 +266,7 @@
 							</tr>
 							<tr>
 								<td><input type="submit" name="valider" onclick="javascript:document.getElementById('process2').style.visibility='visible';document.subeditform.valider.disabled=true;" value="<fmt:message key="sendFile"/>"> </td>
-								<td><img id="process2" src="../files/img/squaresCircle.gif" /></td>
+								<td><img id="process2" src="../files/img/squaresCircle.gif" alt="process..." /></td>
 							</tr>
 						</table>
 					</form>
@@ -307,7 +309,7 @@
 						</tr>
 						<tr>
 							<td><input type="submit" name="subvalider" onclick="javascript:document.getElementById('subprocess').style.visibility='visible';document.subeditform.subvalider.disabled=true;" value="<fmt:message key="sendFile"/>"> </td>
-							<td><img id="subprocess" src="../files/img/squaresCircle.gif" /></td>
+							<td><img id="subprocess" src="../files/img/squaresCircle.gif" alt="process" /></td>
 						</tr>
 						</table>
 					</form>

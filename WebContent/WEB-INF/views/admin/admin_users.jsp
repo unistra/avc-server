@@ -9,9 +9,11 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
   <head>
+
+  	<meta charset="utf-8">
     
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/></title>
 
@@ -71,8 +73,8 @@
 	    		<display:column property="type" title="Type" sortable="true"/>
 	    		<display:column title="Activate" sortable="true">
 					<input type="checkbox" disabled="disabled" ${users.activate == true ? 'checked' : '' } />
-					<a href="<c:url value="./admin_useractivate?userid=${users.userid}&activate=true" />">On</a> /
-					<a href="<c:url value="./admin_useractivate?userid=${users.userid}&activate=false" />">Off</a>
+					<a href="<c:url value="./admin_useractivate?userid=${users.userid}&amp;activate=true" />">On</a> /
+					<a href="<c:url value="./admin_useractivate?userid=${users.userid}&amp;activate=false" />">Off</a>
 				</display:column>
 				<display:column property="etp" title="Etp" sortable="true"/>
 				<display:column property="institute" title="Institute" sortable="true"/>
@@ -99,7 +101,7 @@
 	    		<a href="<c:url value="./admin_adduser"/>">Add</a>	
 	    	</div>
 	    	<br>
-	    	<p id="nbr">${items} users</p>
+	    	<p class="nbr">${items} users</p>
 	    </div>
 	    	
 	    <div class="footer">

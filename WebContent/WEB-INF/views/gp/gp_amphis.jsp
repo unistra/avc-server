@@ -39,7 +39,7 @@
 	    		<c:import url="../include/banner.jsp" />
 	    	</div>
 	    	    	
-	    	<p id="nbr"><c:out value="${buildingName}"/></p>
+	    	<p class="nbr"><c:out value="${buildingName}"/></p>
 	    	<br>
 	    	
 	    	<display:table id="amphis" name="amphis" requestURI="./admin_amphis" class="displaytag">
