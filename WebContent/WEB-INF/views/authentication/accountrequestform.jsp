@@ -5,9 +5,12 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
 	<head>
+
+		<meta charset="utf-8">
+
 		<title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/> - <fmt:message key="accountrequestform"/></title>
 		
 		<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
@@ -89,14 +92,16 @@
 						<td><textarea name="comment" class="textarea">${comment}</textarea></td>
 					</tr>
 					<tr class="odd">
-						<td title="captcha"><img src="../captcha" /></td>
+						<td title="captcha"><img src="../captcha" alt="captcha"/></td>
 						<td><input type="text" name="captcha_answer" class="field"></td>
 					</tr>
 					<tr>
 			    		<td class="chpsObl"><b class="boldStar">*</b>: <fmt:message key="requiredField"/></td>
+			    		<td></td>
 			    	</tr>
 					<tr>
 						<td><input type="submit" name="valider" value="<fmt:message key="Valider"/>"> </td>
+						<td></td>
 					</tr>
 					
 					
