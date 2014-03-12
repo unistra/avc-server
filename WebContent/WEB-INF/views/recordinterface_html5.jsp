@@ -7,7 +7,7 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     
