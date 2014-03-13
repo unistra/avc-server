@@ -5,9 +5,11 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
   <head>
+
+    <meta charset="utf-8">
       
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/> - <fmt:message key="Visualisation du cours"/></title>
 
@@ -54,7 +56,7 @@
 	    	<div class="firstline">
 	    		<div class="amphitheatre">${building} | ${amphi}</div>  	
 	    		<div class="closeButton">
-	    			<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
+	    			<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png" alt="close"></a>
 	    		</div>
 	    	</div>	
 	    	
@@ -92,10 +94,10 @@
    				 <p id="flash"><a id="flashvideo" href="http://www.adobe.com/go/getflashplayer">Get flash to see this player </a></p>
    				 
    				 
-   				 <a id="linkplayersize" class="linkplayersize" href="javascript:modifyPlayerSize();"><img src="../files/styles/${sessionScope.style}/img/btn_enl.png"></a>
+   				 <a id="linkplayersize" class="linkplayersize" href="javascript:modifyPlayerSize();"><img src="../files/styles/${sessionScope.style}/img/btn_enl.png" alt="enlarge"></a>
    				 
    				 
-   				 <a id="linkplayersize2" class="linkplayersize2" href="javascript:modifyPlayerSize();" style="display:none;"><img src="../files/styles/${sessionScope.style}/img/btn_red.png"></a>
+   				 <a id="linkplayersize2" class="linkplayersize2" href="javascript:modifyPlayerSize();" style="display:none;"><img src="../files/styles/${sessionScope.style}/img/btn_red.png" alt="reduce"></a>
    				 
    			</div>
    			
