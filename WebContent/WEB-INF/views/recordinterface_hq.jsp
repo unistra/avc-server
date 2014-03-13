@@ -6,9 +6,11 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
   <head>
+    
+    <meta charset="utf-8">
     
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/> - <fmt:message key="Visualisation du cours"/>&nbsp;${course.title}</title>
 
@@ -59,7 +61,7 @@
 	    	
 	    	<div class="firstline">
 		    	<div class="amphitheatre">${building} | ${amphi}</div>
-		    	<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
+		    	<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png" alt="close"></a>
 	    	</div>
 	    			
 	        <div class="visumain">
@@ -97,7 +99,7 @@
     				  
    				 </script>
    				 
-   				 <center><div id="playercontainer"><p id="flashvideo"><a href="http://www.adobe.com/go/getflashplayer">Get flash to see this player</a> <br>or<br> <a href="./courseaccess?id=${course.courseid}&type=html5">Try the html5 player</a></p></div></center>
+   				 <div class="divCenter" id="playercontainer"><p id="flashvideo"><a href="http://www.adobe.com/go/getflashplayer">Get flash to see this player</a> <br>or<br> <a href="./courseaccess?id=${course.courseid}&amp;type=html5">Try the html5 player</a></p></div>
 
  
 			</div>

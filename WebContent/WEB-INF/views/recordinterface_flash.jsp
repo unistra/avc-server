@@ -7,9 +7,11 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!doctype html>
 <html>
   <head>
+    
+    <meta charset="utf-8">
     
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/> - <fmt:message key="Visualisation du cours"/>&nbsp;${course.title}</title>
 
@@ -104,7 +106,7 @@
 	</script>
 	
 	<meta name="keywords" content="${course.name},${course.title},${formationfullname}">
-	<META NAME=”robots” CONTENT=”nofollow”>
+	<META NAME="robots" CONTENT="nofollow">
 
 	<!-- google analytics -->
 	<c:import url="include/google_analytics.jsp" />
@@ -118,13 +120,13 @@
 	    	<div class="firstline">
 		    	<div class="amphitheatre">${building} | ${amphi}</div>
 		    	<div class="closeButton">
-		    		<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png"></a>
+		    		<a class="closeButton" href=".${sessionScope.previousPage}"><fmt:message key="Fermer"/> <img src="../files/styles/${sessionScope.style}/img/close.png" alt="close"></a>
 	    			<c:forEach var="rssfile" items="${rssfiles}" begin="0" end="1" varStatus="status">
 	    				<c:if test="${rssfile.key != null}">
 	    					<c:url value="itpc://${fn:substringAfter(serverUrl,\"://\")}/${fn:substringAfter(rssfile.value,\"../\")}" var="variableURL"></c:url>
-							<a href="${variableURL}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/itunes_abo.png" alt="itunes_icon"></a>					
-							<c:if test="${status.index == 0}"><a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/rss_abo.png" alt="rss_icon"><fmt:message key="Abonnement"/> <fmt:message key="Auteur"/></a>&nbsp;-&nbsp;</c:if>
-	    					<c:if test="${status.index == 1}"><a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}" /><img src="../files/img/rss_abo.png" alt="rss_icon"><fmt:message key="Abonnement"/> <fmt:message key="Formation"/></a>&nbsp;-&nbsp;</c:if>
+							<a href="${variableURL}" rel="alternate" type="application/rss+xml" title="${rssfile.key}"><img src="../files/img/itunes_abo.png" alt="itunes_icon"></a>					
+							<c:if test="${status.index == 0}"><a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}"><img src="../files/img/rss_abo.png" alt="rss_icon"><fmt:message key="Abonnement"/> <fmt:message key="Auteur"/></a>&nbsp;-&nbsp;</c:if>
+	    					<c:if test="${status.index == 1}"><a href="${rssfile.value}" rel="alternate" type="application/rss+xml" title="${rssfile.key}"><img src="../files/img/rss_abo.png" alt="rss_icon"><fmt:message key="Abonnement"/> <fmt:message key="Formation"/></a>&nbsp;-&nbsp;</c:if>
 	    				</c:if>
 	    			</c:forEach>
 	    		</div> 
@@ -139,7 +141,7 @@
 						<script type="text/javascript">
 							swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '320', '260', '9.0.124', false, flashvars, params, attributes);
    				 		</script>		 
-   				 		<div class="flash" id="flash"><p id="flashvideo"><a href="http://www.adobe.com/go/getflashplayer">Get flash to see this player</a> <br>or<br> <a href="./courseaccess?id=${course.courseid}&type=html5">Try the html5 player</a></p></div>	 	            	
+   				 		<div class="flash" id="flash"><p id="flashvideo"><a href="http://www.adobe.com/go/getflashplayer">Get flash to see this player</a> <br>or<br> <a href="./courseaccess?id=${course.courseid}&amp;type=html5">Try the html5 player</a></p></div>	 	            	
 	            		<br>
 	            		
 	            			<c:if test="${fn:contains(mediaLst, 'hq')}">
@@ -184,7 +186,7 @@
 						<c:url var="permacourseaccess" scope="page" value="${serverUrl}/avc/courseaccess">
 							<c:param name="id" value="${course.courseid}"/>
 						</c:url>
-						<b>URL:</b> <input id="permalieninput" type="text" value="${permacourseaccess}" onClick="javascript:focus();select();" readonly>
+						<b>URL:</b> <input id="permalieninput1" type="text" value="${permacourseaccess}" onClick="javascript:focus();select();" readonly>
 						<br>
 					
 						<div id="permaliencollink">
@@ -201,29 +203,29 @@
 									</c:otherwise>
 								</c:choose>		
 							</c:url>	
-							<b>URL <fmt:message key="Auteur"/>:</b> <input id="permalieninput" type="text" value="${permaauthor}" onClick="javascript:focus();select();" readonly>
+							<b>URL <fmt:message key="Auteur"/>:</b> <input id="permalieninput2" type="text" value="${permaauthor}" onClick="javascript:focus();select();" readonly>
 							<br>
 							<c:url var="permaformation" scope="page" value="${serverUrl}/avc/courses">
 								<c:param name="formation" value="${course.formation}"/>
 							</c:url>	
-							<b>URL <fmt:message key="Formation"/>:</b> <input id="permalieninput" type="text" value="${permaformation}" onClick="javascript:focus();select();" readonly>
+							<b>URL <fmt:message key="Formation"/>:</b> <input id="permalieninput3" type="text" value="${permaformation}" onClick="javascript:focus();select();" readonly>
 							<br>
 							
 							<!-- Embed objects -->
 							<c:if test="${embedvs!=null}">
-							<b><fmt:message key="Embed"/> VS:</b> <input id="permalieninput" type="text" value="${embedvs}" onClick="javascript:focus();select();" readonly>
+							<b><fmt:message key="Embed"/> VS:</b> <input id="permalieninput4" type="text" value="${embedvs}" onClick="javascript:focus();select();" readonly>
 							<br>
 							</c:if>
 							<c:if test="${embedaudio!=null}">
-							<b><fmt:message key="Embed"/> Audio:</b> <input id="permalieninput" type="text" value="${embedaudio}" onClick="javascript:focus();select();" readonly>
+							<b><fmt:message key="Embed"/> Audio:</b> <input id="permalieninput5" type="text" value="${embedaudio}" onClick="javascript:focus();select();" readonly>
 							<br>
 							</c:if>
 							<c:if test="${embedvideo!=null}">
-							<b><fmt:message key="Embed"/> Video:</b> <input id="permalieninput" type="text" value="${embedvideo}" onClick="javascript:focus();select();" readonly>
+							<b><fmt:message key="Embed"/> Video:</b> <input id="permalieninput6" type="text" value="${embedvideo}" onClick="javascript:focus();select();" readonly>
 							<br>
 							</c:if>
 							<c:if test="${embedhq!=null}">
-							<b><fmt:message key="Embed"/> HD:</b> <input id="permalieninput" type="text" value="${embedhq}" onClick="javascript:focus();select();" readonly>
+							<b><fmt:message key="Embed"/> HD:</b> <input id="permalieninput7" type="text" value="${embedhq}" onClick="javascript:focus();select();" readonly>
 							<br>
 							</c:if>
 														
@@ -238,7 +240,7 @@
 					<table>
 					<tr>
 					<td>
-						<b id="type"><fmt:message key="Telecharger"/>:&nbsp;</b>
+						<b class="type"><fmt:message key="Telecharger"/>:&nbsp;</b>
 					</td>
 						
 					<c:choose>	
@@ -247,7 +249,7 @@
 						<!-- FLASH ONLY -->
 						 <c:if test="${course.mediatype == 1}">
 							<td>	
-								<b id="type"><fmt:message key="processing"/></b>
+								<b class="type"><fmt:message key="processing"/></b>
 							</td>
 						</c:if>
 							
@@ -258,7 +260,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="videoslide"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.videoslide']);"><img src="../files/styles/${sessionScope.style}/img/videoslide.png" alt="vs"></a><br><b id="type">mp4</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.videoslide']);"><img src="../files/styles/${sessionScope.style}/img/videoslide.png" alt="vs"></a><br><b class="type">mp4</b>
 							</td>
 						</c:if>
 						
@@ -269,7 +271,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="videoslideipod"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.videoslide']);"><img src="../files/styles/${sessionScope.style}/img/videoslide.png" alt="vs"></a><br><b id="type">mp4<br/>ipod</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.videoslide']);"><img src="../files/styles/${sessionScope.style}/img/videoslide.png" alt="vs"></a><br><b class="type">mp4<br/>ipod</b>
 							</td>
 						</c:if>
 											
@@ -280,7 +282,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="ogg"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.ogg']);"><img src="../files/styles/${sessionScope.style}/img/ogg_v2.png" alt="ogg"></a><br><b id="type">ogg</b>	
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.ogg']);"><img src="../files/styles/${sessionScope.style}/img/ogg_v2.png" alt="ogg"></a><br><b class="type">ogg</b>	
 							</td>
 						</c:if>
 						
@@ -291,7 +293,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="mp3"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.mp3']);"><img src="../files/styles/${sessionScope.style}/img/mp3_v2.png" alt="mp3"></a><br><b id="type">mp3</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.mp3']);"><img src="../files/styles/${sessionScope.style}/img/mp3_v2.png" alt="mp3"></a><br><b class="type">mp3</b>
 							</td>
 						</c:if>
 							
@@ -302,7 +304,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="zip"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.zip']);"><img src="../files/styles/${sessionScope.style}/img/winzip3.png" alt="zip"></a><br><b id="type">zip</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.zip']);"><img src="../files/styles/${sessionScope.style}/img/winzip3.png" alt="zip"></a><br><b class="type">zip</b>
 							</td>
 						</c:if>
 						
@@ -313,7 +315,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="pdf"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.pdf']);"><img src="../files/styles/${sessionScope.style}/img/acrobat.png" alt="pdf"></a><br><b id="type">pdf</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.pdf']);"><img src="../files/styles/${sessionScope.style}/img/acrobat.png" alt="pdf"></a><br><b class="type">pdf</b>
 							</td>
 						</c:if>
 						
@@ -324,7 +326,7 @@
 									<c:param name="id" value="${course.courseid}"/>
 									<c:param name="type" value="video"/>
 								</c:url>
-								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.video']);"><img src="../files/styles/${sessionScope.style}/img/videodl.png" alt="video"></a><br><b id="type">video</b>
+								<a href="<c:out value="${courseaccess}" />" onClick="javascript: _gaq.push(['_trackPageview', '/download/${course.courseid}.video']);"><img src="../files/styles/${sessionScope.style}/img/videodl.png" alt="video"></a><br><b class="type">video</b>
 							</td>
 						</c:if>
 							
@@ -333,7 +335,7 @@
 					</c:when>
 					<c:otherwise>
 						<td>	
-							<b id="type"><fmt:message key="nodownload"/></b>
+							<b class="type"><fmt:message key="nodownload"/></b>
 						</td>
 					</c:otherwise>	
 					</c:choose>
@@ -381,7 +383,7 @@
 	            		<script type="text/javascript">
      			  			swfobject.embedSWF('../files/jwflvplayer/player.swf', 'flashvideo', '640', '500', '9.0.124', false, flashvars, params, attributes);
    						</script>
-   						<div class="flash" id="flash"><p id="flashvideo"><a href="http://www.adobe.com/go/getflashplayer">Get flash to see this player</a> <br>or<br> <a href="./courseaccess?id=${course.courseid}&type=html5">Try the html5 player</a></p></div>	 	            	
+   						<div class="flash" id="flash"><p id="flashvideo"><a href="http://www.adobe.com/go/getflashplayer">Get flash to see this player</a> <br>or<br> <a href="./courseaccess?id=${course.courseid}&amp;type=html5">Try the html5 player</a></p></div>	 	            	
 	            		<br>	
 	            			
 	            			<c:if test="${fn:contains(mediaLst, 'hq')}">
