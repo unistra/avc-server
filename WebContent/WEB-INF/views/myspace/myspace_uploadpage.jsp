@@ -100,6 +100,31 @@
 	    		<p class="error" id="error"><c:out value="${message}" /></p>
 	  	 	</div>
 	  	 	
+
+	    	<c:if test="${pubTest == true}">
+	    		<div class="divCenter">
+	    			<p><fmt:message key="publicationmessage2"/></p>
+	    			<p><fmt:message key="publicationmessage3"/><a href="${serverUrl}/avc/test">${serverUrl}/avc/test</a></p>
+	    			<p><fmt:message key="publicationmessage4"/></p>
+	    		</div>
+	    		<br>
+	    		<div class="pubLinks">
+	    			<c:choose>
+	    				<c:when test="${publication_type == 'serverTest'}">
+	    					<div class="divPubTest" style="border:2px dotted red;">
+	    						<a class="linkPubTest" href="./myspace_upload"><fmt:message key="test"/></a>
+	    					</div>
+	    				</c:when>	
+	    				<c:otherwise>
+	    					<div class="divPubTest" style="">
+	    						<a class="linkPubTest" href="./myspace_upload?publication_type=serverTest"><fmt:message key="test"/></a>
+	    					</div>
+	    				</c:otherwise>
+	    			</c:choose>
+	    		</div>
+	    		<br>
+	    	</c:if>
+	    	
 	  	 	
 	  	 	<c:choose>
 				<c:when test="${message!=null and visible==null}">
@@ -133,14 +158,6 @@
 					<c:set var="checkedRestUdsField" value="checked" />
 				</c:otherwise>
 			</c:choose>
-			<!--<c:choose>
-				<c:when test="${(message!=null and permission!=null)}">
-					<c:set var="checkedPermField" value="checked" />
-				</c:when>
-				<c:otherwise>
-					<c:set var="checkedPermField" value="" />
-				</c:otherwise>
-			</c:choose>-->
 			
 	    	
 	    	<form action="<c:url value="./myspace_mediaupload"/>" method="post" enctype="multipart/form-data" name="uploadform" id="uploadform">
@@ -155,8 +172,15 @@
 				</tr>
 				<tr class="odd">
 					<td title="<fmt:message key="ib_title"/>"><fmt:message key="title"/><b class="boldStar">*</b> : </td>
-					<td><input type="text" name="title" class="field" value="${title}"> </td>
-				</tr>
+					<c:choose>
+						<c:when test="${publication_type == 'serverTest' and pubTest == true and title == null}">
+							<td><input type="text" name="title" class="field" value="test"> </td>
+						</c:when>
+						<c:otherwise>
+							<td><input type="text" name="title" class="field" value="${title}"> </td>
+						</c:otherwise>
+					</c:choose>
+				</tr>	
 				<tr class="even">
 					<td title="<fmt:message key="ib_desc"/>"><fmt:message key="description"/> : </td>
 					<td><input type="text" name="description" class="field" value="${description}"></td>
@@ -183,52 +207,63 @@
 						</c:otherwise>
 					</c:choose>
 				</tr>
-				<!--<tr class="odd">
-					<td title="<fmt:message key="ib_form"/>"><fmt:message key="ue"/> : </td>
-					<td><input type="text" name="formation" class="field" value="${ue}"> </td>
+					
+				<tr class="odd">
+					<td title="<fmt:message key="ib_level"/>"><fmt:message key="level"/><b class="boldStar">*</b> : </td>
+					<td>
+						<select name="level">
+							<option value=""></option>
+							<c:forEach var="levels" items="${levels}" varStatus="status">
+								<c:choose>
+									<c:when test="${publication_type == 'serverTest' and pubTest == true and levelSelected == null and status.count == 1}">
+										<c:set var="selected" value="selected" />
+									</c:when>
+									<c:when test="${levelSelected == levels.code}">
+										<c:set var="selected" value="selected" />
+									</c:when>
+								</c:choose>
+								<option value="${levels.code}" title="${levels.name}" ${selected}>${levels.name}</option>
+								<c:remove var="selected"/>
+							</c:forEach>
+						</select>
+					</td>
 				</tr>
-				-->
+
+				<tr class="even">
+					<td title="<fmt:message key="ib_form"/>"><fmt:message key="component"/><b class="boldStar">*</b> : </td>
+					<td>
+						<select name="component">
+							<option value=""></option>
+							<c:forEach var="discipline" items="${disciplines}" varStatus="status">
+								<c:choose>
+								<c:when test="${publication_type == 'serverTest' and pubTest == true and discSelected == null and status.count == 1}">
+										<c:set var="selected" value="selected" />
+									</c:when>
+								<c:when test="${discSelected == discipline.codecomp}">
+									<c:set var="selected" value="selected" />
+								</c:when>
+								</c:choose>
+								<option value="${discipline.codecomp}" title="${discipline.namecomp}" ${selected}>${discipline.namecomp}</option>
+								<c:remove var="selected"/>
+							</c:forEach>
+						</select>
+					</td>
+				</tr>
+				
 				
 				<tr class="odd">
-						<td title="<fmt:message key="ib_level"/>"><fmt:message key="level"/><b class="boldStar">*</b> : </td>
-						<td>
-							<select name="level">
-								<option value=""></option>
-								<c:forEach var="levels" items="${levels}">
-									<c:if test="${levelSelected == levels.code}">
-										<c:set var="selected" value="selected" />
-									</c:if>
-									<option value="${levels.code}" title="${levels.name}" ${selected}>${levels.name}</option>
-									<c:remove var="selected"/>
-								</c:forEach>
-							</select>
-						</td>
-					</tr>
-								
-					<tr class="even">
-						<td title="<fmt:message key="ib_form"/>"><fmt:message key="component"/><b class="boldStar">*</b> : </td>
-						<td>
-							<select name="component">
-								<option value=""></option>
-								<c:forEach var="discipline" items="${disciplines}">
-									<c:if test="${discSelected == discipline.codecomp}">
-										<c:set var="selected" value="selected" />
-									</c:if>
-									<option value="${discipline.codecomp}" title="${discipline.namecomp}" ${selected}>${discipline.namecomp}</option>
-									<c:remove var="selected"/>
-								</c:forEach>
-							</select>
-						</td>
-					</tr>
+						<td title="<fmt:message key="ib_code"/>"><fmt:message key="Code d'acc&egrave;s"/> : </td>
+						<c:choose>
+						<c:when test="${publication_type == 'serverTest' and pubTest == true}">
+							<td><input type="text" name="genre" class="txtDisabled" readonly="readonly" value="${testKeyWord1}"></td>
+						</c:when>
+						<c:otherwise>
+							<td><input type="password" name="genre" class="field" value="${genre}"></td>
+						</c:otherwise>
+						</c:choose>
+					</tr>		
 				
 				
-				
-				
-				
-				<tr class="odd">
-					<td title="<fmt:message key="ib_code"/>"><fmt:message key="Code d'acc&egrave;s"/> : </td>
-					<td><input type="password" name="genre" class="field" value="${genre}"></td>
-				</tr>
 				<tr class="even">
 				   	<td title="<fmt:message key="ib_tags"/>">Tags :</td>
 					<td><input type="text" name="tags" class="field" value="${tags}"></td>
@@ -276,9 +311,7 @@
 			<p class="message"><fmt:message key="uploadmessage1"/></p>
 			<br>
 			<p class="message"><fmt:message key="uploadmessage2"/></p>
-			<br>
 			<p class="message"><fmt:message key="uploadmessage3"/></p>
-			<br>
 			<p class="message"><fmt:message key="uploadmessage5"/></p>
 
     	</div>

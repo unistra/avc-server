@@ -1935,6 +1935,10 @@ public class Application extends HttpServlet {
 		// Gets the user's login from the session		
 		if(user!=null && user.isActivate()) {
 			
+			if(request.getParameter("publication_type")!=null) {
+				request.setAttribute("publication_type", request.getParameter("publication_type"));	
+			}
+			
 			request.setAttribute("gobackurl", "./myspace_home");
 			request.setAttribute("user", user);		
 			session.setAttribute("btnDeco", true);
@@ -1950,7 +1954,13 @@ public class Application extends HttpServlet {
 			request.setAttribute("univAcronym", univAcronym);
 			// univ name
 			request.setAttribute("univName", univName);
-			
+			// serveur url for test url
+			request.setAttribute("serverUrl", serverUrl);
+			// publication test
+			request.setAttribute("pubTest", pubTest);
+			// testKeyWord1. Uncapitalize the fist char
+			request.setAttribute("testKeyWord1", (testKeyWord1.substring(0, 1).toLowerCase()+testKeyWord1.substring(1)));
+
 								
 			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 			request.setAttribute("err_title", bundle.getString("err_title"));
