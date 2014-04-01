@@ -1424,7 +1424,7 @@ public class Application extends HttpServlet {
 			
 			if( request.getParameter("fullname") != null && ! request.getParameter("fullname").equals("*") ) {
 				// if UTF8 else ISO
-				params.put("fullname", service.encodeString(request.getParameter("fullname")));				
+				params.put("fullname", service.encodeString(WordUtils.capitalizeFully(request.getParameter("fullname"))));
 				request.setAttribute("nameSelected", params.get("fullname"));
 			}
 
@@ -1489,7 +1489,7 @@ public class Application extends HttpServlet {
 		String paramsUrl="?search=true";
 		
 		if( request.getParameter("author") != null) {
-			paramsUrl = paramsUrl + "&fullname=" + WordUtils.capitalize(request.getParameter("author"));
+			paramsUrl = paramsUrl + "&fullname=" + WordUtils.capitalizeFully(request.getParameter("author"));
 		}
 		
 		if( request.getParameter("formation") != null) {
