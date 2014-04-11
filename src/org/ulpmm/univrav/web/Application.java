@@ -4462,37 +4462,24 @@ public class Application extends HttpServlet {
     			String hash = service.encrypt(email + pass);		
     			service.modifyUserResetCode(email, hash, "sha", new Timestamp(new Date().getTime()));
     	
+    			String reset_url = serverUrl + "/avc/authentication_resetpass?hash=" + hash;
     			// Sending email for the user
-				String emailUserSubject = "AudioVideoCast: Réinitialisation du mot de passe / Reset password";
-						
-						String emailUserMessageFr = "Bonjour,\n\nVous pouvez réinitialiser votre mot de passe avec l'url suivante. Cette url est valide une heure.\n"
-							+ serverUrl + "/avc/authentication_resetpass?hash=" + hash
-							+"\n\nPour toute question sur l'usage de la plateforme AudioVideoCast,"
-							+"\n- contactez le support : " + supportLink
-							+"\n- ou consultez la documentation : " + docLink
-							+ "\n\nBien cordialement,\n\nL'équipe AudioVideoCast";
-												
-						String emailUserMessageEn = "Hello,\n\nYou can reset your password using the following url. This url is valid one hour.\n"
-						+ serverUrl + "/avc/authentication_resetpass?hash=" + hash
-						+"\n\nFor any question,"
-						+"\n- contact the support : " + supportLink
-						+"\n- or read the documentation : " + docLink
-						+ "\n\nBest Regards,\n\nAudioVideoCast team";
-												
-						
-						String emailUserMessage = emailUserMessageFr + "\n\n\n********************\n\n\n" + emailUserMessageEn;
-						
-							
-						service.sendMail(emailUserSubject,emailUserMessage,email);
-						
-						// log stats
-						if(logstats) {
-							service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
-						}	
-						
-						request.setAttribute("messagetype", "information");
-						request.setAttribute("message", bundle.getString("forgotpassmessage2"));
-						getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
+				String emailUserSubject = bundle.getString("email_resetpassword_user_subject");
+														
+				String emailUserMessage = MessageFormat.format(bundle.getString("email_resetpassword_user_message"), 
+						reset_url, supportLink, docLink, reset_url, supportLink, docLink);
+				
+					
+				service.sendMail(emailUserSubject,emailUserMessage,email);
+				
+				// log stats
+				if(logstats) {
+					service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+				}	
+				
+				request.setAttribute("messagetype", "information");
+				request.setAttribute("message", bundle.getString("forgotpassmessage2"));
+				getServletContext().getRequestDispatcher("/WEB-INF/views/message.jsp").forward(request, response);			
 				
     		}
     		
