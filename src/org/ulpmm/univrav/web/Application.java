@@ -2172,27 +2172,17 @@ public class Application extends HttpServlet {
 
 								/* Sends the creation of the course to the service layer */
 								service.mediaUpload(c, item, tags, serverUrl,sepEnc,coursesFolder);
-
-								// Sending email for the user
-								String emailUserSubject = "Votre nouvel enregistrement sur AudioVideoCast / Your new course on AudioVideoCast";
 								
-								String emailUserMessageFr = "Bonjour,\n\nVotre enregistrement intitulé \"" + c.getTitle()
-								+"\" sera publié sur la plateforme AudioVideoCast à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()
-								+ "\nMerci de bien vouloir patienter quelques minutes avant la mise en ligne définitive du document, le processus de conversion durant environ 30 minutes pour chaque heure de vidéo."
-								+"\n\nPour toute question sur l'usage de la plateforme AudioVideoCast,"
-								+"\n- contactez le support : " + supportLink		
-								+"\n- ou consultez la documentation : " + docLink
-								+ "\n\nBien cordialement,\n\nL'équipe AudioVideoCast";
+								ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 								
-								String emailUserMessageEn = "Hello,\n\nYour recording entitled \"" + c.getTitle()
-								+"\" will be published on : "+ recordedInterfaceUrl + "?id="+c.getCourseid()
-								+"\nPlease note that the conversion process of your document will take about 30 minutes for every hour of video."
-								+"\n\nFor any question regarding AudioVideoCast,"
-								+"\n- contact support team : " + supportLink
-								+"\n- or read the documentation : " + docLink
-								+ "\n\nBest Regards,\n\nAudioVideoCast team";
+								String access_url = recordedInterfaceUrl + "?id="+c.getCourseid();
+								String formation_fullname = !formation.equals("") ? service.getFormationFullName(formation) : "";
 								
-								String emailUserMessage = emailUserMessageFr + "\n\n\n********************\n\n\n" + emailUserMessageEn;
+								String emailUserSubject = bundle.getString("email_addcourse_user_subject");
+								String emailUserMessage = MessageFormat.format(bundle.getString("email_addcourse_user_message"), 
+										access_url, title, description, name, firstname, formation_fullname, genre, supportLink, docLink, 
+										access_url, title, description, name, firstname, formation_fullname, genre, supportLink, docLink);
+							
 								
 								// If the user is not anonymous and his email is present
 								if(user!=null && user.getEmail()!=null && !user.getEmail().equals("")) {
@@ -2202,8 +2192,10 @@ public class Application extends HttpServlet {
 								// If course is present in the recorded page
 								if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 									// Sending email for admins
-									String emailAdminSubject = "a new file on AudioVideoCast";
-									String emailAdminMessage = "Dear Admin,\n\nA file named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid() + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (user!=null && user.getEmail()!=null ? "\n\nEmail:"+user.getEmail() : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nAudioVideoCast Administrator" ;
+									String emailAdminSubject = bundle.getString("email_addcourse_admin_subject");
+									String emailAdminMessage = MessageFormat.format(bundle.getString("email_addcourse_admin_message"),
+											title, access_url, name+" "+firstname, user!=null && user.getEmail()!=null ? user.getEmail() : "", genre);
+									
 									if(!adminEmail1.equals(""))
 										service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
 									if(!adminEmail2.equals(""))
@@ -2212,7 +2204,6 @@ public class Application extends HttpServlet {
 										service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail3);
 								}
 
-								ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 																
 								message = bundle.getString("upload_valmsg1");
 								message += bundle.getString("upload_valmsg2");
