@@ -1863,8 +1863,9 @@ public class Application extends HttpServlet {
 				// If course is present in the recorded page
 				if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
 					// Sending email for admins
-					String emailAdminSubject = "a new course on AudioVideoCast";
-					String emailAdminMessage = "Dear Admin,\n\nA course named \"" + c.getTitle() +"\" will be published on "+ recordedInterfaceUrl + "?id="+c.getCourseid() + (c.getName()!=null ? "\n\nAuthor:"+c.getName() + (c.getFirstname()!=null ? " " + c.getFirstname() : "") : "") + (email!=null ? "\n\nEmail:"+email : "") + (c.getGenre()!=null ? "\n\nPassword:"+c.getGenre() : "") + "\n\nBest Regards,\n\nAudioVideoCast Administrator" ;
+					String emailAdminSubject = bundle.getString("email_addcourse_admin_subject");
+					String emailAdminMessage = MessageFormat.format(bundle.getString("email_addcourse_admin_message"),
+							title, access_url, name+" "+firstname, email, genre);
 					if(adminEmail1!=null && !adminEmail1.equals(""))
 						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
 					if(adminEmail2!=null && !adminEmail2.equals(""))
