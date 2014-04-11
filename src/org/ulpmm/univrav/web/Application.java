@@ -4069,6 +4069,7 @@ public class Application extends HttpServlet {
 			err_message = "err_user_exist";
 		}
 		
+		ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 		
 		// If the form is not valid
 		if(!formValid) {		
@@ -4080,7 +4081,6 @@ public class Application extends HttpServlet {
 			request.setAttribute("post", post);	
 			
 			request.setAttribute("messagetype", "error");
-			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 			request.setAttribute("message", bundle.getString(err_message));
 			getServletContext().getRequestDispatcher("/avc/authentication_accountrequest").forward(request, response);
 		}
@@ -4093,18 +4093,9 @@ public class Application extends HttpServlet {
 			service.modifyUserPassword(email, hash, "sha");
 						
 			// send email to admin
-			String emailAdminSubject = "a new account request on AudioVideoCast";
-			String emailAdminMessage = "Dear Admin,\n\nA new account request has been sent to AudioVideoCast:"
-			+ "\n\n--------------------"	
-			+ "\n\nEmail: " + email
-			+ "\nFirstname: " + firstname
-			+ "\nLastname: " + lastname
-			+ "\nEstablishment: " + establishment
-			+ "\nPost: " + post
-			+ "\nReason for request: " + comment	
-			+ "\n\n--------------------"
-			+ "\n\nTo activate the account: " + serverUrl + "/avc/admin_users?login=" + email
-			+ "\n\nBest Regards,\n\nAudioVideoCast Administrator";
+			String emailAdminSubject = bundle.getString("email_accountrequest_admin_subject");
+			String emailAdminMessage = MessageFormat.format(bundle.getString("email_accountrequest_admin_message"), 
+					email, firstname, lastname, establishment, post, comment, serverUrl + "/avc/admin_users?login=" + email);
 			
 			if(adminEmail1!=null && !adminEmail1.equals(""))
 				service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
@@ -4121,7 +4112,6 @@ public class Application extends HttpServlet {
 			/* Done message */
 			String requestDispatcher = "/WEB-INF/views/message.jsp";
 			request.setAttribute("messagetype", "information");
-			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 			request.setAttribute("message", bundle.getString("valid_accountrequest"));
 			getServletContext().getRequestDispatcher(requestDispatcher).forward(request, response);
 			
