@@ -769,6 +769,13 @@ public interface IService {
 	 * @return the list of levels
 	 */
 	public List<Level> getAllLevels();
+	
+	/**
+	 * Get level by code 
+	 * @param code the code of the level
+	 * @return the level
+	 */
+	public Level getLevelByCode(String code);
 		
 	/**
 	 * Gets the level code by formation

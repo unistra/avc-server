@@ -1309,6 +1309,15 @@ public class ServiceImpl implements IService {
 	}
 	
 	/**
+	 * Get level by code 
+	 * @param code the code of the level
+	 * @return the level
+	 */
+	public Level getLevelByCode(String code) {
+		return db.getLevelByCode(code);
+	}
+	
+	/**
 	 * Gets the level code by formation
 	 * @param formation the formation
 	 * @return the level code

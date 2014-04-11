@@ -4008,7 +4008,40 @@ public class DatabaseImpl implements IDatabase {
 	}
 	
 	
-	
+	/**
+	 * Get level by code 
+	 * @param code the code of the level
+	 * @return the level
+	 */
+	public Level getLevelByCode(String code) {
+		Level l = null;
+		Connection cnt = null;
+		String sql = "SELECT * FROM level WHERE code = ?";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			cnt = datasrc.getConnection();
+			pstmt = cnt.prepareStatement(sql);
+			pstmt.setString(1, code);
+			rs = pstmt.executeQuery();
+			if( rs.next() ) {
+				l = new Level(
+						rs.getInt("levelid"),
+						rs.getString("code"),
+						rs.getString("name")
+				);
+			}
+		}
+		catch( SQLException sqle) {
+			logger.error("Error while retrieving the level " + code,sqle);
+			throw new DaoException("Error while retrieving the level " + code);
+		}
+		finally {
+			close(rs,pstmt,cnt);
+		}
+		
+		return l;
+	}	
 	
 	/**
 	 * Return the result of find tracks function

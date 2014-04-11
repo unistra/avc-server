@@ -654,6 +654,13 @@ public interface IDatabase {
 	public List<Level> getAllLevels();
 	
 	/**
+	 * Get level by code 
+	 * @param code the code of the level
+	 * @return the level
+	 */
+	public Level getLevelByCode(String code);
+	
+	/**
 	 * Return the result of find tracks function
 	 * 
 	 * @param params all parameters

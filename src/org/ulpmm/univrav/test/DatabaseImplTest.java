@@ -250,6 +250,9 @@ public class DatabaseImplTest {
 		assertEquals(2, lst.size());
 		assertTrue(lvl1.equals(lst.get(0)));
 		assertTrue(lvl2.equals(lst.get(1)));
+		
+		Level mylevel = dbi.getLevelByCode("C0");
+		assertTrue(lvl2.equals(mylevel));
 	}
 	
 	@Test

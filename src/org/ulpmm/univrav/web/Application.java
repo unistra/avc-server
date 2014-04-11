@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1842,29 +1843,18 @@ public class Application extends HttpServlet {
 				);
 					
 				service.addCourse(c, media, tags, serverUrl, sepEnc, coursesFolder);
-												
-				// Sending email for the user
-				String emailUserSubject = "Votre nouvel enregistrement sur AudioVideoCast / Your new course on AudioVideoCast";
 				
-				String emailUserMessageFr = "Bonjour,\n\nVotre enregistrement intitulé \"" + c.getTitle()
-				+"\" sera publié sur la plateforme AudioVideoCast à l'adresse : "+ recordedInterfaceUrl + "?id="+c.getCourseid()
-				+ "\nMerci de bien vouloir patienter quelques minutes avant la mise en ligne définitive du document, le processus de conversion durant environ 30 minutes pour chaque heure de vidéo."
-				+"\n\nPour toute question sur l'usage de la plateforme AudioVideoCast,"
-				+"\n- contactez le support : " + supportLink		
-				+"\n- ou consultez la documentation : " + docLink
-				+ "\n\nBien cordialement,\n\nL'équipe AudioVideoCast";
+				ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 				
-				String emailUserMessageEn = "Hello,\n\nYour recording entitled \"" + c.getTitle()
-				+"\" will be published on : "+ recordedInterfaceUrl + "?id="+c.getCourseid()
-				+"\nPlease note that the conversion process of your document will take about 30 minutes for every hour of video."
-				+"\n\nFor any question regarding AudioVideoCast,"
-				+"\n- contact support team : " + supportLink
-				+"\n- or read the documentation : " + docLink
-				+ "\n\nBest Regards,\n\nAudioVideoCast team";
+				String access_url = recordedInterfaceUrl + "?id="+c.getCourseid();
+				String formation_fullname = !formation.equals("") ? service.getFormationFullName(formation) : "";
 				
-				String emailUserMessage = emailUserMessageFr + "\n\n\n********************\n\n\n" + emailUserMessageEn;
+				String emailUserSubject = bundle.getString("email_addcourse_user_subject");
+				String emailUserMessage = MessageFormat.format(bundle.getString("email_addcourse_user_message"), 
+						access_url, title, description, name, firstname, formation_fullname, genre, supportLink, docLink, 
+						access_url, title, description, name, firstname, formation_fullname, genre, supportLink, docLink);
 				
-						
+	
 				//if the email from av client is present, send an email
 				if(email!=null && !email.equals("")) {
 					service.sendMail(emailUserSubject,emailUserMessage,email);
@@ -1882,9 +1872,7 @@ public class Application extends HttpServlet {
 					if(adminEmail3!=null && !adminEmail3.equals(""))
 						service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail3);
 				}
-				
-				ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
-								
+												
 				message = bundle.getString("addcourse_message1a")+" \"" + c.getTitle() +"\" "+bundle.getString("addcourse_message1b")+": ";
 				ahref = recordedInterfaceUrl + "?id="+c.getCourseid();
 				message2 = bundle.getString("addcourse_message2");
