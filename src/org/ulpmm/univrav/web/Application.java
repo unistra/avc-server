@@ -2388,6 +2388,11 @@ public class Application extends HttpServlet {
 		Course c = null;
 		String genre = null;
 		
+		// set the previous page
+		String previousPage = (String) session.getAttribute("previousPage");
+		if( previousPage == null)
+			session.setAttribute("previousPage", "/home");
+
 		if(request.getParameter("code")!=null) // if code in url or form
 			genre = request.getParameter("code");
 		else if(session.getAttribute("code_"+courseid)!=null) // if code already in session
