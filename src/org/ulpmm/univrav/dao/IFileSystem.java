@@ -196,5 +196,12 @@ public interface IFileSystem {
 	 * @param courseid courseid
 	 */
 	public void deleteReplaceMedia(String mediafolder, int courseid);
+	
+	/**
+	 * Check if the zip file contains a not empty audio or video file 
+	 * @param zip the name of the zip file
+	 * @return true if the zip file is ok
+	 */
+	public boolean checkZipFile(String zip);
 }
 

@@ -24,8 +24,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -1257,5 +1260,41 @@ public class FileSystemImpl implements IFileSystem {
 			}
 		}
 		 		
+	}
+	
+	/**
+	 * Check if the zip file contains a not empty audio or video file 
+	 * @param zip the name of the zip file
+	 * @return true if the zip file is ok
+	 */
+	public boolean checkZipFile(String zip) {
+		ZipFile zf = null;
+		boolean valid = false;
+		
+		try {
+			zf = new ZipFile(new File(ftpFolder + zip));
+		
+			for (Enumeration<? extends ZipEntry> e = zf.entries(); e.hasMoreElements();) {
+				ZipEntry ze = e.nextElement();
+				String name = ze.getName();
+				
+				if (name.endsWith(".mp3") || name.endsWith(".flv") || name.endsWith(".mp4") || name.endsWith(".aac")) {
+					if (ze.getSize() > 0 ) {
+						valid = true;
+					}
+				}
+			}
+		} catch (IOException e) {
+			logger.error("Error while checking the zip file " + zip,e);
+		} finally {
+			try {
+				if(zf != null)
+					zf.close();
+			} catch (IOException e) {
+				logger.error("Error while checking the zip file " + zip,e);
+			}
+		}
+		
+		return valid;
 	}
 }

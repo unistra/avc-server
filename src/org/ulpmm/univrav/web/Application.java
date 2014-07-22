@@ -1751,6 +1751,7 @@ public class Application extends HttpServlet {
 		String message, message2, ahref;
 		message=message2=ahref="";
 		String messageType = "information";
+		ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 		
 		/* The client sends parameters in the ISO8859-15 encoding */
 		request.setCharacterEncoding("ISO8859-15");
@@ -1788,7 +1789,7 @@ public class Application extends HttpServlet {
 		}
 						
 		/* Verifies that all essential parameters are sent, cancels the upload if not */
-		if(mediapath != null && !mediapath.equals("")) {
+		if(mediapath != null && !mediapath.equals("") && service.checkZipFile(mediapath)) {
 			
 			if( timing == null )
 				timing = "n-1";
@@ -1844,8 +1845,6 @@ public class Application extends HttpServlet {
 					
 				service.addCourse(c, media, tags, serverUrl, sepEnc, coursesFolder);
 				
-				ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
-				
 				String access_url = recordedInterfaceUrl + "?id="+c.getCourseid();
 				String formation_fullname = !formation.equals("") ? service.getFormationFullName(formation) : "";
 				
@@ -1897,7 +1896,7 @@ public class Application extends HttpServlet {
 		}
 		else {
 			messageType = "error";
-			message = "Error: One ore more parameters have not been given";
+			message = bundle.getString("err_mediapath");
 		}
 		
 		request.setAttribute("messagetype", messageType);
