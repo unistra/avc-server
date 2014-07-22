@@ -39,7 +39,7 @@ then
 fi
 
 #Creation du fichier HD mp4
-/usr/bin/ffmpeg -v -1 -i "$2" $AUDIO -r 25 -vcodec libx264 -s "$L"x"$H" -vf "pad=$WIDTH:$HEIGHT:$PL:$PHB:black" $ASPECT $VPRE -crf 27 -g 100 -threads 0 -y $3_tmp.mp4 &> /dev/null
+/usr/bin/ffmpeg -v -1 -i "$2" $AUDIO -r 25 -vcodec libx264 -vf "scale=$L:$H,pad=$WIDTH:$HEIGHT:$PL:$PHB:black" $ASPECT $VPRE -crf 27 -g 100 -threads 0 -y $3_tmp.mp4 &> /dev/null
 /usr/bin/qt-faststart $3_tmp.mp4 "$3""$SUFFNAME".mp4 &> /dev/null
 
 
