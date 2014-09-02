@@ -328,10 +328,10 @@ public class DatabaseImpl implements IDatabase {
 		Connection cnt = null;
 		
 		String sql = "SELECT * From course WHERE genre IS NULL AND visible = true AND restrictionuds = false " +
-			"AND INITCAP(title) NOT LIKE '" + testKeyWord1 + "%' ";
+			"AND INITCAP(title) NOT ILIKE '" + testKeyWord1 + "%' ";
 		
 		if( testKeyWord2 != null && ! testKeyWord2.equals(""))
-			sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+			sql += "AND INITCAP(title) NOT ILIKE '" + testKeyWord2 + "%' ";
 				
 		sql += "ORDER BY date DESC, courseid DESC LIMIT " + n;
 		
@@ -396,10 +396,10 @@ public class DatabaseImpl implements IDatabase {
 		
 		String sql = "SELECT * From course WHERE visible = true " +
 			"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
-			"AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+			"AND INITCAP(title) NOT ILIKE '" + testKeyWord2 + "%' ";
 			
 			if( testKeyWord3 != null && ! testKeyWord3.equals(""))
-				sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord3 + "%' ";
+				sql += "AND INITCAP(title) NOT ILIKE '" + testKeyWord3 + "%' ";
 			
 		sql += "ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start;
 
@@ -475,10 +475,10 @@ public class DatabaseImpl implements IDatabase {
 			/* Creation of the SQL query string */
 			String sql = "SELECT * FROM course WHERE visible = true " +
 				"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
-				"AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+				"AND INITCAP(title) NOT ILIKE '" + testKeyWord2 + "%' ";
 			
 			if( testKeyWord3 != null && ! testKeyWord3.equals(""))
-				sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord3 + "%' ";
+				sql += "AND INITCAP(title) NOT ILIKE '" + testKeyWord3 + "%' ";
 			
 			Iterator<String> it = keys.iterator();
 			while( it.hasNext()) {
@@ -489,14 +489,14 @@ public class DatabaseImpl implements IDatabase {
 				if( param.equals("fullname") )
 					sql += "AND (COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = ? ";
 				else if( param.equals("keyword") ) {
-					sql += "AND (UPPER(title) LIKE UPPER(?) OR UPPER(description) LIKE UPPER(?) OR UPPER(name) LIKE UPPER(?) OR UPPER(firstname) LIKE UPPER(?) ";
-					sql += "OR courseid IN(SELECT courseid FROM course WHERE SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1))) IN (SELECT codecomp FROM discipline WHERE UPPER(namecomp) LIKE UPPER(?))) ";
-					sql += "OR courseid IN(SELECT courseid FROM tag WHERE UPPER(tag) LIKE UPPER(?))) ";
+					sql += "AND (UPPER(title) ILIKE UPPER(?) OR UPPER(description) ILIKE UPPER(?) OR UPPER(name) ILIKE UPPER(?) OR UPPER(firstname) ILIKE UPPER(?) ";
+					sql += "OR courseid IN(SELECT courseid FROM course WHERE SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1))) IN (SELECT codecomp FROM discipline WHERE UPPER(namecomp) ILIKE UPPER(?))) ";
+					sql += "OR courseid IN(SELECT courseid FROM tag WHERE UPPER(tag) ILIKE UPPER(?))) ";
 				}	
 				else if (param.equals("discipline"))
-					sql += "AND UPPER(formation) LIKE UPPER(?) ";
+					sql += "AND UPPER(formation) ILIKE UPPER(?) ";
 				else if (param.equals("level"))
-					sql += "AND UPPER(formation) LIKE UPPER(?) ";
+					sql += "AND UPPER(formation) ILIKE UPPER(?) ";
 				else
 					sql += "AND " + param + " = ? ";
 			}
@@ -855,10 +855,10 @@ public class DatabaseImpl implements IDatabase {
 		int number = 0;			
 		String sql = "SELECT COUNT(*) From course WHERE visible = true " +
 		"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
-		"AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+		"AND INITCAP(title) NOT ILIKE '" + testKeyWord2 + "%' ";
 		
 		if( testKeyWord3 != null && ! testKeyWord3.equals(""))
-			sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord3 + "%' ";
+			sql += "AND INITCAP(title) NOT ILIKE '" + testKeyWord3 + "%' ";
 		
 		ResultSet rs = null;
 		Statement stmt = null;
@@ -933,10 +933,10 @@ public class DatabaseImpl implements IDatabase {
 									
 			String sql = "SELECT COUNT(*) From course WHERE visible = true " +
 			"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
-			"AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+			"AND INITCAP(title) NOT ILIKE '" + testKeyWord2 + "%' ";
 			
 			if( testKeyWord3 != null && ! testKeyWord3.equals(""))
-				sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord3 + "%' ";
+				sql += "AND INITCAP(title) NOT ILIKE '" + testKeyWord3 + "%' ";
 			
 						
 			Iterator<String> it = keys.iterator();
@@ -948,14 +948,14 @@ public class DatabaseImpl implements IDatabase {
 				if( param.equals("fullname") )
 					sql += "(COALESCE(INITCAP(name),'') || COALESCE(INITCAP(' ' || firstname),'')) = ? ";
 				else if( param.equals("keyword") ) {
-					sql += "(UPPER(title) LIKE UPPER(?) OR UPPER(description) LIKE UPPER(?) OR UPPER(name) LIKE UPPER(?) OR UPPER(firstname) LIKE UPPER(?) ";
-					sql += "OR courseid IN(SELECT courseid FROM course WHERE SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1))) IN (SELECT codecomp FROM discipline WHERE UPPER(namecomp) LIKE UPPER(?))) ";
-					sql += "OR courseid IN(SELECT courseid FROM tag WHERE UPPER(tag) LIKE UPPER(?))) ";
+					sql += "(UPPER(title) ILIKE UPPER(?) OR UPPER(description) ILIKE UPPER(?) OR UPPER(name) ILIKE UPPER(?) OR UPPER(firstname) ILIKE UPPER(?) ";
+					sql += "OR courseid IN(SELECT courseid FROM course WHERE SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1))) IN (SELECT codecomp FROM discipline WHERE UPPER(namecomp) ILIKE UPPER(?))) ";
+					sql += "OR courseid IN(SELECT courseid FROM tag WHERE UPPER(tag) ILIKE UPPER(?))) ";
 				}
 				else if (param.equals("discipline"))
-					sql += "UPPER(formation) LIKE UPPER(?) ";
+					sql += "UPPER(formation) ILIKE UPPER(?) ";
 				else if (param.equals("level"))
-					sql += "UPPER(formation) LIKE UPPER(?) ";
+					sql += "UPPER(formation) ILIKE UPPER(?) ";
 				else
 					sql += param + " = ? ";
 			}
@@ -1299,10 +1299,10 @@ public class DatabaseImpl implements IDatabase {
 		
 		String sql = "SELECT * From course " +
 			"WHERE INITCAP(genre) = '" + testKeyWord1 + "' " +
-			"OR INITCAP(title) LIKE '" + testKeyWord2 + "%' ";
+			"OR INITCAP(title) ILIKE '" + testKeyWord2 + "%' ";
 			
 			if( testKeyWord3 != null && ! testKeyWord3.equals(""))
-				sql += "OR INITCAP(title) LIKE '" + testKeyWord3 + "%' ";
+				sql += "OR INITCAP(title) ILIKE '" + testKeyWord3 + "%' ";
 			
 		sql += "ORDER BY date DESC, courseid DESC LIMIT " + number + " OFFSET " + start;
 
@@ -1366,10 +1366,10 @@ public class DatabaseImpl implements IDatabase {
 		int number = 0;			
 		String sql = "SELECT COUNT(*) From course " +
 		"WHERE INITCAP(genre) = '" + testKeyWord1 + "' " +
-		"OR INITCAP(title) LIKE '" + testKeyWord2 + "%' ";
+		"OR INITCAP(title) ILIKE '" + testKeyWord2 + "%' ";
 		
 		if( testKeyWord3 != null && ! testKeyWord3.equals(""))
-			sql += "OR INITCAP(title) LIKE '" + testKeyWord3 + "%' ";
+			sql += "OR INITCAP(title) ILIKE '" + testKeyWord3 + "%' ";
 		
 		ResultSet rs = null;
 		Statement stmt = null;
@@ -1429,10 +1429,10 @@ public class DatabaseImpl implements IDatabase {
 		if( testKeyWord1 != null && ! testKeyWord1.equals("")) {
 		
 			String sql = "UPDATE course SET visible=false " +
-					"WHERE INITCAP(title) LIKE '" + testKeyWord1 + "%'";
+					"WHERE INITCAP(title) ILIKE '" + testKeyWord1 + "%'";
 			
 			if( testKeyWord2 != null && ! testKeyWord2.equals(""))
-				sql += "OR INITCAP(title) LIKE '" + testKeyWord2 + "%'";
+				sql += "OR INITCAP(title) ILIKE '" + testKeyWord2 + "%'";
 			
 			Statement stmt = null;
 			Connection cnt = null;
@@ -2714,9 +2714,9 @@ public class DatabaseImpl implements IDatabase {
 				sql+="AND visible=true ";
 
 			//keywords
-			sql += "AND (UPPER(title) LIKE UPPER(?) OR UPPER(description) LIKE UPPER(?) OR UPPER(name) LIKE UPPER(?) OR UPPER(firstname) LIKE UPPER(?) ";
-			sql += "OR courseid IN(SELECT courseid FROM course WHERE SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1))) IN (SELECT codecomp FROM discipline WHERE UPPER(namecomp) LIKE UPPER(?))) ";
-			sql += "OR courseid IN(SELECT courseid FROM tag WHERE UPPER(tag) LIKE UPPER(?))) ";
+			sql += "AND (UPPER(title) ILIKE UPPER(?) OR UPPER(description) ILIKE UPPER(?) OR UPPER(name) ILIKE UPPER(?) OR UPPER(firstname) ILIKE UPPER(?) ";
+			sql += "OR courseid IN(SELECT courseid FROM course WHERE SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1))) IN (SELECT codecomp FROM discipline WHERE UPPER(namecomp) ILIKE UPPER(?))) ";
+			sql += "OR courseid IN(SELECT courseid FROM tag WHERE UPPER(tag) ILIKE UPPER(?))) ";
 					
 			sql+="ORDER BY date DESC, courseid ";		
 			
@@ -2829,9 +2829,9 @@ public class DatabaseImpl implements IDatabase {
 		if( keywords != null && ! keywords.equals("")) {
 
 			//keywords
-			sql += "AND (UPPER(title) LIKE UPPER(?) OR UPPER(description) LIKE UPPER(?) OR UPPER(name) LIKE UPPER(?) OR UPPER(firstname) LIKE UPPER(?) ";
-			sql += "OR courseid IN(SELECT courseid FROM course WHERE SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1))) IN (SELECT codecomp FROM discipline WHERE UPPER(namecomp) LIKE UPPER(?))) ";
-			sql += "OR courseid IN(SELECT courseid FROM tag WHERE UPPER(tag) LIKE UPPER(?))) ";
+			sql += "AND (UPPER(title) ILIKE UPPER(?) OR UPPER(description) ILIKE UPPER(?) OR UPPER(name) ILIKE UPPER(?) OR UPPER(firstname) ILIKE UPPER(?) ";
+			sql += "OR courseid IN(SELECT courseid FROM course WHERE SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1))) IN (SELECT codecomp FROM discipline WHERE UPPER(namecomp) ILIKE UPPER(?))) ";
+			sql += "OR courseid IN(SELECT courseid FROM tag WHERE UPPER(tag) ILIKE UPPER(?))) ";
 							
 			try {
 				cnt = datasrc.getConnection();
@@ -3119,10 +3119,10 @@ public class DatabaseImpl implements IDatabase {
 		
 		String sql = "SELECT * From course WHERE visible = true " +
 			"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
-			"AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+			"AND INITCAP(title) NOT ILIKE '" + testKeyWord2 + "%' ";
 		
 			if( testKeyWord3 != null && ! testKeyWord3.equals(""))
-				sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord3 + "%' ";
+				sql += "AND INITCAP(title) NOT ILIKE '" + testKeyWord3 + "%' ";
 						
 			for(int i=0;i<tags.size();i++) 
 				sql += "and courseid in (select courseid from tag where lower(tag)='" + tags.get(i).toLowerCase() + "') "; 
@@ -3194,13 +3194,13 @@ public class DatabaseImpl implements IDatabase {
 												
 			String sql = "SELECT count(*) From course WHERE visible = true " +
 			"AND (genre IS NULL OR NOT INITCAP(genre) = '" + testKeyWord1 + "') " +
-			"AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+			"AND INITCAP(title) NOT ILIKE '" + testKeyWord2 + "%' ";
 			
 			for(int i=0;i<tags.size();i++) 
 				sql += "and courseid in (select courseid from tag where tag='" + tags.get(i) + "') "; 
 			
 			if( testKeyWord3 != null && ! testKeyWord3.equals(""))
-				sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord3 + "%' ";
+				sql += "AND INITCAP(title) NOT ILIKE '" + testKeyWord3 + "%' ";
 			
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
@@ -3239,10 +3239,10 @@ public class DatabaseImpl implements IDatabase {
 	public List<Course> getNSelectionCourses(int n, String testKeyWord1, String testKeyWord2) {
 		
 		String sql = "SELECT * From course,selection WHERE courseid=idcourseselection AND genre IS NULL AND visible = true " +
-			"AND INITCAP(title) NOT LIKE '" + testKeyWord1 + "%' ";
+			"AND INITCAP(title) NOT ILIKE '" + testKeyWord1 + "%' ";
 		
 		if( testKeyWord2 != null && ! testKeyWord2.equals(""))
-			sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+			sql += "AND INITCAP(title) NOT ILIKE '" + testKeyWord2 + "%' ";
 		
 		sql += "ORDER BY position ASC, date DESC, courseid DESC LIMIT " + n;
 				
@@ -3303,10 +3303,10 @@ public class DatabaseImpl implements IDatabase {
 	public List<Course> getNFormationCourses(int n, String testKeyWord1, String testKeyWord2) {
 		
 		String sql = "SELECT * From course WHERE genre IS NULL AND visible = true " +
-			"AND INITCAP(title) NOT LIKE '" + testKeyWord1 + "%' AND formation=(select formationcollection from selection s where position=1) ";
+			"AND INITCAP(title) NOT ILIKE '" + testKeyWord1 + "%' AND formation=(select formationcollection from selection s where position=1) ";
 		
 		if( testKeyWord2 != null && ! testKeyWord2.equals(""))
-			sql += "AND INITCAP(title) NOT LIKE '" + testKeyWord2 + "%' ";
+			sql += "AND INITCAP(title) NOT ILIKE '" + testKeyWord2 + "%' ";
 		
 		sql += "ORDER BY date DESC, courseid DESC LIMIT " + n;
 		
@@ -4072,10 +4072,10 @@ public class DatabaseImpl implements IDatabase {
 					sql += "AND UPPER(c.firstname)=UPPER('"+params.get(param)+"') ";
 
 				if(param.equals("component"))
-					sql += "AND UPPER(c.formation) LIKE UPPER('"+params.get(param)+"-%') ";
+					sql += "AND UPPER(c.formation) ILIKE UPPER('"+params.get(param)+"-%') ";
 
 				if(param.equals("level"))
-					sql += "AND UPPER(c.formation) LIKE UPPER('%-"+params.get(param)+"') ";
+					sql += "AND UPPER(c.formation) ILIKE UPPER('%-"+params.get(param)+"') ";
 
 				if(param.equals("authorLogin"))
 					sql += "AND c.userid=(SELECT u.userid FROM \"user\" u WHERE u.login='"+params.get(param)+"') ";
@@ -4186,10 +4186,10 @@ public class DatabaseImpl implements IDatabase {
 					sql += "AND c.date <= '"+params.get(param)+"' ";
 
 				if(param.equals("level"))
-					sql += "AND UPPER(c.formation) LIKE UPPER('%-"+params.get(param)+"') ";
+					sql += "AND UPPER(c.formation) ILIKE UPPER('%-"+params.get(param)+"') ";
 
 				if(param.equals("component"))
-					sql += "AND UPPER(c.formation) LIKE UPPER('"+params.get(param)+"-%') ";
+					sql += "AND UPPER(c.formation) ILIKE UPPER('"+params.get(param)+"-%') ";
 
 				if(param.equals("domain"))
 					sql += "AND UPPER(SUBSTRING(formation FROM 1 FOR (ABS(POSITION('-' in formation)-1)))) in (select UPPER(d.codecomp) from discipline d where d.codedom='"+params.get(param)+"') ";

@@ -44,7 +44,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
-import org.apache.commons.lang.WordUtils;
+//import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONObject;
@@ -1425,7 +1425,9 @@ public class Application extends HttpServlet {
 			
 			if( request.getParameter("fullname") != null && ! request.getParameter("fullname").equals("*") ) {
 				// if UTF8 else ISO
-				params.put("fullname", service.encodeString(WordUtils.capitalizeFully(request.getParameter("fullname"))));
+				//final char[] delimiters = {' ', '-', '\'', '.', '&', ':', ';', ',', '_'};
+				//params.put("fullname", service.encodeString(WordUtils.capitalizeFully(request.getParameter("fullname"), delimiters)));
+				params.put("fullname", service.encodeString(request.getParameter("fullname")));
 				request.setAttribute("nameSelected", params.get("fullname"));
 			}
 
@@ -1488,9 +1490,11 @@ public class Application extends HttpServlet {
 	throws ServletException, IOException {
 		
 		String paramsUrl="?search=true";
+		//final char[] delimiters = {' ', '-', '\'', '.', '&', ':', ';', ',', '_'};
 		
 		if( request.getParameter("author") != null) {
-			paramsUrl = paramsUrl + "&fullname=" + WordUtils.capitalizeFully(request.getParameter("author"));
+			//paramsUrl = paramsUrl + "&fullname=" + WordUtils.capitalizeFully(request.getParameter("author"), delimiters);
+			paramsUrl = paramsUrl + "&fullname=" + request.getParameter("author");
 		}
 		
 		if( request.getParameter("formation") != null) {
