@@ -35,13 +35,13 @@ cd workingVS
 cat *.jpg | /usr/bin/ffmpeg -v -1 -f image2pipe -r 1 -vcodec mjpeg -i - -y ../$2_tmp.avi &> /dev/null
 
 # Convert avi+aac into mp4 ipod
-/usr/bin/ffmpeg -v -1 -i ./../$2.mp3 -i ../$2_tmp.avi -acodec libvo_aacenc -f mp4 -vcodec libx264 -vpre medium -vpre ipod640 -crf 27 -s 640x480 -y ./../$2_videoslide_tmp_ipod.mp4 &> /dev/null
+/usr/bin/ffmpeg -v -1 -i ./../$2.mp3 -i ../$2_tmp.avi -acodec libvo_aacenc -f mp4 -vcodec libx264 -vpre medium -vpre ipod640 -crf 27 -r 25 -s 640x480 -y ./../$2_videoslide_tmp_ipod.mp4 &> /dev/null
 
 # Adds mov atom
 /usr/bin/qt-faststart ./../$2_videoslide_tmp_ipod.mp4 ./../$2_videoslide_ipod.mp4 &> /dev/null
 
 # Convert avi+aac into mp4
-/usr/bin/ffmpeg -v -1 -i ./../$2.mp3 -i ../$2_tmp.avi -acodec libvo_aacenc -f mp4 -vcodec libx264 -vpre medium -crf 27 -y ./../$2_videoslide_tmp.mp4 &> /dev/null
+/usr/bin/ffmpeg -v -1 -i ./../$2.mp3 -i ../$2_tmp.avi -acodec libvo_aacenc -f mp4 -vcodec libx264 -vpre medium -crf 27 -r 25 -y ./../$2_videoslide_tmp.mp4 &> /dev/null
 
 # Adds mov atom
 /usr/bin/qt-faststart ./../$2_videoslide_tmp.mp4 ./../$2_videoslide.mp4 &> /dev/null
