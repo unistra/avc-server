@@ -5,10 +5,12 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
   <head>
     
+    <meta charset="utf-8">
+
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
@@ -38,7 +40,7 @@
 	    	
 	    	<div id="codeForm">
 		    	<form method="post" action="./courseaccess?id=${id}">
-					<legend><fmt:message key="Code d'acc&egrave;s"/></legend>
+					<span><fmt:message key="Code d'acc&egrave;s"/></span>
 					<input type="password" name="code">
 					<c:if test="${not empty type}">
 						<input type="hidden" name="type" value="${type}">

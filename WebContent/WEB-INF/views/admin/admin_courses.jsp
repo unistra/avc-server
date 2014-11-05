@@ -7,9 +7,11 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
   <head>
+
+  	<meta charset="utf-8">
     
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/></title>
 
@@ -68,7 +70,7 @@
 	    	</display:table>
 	  	    		    		
 	    	<br>
-	    	<p id="nbr">${number} courses</p>
+	    	<p class="nbr">${number} courses</p>
 	    </div>
 	    	
 	    <div class="footer">

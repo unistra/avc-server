@@ -5,9 +5,11 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
   <head>
+
+  	<meta charset="utf-8">
     
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/></title>
 
@@ -72,7 +74,7 @@
 			    		</tr>
 			    		<tr class="even">
 				    		<td><fmt:message key="restrictionuds"/> ${univAcronym}</td>
-				    		<td><input type="checkbox" name="restrictionuds" ${amphi.restrictionuds == true ? 'checked' : ''} ><font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
+				    		<td><input type="checkbox" name="restrictionuds" ${amphi.restrictionuds == true ? 'checked' : ''} ><span class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</span></td>
 			    		</tr>
 			    	</table>
 			    	<br>

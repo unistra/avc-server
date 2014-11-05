@@ -5,10 +5,12 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
   <head>
     
+    <meta charset="utf-8">
+
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/> - <fmt:message key="uploadPage"/></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
@@ -157,8 +159,8 @@
 				<c:otherwise>
 					<c:set var="checkedRestUdsField" value="checked" />
 				</c:otherwise>
-			</c:choose>
-			
+			</c:choose>		
+
 	    	
 	    	<form action="<c:url value="./myspace_mediaupload"/>" method="post" enctype="multipart/form-data" name="uploadform" id="uploadform">
 				<table>
@@ -212,7 +214,7 @@
 					<td title="<fmt:message key="ib_level"/>"><fmt:message key="level"/><b class="boldStar">*</b> : </td>
 					<td>
 						<select name="level">
-							<option value=""></option>
+							<option>
 							<c:forEach var="levels" items="${levels}" varStatus="status">
 								<c:choose>
 									<c:when test="${publication_type == 'serverTest' and pubTest == true and levelSelected == null and status.count == 1}">
@@ -233,7 +235,7 @@
 					<td title="<fmt:message key="ib_form"/>"><fmt:message key="component"/><b class="boldStar">*</b> : </td>
 					<td>
 						<select name="component">
-							<option value=""></option>
+							<option>
 							<c:forEach var="discipline" items="${disciplines}" varStatus="status">
 								<c:choose>
 								<c:when test="${publication_type == 'serverTest' and pubTest == true and discSelected == null and status.count == 1}">
@@ -276,31 +278,25 @@
 				    <td title="<fmt:message key="ib_dl"/>"><fmt:message key="Telecharger"/> :</td>
 				    <td><input type="checkbox" name="download" <c:out value="${checkedDownloadField}"/>></td>
 			   	</tr>
-				<!--<tr class="odd">
-					<td title="<fmt:message key="ib_hq"/>"><fmt:message key="hd"/> : </td>
-					<td><input type="checkbox" name="hd" <c:out value="${checkedHdField}"/>> <font class="littleFont"><fmt:message key="uploadmessage4"/></font> </td>
-				</tr>-->
 				<tr class="odd">
 				    <td title="<fmt:message key="ib_restrictionuds"/> ${univName}"><fmt:message key="restrictionuds"/> ${univAcronym} :</td>
-				    <td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/>> <font class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</font></td>
+				    <td><input type="checkbox" name="restrictionuds" <c:out value="${checkedRestUdsField}"/>> <span class="littleFont"><fmt:message key="uploadmessage6"/> ${univAcronym}</span></td>
 			   	</tr>
-			   	<!--  <tr class="odd">
-					  	<td title="<fmt:message key="ib_permission"/>"><fmt:message key="permission"/><b class="boldStar">*</b> :</td>
-					   	<td><input type="checkbox" name="permission" <c:out value="${checkedPermField}"/> <c:out value="${disabledField}"/>><font class="littleFont"><fmt:message key="uploadmessage7"/> ${univName} <fmt:message key="uploadmessage7b"/></font></td>
-			   	</tr>-->
 				<tr class="even">
 					<td title="<fmt:message key="ib_file"/>"><fmt:message key="file"/><b class="boldStar">*</b> : </td>
 					<td><input type="file" name="media" id="media" class="field"> </td>
 				</tr>
 				<tr>
 			    	<td class="chpsObl"><b class="boldStar">*</b>: <fmt:message key="requiredField"/></td>
+			    	<td></td>
 			    </tr>
 				<tr>
 					<td><input type="submit" name="valider" onclick="javascript:document.getElementById('process').style.visibility='visible';" value="<fmt:message key="sendFile"/>"> </td>
-					<td><img id="process" src="../files/img/squaresCircle.gif" /></td>
+					<td><img id="process" src="../files/img/squaresCircle.gif" alt="process..."/></td>
 				</tr>
 				<tr>
 					<td><a href="<c:url value="${gobackurl}" />"><fmt:message key="Retour"/></a></td>
+					<td></td>
 		    	</tr>
 				
 				</table>

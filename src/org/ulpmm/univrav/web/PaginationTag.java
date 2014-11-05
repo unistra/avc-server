@@ -92,17 +92,17 @@ public class PaginationTag extends TagSupport {
 			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) pageContext.getSession().getAttribute("language")));
 			
 			/* Link to the previous page */
-			out.println("<a href=\"" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&page=" : "?page=") + ((currentPage-1) > 0 ? currentPage-1 : 1)  + (resultPageName.equals("tags")? "&tags="+tags :"") + "#tableheader\">" + bundle.getString("Precedent") + "<img src=\"../files/img/R.png\"></a>&nbsp;");
+			out.println("<a href=\"" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&amp;page=" : "?page=") + ((currentPage-1) > 0 ? currentPage-1 : 1)  + (resultPageName.equals("tags")? "&amp;tags="+tags :"") + "#tableheader\">" + bundle.getString("Precedent") + "<img src=\"../files/img/R.png\" alt=\"prev\"></a>&nbsp;");
 
 			/* Links with page numbers to the pages */
 			for( int i=begin ; i<= end ; i++)
-				out.println((i != currentPage ? "<a class=\"numpage\" href=\"" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&page=" : "?page=") + i + (resultPageName.equals("tags")? "&tags="+tags :"") + "#tableheader\">" : "<b class=\"currentnumpage\">") + i + (i != currentPage ? "</a>" : "</b>") +"&nbsp;");
+				out.println((i != currentPage ? "<a class=\"numpage\" href=\"" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&amp;page=" : "?page=") + i + (resultPageName.equals("tags")? "&amp;tags="+tags :"") + "#tableheader\">" : "<b class=\"currentnumpage\">") + i + (i != currentPage ? "</a>" : "</b>") +"&nbsp;");
 		
 			
 			// Combobox
 			int combosize=10;
 			
-			out.println("<select name=combopages onchange=\"javascript:document.location.href='" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&page=" : "?page=") + "'+this.value+'" + (resultPageName.equals("tags")? "&tags="+tags :"") + "#tableheader'\" />");
+			out.println("<select name=combopages onchange=\"javascript:document.location.href='" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&amp;page=" : "?page=") + "'+this.value+'" + (resultPageName.equals("tags")? "&amp;tags="+tags :"") + "#tableheader'\">");
 			out.println("<option value=''>page</option>");
 			for(int i=1;i<=pagesNumber;i++) {
 								
@@ -116,7 +116,7 @@ public class PaginationTag extends TagSupport {
 						
 			
 			/* Link to the next page */
-			out.println("<a href=\"" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&page=" : "?page=") + ((currentPage+1) <= pagesNumber ? currentPage+1 : pagesNumber) + (resultPageName.equals("tags")? "&tags="+tags :"") + "#tableheader\"><img src=\"../files/img/F.png\">"+ bundle.getString("Suivant") + "</a>&nbsp;");
+			out.println("<a href=\"" + resultPageName + sessionId + (paramsUrl!=null && !paramsUrl.equals("") ? paramsUrl+"&amp;page=" : "?page=") + ((currentPage+1) <= pagesNumber ? currentPage+1 : pagesNumber) + (resultPageName.equals("tags")? "&amp;tags="+tags :"") + "#tableheader\"><img src=\"../files/img/F.png\" alt=\"next\">"+ bundle.getString("Suivant") + "</a>&nbsp;");
 
 			
 		}

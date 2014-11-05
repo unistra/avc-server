@@ -7,9 +7,11 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
   <head>
+
+  	<meta charset="utf-8">
     
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/></title>
 
@@ -45,7 +47,7 @@
 		    	<c:import url="./links.jsp" />
 	    	</div>
 	    	
-	    	<p id="nbr">To show a formation into the table "collection" of the home page, just complete the line with position=1</p>
+	    	<p class="nbr">To show a formation into the table "collection" of the home page, just complete the line with position=1</p>
 	    	
 	    	<display:table id="selections" name="selections" requestURI="${viewurl}" class="displaytag">
 	    		<display:column property="position" title="Position" sortable="true"/>
@@ -64,7 +66,7 @@
 	    		<a href="<c:url value="./admin_addselection"/>">Add</a>	
 	    	</div>
 	    	<br>
-	    	<p id="nbr">${number} selections</p>
+	    	<p class="nbr">${number} selections</p>
 	    </div>
 	    	
 	    <div class="footer">

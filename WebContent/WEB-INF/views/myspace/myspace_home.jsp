@@ -6,10 +6,12 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
   <head>
     
+    <meta charset="utf-8">
+
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/> - <fmt:message key="Cours enregistr&eacute;s"/></title>
 
 	<link rel="stylesheet" type="text/css" href="../files/thickbox/thickbox.css" media="screen">
@@ -85,7 +87,7 @@
 	    	<c:choose>
 			<c:when test="${!empty courses}">	
 	    		<div class="course">
-					<table cellspacing="0">
+					<table>
 						<tr class="tableheader" id="tableheader">
 							<th colspan="5" id="courses"><fmt:message key="Mes cours"/></th>
 							<th colspan="1"><fmt:message key="Editer"/></th>

@@ -26,8 +26,8 @@ function modifyPlayerSize() {
 				
 	// when player 320 260
 	if((playerWidth==playerMinWidth) && (playerHeight==playerMinHeight)) {
-		player.style.width = playerMaxWidth;
-		player.style.height = playerMaxHeight;
+		player.width = playerMaxWidth;
+		player.height = playerMaxHeight;
 		playerWidth=playerMaxWidth;
 		playerHeight=playerMaxHeight;
 		document.getElementById("linkplayersize").style.display="none";
@@ -35,8 +35,8 @@ function modifyPlayerSize() {
 	}
 	// when player 640 480
 	else {
-		player.style.width = playerMinWidth;
-		player.style.height = playerMinHeight;
+		player.width = playerMinWidth;
+		player.height = playerMinHeight;
 		playerWidth=playerMinWidth;
 		playerHeight=playerMinHeight;
 		document.getElementById("linkplayersize").style.display="block";

@@ -23,7 +23,7 @@ th {
 	font-size: 12px;
 }
 
-th#courses {
+th#courses, th#lastcourses, th#selectioncourses, th#collectioncourses {
 	color: #FFFFFF;
 	font-size: 14px;
 }
@@ -32,6 +32,10 @@ td {
 	padding-left: 5px;
 	font-size: 11px;
 	border-width: 0px;
+}
+
+td.nowrap {
+	white-space: nowrap;
 }
 
 /* Classes to alternate the color of the rows of the courses table */

@@ -5,9 +5,12 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
   <head>
+  	
+  	<meta charset="utf-8">
+  	<meta name="keywords" content="flash, cours audio, cours video, cours live, cours en direct, synchronisation de médias, audiocours, videocours">
     
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/></title>
 
@@ -36,8 +39,6 @@
 	<script type="text/javascript" src="../files/thickbox/thickbox.js"></script>
 	<script type='text/javascript' src="../files/js/flexcroll.js"></script>
 		
-	<meta name="keywords" content="flash, cours audio, cours video, cours live, cours en direct, synchronisation de médias, audiocours, videocours">
-	
 	<!-- google analytics -->
 	<c:import url="include/google_analytics.jsp" />
 		
@@ -87,9 +88,9 @@
 	    		
 	    	
 	    		<div class="flexcroll">
-	    		<table cellspacing="0" class="tableHome">
+	    		<table class="tableHome">
 					<tr class="tableheader">
-						<th colspan="3" id="courses"><fmt:message key="Les derniers cours"/></th>
+						<th colspan="2" id="lastcourses"><fmt:message key="Les derniers cours"/></th>
 					</tr>
 					<c:import url="include/homecourselist.jsp">
 						<c:param name="courses" value="lastcourses"/>
@@ -98,9 +99,9 @@
 				</div>
 				
 				<div class="flexcroll">
-	    		<table cellspacing="0" class="tableHome">
+	    		<table class="tableHome">
 					<tr class="tableheader">
-						<th colspan="2" id="courses"><fmt:message key="selection"/></th>
+						<th colspan="2" id="selectioncourses"><fmt:message key="selection"/></th>
 					</tr>
 					<c:import url="include/homecourselist.jsp">
 						<c:param name="courses" value="selectioncourses"/>
@@ -109,12 +110,12 @@
 	    		</div>
 				
 				<div class="flexcroll">	
-				<table cellspacing="0" class="tableHome">
+				<table class="tableHome">
 					<tr class="tableheader">
 						<c:url var="permaformation" scope="page" value="${serverUrl}/avc/courses">
 							<c:param name="formation" value="${collectioncode}"/>
 						</c:url>	
-						<th colspan="3" id="courses"><fmt:message key="collection"/>: <a href="${permaformation}"><b class="titleColl">${collectionname}</b></a></th>
+						<th colspan="2" id="collectioncourses"><fmt:message key="collection"/>: <a href="${permaformation}"><b class="titleColl">${collectionname}</b></a></th>
 					</tr>
 					<c:import url="include/homecourselist.jsp">
 						<c:param name="courses" value="collectioncourses"/>

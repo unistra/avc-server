@@ -7,9 +7,11 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html>
   <head>
+
+  	<meta charset="utf-8">
     
     <title><fmt:message key="Univ-R AV Audiovid&eacute;cours"/></title>
 
@@ -57,7 +59,7 @@
 		    	<form method="POST" action="<c:url value="./gp_validatebuilding" />">
 		    		<input type="hidden" name="buildingid" value="${building.buildingid}">
 		    		<input type="hidden" name="action" value="${action}">
-			    	<table cellspacing="0">
+			    	<table>
 			    		<tr class="tableheader">
 							<td class="littleFont">Name</td>
 							<td class="littleFont">ImageFile</td>

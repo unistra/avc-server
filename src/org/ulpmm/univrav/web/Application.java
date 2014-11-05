@@ -5518,7 +5518,7 @@ public class Application extends HttpServlet {
 			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, "User : " + request.getParameter("id"));
 		}	
 		
-		List<String> types = Arrays.asList("","ldap","local");
+		List<String> types = Arrays.asList("ldap","local");
 		request.setAttribute("types",types);
 		request.setAttribute("action","edit"); 
 		request.setAttribute("user", service.getUser(Integer.parseInt(request.getParameter("id"))));
@@ -5574,7 +5574,7 @@ public class Application extends HttpServlet {
 			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
 		}	
 		
-		List<String> types = Arrays.asList("","ldap","local");
+		List<String> types = Arrays.asList("ldap","local");
 		request.setAttribute("types",types);
 		request.setAttribute("action","add"); 
 		getServletContext().getRequestDispatcher("/WEB-INF/views/admin/admin_edituser.jsp").forward(request, response);
