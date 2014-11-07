@@ -611,6 +611,10 @@ public class Application extends HttpServlet {
 			displayPublicationPage(request,response);
 		else if(page.equals("/publication_validatepublication")) 
 			validatePublication(request,response);
+		else if(page.equals("/publication_screencast")) 
+			displayPublicationScreencastPage(request,response);
+		else if(page.equals("/publication_screencast_validatepublication")) 
+			validatePublicationScreencast(request,response);
 		else if( page.equals("/live"))
 			displayLivePage(request, response);
 		else if( page.equals("/recorded"))
@@ -918,6 +922,10 @@ public class Application extends HttpServlet {
 				if(request.getParameter("returnPage")!=null && request.getParameter("returnPage").equals("publication")) {
 					request.setAttribute("publication_type", "serverCas");
 					getServletContext().getRequestDispatcher("/avc/publication").forward(request, response);
+				}
+				else if(request.getParameter("returnPage")!=null && request.getParameter("returnPage").equals("publication_screencast")) {
+					request.setAttribute("publication_type", "serverCas");
+					getServletContext().getRequestDispatcher("/avc/publication_screencast").forward(request, response);
 				}
 				//Myspace
 				else if(request.getParameter("returnPage")!=null && request.getParameter("returnPage").equals("myspace")) {
@@ -4149,6 +4157,9 @@ public class Application extends HttpServlet {
 			if(returnPage!=null && returnPage.equals("publication")) {
 				response.sendRedirect("./publication?publication_type=serverLocal");
 			}
+			else if(returnPage!=null && returnPage.equals("publication_screencast")) {
+				response.sendRedirect("./publication_screencast?publication_type=serverLocal");
+			}
 			// return home by default
 			else {
 				response.sendRedirect("./myspace_home");
@@ -4165,6 +4176,10 @@ public class Application extends HttpServlet {
 			// add return page (publication)
 			if(returnPage!=null && returnPage.equals("publication")) {
 				request.setAttribute("gobackurl", "./publication");
+				request.setAttribute("posturl", "./authentication_localvalid?returnPage="+returnPage);
+			}
+			else if(returnPage!=null && returnPage.equals("publication_screencast")) {
+				request.setAttribute("gobackurl", "./publication_screencast");
 				request.setAttribute("posturl", "./authentication_localvalid?returnPage="+returnPage);
 			}
 			//by default, valid the form to go to myspace
@@ -4246,6 +4261,9 @@ public class Application extends HttpServlet {
     						// publication redirect
     						if(returnPage!=null && returnPage.equals("publication")) {
     							response.sendRedirect("./publication?publication_type=serverLocal");
+    						}
+    						else if(returnPage!=null && returnPage.equals("publication_screencast")) {
+    							response.sendRedirect("./publication_screencast?publication_type=serverLocal");
     						}
     						// by default
     						else {
@@ -5935,6 +5953,348 @@ public class Application extends HttpServlet {
 	}
 
 	
+	/**
+	 * Method to display publication screencast page
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	private void displayPublicationScreencastPage(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {  
+
+		if(request.getParameter("publication_type")!=null) {
+			request.setAttribute("publication_type", request.getParameter("publication_type"));	
+		}
+
+		User user = service.getSessionUser(session);
+		// if user is present and activate
+		if(user!=null && user.isActivate()) {
+			request.setAttribute("user", user);
+			// Button disconnect
+			session.setAttribute("btnDeco", true);
+		}
+
+		/* Saves the page for the style selection thickbox return */
+		session.setAttribute("previousPage", "/publication_screencast");
+
+		/* the discipline box */
+		request.setAttribute("disciplines", service.getAllDiscipline());
+
+		/* the levels box */
+		request.setAttribute("levels", service.getAllLevels());
+
+		// serveur url for test url
+		request.setAttribute("serverUrl", serverUrl);
+
+		// publication free
+		request.setAttribute("pubFree", pubFree);
+		
+		// publication test
+		request.setAttribute("pubTest", pubTest);
+
+		// univ acronym
+		request.setAttribute("univAcronym", univAcronym);
+		// univ name
+		request.setAttribute("univName", univName);
+				
+		// testKeyWord1. Uncapitalize the fist char
+		request.setAttribute("testKeyWord1", (testKeyWord1.substring(0, 1).toLowerCase()+testKeyWord1.substring(1)));
+
+		// log stats
+		if(logstats) {
+			service.addLogUserAction(request, service.getSessionUser(session), null, LogUserAction.typeAccess, null);
+		}
+		
+		ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+		request.setAttribute("err_title", bundle.getString("err_title"));
+		request.setAttribute("err_name", bundle.getString("err_name"));
+		request.setAttribute("err_lvl", bundle.getString("err_lvl"));
+		request.setAttribute("err_component", bundle.getString("err_component"));
+		request.setAttribute("err_file", bundle.getString("err_file"));
+		
+		/* Displays the view */ 
+		getServletContext().getRequestDispatcher("/WEB-INF/views/publication_screencast.jsp").forward(request, response);
+
+
+	}	
 	
+	
+	
+	/**
+	 * Method to validate the publication form
+	 * 
+	 * @param request the request send by the client to the server
+	 * @param response the response send by the server to the client
+	 * @throws ServletException if an error occurred
+	 * @throws IOException if an error occurred
+	 */
+	@SuppressWarnings("unchecked")
+	private void validatePublicationScreencast(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+				
+		String title, description, name, firstname, date, formation, genre,tags, fileName, level, component, publication_type, login, email;
+		title = description = name = firstname = date = formation = genre = tags = fileName = level = component = publication_type = login = email = "";
+		boolean visible, restrictionuds, download;
+		visible=restrictionuds=download=false;
+		String message, message2, ahref;
+		message = message2 = ahref = "";
+		String messageType = "information";
+		String requestDispatcher = "/WEB-INF/views/message.jsp";
+		Calendar cal = new GregorianCalendar();        	
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Date d = new Date();
+		boolean continuer=true;
+        ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+        
+
+		if( ServletFileUpload.isMultipartContent(new ServletRequestContext(request)) ) {
+
+			try {
+				/* Prepares to parse the request to get the different elements of the POST */
+				FileItemFactory factory = new DiskFileItemFactory();
+				ServletFileUpload upload = new ServletFileUpload(factory);
+				List<FileItem> items = upload.parseRequest(request);
+
+				/* Processes the different elements */
+				Iterator<FileItem> iter = items.iterator();
+				while (iter.hasNext() && continuer) {
+					FileItem item = (FileItem) iter.next();
+
+					/* If the element is a form field, retrieves the info */
+					if (item.isFormField()) {
+
+						if(item.getFieldName().equals("title"))
+							title = item.getString("UTF8");
+						else if(item.getFieldName().equals("description"))
+							description = item.getString("UTF8");
+						else if(item.getFieldName().equals("date")){
+							date = item.getString("UTF8");
+							try {
+								d = sdf.parse(date);					        	
+							}
+							catch( ParseException pe) {
+								logger.error("Parse date error",pe);
+							}
+							finally {
+								cal.setTime(d);
+							}
+						}
+						else if(item.getFieldName().equals("level"))
+							level = item.getString("UTF8");
+						else if(item.getFieldName().equals("component"))
+							component = item.getString("UTF8");
+						else if(item.getFieldName().equals("genre")) {
+							genre = item.getString("UTF8");
+						}
+						else if(item.getFieldName().equals("name")) {
+							name = item.getString("UTF8");
+						}
+						else if(item.getFieldName().equals("firstname")) {
+							firstname = item.getString("UTF8");
+						}
+						else if(item.getFieldName().equals("visible")) {
+							visible=true;
+						}
+						else if(item.getFieldName().equals("download")) {
+							download=true;
+						}
+						else if(item.getFieldName().equals("tags")) {
+							tags = item.getString("UTF8");
+						}
+						else if(item.getFieldName().equals("restrictionuds")) {
+							restrictionuds=true;
+						}
+						else if(item.getFieldName().equals("login")) {
+							login=item.getString("UTF8");
+						}
+						else if(item.getFieldName().equals("email")) {
+							email=item.getString("UTF8");
+						}
+						else if(item.getFieldName().equals("publication_type")) {
+							publication_type=item.getString("UTF8");
+						}
+
+
+					} /* If the element is a file (the last element */
+					else {
+						fileName = item.getName();
+						String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1,fileName.length()).toLowerCase() : "";
+						
+						/* Checks the extension of the item to have a supported file format */				
+						StringTokenizer tokenMediaFormats = new StringTokenizer("mp4");
+						boolean isExtVal = false;
+						while(tokenMediaFormats.hasMoreTokens() && !isExtVal) {
+							isExtVal = extension.equals(tokenMediaFormats.nextToken());
+						}
+						
+						// Test the form
+						if(fileName==null || fileName.equals("")) {
+							messageType = "error";
+							message = bundle.getString("err_file");
+							requestDispatcher="/avc/publication_screencast";								
+						}
+						/* Checks the extension of the item to have a supported file format */
+						else if( !isExtVal ) {
+
+							messageType = "error";
+							message = bundle.getString("err_fileformat")+" : " + extension;
+							requestDispatcher="/avc/publication_screencast";
+						}
+						else if(title==null || title.equals("")) {
+							messageType = "error";
+							message = bundle.getString("err_title");
+							requestDispatcher="/avc/publication_screencast";
+						}
+						else if(name==null || name.equals("")) {
+							messageType = "error";
+							message = bundle.getString("err_name");
+							requestDispatcher="/avc/publication_screencast";
+						}
+						else if(level==null || level.equals("")) {
+							messageType = "error";
+							message = bundle.getString("err_lvl");
+							requestDispatcher="/avc/publication_screencast";
+						}
+						else if(component==null || component.equals("")) {
+							messageType = "error";
+							message = bundle.getString("err_component");
+							requestDispatcher="/avc/publication_screencast";
+						}
+						else {
+							
+							String clientIP = request.getRemoteAddr();
+							String timing = "n-1";
+							String type = (extension.equals("mp3") || extension.equals("ogg") || extension.equals("wav") || extension.equals("wma")) ? "audio" : "video";
+							
+							// Generate pseudo code etp for formation
+							if(!level.equals("") && !component.equals("")) {
+								formation=component+"-"+level;
+							}
+							// for old client
+							else {
+								//FORMATION DANS AUTRE AUTRE
+								formation="00-O0";
+							}
+							
+					        User user=null; // user audiovideocours
+					        
+					        if(!login.equals("")) { 
+					            // getting the user
+					            user = service.getUser(login);
+					        }
+							
+							Course c = new Course(
+									service.getNextCoursId(),
+									new Timestamp(new Date().getTime()),
+									type,
+									title.equals("") ? null : title,
+									description.equals("") ? null : description,
+									formation.equals("") ? null : formation,
+									(name == null || name.equals("")) ? null : name,
+									(firstname == null || firstname.equals("")) ? null : firstname,
+									clientIP,
+									0, // The duration can't be set yet
+									(genre == null || genre.equals("")) ? null : genre,
+									visible,
+									0,
+									timing,
+									user!=null ? user.getUserid() : null,
+									null,
+									download,
+									restrictionuds,
+									0,
+									volume,
+									new Timestamp(new Date().getTime()),
+									null
+							);
+
+							/* Sends the creation of the course to the service layer */
+							service.mediaUpload(c, item, tags, serverUrl,sepEnc,coursesFolder);
+//								
+//								ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+							
+							String access_url = recordedInterfaceUrl + "?id="+c.getCourseid();
+							String formation_fullname = !formation.equals("") ? service.getFormationFullName(formation) : "";
+							
+							String emailUserSubject = bundle.getString("email_addcourse_user_subject");
+							String emailUserMessage = MessageFormat.format(bundle.getString("email_addcourse_user_message"), 
+									access_url, title, description, name, firstname, formation_fullname, genre, supportLink, docLink, 
+									access_url, title, description, name, firstname, formation_fullname, genre, supportLink, docLink);
+						
+							
+							// If the user is not anonymous and his email is present
+							if(email!=null && !email.equals("")) {
+								service.sendMail(emailUserSubject,emailUserMessage,email);
+							}
+
+							// If course is present in the recorded page
+							if(c.isVisible() && (c.getGenre()!=null ? !c.getGenre().toUpperCase().equals(testKeyWord1.toUpperCase()) : true) && (c.getTitle()!=null ? !c.getTitle().toUpperCase().startsWith(testKeyWord2.toUpperCase()) : false)) {
+								// Sending email for admins
+								String emailAdminSubject = bundle.getString("email_addcourse_admin_subject");
+								String emailAdminMessage = MessageFormat.format(bundle.getString("email_addcourse_admin_message"),
+										title, access_url, name+" "+firstname, user!=null && user.getEmail()!=null ? user.getEmail() : "", genre);
+								
+								if(!adminEmail1.equals(""))
+									service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail1);
+								if(!adminEmail2.equals(""))
+									service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail2);
+								if(!adminEmail3.equals(""))
+									service.sendMail(emailAdminSubject,emailAdminMessage,adminEmail3);
+							}
+
+															
+							message = bundle.getString("addcourse_message1a")+" \"" + c.getTitle() +"\" "+bundle.getString("addcourse_message1b")+": ";
+							ahref = recordedInterfaceUrl + "?id="+c.getCourseid();
+							message2 = bundle.getString("addcourse_message2");
+							
+							// log stats
+							if(logstats) {
+								service.addLogUserAction(request, service.getSessionUser(session), c, LogUserAction.typeAdd, fileName);
+							}	
+						}
+					}
+				}
+			}
+			catch( FileUploadException fue) {
+				messageType = "error";
+				message = "Error : File upload error";
+			}
+		}
+		else {
+			messageType = "error";
+			message = "Error: Incorrect file upload request";
+		}
+
+
+		
+		if(requestDispatcher.equals("/avc/publication_screencast")) {
+			request.setAttribute("title", title);
+			request.setAttribute("description", description);
+			request.setAttribute("name", name);
+			request.setAttribute("firstname", firstname);
+			request.setAttribute("ue", formation);
+			request.setAttribute("genre", genre);
+			request.setAttribute("tags", tags);
+			request.setAttribute("visible", visible!=false ? visible : null);
+			request.setAttribute("download", download!=false ? download : null);
+			//request.setAttribute("hd", hq!=false ? hq : null);
+			request.setAttribute("restrictionuds", restrictionuds!=false ? restrictionuds : null);
+			request.setAttribute("levelSelected", level);
+			request.setAttribute("discSelected", component);
+			request.setAttribute("login", login);
+			request.setAttribute("email", email);
+			request.setAttribute("publication_type", publication_type);
+		}
+				
+		/* Displays the result of the upload process */
+		request.setAttribute("messagetype", messageType);
+		request.setAttribute("message", message);
+		request.setAttribute("messagetype2", messageType);
+		request.setAttribute("message2", message2);
+		request.setAttribute("ahref", ahref);
+		getServletContext().getRequestDispatcher(requestDispatcher).forward(request, response);
+	}
 
 }

@@ -157,3 +157,9 @@ img#process {
 .boldStar {
 	color:red;
 }
+
+#dropzonePreview {
+	width:200px; 
+    height:150px; 
+    border: 10px dashed blue;
+}

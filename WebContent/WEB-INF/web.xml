@@ -129,6 +129,8 @@
 			<url-pattern>/avc/myspace_mediaupload</url-pattern>
 			<url-pattern>/avc/publication</url-pattern>
 			<url-pattern>/avc/publication_validatepublication</url-pattern>
+			<url-pattern>/avc/publication_screencast</url-pattern>
+			<url-pattern>/avc/publication_screencast_validatepublication</url-pattern>
 			<url-pattern>/avc/authentication_cas</url-pattern>
 			<url-pattern>/avc/authentication_local</url-pattern>
 			<url-pattern>/avc/authentication_localvalid</url-pattern>
