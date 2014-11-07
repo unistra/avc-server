@@ -204,6 +204,9 @@
 
         
             <!-- FORMULAIRE -->
+            
+            <c:if test="${publication_type != null}">
+            
             <form id="uploadform" name="uploadform" class="dropzone" action="<c:url value="./publication_screencast_validatepublication"/>" enctype="multipart/form-data" method="POST">
                 
                 <input type="hidden" name="publication_type" value="${publication_type}">
@@ -373,7 +376,7 @@
                 
                 </table>
             </form>
-            
+                        
             <br>
             
             <div class="divCenter">
@@ -381,6 +384,8 @@
                 <p><fmt:message key="publicationmessage3"/><a href="${serverUrl}/avc/test">${serverUrl}/avc/test</a></p>
                 <p><fmt:message key="publicationmessage4"/></p>
             </div>
+            
+            </c:if>
             
         </div>
             
