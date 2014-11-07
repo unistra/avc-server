@@ -57,6 +57,7 @@
             init: function() {
                                  
             	var myDropzone = this;
+            	$('#sbmtbtn').attr('disabled', true)
             	
             	this.element.querySelector("input[type=submit]").addEventListener("click", function(e) {
 
@@ -370,7 +371,7 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td><input type="submit" id="sbmtbtn" name="valider" onclick="javascript:document.getElementById('process').style.visibility='visible'" value="<fmt:message key="publier"/>" disabled> </td>
+                        <td><input type="submit" id="sbmtbtn" name="valider" onclick="javascript:document.getElementById('process').style.visibility='visible'" value="<fmt:message key="publier"/>"> </td>
                         <td><img id="process" src="../files/img/squaresCircle.gif" alt="process"/></td>
                     </tr>
                 
