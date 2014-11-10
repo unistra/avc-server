@@ -36,6 +36,7 @@
         	acceptedFiles: 'video/mp4',
         	addRemoveLinks: false,
        		maxFiles: 1,
+       		maxFilesize: 5000,
          	uploadMultiple: false,
 			previewTemplate: "<div class=\"dz-preview dz-file-preview\"><div class=\"dz-details\"><div class=\"dz-filename\"><span data-dz-name></span></div><div class=\"dz-size\" data-dz-size></div></div></div>",
         	dictDefaultMessage: '',
