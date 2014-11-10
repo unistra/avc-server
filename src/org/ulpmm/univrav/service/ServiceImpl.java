@@ -1842,4 +1842,18 @@ public class ServiceImpl implements IService {
 	public boolean checkZipFile(String zip) {
 		return fs.checkZipFile(zip);
 	}
+	
+	/**
+	 * Creates a course from a publication of a screencast by the client
+	 * @param c the course to create
+	 * @param mediaFile the media file of the course to create
+	 * @param tags tags list
+	 * @param serverUrl the URL of the application on the server
+	 * @param sepEnc true if medias encodage is separated
+	 * @param coursesFolder the courses folder
+	 */
+	public synchronized void screencastUpload( Course c, FileItem mediaFile, String tags, String serverUrl, boolean sepEnc,String coursesFolder) {
+		ScreencastUpload mu = new ScreencastUpload(db, fs, c, mediaFile, tags, this, serverUrl, sepEnc,coursesFolder);
+		mu.start();
+	}
 }

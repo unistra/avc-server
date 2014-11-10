@@ -243,6 +243,37 @@ mv $MediaFolder/"$CourseID"_tmp.mp4 $MediaFolder/"$CourseID".mp4
 bash $PTHSCR/convertAll2Webm.sh $MediaFolder $CourseID mp4
 ;;
 
+
+CSC)
+ORI="ori_"
+#move atom
+/usr/bin/qt-faststart $MediaFolder/$ORI$CourseID.$Extension $MediaFolder/$CourseID.$Extension &> /dev/null
+#mp4Tag
+/usr/bin/AtomicParsley $MediaFolder/$CourseID.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
+# link ipod
+ln -s $MediaFolder/"$CourseID".mp4 $MediaFolder/"$CourseID"_ipod.mp4
+# remove ori
+rm $MediaFolder/$ORI$CourseID.$Extension
+
+#convertAllToMp3
+bash $PTHSCR/convertAll2Mp3.sh $MediaFolder $CourseID "mp4"
+
+# test if no sound
+if [ `stat -c '%s' $MediaFolder/$CourseID.mp3` -eq 0 ]
+then
+	MediaType=$(echo "$MediaType-6"|bc)
+else
+	#mp3Tag
+	#/usr/bin/mp3info -t "$TITLE" -a "$AUTHOR" -y "$DATE" -l "$FORMATION" -c "$COMMENT" $MediaFolder/$CourseID.mp3 &> /dev/null
+	#mp3 tag image
+	/usr/bin/eyeD3 -t "$TITLE" -a "$AUTHOR" -Y "$DATE" -A "$FORMATION" -c "::$COMMENT" --to-v2.3 --add-image=$PTHSCR/cover.jpg:FRONT_COVER $MediaFolder/$CourseID.mp3 &> /dev/null
+fi
+
+
+# webm for html5
+bash $PTHSCR/convertAll2Webm.sh $MediaFolder $CourseID mp4
+;;
+
 esac
 
 # Maj du mediatype sur le serveur avc

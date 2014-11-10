@@ -910,4 +910,16 @@ public interface IService {
 	 * @return true if the zip file is ok
 	 */
 	public boolean checkZipFile(String zip);
+	
+	/**
+	 * Creates a course from a publication of a screencast by the client
+	 * @param c the course to create
+	 * @param mediaFile the media file of the course to create
+	 * @param tags tags list
+	 * @param serverUrl the URL of the application on the server
+	 * @param sepEnc true if medias encodage is separated
+	 * @param coursesFolder the courses folder
+	 */
+	public void screencastUpload( Course c, FileItem mediaFile, String tags, String serverUrl, boolean sepEnc, String coursesFolder);
+
 }

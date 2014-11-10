@@ -2465,7 +2465,12 @@ public class Application extends HttpServlet {
 					if(type == null || type.equals("")) {
 						// if audio with mp3 and ogg, or video with webm-mp4, go to html5 page, else, go to flash
 						String recordinterface = (String) session.getAttribute("recordinterface");
+						// if user demand html5 and if audio have ogg+mp3 or video have mp4+webm, go html5
 						if(recordinterface.equals("html5") && ((c.getType().equals("audio") && c.isAvailable("ogg") && c.isAvailable("mp3")) || (c.getType().equals("video") && c.isAvailable("webm")))) {
+							type = "html5";
+						}
+						// if user demand flash but flash not available and html5 available, go to html5
+						else if(recordinterface.equals("flash") && !c.isAvailable("flash") && ((c.getType().equals("audio") && c.isAvailable("ogg") && c.isAvailable("mp3")) || (c.getType().equals("video") && c.isAvailable("webm")))) {
 							type = "html5";
 						}
 						else {
@@ -6211,9 +6216,7 @@ public class Application extends HttpServlet {
 							);
 
 							/* Sends the creation of the course to the service layer */
-							service.mediaUpload(c, item, tags, serverUrl,sepEnc,coursesFolder);
-//								
-//								ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
+							service.screencastUpload(c, item, tags, serverUrl,sepEnc,coursesFolder);
 							
 							String access_url = recordedInterfaceUrl + "?id="+c.getCourseid();
 							String formation_fullname = !formation.equals("") ? service.getFormationFullName(formation) : "";
