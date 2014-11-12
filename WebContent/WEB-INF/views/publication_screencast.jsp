@@ -44,7 +44,7 @@
         	autoDiscover: false,
         	paramName: 'media',
         	previewsContainer: '#dropzonePreview',
-        	clickable: false,
+        	clickable:'#dropzonePreview',
         	accept: function(file, done) {
 				$('#sbmtbtn').removeAttr('disabled');
 				document.getElementById('error').innerHTML = '';
