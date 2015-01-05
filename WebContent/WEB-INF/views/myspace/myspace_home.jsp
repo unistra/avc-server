@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="pt" uri="/WEB-INF/pagination-taglib.tld" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
@@ -63,10 +64,16 @@
 				</c:choose>		
 	    	</div>
 	    	<br>
-	    	<div class=btnMyspace>	
-	    		<div class="btnUpload">
-	    			<a href="<c:url value="./myspace_upload" />" title="<fmt:message key="upload"/>" ><fmt:message key="upload"/></a>
-	    		</div>
+	    	<div class=btnMyspace>
+
+	    		<div class=btnMyspace>
+ 
+                <!-- check if publisher ldap profile can publish -->
+                <c:if test="${(fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)}">
+		    		<div class="btnUpload">
+		    			<a href="<c:url value="./myspace_upload" />" title="<fmt:message key="upload"/>" ><fmt:message key="upload"/></a>
+		    		</div>
+		    	</c:if>
 	    		
 	    		<!-- change mdp for local user -->
 	    		<c:if test="${$userLocalLogin != null}">
