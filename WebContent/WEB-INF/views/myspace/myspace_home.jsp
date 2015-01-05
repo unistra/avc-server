@@ -65,11 +65,9 @@
 	    	</div>
 	    	<br>
 	    	<div class=btnMyspace>
-
-	    		<div class=btnMyspace>
  
                 <!-- check if publisher ldap profile can publish -->
-                <c:if test="${(fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)}">
+                <c:if test="${((fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)) or (publisherLdapProfiles=='all') or (fn:length(publisherLdapProfiles)==0)}">
 		    		<div class="btnUpload">
 		    			<a href="<c:url value="./myspace_upload" />" title="<fmt:message key="upload"/>" ><fmt:message key="upload"/></a>
 		    		</div>

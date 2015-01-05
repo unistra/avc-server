@@ -105,7 +105,7 @@
 
 	  	 	<!-- check if publisher ldap profile can publish -->
             <c:choose>
-            	<c:when test="${(fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)}">
+            	<c:when test="${((fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)) or (publisherLdapProfiles=='all') or (fn:length(publisherLdapProfiles)==0)}">
 
 			    	<c:if test="${pubTest == true}">
 			    		<div class="divCenter">

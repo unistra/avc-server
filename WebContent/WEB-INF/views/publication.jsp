@@ -52,7 +52,7 @@
 	       		<c:set var="borderstyleCas" value="border:2px dotted red;" />
 	    	</c:if>
 	    	<!-- check if publisher ldap profile can publish -->
-	        <c:if test="${(fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)}">
+	        <c:if test="${((fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)) or (publisherLdapProfiles=='all') or (fn:length(publisherLdapProfiles)==0)}">
 		    	<c:if test="${publication_type == 'serverFree' and pubFree == true}">
 		    	 	<c:set var="borderstyleFree" value="border:2px dotted red;" />
 		    	</c:if>
@@ -70,7 +70,7 @@
 		    			<a class="linkPubCas" href="./authentication_cas?returnPage=publication"><fmt:message key="udsAccount"/> ${univAcronym}</a>
 		    		</div>
 			    	<!-- check if publisher ldap profile can publish -->
-		            <c:if test="${(fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)}">
+		            <c:if test="${((fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)) or (publisherLdapProfiles=='all') or (fn:length(publisherLdapProfiles)==0)}">
 			    		<c:if test="${pubFree == true}">
 			    			<div class="divPubFree" style="${borderstyleFree}">
 			    				<a class="linkPubFree" href="./publication?publication_type=serverFree"><fmt:message key="free"/></a>
@@ -131,7 +131,7 @@
 
 			<!-- check if publisher ldap profile can publish -->
 	        <c:choose>
-				<c:when test="${(fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)}">
+				<c:when test="${((fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)) or (publisherLdapProfiles=='all') or (fn:length(publisherLdapProfiles)==0)}">
 					<!-- FORMULAIRE -->
 			    	<form action="<c:url value="./publication_validatepublication"/>" method="POST">
 			    		
