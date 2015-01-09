@@ -1,6 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="org.ulpmm.univrav.language.messages"/>
@@ -209,6 +210,11 @@
             
             <c:if test="${publication_type != null}">
             
+            <!-- check if publisher ldap profile can publish -->
+	        <c:choose>
+	        <c:when test="${((fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)) or (publisherLdapProfiles=='all') or (fn:length(publisherLdapProfiles)==0)}">
+				
+            
             <form id="uploadform" name="uploadform" class="dropzone" action="<c:url value="./publication_screencast_validatepublication"/>" enctype="multipart/form-data" method="POST">
                 
                 <input type="hidden" name="publication_type" value="${publication_type}">
@@ -386,6 +392,13 @@
                 <p><fmt:message key="publicationmessage3"/><a href="${serverUrl}/avc/test">${serverUrl}/avc/test</a></p>
                 <p><fmt:message key="publicationmessage4"/></p>
             </div>
+            </c:when>
+				<c:otherwise>
+					<div class="divCenter">
+						<p><fmt:message key="restrictionprofil1"/></p>
+					</div>
+				</c:otherwise>
+			</c:choose>
             
             </c:if>
             

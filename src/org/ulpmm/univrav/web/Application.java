@@ -6019,6 +6019,9 @@ public class Application extends HttpServlet {
 				
 		// testKeyWord1. Uncapitalize the fist char
 		request.setAttribute("testKeyWord1", (testKeyWord1.substring(0, 1).toLowerCase()+testKeyWord1.substring(1)));
+		
+		// publication profil
+		request.setAttribute("publisherLdapProfiles",publisherLdapProfiles);
 
 		// log stats
 		if(logstats) {
