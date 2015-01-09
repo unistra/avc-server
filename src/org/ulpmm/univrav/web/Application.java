@@ -44,7 +44,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
-//import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang.WordUtils;
+// import org.apache.commons.lang3.text.WordUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONObject;
@@ -157,6 +158,9 @@ public class Application extends HttpServlet {
 	private static boolean pubFree;
 	/** Publication test */
 	private static boolean pubTest;
+
+	/** Publication profil */
+	private static String publisherLdapProfiles;
 	
 	/** The numbers of last courses to display */
 	private static int lastCourseNumber;
@@ -325,6 +329,9 @@ public class Application extends HttpServlet {
 			pubFree = Boolean.parseBoolean(p.getProperty("pubFree"));
 			// Publication test
 			pubTest = Boolean.parseBoolean(p.getProperty("pubTest"));
+
+			// Publication profile
+			publisherLdapProfiles = p.getProperty("publisherLdapProfiles");
 			
 			// The numbers of courses to display at the same time
 			lastCourseNumber = Integer.parseInt(p.getProperty("lastCourseNumber"));
@@ -1014,7 +1021,8 @@ public class Application extends HttpServlet {
 			request.setAttribute("rssfiles", service.getRssFileList(rssTitle, rssName, true));
 			request.setAttribute("user", user);
 
-			
+			// publication profil
+			request.setAttribute("publisherLdapProfiles",publisherLdapProfiles);
 
 			// Button disconnect
 			session.setAttribute("btnDeco", true);
@@ -1130,6 +1138,9 @@ public class Application extends HttpServlet {
 		
 		// publication test
 		request.setAttribute("pubTest", pubTest);
+
+		// publication profil
+		request.setAttribute("publisherLdapProfiles",publisherLdapProfiles);
 
 		// univ acronym
 		request.setAttribute("univAcronym", univAcronym);
@@ -1961,6 +1972,8 @@ public class Application extends HttpServlet {
 			// testKeyWord1. Uncapitalize the fist char
 			request.setAttribute("testKeyWord1", (testKeyWord1.substring(0, 1).toLowerCase()+testKeyWord1.substring(1)));
 
+			// publication profil
+			request.setAttribute("publisherLdapProfiles",publisherLdapProfiles);
 								
 			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale( (String) session.getAttribute("language")));
 			request.setAttribute("err_title", bundle.getString("err_title"));
