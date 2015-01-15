@@ -128,7 +128,7 @@
 
 			<!-- check if publisher ldap profile can publish -->
 	        <c:choose>
-				<c:when test="${((fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)) or (publisherLdapProfiles=='all') or (fn:length(publisherLdapProfiles)==0)}">
+				<c:when test="${((fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)) or (publisherLdapProfiles=='all') or (fn:length(publisherLdapProfiles)==0) or ((fn:contains(publisherLdapProfiles,user.type)) and user != null)}">
 					<!-- FORMULAIRE -->
 			    	<form action="<c:url value="./publication_validatepublication"/>" method="POST">
 			    		
