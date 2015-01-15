@@ -105,7 +105,7 @@
 
 	  	 	<!-- check if publisher ldap profile can publish -->
             <c:choose>
-            	<c:when test="${((fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)) or (publisherLdapProfiles=='all') or (fn:length(publisherLdapProfiles)==0)}">
+            	<c:when test="${((fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)) or (publisherLdapProfiles=='all') or (fn:length(publisherLdapProfiles)==0) or ((fn:contains(publisherLdapProfiles,user.type)) and user != null)}">
 
 			    	<c:if test="${pubTest == true}">
 			    		<div class="divCenter">
@@ -315,7 +315,14 @@
 				</c:when>
 				<c:otherwise>
 					<div class="divCenter">
-						<p><fmt:message key="restrictionprofil1"/></p>
+						<c:choose>
+							<c:when test="${user != null}">
+								<p><fmt:message key="restrictionprofil1"/></p>
+							</c:when>
+							<c:otherwise>
+								<p><fmt:message key="restrictionprofil2"/></p>
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</c:otherwise>
 			</c:choose>

@@ -48,11 +48,9 @@
 	    	
 	    	<br>
 	    	
-	    	<c:if test="${publication_type == 'serverCas'}">
-	       		<c:set var="borderstyleCas" value="border:2px dotted red;" />
-	    	</c:if>
-	    	<!-- check if publisher ldap profile can publish -->
-	        <c:if test="${((fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)) or (publisherLdapProfiles=='all') or (fn:length(publisherLdapProfiles)==0)}">
+		    	<c:if test="${publication_type == 'serverCas'}">
+		       		<c:set var="borderstyleCas" value="border:2px dotted red;" />
+		    	</c:if>
 		    	<c:if test="${publication_type == 'serverFree' and pubFree == true}">
 		    	 	<c:set var="borderstyleFree" value="border:2px dotted red;" />
 		    	</c:if>
@@ -62,15 +60,17 @@
 		    	<c:if test="${publication_type == 'serverLocal'}">
 		       		<c:set var="borderstyleLocal" value="border:2px dotted red;" />
 		    	</c:if>
-			</c:if>
 
 		    	<!-- Choose if you have an account or not -->
 		    	<div class="pubLinks">
 		    		<div class="divPubCas" style="${borderstyleCas}">
 		    			<a class="linkPubCas" href="./authentication_cas?returnPage=publication"><fmt:message key="udsAccount"/> ${univAcronym}</a>
 		    		</div>
+		    		<div class="divPubLocal" style="${borderstyleLocal}">
+		    			<a class="linkPubLocal" href="./authentication_local?returnPage=publication"><fmt:message key="authLocalLink"/></a>
+		    		</div> 
 			    	<!-- check if publisher ldap profile can publish -->
-		            <c:if test="${((fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)) or (publisherLdapProfiles=='all') or (fn:length(publisherLdapProfiles)==0)}">
+		            <c:if test="${((fn:contains(publisherLdapProfiles,user.profile)) and (fn:length(user.profile)>0)) or (publisherLdapProfiles=='all') or (fn:length(publisherLdapProfiles)==0) or ((fn:contains(publisherLdapProfiles,user.type)) and user != null)}">
 			    		<c:if test="${pubFree == true}">
 			    			<div class="divPubFree" style="${borderstyleFree}">
 			    				<a class="linkPubFree" href="./publication?publication_type=serverFree"><fmt:message key="free"/></a>
@@ -81,9 +81,6 @@
 			    				<a class="linkPubTest" href="./publication?publication_type=serverTest"><fmt:message key="test"/></a>
 			    			</div>
 			    		</c:if>
-			    		<div class="divPubLocal" style="${borderstyleLocal}">
-			    			<a class="linkPubLocal" href="./authentication_local?returnPage=publication"><fmt:message key="authLocalLink"/></a>
-			    		</div> 
 			    	</c:if>
 		    	</div>
 		    	
@@ -306,7 +303,14 @@
 				</c:when>
 				<c:otherwise>
 					<div class="divCenter">
-						<p><fmt:message key="restrictionprofil1"/></p>
+						<c:choose>
+							<c:when test="${user != null and ((publication_type == 'serverCas') or (publication_type == 'serverLocal'))}">
+								<p><fmt:message key="restrictionprofil1"/></p>
+							</c:when>
+							<c:otherwise>
+								<p><fmt:message key="restrictionprofil2"/></p>
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</c:otherwise>
 			</c:choose>
