@@ -369,7 +369,7 @@
                         <div class="fallback">
                         	<input type="file" name="media" id="media" class="field">
                         </div>
-                        <div id="dropzonePreview"><fmt:message key="dragndrop"/></div>
+                        <div id="dropzonePreview" title="<fmt:message key="dragndrop"/>"></div>
                         </td>
                     </tr>
                     

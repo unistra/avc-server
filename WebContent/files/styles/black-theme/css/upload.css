@@ -158,8 +158,9 @@ img#process {
 }
 
 #dropzonePreview {
-	width:200px; 
-    height:150px; 
-    border: 10px dashed black;
+	width:283px; 
+    height:109px; 
+    background-image: url("../../../img/drag_and_drop.png");
+    background-repeat: no-repeat;
 }
 
