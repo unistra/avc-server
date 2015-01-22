@@ -76,6 +76,9 @@ bash $PTHSCR/convertAll2Webm.sh $MediaFolder "$CourseID"_videoslide mp4
 #mp4Tag
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_videoslide_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
+
+# Maj du mediatype sur le serveur avc
+wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType&jobtype=$JobType"
 ;;
 
 CV)
@@ -105,6 +108,9 @@ ln -s $MediaFolder/"$CourseID"_ipod.mp4 $MediaFolder/"$CourseID".mp4
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 # convert flv to webm for html5
 bash $PTHSCR/convertAll2Webm.sh $MediaFolder $CourseID flv
+
+# Maj du mediatype sur le serveur avc
+wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType&jobtype=$JobType"
 ;;
 
 MUA)
@@ -145,6 +151,9 @@ bash $PTHSCR/convertAll2Ogg.sh $MediaFolder $CourseID "mp3"
 #oggTag
 /usr/bin/vorbiscomment -w -t "title=$TITLE" -t "artist=$AUTHOR" -t "date=$DATE" -t "album=$FORMATION" -t "COMMENT=$COMMENT" $MediaFolder/$CourseID.ogg &> /dev/null
 fi
+
+# Maj du mediatype sur le serveur avc
+wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType&jobtype=$JobType"
 ;;
 
 MUV)
@@ -187,6 +196,9 @@ bash $PTHSCR/convertAll2Mp4.sh $MediaFolder $ORI$CourseID.$Extension $CourseID $
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID"_ipod.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 # webm for html5
 bash $PTHSCR/convertAll2Webm.sh $MediaFolder $CourseID mp4
+
+# Maj du mediatype sur le serveur avc
+wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType&jobtype=$JobType"
 ;;
 
 ADDV)
@@ -205,6 +217,9 @@ rm $MediaFolder/$FOLDER/$ORI$AV$CourseID.$Extension
 rm $MediaFolder/$FOLDER/$AV$CourseID.mp3
 # webm for html5
 bash $PTHSCR/convertAll2Webm.sh $MediaFolder/$FOLDER $AV$CourseID mp4
+
+# Maj du mediatype sur le serveur avc
+wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType&jobtype=$JobType"
 ;;
 
 
@@ -241,6 +256,9 @@ mv $MediaFolder/"$CourseID"_tmp.mp4 $MediaFolder/"$CourseID".mp4
 /usr/bin/AtomicParsley $MediaFolder/"$CourseID".mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 # convert mp4 to webm for html5
 bash $PTHSCR/convertAll2Webm.sh $MediaFolder $CourseID mp4
+
+# Maj du mediatype sur le serveur avc
+wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType&jobtype=$JobType"
 ;;
 
 
@@ -269,14 +287,13 @@ else
 	/usr/bin/eyeD3 -t "$TITLE" -a "$AUTHOR" -Y "$DATE" -A "$FORMATION" -c "::$COMMENT" --to-v2.3 --add-image=$PTHSCR/cover.jpg:FRONT_COVER $MediaFolder/$CourseID.mp3 &> /dev/null
 fi
 
+# Maj du mediatype sur le serveur avc
+wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType&jobtype=$JobType"
 
 # webm for html5
-#bash $PTHSCR/convertAll2Webm.sh $MediaFolder $CourseID mp4
+bash $PTHSCR/convertAll2Webm.sh $MediaFolder $CourseID mp4
 ;;
 
 esac
-
-# Maj du mediatype sur le serveur avc
-wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType&jobtype=$JobType"
 
 fi
