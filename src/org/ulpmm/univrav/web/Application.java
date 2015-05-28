@@ -2355,12 +2355,18 @@ public class Application extends HttpServlet {
 				int courseid = Integer.parseInt(request.getParameter("courseid"));
 				int mediatype = Integer.parseInt(request.getParameter("mediatype"));		
 				int currentmt = service.getMediaType(courseid);
+				boolean intermediate = request.getParameter("intermediate") != null && request.getParameter("intermediate").equals("true") ? true : false;
 				String jobtype = request.getParameter("jobtype");
 				
 				Job j = service.getJob(courseid, jobtype);
 				
+				// set intermediate mediatype
+				if (intermediate && j!=null && !j.getStatus().equals("done")) {
+					// Update the mediatype
+					service.modifyCourseMediatype(courseid, currentmt+mediatype);	
+				}
 			    // If job not already done				
-				if (j!=null && !j.getStatus().equals("done")) {
+				else if (j!=null && !j.getStatus().equals("done")) {
 					
 					//update the job status
 					service.modifyJobStatus(courseid, "done", jobtype);

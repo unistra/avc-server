@@ -272,7 +272,7 @@ ORI="ori_"
 ln -s $MediaFolder/"$CourseID".mp4 $MediaFolder/"$CourseID"_ipod.mp4
 
 # HARD SET : Maj du mediatype sur le serveur avc
-wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=128&jobtype=$JobType"
+wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=128&jobtype=$JobType&intermediate=true"
 
 # remove ori
 rm $MediaFolder/$ORI$CourseID.$Extension
