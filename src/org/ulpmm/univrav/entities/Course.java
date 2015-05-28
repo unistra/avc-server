@@ -542,9 +542,9 @@ public class Course {
 		else if(type.equals("webm")) return ((typeWebm & mediatype) > 0);
 		else if(type.equals("html5")) {
 			if(this.type.equals("audio"))
-				return ((typeOgg & mediatype) > 0) && ((typeMp3 & mediatype) > 0);
+				return  ((typeMp3 & mediatype) > 0);
 			else
-				return ((typeWebm & mediatype) > 0);
+				return ((typeHq & mediatype) > 0) || ((typeWebm & mediatype) > 0);
 		}
 		else return false;
 	}

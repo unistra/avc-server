@@ -354,7 +354,7 @@
 						</div>
 					</c:if>
 					
-					<!-- html5 link for audio (mp3+ogg) or video (mp4+webm) -->
+					<!-- html5 link for audio mp3 or video mp4 -->
 					<c:if test="${fn:contains(mediaLst, 'html5')}">			
 	            		<c:url var="courseaccess" scope="page" value="./changeinterface">
 							<c:param name="courseid" value="${course.courseid}"/>

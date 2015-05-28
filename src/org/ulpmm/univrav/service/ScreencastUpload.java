@@ -114,7 +114,7 @@ public class ScreencastUpload extends Thread {
 		}
 				
 		//int mediatype = Course.typeFlash + Course.typeMp3 + Course.typeOgg + Course.typeHq + Course.typeWebm;
-		int mediatype = Course.typeMp3 + Course.typeHq + Course.typeWebm;
+		int mediatype = Course.typeMp3 + Course.typeHq;
 		
 		// If medias encodage isnt separated
 		if(!sepEnc) {

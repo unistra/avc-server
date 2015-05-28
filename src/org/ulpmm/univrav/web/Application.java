@@ -2476,14 +2476,14 @@ public class Application extends HttpServlet {
 
 					// default access : set html5 or flash
 					if(type == null || type.equals("")) {
-						// if audio with mp3 and ogg, or video with webm-mp4, go to html5 page, else, go to flash
+						// if audio with mp3 or video with mp4, go to html5 page, else, go to flash
 						String recordinterface = (String) session.getAttribute("recordinterface");
-						// if user demand html5 and if audio have ogg+mp3 or video have mp4+webm, go html5
-						if(recordinterface.equals("html5") && ((c.getType().equals("audio") && c.isAvailable("ogg") && c.isAvailable("mp3")) || (c.getType().equals("video") && c.isAvailable("webm")))) {
+						// if user demand html5 and if audio have mp3 or video have mp4, go html5
+						if(recordinterface.equals("html5") && c.isAvailable("html5")) {
 							type = "html5";
 						}
 						// if user demand flash but flash not available and html5 available, go to html5
-						else if(recordinterface.equals("flash") && !c.isAvailable("flash") && ((c.getType().equals("audio") && c.isAvailable("ogg") && c.isAvailable("mp3")) || (c.getType().equals("video") && c.isAvailable("webm")))) {
+						else if(recordinterface.equals("flash") && !c.isAvailable("flash") && c.isAvailable("html5")) {
 							type = "html5";
 						}
 						else {
@@ -2693,11 +2693,11 @@ public class Application extends HttpServlet {
 							// Sets embed objects
 							if(c.isDownload() && !c.isRestrictionuds() && c.getGenre()==null) {
 								if(c.isAvailable("videoslide"))
-									request.setAttribute("embedvs", "<video width='640' height='480' controls poster='" + serverUrl + "/files/img/logo_audio640.png'><source src='" + courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName() + "_videoslide.mp4" + "' type='video/mp4'><source src='" + courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName() + "_videoslide.webm" + "' type='video/webm'><p class='nohtml5'>Warning! Your browser doesn't support html5.</p></video>");
+									request.setAttribute("embedvs", "<video width='640' height='480' controls poster='" + serverUrl + "/files/img/logo_audio640.png'><source src='" + courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName() + "_videoslide.mp4" + "' type='video/mp4'><p class='nohtml5'>Warning! Your browser doesn't support html5.</p></video>");
 								if(c.isAvailable("mp3"))
-									request.setAttribute("embedaudio", "<audio width='320' height='20' controls poster='" + serverUrl + "/files/img/logo_audio640.png'><source src='" + courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName() + ".mp3" + "' type='audio/mpeg'><source src='" + courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName() + ".ogg" + "' type='audio/ogg'><p class='nohtml5'>Warning! Your browser doesn't support html5.</p></audio>");
+									request.setAttribute("embedaudio", "<audio width='320' height='20' controls poster='" + serverUrl + "/files/img/logo_audio640.png'><source src='" + courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName() + ".mp3" + "' type='audio/mpeg'><p class='nohtml5'>Warning! Your browser doesn't support html5.</p></audio>");
 								if(c.getType().equals("video"))
-									request.setAttribute("embedvideo", "<video width='640' height='480' controls poster='" + serverUrl + "/files/img/logo_audio640.png'><source src='" + courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName() + ".mp4" + "' type='video/mp4'><source src='" + courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName() + ".webm" + "' type='video/webm'><p class='nohtml5'>Warning! Your browser doesn't support html5.</p></video>");
+									request.setAttribute("embedvideo", "<video width='640' height='480' controls poster='" + serverUrl + "/files/img/logo_audio640.png'><source src='" + courseAccessUrl + c.getMediafolder() + "/" + c.getMediasFileName() + ".mp4" + "' type='video/mp4'><p class='nohtml5'>Warning! Your browser doesn't support html5.</p></video>");
 							}
 
 

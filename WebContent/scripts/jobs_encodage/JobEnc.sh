@@ -270,6 +270,10 @@ ORI="ori_"
 /usr/bin/AtomicParsley $MediaFolder/$CourseID.mp4 --title "$TITLE" --artist "$AUTHOR" --year "$DATE" --album "$FORMATION" --comment "$COMMENT" --overWrite &> /dev/null
 # link ipod
 ln -s $MediaFolder/"$CourseID".mp4 $MediaFolder/"$CourseID"_ipod.mp4
+
+# HARD SET : Maj du mediatype sur le serveur avc
+wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=128&jobtype=$JobType"
+
 # remove ori
 rm $MediaFolder/$ORI$CourseID.$Extension
 
@@ -287,11 +291,8 @@ else
 	/usr/bin/eyeD3 -t "$TITLE" -a "$AUTHOR" -Y "$DATE" -A "$FORMATION" -c "::$COMMENT" --to-v2.3 --add-image=$PTHSCR/cover.jpg:FRONT_COVER $MediaFolder/$CourseID.mp3 &> /dev/null
 fi
 
-# Maj du mediatype sur le serveur avc
-wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=$MediaType&jobtype=$JobType"
-
-# webm for html5
-bash $PTHSCR/convertAll2Webm.sh $MediaFolder $CourseID mp4
+# HARD SET : Maj du mediatype sur le serveur avc
+wget --spider "$SRVURL/avc/encodagestate?courseid=$CourseID&mediatype=2&jobtype=$JobType"
 ;;
 
 esac
